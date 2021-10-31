@@ -1,3 +1,5 @@
+export {}
+
 const express = require('express')
 const session = require("express-session");
 const passport = require("passport");
@@ -12,7 +14,6 @@ require('dotenv').config()
 
 const PORT = process.env.PORT || 8888
 const shoeRouter = require('./routes/shoeRouter')
-const userRouter = require('./routes/userRouter')
 const database = require('./database/connection')
 const User = require('./models/User')
 
@@ -24,14 +25,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-require('./passport/config')(passport)
 
 app.use('/shoes', shoeRouter)
-app.use('/users', userRouter)
 
 
 app.listen(PORT, () => {
-  database.connectToServer((err) => {
+  database.connectToServer((err: any) => {
     if (err) {
       console.error(err)
     }

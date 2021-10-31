@@ -1,3 +1,5 @@
+export {}
+
 const mongoose = require('mongoose')
 
 const shoeSchema = new mongoose.Schema(

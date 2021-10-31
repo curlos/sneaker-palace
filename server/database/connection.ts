@@ -1,3 +1,5 @@
+export {}
+
 const mongoose = require("mongoose");
 const ATLAS_URI = process.env.ATLAS_URI;
  
