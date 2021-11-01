@@ -9,7 +9,7 @@ const { getShoesFromBrand, getShoesFromAllBrands } = require('../utils/sneakerV2
 const router = express.Router()
 
 router.get('/', async (req: Request, res: Response) => {
-  const allShoes = await Shoe.find({})
+  const allShoes = await Shoe.find({}).sort({'date': 1}).limit(10)
   res.json(allShoes)
 })
 
