@@ -8,9 +8,11 @@ const SmallShoe = ({ shoe }: Props) => {
 
   return (
     <Link to={`/shoe/${shoe.shoeID}`}>
-      <div className="flex flex-col items-center h-80 w-80 m-5 bg-white cursor-pointer p-5">
-        <img src={shoe.image.original} className="h-9/12 w-9/12"/>
-        <div>{shoe.name}</div>
+      <div className="flex flex-col h-96 w-96 wm-5 bg-white cursor-pointer mr-5 mb-5 px-3 ">
+        <img src={shoe.image.original} alt={shoe.name} className="h-9/12 w-9/12"/>
+        <div className="font-medium">{shoe.name}</div>
+        <div className="text-gray-500"><span className="capitalize">{shoe.gender}'s</span> Shoe</div>
+        <div className="text-gray-500"><span className="capitalize">{shoe.colorway}</span></div>
         <div className="text-emerald-500">${shoe.retailPrice}</div>
       </div>
     </Link>
