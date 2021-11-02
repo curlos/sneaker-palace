@@ -6,8 +6,11 @@ module.exports = {
     theme: {
       flex: {
         '2': '2',
+        '3': '3',
+        '4': '4',
         '6': '6',
-        '8': '8'
+        '8': '8',
+        '10': '10'
       },
       colors: {
         transparent: "transparent",
@@ -28,7 +31,7 @@ module.exports = {
         emerald: colors.emerald,
         teal: colors.teal,
         cyan: colors.cyan,
-        lightblue: colors.lightBlue,
+        lightblue: colors.sky,
         blue: colors.blue,
         indigo: colors.indigo,
         violet: colors.violet,
@@ -36,6 +39,11 @@ module.exports = {
         fuchsia: colors.fuchsia,
         pink: colors.pink,
         rose: colors.rose,
+      },
+      extend: {
+        backgroundImage: {
+          'login-image': "url('https://i.pinimg.com/originals/a1/b6/80/a1b68042f24f520d7a1e505bde40a24a.jpg')"
+        }
       }
     },
     variants: {

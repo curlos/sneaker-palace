@@ -6,8 +6,13 @@ import {
   Link
 } from "react-router-dom";
 import ProductList from "./pages/ProductList";
+import Navbar from "./components/Navbar";
 import Home from './pages/Home'
 import FullShoePage from './pages/FullShoePage'
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Cart from "./pages/Cart";
+import { Footer } from "./components/Footer";
 
 const App = () => {
 
@@ -20,11 +25,28 @@ const App = () => {
 
         <Switch>
           <Route path="/shoes">
+            <Navbar />
             <ProductList />
           </Route>
 
           <Route path="/shoe/:shoeID">
+            <Navbar />
             <FullShoePage />
+          </Route>
+
+          <Route path="/login">
+            <Navbar />
+            <Login />
+          </Route>
+
+          <Route path="/register">
+            <Navbar />
+            <Register />
+          </Route>
+
+          <Route path="/cart">
+            <Navbar />
+            <Cart />
           </Route>
 
 
@@ -33,6 +55,8 @@ const App = () => {
           </Route>
 
         </Switch>
+
+        <Footer />
       </div>
 
     
