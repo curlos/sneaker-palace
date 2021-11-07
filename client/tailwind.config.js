@@ -43,6 +43,11 @@ module.exports = {
       extend: {
         backgroundImage: {
           'login-image': "url('https://i.pinimg.com/originals/a1/b6/80/a1b68042f24f520d7a1e505bde40a24a.jpg')"
+        },
+        colors: {
+          brown: {
+            '500': '#975A16'
+          }
         }
       }
     },

@@ -3,7 +3,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
 import ProductList from "./pages/ProductList";
 import Navbar from "./components/Navbar";
@@ -13,9 +14,12 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import { Footer } from "./components/Footer";
+import { useSelector } from 'react-redux'
+import { RootState } from "./redux/store";
 
 const App = () => {
 
+  const user = useSelector((state: RootState) => state.user.currentUser)
   
   return (
     <Router>
@@ -40,8 +44,13 @@ const App = () => {
           </Route>
 
           <Route path="/register">
-            <Navbar />
-            <Register />
+            {user ? <Redirect to='/' /> : (
+              <span>
+                <Navbar />
+                <Register />
+              </span>
+            )}
+            
           </Route>
 
           <Route path="/cart">
@@ -51,6 +60,7 @@ const App = () => {
 
 
           <Route path="/">
+            <Navbar />
             <Home />
           </Route>
 
