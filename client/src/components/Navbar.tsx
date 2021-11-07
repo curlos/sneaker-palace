@@ -1,8 +1,24 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { ShoppingBagIcon } from "@heroicons/react/outline";
 import { Link, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { UserType } from "../types/types";
+import { UserDropdown } from "./UserDropdown";
+import { logout } from '../redux/userRedux'
+import axios from "axios";
 
 const Navbar = () => {
+
+  const user: UserType | null = useSelector((state: RootState) => state.user.currentUser)
+  const dispatch = useDispatch()
+  
+  const handleLogout = () => {
+    console.log('log out')
+    dispatch(logout())
+  }
+
+  console.log(user)
 
   return (
     <div className="sticky top-0 z-50 w-full bg-white flex justify-between items-center p-5 border-b border-gray-300">
@@ -17,8 +33,16 @@ const Navbar = () => {
       <div className="flex items-center gap-5">
         <Link to="/shoes">Sneakers</Link>
         <Link to="/brands">Brands</Link>
-        <Link to="/login">Login</Link>
-        <Link to="/register">Sign Up</Link>
+        {user ? (
+          <span>
+            <UserDropdown user={user} handleLogout={handleLogout}/>
+          </span> )
+           : (
+          <span className="flex items-center gap-5">
+            <Link to="/login">Login</Link>
+            <Link to="/register">Sign Up</Link>
+          </span>
+        )}
         <Link to="/cart" className="inline-flex relative">
           <ShoppingBagIcon className="h-7 w-7"/>
           <span className="z-10 inline-flex justify-center items-center text-white text-sm bg-emerald-500 h-5 w-5 border rounded-full absolute ml-4">5</span>
