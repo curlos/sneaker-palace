@@ -13,6 +13,7 @@ const cors = require('cors')
 require('dotenv').config()
 
 const PORT = process.env.PORT || 8888
+const authRouter = require('./routes/authRouter')
 const shoeRouter = require('./routes/shoeRouter')
 const database = require('./database/connection')
 const User = require('./models/User')
@@ -26,6 +27,11 @@ app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/auth', authRouter)
+app.use('/shoes', shoeRouter)
+app.use('/shoes', shoeRouter)
+app.use('/shoes', shoeRouter)
+app.use('/shoes', shoeRouter)
 app.use('/shoes', shoeRouter)
 
 

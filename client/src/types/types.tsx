@@ -19,10 +19,10 @@ export interface Shoe {
     thumbnail: string,
   },
   links: {
-    stockX: {type: String},
-    goat: {type: String},
-    flightClub: {type: String},
-    stadiumGoods: {type: String},
+    stockX: string,
+    goat: string,
+    flightClub: string,
+    stadiumGoods: string,
   },
   reviews: Array<string>,
   rating: number,
@@ -31,5 +31,5 @@ export interface Shoe {
 }
 
 export interface Props {
-  shoe: Shoe
+  shoe: Shoe,
 }
