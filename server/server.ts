@@ -15,6 +15,7 @@ require('dotenv').config()
 const PORT = process.env.PORT || 8888
 const authRouter = require('./routes/authRouter')
 const shoeRouter = require('./routes/shoeRouter')
+const cartRouter = require('./routes/cartRouter')
 const database = require('./database/connection')
 const User = require('./models/User')
 
@@ -29,10 +30,7 @@ app.use(passport.session());
 
 app.use('/auth', authRouter)
 app.use('/shoes', shoeRouter)
-app.use('/shoes', shoeRouter)
-app.use('/shoes', shoeRouter)
-app.use('/shoes', shoeRouter)
-app.use('/shoes', shoeRouter)
+app.use('/cart', cartRouter)
 
 
 app.listen(PORT, () => {

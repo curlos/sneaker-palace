@@ -30,7 +30,7 @@ const shoeSchema = new mongoose.Schema(
     },
     reviews: [{type: mongoose.Schema.Types.ObjectId, ref: 'Review'}],
     rating: {type: Number},
-    favorites: {type: Number},
+    favorites: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
     inStock: { type: Boolean, default: true}
   }
 )
