@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     isAdmin: { type: Boolean, default: false},
     profilePic: { type: String }, 
-    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
+    ratings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }],
     favorites: [{type: mongoose.Schema.Types.ObjectId, ref: 'Shoe'}],
     reviewUpvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
     reviewDownvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],

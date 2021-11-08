@@ -14,23 +14,27 @@ require('dotenv').config()
 
 const PORT = process.env.PORT || 8888
 const authRouter = require('./routes/authRouter')
+const userRouter = require('./routes/userRouter')
 const shoeRouter = require('./routes/shoeRouter')
 const cartRouter = require('./routes/cartRouter')
+const ratingRouter = require('./routes/ratingRouter')
 const database = require('./database/connection')
 const User = require('./models/User')
 
-app.use(logger('dev'));
+app.use(logger('dev'))
 app.use(cors())
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }))
 
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', authRouter)
+app.use('/users', userRouter)
 app.use('/shoes', shoeRouter)
 app.use('/cart', cartRouter)
+app.use('/rating', ratingRouter)
 
 
 app.listen(PORT, () => {

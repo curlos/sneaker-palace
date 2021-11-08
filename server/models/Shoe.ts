@@ -28,7 +28,7 @@ const shoeSchema = new mongoose.Schema(
       flightClub: {type: String},
       stadiumGoods: {type: String},
     },
-    reviews: [{type: mongoose.Schema.Types.ObjectId, ref: 'Review'}],
+    ratings: [{type: mongoose.Schema.Types.ObjectId, ref: 'Rating'}],
     rating: {type: Number},
     favorites: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
     inStock: { type: Boolean, default: true}
