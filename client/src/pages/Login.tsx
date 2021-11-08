@@ -4,12 +4,13 @@ import { Link, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../redux/store'
 import { loginStart, loginFailure, loginSuccess } from '../redux/userRedux'
+import { updateCart } from '../redux/cartRedux'
+import { UserType } from '../types/types'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
-  const { isFetching, error } = useSelector((state: RootState) => state.user)
   const history = useHistory()
   
   const handleLoginUser = async (e: React.FormEvent) => {
@@ -27,6 +28,9 @@ const Login = () => {
       
       if (response.data) {
         dispatch(loginSuccess(response.data))
+        const userCart = await fetchUserCart(response.data)
+        console.log(userCart)
+        dispatch(updateCart({currentCart: userCart}))
         history.push('/')
       }
       console.log(response.data)
@@ -34,6 +38,12 @@ const Login = () => {
       console.log(err)
       dispatch(loginFailure())
     }
+  }
+
+  const fetchUserCart = async (loggedInUser: UserType) => {
+    const response = await axios.get(`http://localhost:8888/cart/find/${loggedInUser._id}`)
+
+    return response.data
   }
 
   return (

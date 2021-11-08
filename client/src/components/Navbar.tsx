@@ -3,14 +3,18 @@ import { ShoppingBagIcon } from "@heroicons/react/outline";
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { UserType } from "../types/types";
+import { CartState, ICart, UserType } from "../types/types";
 import { UserDropdown } from "./UserDropdown";
 import { logout } from '../redux/userRedux'
 import axios from "axios";
+import { updateCart } from "../redux/cartRedux";
+import { useEffect } from "react";
 
 const Navbar = () => {
 
-  const user: UserType | null = useSelector((state: RootState) => state.user.currentUser)
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user.currentUser)
+  const cart: Partial<CartState> = useSelector((state: RootState) => state.cart.currentCart)
+  const currentCart = cart?.currentCart
   const dispatch = useDispatch()
   
   const handleLogout = () => {
@@ -18,7 +22,18 @@ const Navbar = () => {
     dispatch(logout())
   }
 
+  useEffect(() => {
+    const fetchFromAPI = async () => {
+      const response = await axios.get(`http://localhost:8888/cart/find/${user?._id}`)
+      const newCart = response.data
+      dispatch(updateCart({currentCart: newCart}))
+    }
+
+    fetchFromAPI()
+  }, [])
+
   console.log(user)
+  console.log(currentCart)
 
   return (
     <div className="sticky top-0 z-50 w-full bg-white flex justify-between items-center p-5 border-b border-gray-300">
@@ -45,7 +60,7 @@ const Navbar = () => {
         )}
         <Link to="/cart" className="inline-flex relative">
           <ShoppingBagIcon className="h-7 w-7"/>
-          <span className="z-10 inline-flex justify-center items-center text-white text-sm bg-emerald-500 h-5 w-5 border rounded-full absolute ml-4">5</span>
+          <span className="z-10 inline-flex justify-center items-center text-white text-sm bg-emerald-500 h-5 w-5 border rounded-full absolute ml-4">{currentCart?.products?.length}</span>
         </Link>
       </div>
     </div>

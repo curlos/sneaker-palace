@@ -6,7 +6,7 @@ import { UserType } from '../types/types'
 import { Link } from 'react-router-dom'
 
 interface Props {
-  user: UserType,
+  user: Partial<UserType>,
   handleLogout: Function
 }
 
@@ -23,8 +23,8 @@ export const UserDropdown = ({ user, handleLogout }: Props) => {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="flex items-center">
-          Hi, {user['firstName']}
-          <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+          {user['firstName'] && `Hi, ${user['firstName']}`}
+          {user['firstName'] && <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />}
         </Menu.Button>
       </div>
 
@@ -42,7 +42,7 @@ export const UserDropdown = ({ user, handleLogout }: Props) => {
             <Menu.Item>
               {({ active }) => (
                 <Link
-                  to={`/settings/`}
+                  to={`/profile`}
                   className={classNames(
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                     'block px-4 py-2 text-sm'
@@ -54,42 +54,42 @@ export const UserDropdown = ({ user, handleLogout }: Props) => {
             </Menu.Item>
             <Menu.Item>
               {({ active }) => (
-                <a
-                  href="#"
+                <Link
+                  to="/orders"
                   className={classNames(
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                     'block px-4 py-2 text-sm'
                   )}
                 >
                   Orders
-                </a>
+                </Link>
               )}
             </Menu.Item>
             <Menu.Item>
               {({ active }) => (
-                <a
-                  href="#"
+                <Link
+                  to="/favorites"
                   className={classNames(
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                     'block px-4 py-2 text-sm'
                   )}
                 >
                   Favorites
-                </a>
+                </Link>
               )}
             </Menu.Item>
 
             <Menu.Item>
               {({ active }) => (
-                <a
-                  href="#"
+                <Link
+                  to="/member/settings"
                   className={classNames(
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                     'block px-4 py-2 text-sm'
                   )}
                 >
                   Settings
-                </a>
+                </Link>
               )}
             </Menu.Item>
 
