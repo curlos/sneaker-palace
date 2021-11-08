@@ -1,7 +1,7 @@
 import React, {useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from "react-redux";
-import { CartState, IProduct, UserType } from "../types/types";
+import { CartState, IProduct, IRating, UserType } from "../types/types";
 import { RootState } from "../redux/store";
 import axios from 'axios'
 import moment from 'moment'
@@ -11,6 +11,9 @@ import { Shoe } from '../types/types'
 import { updateUser } from '../redux/userRedux'
 import { updateCart } from '../redux/cartRedux';
 import { current } from '@reduxjs/toolkit';
+import StarRatingComponent from 'react-star-rating-component'
+import StarRatingProgress from '../components/StarRatingProgress';
+import Review from '../components/Review';
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17' ]
 
@@ -27,15 +30,20 @@ const FullShoePage = () => {
   const dispatch = useDispatch()
   
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
+  const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([])
   const [selectedSize, setSelectedSize] = useState(AVERAGE_MAN_FOOT_SIZE)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     window.scrollTo(0, 0)
+    setLoading(true)
+
     const fetchFromAPI = async () => {
       console.log(shoeID)
       const response = await axios.get(`http://localhost:8888/shoes/${shoeID}`)
+      const ratings = await fetchAllRatings(response.data.ratings)
       setShoe(response.data)
+      setShoeRatings(ratings)
       setLoading(false)
     }
     fetchFromAPI()
@@ -76,7 +84,26 @@ const FullShoePage = () => {
     setShoe(response.data.updatedShoe)
   }
 
+  const fetchAllRatings = async (ratingIDs: Array<string>) => {
+    const ratings = []
+    console.log(ratingIDs)
+    if (ratingIDs) {
+      for (let ratingID of ratingIDs) {
+        const response = await axios.get(`http://localhost:8888/rating/${ratingID}`)
+        console.log(response.data)
+        if (response.data !== null) {
+          const authorResponse = await axios.get(`http://localhost:8888/users/${response.data.userID}`)
+          ratings.push({...response.data, postedByUser: authorResponse.data})
+        }
+      }
+    }
+
+    return ratings
+
+  }
+
   console.log(shoe)
+  console.log(shoeRatings)
 
   return (
 
@@ -161,9 +188,49 @@ const FullShoePage = () => {
 
               
             </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-300 flex pt-8">
+          <div className="mr-12 flex-2">
+            <div className="text-2xl font-bold">Customer reviews</div>
+            <div className="flex gap-2 items-center">
+              <StarRatingComponent
+                  name={'Rating'}
+                  value={5}
+                  starCount={5}
+                  editing={false}
+                  starColor={'#10B981'}
+              />
+              <span className="text-lg">4.8 out of 5</span>
+            </div>
+
+            <div className="text-gray-700">{shoeRatings.length} global ratings</div>
+            
+            <div>
+              <StarRatingProgress rating={5}/>
+              <StarRatingProgress rating={4}/>
+              <StarRatingProgress rating={3}/>
+              <StarRatingProgress rating={2}/>
+              <StarRatingProgress rating={1}/>
+            </div>
+
+            <div className="">
+              <div className="text-xl font-bold">Review this product</div>
+              <div className="my-3">Share your thoguhts with other customers</div>
+              <Link to={`/shoe/submit-review/${shoe.shoeID}`} className="px-5 py-2 border border-gray-300">Write a customer review</Link>
+            </div>
+          </div>
+
+          <div className="flex-8">
+            <div className="text-2xl font-bold mb-4">
+              Top reviews from the United States
+            </div>
 
             
-
+            <div>
+            {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating}/>)}
+            </div>
           </div>
         </div>
 

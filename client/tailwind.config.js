@@ -48,6 +48,12 @@ module.exports = {
           brown: {
             '500': '#975A16'
           }
+        },
+        height: {
+          '150': '150px',
+        },
+        width: {
+          '150': '150px',
         }
       }
     },
