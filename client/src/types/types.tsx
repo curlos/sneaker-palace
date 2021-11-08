@@ -25,7 +25,7 @@ export interface Shoe {
     flightClub: string,
     stadiumGoods: string,
   },
-  reviews: Array<string>,
+  ratings: Array<string>,
   rating: number,
   favorites: Array<string>,
   createdAt: string,
@@ -72,4 +72,23 @@ export interface ICart {
 
 export interface CartState {
   currentCart: ICart
+}
+
+export interface IRating {
+  userID: string,
+  shoeID: string,
+  ratingNum: number,
+  summary: string,
+  text: string,
+  photo: string,
+  size: string,
+  comfort: string,
+  width: string,
+  quality: string,
+  recommended: boolean,
+  helpful: Array<string>,
+  unhelpful: Array<string>,
+  createdAt: string,
+  updatedAt: string,
+  postedByUser: UserType
 }

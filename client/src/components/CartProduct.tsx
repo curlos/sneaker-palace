@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { updateCart } from '../redux/cartRedux';
 import { RootState } from '../redux/store';
 import { Shoe, ICart, IProduct, CartState } from "../types/types";
@@ -74,12 +75,14 @@ const CartProduct = ({ productInfo }: Props) => {
 
   return (
     <div className="flex py-5 mb-5 border-0 border-b border-solid border-gray-300">
-      <img src={shoe?.image?.original} className="h-40 h-40"/>
+      <Link to={`/shoe/${shoe.shoeID}`}><img src={shoe?.image?.thumbnail} alt={shoe?.name} style={{height: '150px', width: '150px'}}/></Link>
 
       <div className="ml-5 w-full">
         <div>
           <div className="flex justify-between">
-            <span className="font-medium">{shoe?.name}</span> 
+          <Link to={`/shoe/${shoe.shoeID}`}>
+            <span className="font-medium hover:underline">{shoe?.name}</span> 
+          </Link>
             <span>${Number(shoe?.retailPrice) * productInfo?.quantity}.00</span>  
           </div>
           <div className="text-gray-500"><span className="capitalize">{shoe?.gender}</span>'s Shoes</div>

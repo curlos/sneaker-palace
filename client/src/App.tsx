@@ -16,6 +16,7 @@ import Cart from "./pages/Cart";
 import { Footer } from "./components/Footer";
 import { useSelector } from 'react-redux'
 import { RootState } from "./redux/store";
+import ReviewForm from "./pages/ReviewForm";
 
 const App = () => {
 
@@ -28,22 +29,27 @@ const App = () => {
         
 
         <Switch>
-          <Route path="/shoes">
+          <Route path="/shoes" exact>
             <Navbar />
             <ProductList />
           </Route>
 
-          <Route path="/shoe/:shoeID">
+          <Route path="/shoe/:shoeID" exact>
             <Navbar />
             <FullShoePage />
           </Route>
 
-          <Route path="/login">
+          <Route path="/shoe/submit-review/:shoeID" exact>
+            <Navbar />
+            <ReviewForm />
+          </Route>
+
+          <Route path="/login" exact>
             <Navbar />
             <Login />
           </Route>
 
-          <Route path="/register">
+          <Route path="/register" exact>
             {user ? <Redirect to='/' /> : (
               <span>
                 <Navbar />
@@ -53,13 +59,13 @@ const App = () => {
             
           </Route>
 
-          <Route path="/cart">
+          <Route path="/cart" exact>
             <Navbar />
             <Cart />
           </Route>
 
 
-          <Route path="/">
+          <Route path="/" exact>
             <Navbar />
             <Home />
           </Route>
