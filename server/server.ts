@@ -10,6 +10,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const app = express()
 const cors = require('cors')
+const multer = require("multer")
+const path = require("path")
 require('dotenv').config()
 
 const PORT = process.env.PORT || 8888
@@ -20,6 +22,8 @@ const cartRouter = require('./routes/cartRouter')
 const ratingRouter = require('./routes/ratingRouter')
 const database = require('./database/connection')
 const User = require('./models/User')
+
+app.use("/assets", express.static(path.join(__dirname, "/assets")));
 
 app.use(logger('dev'))
 app.use(cors())
