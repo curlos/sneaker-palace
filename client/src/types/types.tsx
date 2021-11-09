@@ -46,8 +46,8 @@ export interface UserType {
   profilePic: string,
   reviews: Array<string>,
   favorites: Array<string>,
-  reviewUpvotes: Array<string>,
-  reviewDownvotes: Array<string>,
+  helpful: Array<string>,
+  notHelpful: Array<string>,
   shoppingCartItems: Array<string>,
   itemsBought: Array<string>,
   lowerCaseEmail: string,
@@ -75,6 +75,7 @@ export interface CartState {
 }
 
 export interface IRating {
+  _id: string,
   userID: string,
   shoeID: string,
   ratingNum: number,
@@ -87,7 +88,7 @@ export interface IRating {
   quality: string,
   recommended: boolean,
   helpful: Array<string>,
-  unhelpful: Array<string>,
+  notHelpful: Array<string>,
   createdAt: string,
   updatedAt: string,
   postedByUser: UserType

@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar'
 import SmallShoe from '../components/SmallShoe'
 import { Shoe } from '../types/types'
 import { filterByBrand, filterByColor, filterByGender, filterByPrice } from '../utils/filterShoes'
+import { SortDropdown } from '../components/SortDropdown'
 
 
 const ProductList = () => {
@@ -14,6 +15,8 @@ const ProductList = () => {
 
   const [shoes, setShoes] = useState([])
   const [filteredShoes, setFilteredShoes] = useState<Array<Shoe>>([])
+  const [sortedShoes, setSortedShoes] = useState<Array<Shoe>>([])
+  const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>({
     colors: {
       'red': false as boolean,
@@ -137,12 +140,16 @@ const ProductList = () => {
       <div className="flex">
         <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES}/>
 
-        <div className="flex justify-center flex-wrap flex-10">
-          {filteredShoes.map((shoe: Shoe) => {
-            return (
-              <SmallShoe key={shoe.shoeID} shoe={shoe} />
-            )
-          })}
+        <div className="flex-10">
+          <SortDropdown sortType={sortType} setSortType={setSortType}/>
+
+          <div className="flex justify-center flex-wrap">
+            {filteredShoes.map((shoe: Shoe) => {
+              return (
+                <SmallShoe key={shoe.shoeID} shoe={shoe} />
+              )
+            })}
+          </div>
         </div>
         
       </div>

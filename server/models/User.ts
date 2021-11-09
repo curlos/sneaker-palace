@@ -12,11 +12,11 @@ const userSchema = new mongoose.Schema(
     profilePic: { type: String }, 
     ratings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }],
     favorites: [{type: mongoose.Schema.Types.ObjectId, ref: 'Shoe'}],
-    reviewUpvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
-    reviewDownvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
     shoppingCart: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart' },
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Shoe' }],
     lowerCaseEmail: {type: String, lowercase: true, trim: true, required: true },
+    helpful: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }],
+    notHelpful: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }]
   },
   { timestamps: true}
 )

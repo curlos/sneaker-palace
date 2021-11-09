@@ -48,6 +48,11 @@ module.exports = {
         colors: {
           brown: {
             '500': '#975A16'
+          },
+          lakersGold: {
+            '100': '#f8e1b0',
+            '200': '#f8ca68',
+            '500': '#F5B327'
           }
         },
         height: {

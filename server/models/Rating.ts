@@ -17,7 +17,7 @@ const ratingSchema = new mongoose.Schema(
     recommended: {type: Boolean},
     verifiedPurchase: {type: Boolean},
     helpful: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
-    unhelpful: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]
+    notHelpful: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]
   },
   { timestamps: true }
 )
