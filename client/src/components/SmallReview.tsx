@@ -45,7 +45,7 @@ const SmallReview = ({ review, author }: Props) => {
                 value={review.ratingNum}
                 starCount={5}
                 editing={false}
-                starColor={'#10B981'}
+                starColor={'#F5B327'}
           />
           <div className="text-sm text-orange-700">Verified Purchase</div>
         </div>
@@ -65,7 +65,7 @@ const SmallReview = ({ review, author }: Props) => {
                         value={4}
                         starCount={5}
                         editing={false}
-                        starColor={'#10B981'}
+                        starColor={'#F5B327'}
                   />
                   <div className="text-sm text-gray-700">{shoe?.ratings?.length}</div>
                 </div>

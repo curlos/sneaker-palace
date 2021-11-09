@@ -33,6 +33,7 @@ const FullShoePage = () => {
   const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([])
   const [selectedSize, setSelectedSize] = useState(AVERAGE_MAN_FOOT_SIZE)
   const [loading, setLoading] = useState(false)
+  
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -97,9 +98,7 @@ const FullShoePage = () => {
         }
       }
     }
-
     return ratings
-
   }
 
   console.log(shoe)
@@ -200,7 +199,7 @@ const FullShoePage = () => {
                   value={5}
                   starCount={5}
                   editing={false}
-                  starColor={'#10B981'}
+                  starColor={'#F5B327'}
               />
               <span className="text-lg">4.8 out of 5</span>
             </div>

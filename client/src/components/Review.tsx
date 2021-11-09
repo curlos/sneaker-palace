@@ -25,7 +25,7 @@ const Review = ({ shoeRating }: Props) => {
           value={shoeRating.ratingNum}
           starCount={5}
           editing={false}
-          starColor={'#10B981'}
+          starColor={'#F5B327'}
         />
         <div className="ml-2 font-bold">{shoeRating.summary}</div>
       </div>

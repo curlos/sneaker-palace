@@ -4,6 +4,8 @@ import { Props } from '../types/types'
 
 
 const SmallShoe = ({ shoe }: Props) => {
+
+  console.log(shoe)
   
 
   return (
