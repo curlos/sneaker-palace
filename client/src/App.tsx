@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,56 +17,81 @@ import { Footer } from "./components/Footer";
 import { useSelector } from 'react-redux'
 import { RootState } from "./redux/store";
 import ReviewForm from "./pages/ReviewForm";
+import Profile from "./pages/Profile";
+import Orders from "./pages/Orders";
+import Favorites from "./pages/Favorites";
+import Settings from "./pages/Settings";
+import SearchModal from "./components/SearchModal";
 
 const App = () => {
 
   const user = useSelector((state: RootState) => state.user.currentUser)
+  const [showModal, setShowModal] = useState(false)
   
   return (
     <Router>
 
       <div className="m-0 box-border">
+
+      {showModal ? <SearchModal showModal={showModal} setShowModal={setShowModal}/> : null}
+      <Navbar setShowModal={setShowModal}/>
         
 
         <Switch>
-          <Route path="/shoes" exact>
-            <Navbar />
-            <ProductList />
-          </Route>
-
-          <Route path="/shoe/:shoeID" exact>
-            <Navbar />
-            <FullShoePage />
-          </Route>
-
-          <Route path="/shoe/submit-review/:shoeID" exact>
-            <Navbar />
-            <ReviewForm />
-          </Route>
-
           <Route path="/login" exact>
-            <Navbar />
             <Login />
           </Route>
 
           <Route path="/register" exact>
             {user ? <Redirect to='/' /> : (
               <span>
-                <Navbar />
                 <Register />
               </span>
             )}
-            
           </Route>
 
           <Route path="/cart" exact>
-            <Navbar />
             <Cart />
+          </Route>
+
+          <Route path="/shoes" exact>
+            <ProductList />
+          </Route>
+
+          <Route path="/shoe/:shoeID" exact>
+            <FullShoePage />
+          </Route>
+
+          <Route path="/shoe/submit-review/:shoeID" exact>
+            <ReviewForm />
+          </Route>
+
+          <Route path="/profile/:userID" exact>
+            <Profile />
+          </Route>
+
+          <Route path="/orders" exact>
+            {!user ? <Redirect to='/' /> : (
+              <span>
+                <Orders />
+              </span>
+            )}
+          </Route>
+
+          <Route path="/favorites" exact>
+            <Favorites />
+          </Route>
+
+          <Route path="/settings" exact>
+            {!user ? <Redirect to='/' /> : (
+              <span>
+                <Settings />
+              </span>
+            )}
           </Route>
 
 
           <Route path="/" exact>
-            <Navbar />
             <Home />
           </Route>
 
