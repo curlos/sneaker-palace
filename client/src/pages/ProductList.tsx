@@ -7,6 +7,8 @@ import SmallShoe from '../components/SmallShoe'
 import { Shoe } from '../types/types'
 import { filterByBrand, filterByColor, filterByGender, filterByPrice } from '../utils/filterShoes'
 import { SortDropdown } from '../components/SortDropdown'
+import { sortByHighestPrice, sortByLowestPrice, sortByNewest, sortByOldest } from '../utils/sortShoes'
+import { Pagination } from '../components/Pagination'
 
 
 const ProductList = () => {
@@ -16,6 +18,8 @@ const ProductList = () => {
   const [shoes, setShoes] = useState([])
   const [filteredShoes, setFilteredShoes] = useState<Array<Shoe>>([])
   const [sortedShoes, setSortedShoes] = useState<Array<Shoe>>([])
+  const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
+  const [displayedShoes, setDisplayedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>({
     colors: {
@@ -108,21 +112,30 @@ const ProductList = () => {
     }
   })
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     const fetchFromAPI = async () => {
       const response = await axios.get(`http://localhost:8888/shoes`)
-      const filteredShoes: Array<Shoe> = getFilteredShoes(response.data)
+      const newSortedShoes : Array<Shoe> = getSortedShoes(response.data)
       setShoes(response.data)
-      setFilteredShoes(filteredShoes)
+      setSortedShoes(newSortedShoes)
+      
+      setLoading(false)
     }
 
     fetchFromAPI()
   }, [])
 
   useEffect(() => {
+    window.scrollTo(0,0)
     const newShoes: Array<Shoe> = getFilteredShoes(shoes)
-    setFilteredShoes(newShoes)
-  }, [filters])
+    const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
+    console.log(newSortedShoes)
+    setSortedShoes(newSortedShoes)
+  }, [filters, sortType, paginatedShoes])
+
 
   const getFilteredShoes = (shoesToFilter: Array<Shoe>) => {
     const colorShoes = filterByBrand(filters, shoesToFilter)
@@ -133,29 +146,57 @@ const ProductList = () => {
     return priceShoes
   }
 
-  console.log(filterByPrice(filters, shoes))
+  const getSortedShoes = (shoesToSort: Array<Shoe>) => {
+    switch (sortType) {
+      case 'Newest':
+        return sortByNewest(shoesToSort)
+      case 'Oldest':
+        return sortByOldest(shoesToSort)
+      case 'Price: High-Low':
+        return sortByHighestPrice(shoesToSort)
+      case 'Price: Low-High':
+        return sortByLowestPrice(shoesToSort)
+      case 'Most Likes':
+        return sortByLowestPrice(shoesToSort)
+      case 'Most Reviews':
+        return sortByLowestPrice(shoesToSort)
+      default:
+        return shoesToSort
+    }
+  }
+
+  const handleNewPageClick = (newPaginatedShoes: Array<Shoe>) => {
+    setPaginatedShoes(newPaginatedShoes)
+  }
 
   return (
-    <div className="text-xl-lg">
-      <div className="flex">
-        <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES}/>
 
-        <div className="flex-10">
-          <SortDropdown sortType={sortType} setSortType={setSortType}/>
+    loading ? <div>Loading...</div> : (
+      <div className="text-xl-lg">
+        <div className="flex">
+          <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES}/>
 
-          <div className="flex justify-center flex-wrap">
-            {filteredShoes.map((shoe: Shoe) => {
-              return (
-                <SmallShoe key={shoe.shoeID} shoe={shoe} />
-              )
-            })}
+          <div className="flex-10 p-4">
+
+            <div>
+              <SortDropdown sortType={sortType} setSortType={setSortType}/>
+            </div>
+
+            <div className="flex justify-center flex-wrap">
+              {paginatedShoes.map((shoe: Shoe) => {
+                return (
+                  <SmallShoe key={shoe.shoeID} shoe={shoe} />
+                )
+              })}
+            </div>
+
+            <Pagination data={sortedShoes} pageLimit={Math.round(sortedShoes.length / 10)} dataLimit={10} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick}/>
           </div>
+          
         </div>
-        
       </div>
-    </div>
+    )
   )
-
 }
 
 export default ProductList

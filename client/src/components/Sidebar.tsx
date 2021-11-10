@@ -9,12 +9,11 @@ interface Props {
     priceRanges: any,
     shoeSizes: any
   },
-  setFilters: any
+  setFilters: any,
+  shoeSizes: Array<string>
 }
 
-const Sidebar = ({ filters, setFilters }: Props) => {
-
-  console.log(filters)
+const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
   
   const [showColors, setShowColors] = useState(false)
   const [showBrands, setShowBrands] = useState(false)
@@ -134,7 +133,7 @@ const Sidebar = ({ filters, setFilters }: Props) => {
 
         {showSizes ? (
           <div className="flex flex-wrap">
-            {Object.keys(filters.shoeSizes).map((shoeSize) => {
+            {shoeSizes.map((shoeSize) => {
               return (
                 <div className={`h-10 w-12 inline-flex items-center justify-center ${filters.shoeSizes[shoeSize] ? ' border-2 border-black' : 'border border-gray-300'} m-1 rounded-lg cursor-pointer`} onClick={() => handleSizeClick(shoeSize)}>{shoeSize}</div>
               )
