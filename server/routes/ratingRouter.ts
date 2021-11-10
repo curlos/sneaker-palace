@@ -14,23 +14,56 @@ router.get('/:ratingID', async (req: Request, res: Response) => {
   res.json(rating)
 })
 
-router.post('/rate', async (req: Request, res: Response) => {
-  try {
-    const rating = new Rating(req.body)
-    const shoe = await Shoe.findOne({ shoeID: req.body.shoeID})
-    const user = await User.findById(req.body.userID)
-    
-    await shoe.updateOne({ $push: { ratings: rating._id } })
-    await user.updateOne({ $push: { ratings: rating._id } })
-    const updatedShoe = await Shoe.findById(shoe._id)
-    const updatedUser = await User.findById(user._id)
-
-    await rating.save()
-    
-    res.json({updatedShoe, updatedUser, rating})
-  } catch (err) {
-    res.json(err)
+const getAverageRating = async (ratingIDs: Array<string>) => {
+  if (ratingIDs.length === 0) {
+    return 0
   }
+
+  let ratingSum = 0
+  
+
+  console.log(ratingIDs)
+
+  for (let ratingID of ratingIDs) {
+    try {
+      const response = await Rating.findById(ratingID, (err: any, results: typeof Rating) => {
+        console.log(results)
+        if (results) {
+          ratingSum += results.ratingNum
+        } 
+      }).clone().catch((err: any) => console.log(err))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  console.log(ratingSum)
+
+
+
+  return ratingSum / ratingIDs.length
+}
+
+router.post('/rate', async (req: Request, res: Response) => {
+  console.log('new fuck')
+  const rating = new Rating(req.body)
+  const shoe = await Shoe.findOne({ shoeID: req.body.shoeID})
+  const user = await User.findById(req.body.userID)
+
+  console.log(shoe.ratings)
+
+  const shoeAverageRating = await getAverageRating(shoe.ratings)
+
+  console.log(shoeAverageRating)
+  
+  await shoe.updateOne({ $push: { ratings: rating._id, rating: shoeAverageRating } })
+  await user.updateOne({ $push: { ratings: rating._id } })
+  const updatedShoe = await Shoe.findById(shoe._id)
+  const updatedUser = await User.findById(user._id)
+
+  await rating.save()
+  
+  res.json({updatedShoe, updatedUser, rating})
 })
 
 router.put('/like', async (req: Request, res: Response) => {
@@ -82,5 +115,10 @@ router.put('/dislike', async (req: Request, res: Response) => {
   }
   res.json(rating)
 })
+
+
+
+
+
 
 module.exports = router;
