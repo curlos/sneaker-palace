@@ -19,10 +19,14 @@ router.get('/:shoeID', async (req: Request, res: Response) => {
   res.json(shoe)
 })
 
-router.get('/:shoeID', async (req: Request, res: Response) => {
-  const shoe = await Shoe.findOne({shoeID: req.params.shoeID})
-  res.json(shoe)
-})
+router.get('/query/:queryText', async (req: Request, res: Response) => {
+  const shoes = await Shoe
+                    .find({ "name": { "$regex": req.params.queryText.trim(), "$options": "i" } })
+                    .limit(10)
+    console.log(shoes.length)
+    res.json(shoes)
+
+  })
 
 router.put('/favorite', async (req: Request, res: Response) => {
   const shoe = await Shoe.findOne({shoeID: req.body.shoeID})
