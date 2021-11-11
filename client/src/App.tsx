@@ -25,7 +25,7 @@ import SearchModal from "./components/SearchModal";
 
 const App = () => {
 
-  const user = useSelector((state: RootState) => state.user.currentUser)
+  const user = useSelector((state: RootState) => state.user && state.user.currentUser)
   const [showModal, setShowModal] = useState(false)
   
   return (
@@ -71,7 +71,7 @@ const App = () => {
           </Route>
 
           <Route path="/orders" exact>
-            {!user ? <Redirect to='/' /> : (
+            {Object.keys(user).length > 0 ? <Redirect to='/' /> : (
               <span>
                 <Orders />
               </span>

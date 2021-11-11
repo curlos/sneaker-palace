@@ -5,14 +5,12 @@ export {}
 export const filterByColor = (filters: any, shoesToFilter: Array<Shoe>) => {
   if (Object.values(filters.colors).every((v) => v === false)) {
     return shoesToFilter
-  } else {
-    console.log('no')
-  }
+  } 
+  
   return shoesToFilter.filter((shoe) => {
     let colorIncluded = false
     for (let color of Object.keys(filters.colors)) {
       if (filters.colors[color] && shoe.colorway.toLowerCase().includes(color)) {
-        console.log(shoe.colorway.toLowerCase())
         colorIncluded = true
         break
       }
@@ -25,18 +23,16 @@ export const filterByColor = (filters: any, shoesToFilter: Array<Shoe>) => {
 export const filterByBrand = (filters: any, shoesToFilter: Array<Shoe>) => {
   if (Object.values(filters.brands).every((v) => v === false)) {
     return shoesToFilter
-  } else {
-    console.log('no')
   }
+
   return shoesToFilter.filter((shoe: Shoe) => filters.brands[shoe.brand])
 }
 
 export const filterByGender = (filters: any, shoesToFilter: Array<Shoe>) => {
   if (Object.values(filters.genders).every((v) => v === false)) {
     return shoesToFilter
-  } else {
-    console.log('no')
   }
+
   return shoesToFilter.filter((shoe) => {
     console.log(shoe.gender)
 
@@ -46,10 +42,7 @@ export const filterByGender = (filters: any, shoesToFilter: Array<Shoe>) => {
 
 export const filterByPrice = (filters: any, shoesToFilter: Array<Shoe>) => {
   if (Object.values(filters.priceRanges).every((v: any) => v['checked'] === false)) {
-    console.log('fuck you')
     return shoesToFilter
-  } else {
-    console.log('no')
   }
 
   return shoesToFilter.filter((shoe) => {

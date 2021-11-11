@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const INITIAL_STATE = {
+  currentUser: {},
+  isFetching: false,
+  error: false,
+}
+
 const userSlice = createSlice({
   name: 'user',
-  initialState: {
-    currentUser: {},
-    isFetching: false,
-    error: false,
-  },
+  initialState: INITIAL_STATE,
   reducers: {
     loginStart: (state) => {
       state.isFetching = true;
@@ -20,9 +22,7 @@ const userSlice = createSlice({
       state.error = true
     },
     logout: (state) => {
-      state.isFetching = false
-      state.currentUser = {}
-      
+      return INITIAL_STATE
     },
     updateUser: (state, action) => {
       state.currentUser = action.payload

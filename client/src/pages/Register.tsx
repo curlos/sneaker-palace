@@ -22,6 +22,7 @@ const Register = () => {
     console.log(body)
     try {
       const response = await axios.post(`http://localhost:8888/auth/register`, body)
+      const cartResponse = await axios.post(`http://localhost:8888/cart/${response.data._id}`)
       console.log(response.data)
       history.push('/')
     } catch (err) {
