@@ -8,7 +8,7 @@ import { Shoe, UserType } from '../types/types'
 
 const ReviewForm = () => {
   const history = useHistory()
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user.currentUser)
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   
   const { shoeID }: { shoeID: string } = useParams()
   const [shoe, setShoe] = useState<Partial<Shoe>>({})

@@ -22,7 +22,6 @@ router.get('/:shoeID', async (req: Request, res: Response) => {
 router.get('/query/:queryText', async (req: Request, res: Response) => {
   const shoes = await Shoe
                     .find({ "name": { "$regex": req.params.queryText.trim(), "$options": "i" } })
-                    .limit(10)
     console.log(shoes.length)
     res.json(shoes)
 

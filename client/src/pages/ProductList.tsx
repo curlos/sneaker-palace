@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
@@ -9,9 +9,19 @@ import { filterByBrand, filterByColor, filterByGender, filterByPrice } from '../
 import { SortDropdown } from '../components/SortDropdown'
 import { sortByHighestPrice, sortByLowestPrice, sortByNewest, sortByOldest } from '../utils/sortShoes'
 import { Pagination } from '../components/Pagination'
+import { useLocation } from 'react-router-dom'
+
+const useQuery = () => {
+  const { search } = useLocation()
+
+  return React.useMemo(() => new URLSearchParams(search), [search])
+}
 
 
 const ProductList = () => {
+
+
+  const query = useQuery()
 
   const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17' ]
 
@@ -117,7 +127,15 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchFromAPI = async () => {
-      const response = await axios.get(`http://localhost:8888/shoes`)
+      let API_URL = `http://localhost:8888/shoes`
+
+      if (query.get('query')) {
+        API_URL = `http://localhost:8888/shoes/query/${query.get('query')}`
+      }
+
+      console.log(API_URL)
+      const response = await axios.get(API_URL)
+      console.log(response.data)
       const newSortedShoes : Array<Shoe> = getSortedShoes(response.data)
       setShoes(response.data)
       setSortedShoes(newSortedShoes)
@@ -126,7 +144,7 @@ const ProductList = () => {
     }
 
     fetchFromAPI()
-  }, [])
+  }, [query.get('query')])
 
   useEffect(() => {
     window.scrollTo(0,0)
@@ -134,7 +152,7 @@ const ProductList = () => {
     const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
     console.log(newSortedShoes)
     setSortedShoes(newSortedShoes)
-  }, [filters, sortType, paginatedShoes])
+  }, [filters, sortType, paginatedShoes, query.get('query')])
 
 
   const getFilteredShoes = (shoesToFilter: Array<Shoe>) => {
@@ -177,11 +195,7 @@ const ProductList = () => {
           <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES}/>
 
           <div className="flex-10 p-4">
-
-            <div>
-              <SortDropdown sortType={sortType} setSortType={setSortType}/>
-            </div>
-
+            <SortDropdown sortType={sortType} setSortType={setSortType}/>
             <div className="flex justify-center flex-wrap">
               {paginatedShoes.map((shoe: Shoe) => {
                 return (

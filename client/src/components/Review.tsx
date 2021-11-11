@@ -15,7 +15,7 @@ interface Props {
 
 const Review = ({ shoeRating }: Props) => {
   
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user.currentUser)
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const dispatch = useDispatch()
   const [review, setReview] = useState(shoeRating)
 

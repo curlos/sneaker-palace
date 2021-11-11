@@ -17,8 +17,8 @@ const classNames = (...classes: Array<string>) => {
 export const SortDropdown = ({ sortType, setSortType }: Props) => {
 
   return (
-    <div>
-      <Menu as="div" className="relative inline-block text-left float-right mr-16 mt-4">
+    <div className="flex justify-end">
+      <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="flex items-center">
           {sortType} <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />

@@ -60,12 +60,14 @@ export interface IProduct {
   productID: string,
   size: number,
   quantity: number,
+  retailPrice: number
 }
 
 export interface ICart {
   _id: string,
   userID: string,
   products: Array<IProduct>,
+  total: number,
   createdAt: string,
   updatedAt: string
 }

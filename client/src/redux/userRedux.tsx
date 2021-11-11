@@ -22,6 +22,7 @@ const userSlice = createSlice({
     logout: (state) => {
       state.isFetching = false
       state.currentUser = {}
+      
     },
     updateUser: (state, action) => {
       state.currentUser = action.payload

@@ -16,7 +16,7 @@ interface Props {
 
 const Navbar = ({ setShowModal }: Props) => {
 
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user.currentUser)
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const cart: Partial<CartState> = useSelector((state: RootState) => state.cart.currentCart)
   const currentCart = cart?.currentCart
   const dispatch = useDispatch()
@@ -37,7 +37,7 @@ const Navbar = ({ setShowModal }: Props) => {
   }, [])
 
   console.log(user)
-  console.log(currentCart)
+  console.log(cart)
 
   return (
     <div className="sticky top-0 z-10 w-full bg-white flex justify-between items-center p-5 border-b border-gray-300">
@@ -61,7 +61,7 @@ const Navbar = ({ setShowModal }: Props) => {
         <SearchIcon className="h-5 w-5 cursor-pointer" onClick={() => setShowModal(true)}/>
         <Link to="/cart" className="inline-flex relative">
           <ShoppingBagIcon className="h-7 w-7"/>
-          <span className="z-10 inline-flex justify-center items-center text-white text-sm bg-emerald-500 h-5 w-5 border rounded-full absolute ml-4">{currentCart?.products?.length}</span>
+          <span className="z-10 inline-flex justify-center items-center text-white text-sm bg-emerald-500 h-5 w-5 border rounded-full absolute ml-4">{currentCart && currentCart.products && currentCart?.products?.length}</span>
         </Link>
       </div>
     </div>

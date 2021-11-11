@@ -11,10 +11,11 @@ const Cart = () => {
 
   const dispatch = useDispatch()
 
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user.currentUser)
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const cart: Partial<CartState> = useSelector((state: RootState) => state.cart.currentCart)
   const currentCart = cart?.currentCart
   
+  console.log(cart)
 
 
 

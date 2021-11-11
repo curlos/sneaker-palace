@@ -22,7 +22,7 @@ const AVERAGE_WOMEN_FOOT_SIZE = '8.5'
 
 const FullShoePage = () => {
 
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user.currentUser)
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const cart: Partial<CartState> = useSelector((state: RootState) => state.cart.currentCart)
   const currentCart = cart?.currentCart
 
@@ -48,7 +48,7 @@ const FullShoePage = () => {
       setLoading(false)
     }
     fetchFromAPI()
-  }, [])
+  }, [shoeID])
 
   const handleAddToCart = async () => {
     if (currentCart && currentCart.products && shoe && shoe.shoeID) {
@@ -57,6 +57,7 @@ const FullShoePage = () => {
         productID: shoe.shoeID,
         size: Number(selectedSize),
         quantity: 1,
+        retailPrice: shoe.retailPrice
       }
       const currentProducts = currentCart?.products
 
