@@ -17,8 +17,7 @@ interface Props {
 const CartProduct = ({ productInfo }: Props) => {
 
   const dispatch = useDispatch()
-  const cart: Partial<CartState> = useSelector((state: RootState) => state.cart.currentCart)
-  const currentCart = cart?.currentCart
+  const { currentCart, total } = useSelector((state: RootState) => state.cart)
 
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
   const [loading, setLoading] = useState(true)
@@ -45,9 +44,11 @@ const CartProduct = ({ productInfo }: Props) => {
       const newProducts = currentCartClone?.products
       console.log(currentCartClone)
 
-      for (let product of newProducts) {
-        if (product._id === productInfo._id) {
-          product.quantity = Number(e.currentTarget.value)
+      if (newProducts) {
+        for (let product of newProducts) {
+          if (product._id === productInfo._id) {
+            product.quantity = Number(e.currentTarget.value)
+          }
         }
       }
 

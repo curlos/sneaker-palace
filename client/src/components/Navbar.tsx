@@ -17,9 +17,10 @@ interface Props {
 const Navbar = ({ setShowModal }: Props) => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const cart: Partial<CartState> = useSelector((state: RootState) => state.cart.currentCart)
-  const currentCart = cart?.currentCart
+  const { currentCart, total } = useSelector((state: RootState) => state.cart)
   const dispatch = useDispatch()
+
+  console.log(currentCart)
   
   const handleLogout = () => {
     console.log('log out')
@@ -30,14 +31,13 @@ const Navbar = ({ setShowModal }: Props) => {
     const fetchFromAPI = async () => {
       const response = await axios.get(`http://localhost:8888/cart/find/${user?._id}`)
       const newCart = response.data
-      dispatch(updateCart({currentCart: newCart}))
+      dispatch(updateCart(newCart))
     }
 
     fetchFromAPI()
   }, [])
 
   console.log(user)
-  console.log(cart)
 
   return (
     <div className="sticky top-0 z-10 w-full bg-white flex justify-between items-center p-5 border-b border-gray-300">

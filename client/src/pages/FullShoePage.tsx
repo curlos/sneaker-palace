@@ -23,8 +23,7 @@ const AVERAGE_WOMEN_FOOT_SIZE = '8.5'
 const FullShoePage = () => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const cart: Partial<CartState> = useSelector((state: RootState) => state.cart.currentCart)
-  const currentCart = cart?.currentCart
+  const { currentCart, total } = useSelector((state: RootState) => state.cart)
 
   const { shoeID }: { shoeID: string } = useParams()
   const dispatch = useDispatch()

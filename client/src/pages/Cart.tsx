@@ -12,12 +12,10 @@ const Cart = () => {
   const dispatch = useDispatch()
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const cart: Partial<CartState> = useSelector((state: RootState) => state.cart.currentCart)
-  const currentCart = cart?.currentCart
-  
-  console.log(cart)
+  const { currentCart, total } = useSelector((state: RootState) => state.cart)
 
-
+  console.log(currentCart)
+  console.log(total)
 
   return (
     <div className="w-full px-16 py-12 flex flex-start">
@@ -30,7 +28,7 @@ const Cart = () => {
           <div className="font-medium text-xl mb-5">Summary</div>
           <div className="flex justify-between items-center mb-2">
             <div>Subtotal</div>
-            <div>$0.00</div>
+            <div>${total}.00</div>
           </div>
 
           <div className="flex justify-between items-center mb-2">
@@ -46,7 +44,7 @@ const Cart = () => {
           <div className="border-0 border-b border-solid border-gray-300 my-3"></div>
           <div className="flex justify-between items-center">
             <div>Total</div>
-            <div>$0.00</div>
+            <div>${total}.00</div>
           </div>
           <div className="border-0 border-b border-solid border-gray-300 my-3"></div>
           
