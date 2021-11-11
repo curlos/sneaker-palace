@@ -10,6 +10,7 @@ import { SortDropdown } from '../components/SortDropdown'
 import { sortByHighestPrice, sortByLowestPrice, sortByNewest, sortByOldest } from '../utils/sortShoes'
 import { Pagination } from '../components/Pagination'
 import { useLocation } from 'react-router-dom'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
 
 const useQuery = () => {
   const { search } = useLocation()
@@ -188,29 +189,30 @@ const ProductList = () => {
   }
 
   return (
-
-    loading ? <div>Loading...</div> : (
       <div className="text-xl-lg">
         <div className="flex">
           <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES}/>
 
           <div className="flex-10 p-4">
             <SortDropdown sortType={sortType} setSortType={setSortType}/>
-            <div className="flex justify-center flex-wrap">
-              {paginatedShoes.map((shoe: Shoe) => {
-                return (
-                  <SmallShoe key={shoe.shoeID} shoe={shoe} />
-                )
-              })}
-            </div>
+            {loading ? <div className="flex justify-center"><CircleLoader /></div> : (
+              <div>
+                <div className="flex justify-center flex-wrap">
+                {paginatedShoes.map((shoe: Shoe) => {
+                  return (
+                    <SmallShoe key={shoe.shoeID} shoe={shoe} />
+                  )
+                  })}
+                </div>
 
-            <Pagination data={sortedShoes} pageLimit={Math.round(sortedShoes.length / 10)} dataLimit={10} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick}/>
+                <Pagination data={sortedShoes} pageLimit={Math.round(sortedShoes.length / 10)} dataLimit={10} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick}/>
+              </div>
+            )}
           </div>
           
         </div>
       </div>
     )
-  )
 }
 
 export default ProductList

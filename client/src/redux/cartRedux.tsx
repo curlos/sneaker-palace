@@ -17,10 +17,7 @@ const cartSlice = createSlice({
   reducers: {
     updateCart: (state, action) => {
       state.currentCart = action.payload
-
-      if (action.payload.currentCart) {
-        state.total = calcTotal(action.payload.currentCart.products)
-      }
+      state.total = calcTotal(action.payload.products)
     }
   }
 })

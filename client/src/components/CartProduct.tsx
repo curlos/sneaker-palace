@@ -52,13 +52,12 @@ const CartProduct = ({ productInfo }: Props) => {
         }
       }
 
-      console.log(newProducts)
-      // const body = { products: newProducts}
-      // console.log(body)
-      // const response = await axios.put(`http://localhost:8888/cart/${currentCart?._id}`, body)
-      // const newCart = response.data
-      // console.log(newCart)
-      // dispatch(updateCart({currentCart: newCart}))
+      const body = { products: newProducts}
+      console.log(body)
+      const response = await axios.put(`http://localhost:8888/cart/${currentCart?._id}`, body)
+      const newCart = response.data
+      console.log(newCart)
+      dispatch(updateCart({currentCart: newCart}))
     }
   }
 

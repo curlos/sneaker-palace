@@ -14,6 +14,8 @@ import { current } from '@reduxjs/toolkit';
 import StarRatingComponent from 'react-star-rating-component'
 import StarRatingProgress from '../components/StarRatingProgress';
 import Review from '../components/Review';
+import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
+import CircleLoader from '../skeleton_loaders/CircleLoader';
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17' ]
 
@@ -66,7 +68,7 @@ const FullShoePage = () => {
       const response = await axios.put(`http://localhost:8888/cart/${currentCart?._id}`, body)
       const newCart = response.data
       console.log(newCart)
-      dispatch(updateCart({currentCart: newCart}))
+      dispatch(updateCart(newCart))
     }
   }
 
@@ -106,134 +108,137 @@ const FullShoePage = () => {
 
   return (
 
-    <div className="p-5 px-28">
-      {loading ? 'Loading...' :
-      (<div>
-        <div className="flex">
-          <div className="flex-3">
-            <img src={shoe?.image?.original} alt={shoe.name}/>
+    <div className="p-5 px-28 w-full h-full">
+      <div className="w-full h-full">
+        {loading ? <FullShoeSkeleton /> : (
+          <div className="flex">
+            <div className="flex-3">
+              <img src={shoe?.image?.original} alt={shoe.name}/>
+            </div>
+
+            <div className="flex-2 p-10">
+              <div className="text-2xl">{shoe.name}</div>
+              <div className="text-xl text-emerald-500">${shoe.retailPrice}</div>
+              <div className="my-5">{`SELECT US ${shoe?.gender?.toUpperCase()}S`}</div>
+              <div className="flex flex-wrap">
+                {SHOE_SIZES.map((shoeSize) => {
+                  return (
+                    <div className={`cursor-pointer text-center border py-2 mb-2 mr-2 hover:border-gray-600 h-15 w-20 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
+                      {shoeSize}
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="flex justify-center flex-wrap">
+                <button className="bg-black text-white rounded-full flex-2 py-3 mr-5 my-5 hover:bg-gray-700" onClick={handleAddToCart}>
+                  Add to Bag
+                </button>
+
+                <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full flex-2 my-5 hover:border-gray-600" onClick={handleFavorite}>
+                  {user && shoe?._id && user?.favorites?.includes(shoe?._id) ? <span className="inline-flex items-center"> <HeartSolid className="mr-2 h-5 w-5" /></span> : <span className="inline-flex items-center"> <HeartOutline className="mr-2 h-5 w-5" /></span>}
+                  {shoe?.favorites?.length}
+                </button>
+
+              </div>
+
+              <div className="my-5">
+                {shoe?.story}
+              </div>
+
+              <div>
+                <span className="font-bold">Colorway:</span> {shoe?.colorway}
+              </div>
+
+              <div>
+                <span className="font-bold">Gender:</span> {shoe?.gender?.toUpperCase()}
+              </div>
+
+              <div>
+                <span className="font-bold">Release date:</span> {moment(shoe.releaseDate).format('MMMM Do, YYYY')}
+              </div>
+
+              <div>
+                <span className="font-bold">SKU:</span> {shoe.sku}
+              </div>
+
+              <div className="flex w-full my-5">
+                {shoe.links?.flightClub ? (
+                  <a href={shoe.links.flightClub} target="_blank" rel="noreferrer">
+                    <img src="/assets/flight_club.png" alt={'Flight Club'} className="w-32"/>
+                  </a>
+                ) : null}
+
+                {shoe.links?.goat ? (
+                  <a href={shoe.links.goat} target="_blank" rel="noreferrer">
+                    <img src="/assets/goat.png" alt={'Goat'} className="w-32"/>
+                  </a>
+                ) : null}
+
+                {shoe.links?.stadiumGoods ? (
+                  <a href={shoe.links.stadiumGoods} target="_blank" rel="noreferrer">
+                    <img src="/assets/stadium_goods.svg" alt={'Stadium Goods'} className="w-32"/>
+                  </a>
+                ) : null}
+
+                {shoe.links?.stockX ? (
+                  <a href={shoe.links.stockX} target="_blank" rel="noreferrer">
+                    <img src="/assets/stockx.jpeg" alt={'Stock X'} className="w-32"/>
+                  </a>
+                ) : null}
+
+                
+              </div>
+            </div>
           </div>
+        )}
 
-          <div className="flex-2 p-10">
-            <div className="text-2xl">{shoe.name}</div>
-            <div className="text-xl text-emerald-500">${shoe.retailPrice}</div>
-            <div className="my-5">{`SELECT US ${shoe?.gender?.toUpperCase()}S`}</div>
-            <div className="flex flex-wrap">
-              {SHOE_SIZES.map((shoeSize) => {
-                return (
-                  <div className={`cursor-pointer text-center border py-2 mb-2 mr-2 hover:border-gray-600 h-15 w-20 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
-                    {shoeSize}
-                  </div>
-                )
-              })}
+        {loading ? <div className="flex justify-center"><CircleLoader /></div> : (
+          <div className="border-t border-gray-300 flex pt-8">
+            <div className="mr-12 flex-2">
+              <div className="text-2xl font-bold">Customer reviews</div>
+              <div className="flex gap-2 items-center">
+                <StarRatingComponent
+                    name={'Rating'}
+                    value={5}
+                    starCount={5}
+                    editing={false}
+                    starColor={'#F5B327'}
+                />
+                <span className="text-lg">4.8 out of 5</span>
+              </div>
+
+              <div className="text-gray-700">{shoeRatings.length} global ratings</div>
+              
+              <div>
+                <StarRatingProgress rating={5}/>
+                <StarRatingProgress rating={4}/>
+                <StarRatingProgress rating={3}/>
+                <StarRatingProgress rating={2}/>
+                <StarRatingProgress rating={1}/>
+              </div>
+
+              <div className="">
+                <div className="text-xl font-bold">Review this product</div>
+                <div className="my-3">Share your thoguhts with other customers</div>
+                <Link to={`/shoe/submit-review/${shoe.shoeID}`} className="px-5 py-2 border border-gray-300">Write a customer review</Link>
+              </div>
             </div>
 
-            <div className="flex justify-center flex-wrap">
-              <button className="bg-black text-white rounded-full flex-2 py-3 mr-5 my-5 hover:bg-gray-700" onClick={handleAddToCart}>
-                Add to Bag
-              </button>
-
-              <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full flex-2 my-5 hover:border-gray-600" onClick={handleFavorite}>
-                {user && shoe?._id && user?.favorites?.includes(shoe?._id) ? <span className="inline-flex items-center"> <HeartSolid className="mr-2 h-5 w-5" /></span> : <span className="inline-flex items-center"> <HeartOutline className="mr-2 h-5 w-5" /></span>}
-                {shoe?.favorites?.length}
-              </button>
-
-            </div>
-
-            <div className="my-5">
-              {shoe?.story}
-            </div>
-
-            <div>
-              <span className="font-bold">Colorway:</span> {shoe?.colorway}
-            </div>
-
-            <div>
-              <span className="font-bold">Gender:</span> {shoe?.gender?.toUpperCase()}
-            </div>
-
-            <div>
-              <span className="font-bold">Release date:</span> {moment(shoe.releaseDate).format('MMMM Do, YYYY')}
-            </div>
-
-            <div>
-              <span className="font-bold">SKU:</span> {shoe.sku}
-            </div>
-
-            <div className="flex w-full my-5">
-              {shoe.links?.flightClub ? (
-                <a href={shoe.links.flightClub} target="_blank" rel="noreferrer">
-                  <img src="/assets/flight_club.png" alt={'Flight Club'} className="w-32"/>
-                </a>
-              ) : null}
-
-              {shoe.links?.goat ? (
-                <a href={shoe.links.goat} target="_blank" rel="noreferrer">
-                  <img src="/assets/goat.png" alt={'Goat'} className="w-32"/>
-                </a>
-              ) : null}
-
-              {shoe.links?.stadiumGoods ? (
-                <a href={shoe.links.stadiumGoods} target="_blank" rel="noreferrer">
-                  <img src="/assets/stadium_goods.svg" alt={'Stadium Goods'} className="w-32"/>
-                </a>
-              ) : null}
-
-              {shoe.links?.stockX ? (
-                <a href={shoe.links.stockX} target="_blank" rel="noreferrer">
-                  <img src="/assets/stockx.jpeg" alt={'Stock X'} className="w-32"/>
-                </a>
-              ) : null}
+            <div className="flex-8">
+              <div className="text-2xl font-bold mb-4">
+                Top reviews from the United States
+              </div>
 
               
+              <div>
+              {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating}/>)}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="border-t border-gray-300 flex pt-8">
-          <div className="mr-12 flex-2">
-            <div className="text-2xl font-bold">Customer reviews</div>
-            <div className="flex gap-2 items-center">
-              <StarRatingComponent
-                  name={'Rating'}
-                  value={5}
-                  starCount={5}
-                  editing={false}
-                  starColor={'#F5B327'}
-              />
-              <span className="text-lg">4.8 out of 5</span>
-            </div>
-
-            <div className="text-gray-700">{shoeRatings.length} global ratings</div>
-            
-            <div>
-              <StarRatingProgress rating={5}/>
-              <StarRatingProgress rating={4}/>
-              <StarRatingProgress rating={3}/>
-              <StarRatingProgress rating={2}/>
-              <StarRatingProgress rating={1}/>
-            </div>
-
-            <div className="">
-              <div className="text-xl font-bold">Review this product</div>
-              <div className="my-3">Share your thoguhts with other customers</div>
-              <Link to={`/shoe/submit-review/${shoe.shoeID}`} className="px-5 py-2 border border-gray-300">Write a customer review</Link>
-            </div>
-          </div>
-
-          <div className="flex-8">
-            <div className="text-2xl font-bold mb-4">
-              Top reviews from the United States
-            </div>
-
-            
-            <div>
-            {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating}/>)}
-            </div>
-          </div>
-        </div>
-
-      </div>)}
+      </div>
     </div>
   )
 }
