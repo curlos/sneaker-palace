@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
 import ListShoe from './ListShoe'
 
 interface Props {
@@ -13,6 +14,9 @@ const SmallProductList = ({ searchText, setShowModal }: Props) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    
+    setLoading(true)
+
     const fetchFromAPI = async () => {
       const response = await axios.get(`http://localhost:8888/shoes/query/${searchText}`)
       console.log(response.data)
@@ -23,7 +27,7 @@ const SmallProductList = ({ searchText, setShowModal }: Props) => {
   }, [searchText])
 
   return (
-    loading ? <div>'Loading...'</div> : (
+    loading ? <div className="flex justify-center py-4"><CircleLoader /></div> : (
       <div>
 
         <div className="flex justify-between p-6 border-0 border-b border-solid border-gray-300 text-sm">

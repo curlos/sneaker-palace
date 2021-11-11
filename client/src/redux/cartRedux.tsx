@@ -38,5 +38,9 @@ const calcTotal = (products: Array<IProduct>) => {
   return total
 }
 
+const checkIfShoeInCart = () => {
+  
+}
+
 export const { updateCart } = cartSlice.actions
 export default cartSlice.reducer

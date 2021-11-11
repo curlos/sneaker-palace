@@ -32,46 +32,91 @@ const CartProduct = ({ productInfo }: Props) => {
     }
 
     fetchFromAPI()
-  }, [])
+  }, [productInfo])
 
-  const handleChangeSize = async () => {
-    const response = await axios.put(`http://localhost:8888/cart/6188151282fac429716b04a0`)
-  }
-
-  const handleChangeQuantity = async (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeSize = async (e: ChangeEvent<HTMLSelectElement>) => {
 
     if (currentCart && currentCart.products) {
       const currentCartClone = { ...currentCart }
-      const newProducts = currentCartClone?.products
-      console.log(currentCartClone)
+      const products = currentCartClone?.products
+      const newProducts: Array<IProduct> = []
 
-      if (newProducts) {
-        for (let product of newProducts) {
+      if (products) {
+        for (let product of products) {
+          let finalSize = product.size
           if (product._id === productInfo._id) {
-            product.quantity = Number(e.currentTarget.value)
+            finalSize = Number(e.currentTarget.value)
           }
+
+          newProducts.push({
+            productID: product.productID,
+            size: finalSize,
+            quantity: product.quantity,
+            retailPrice: product.retailPrice,
+            _id: product._id
+          })
         }
       }
+
+      console.log(products)
+      console.log(newProducts)
 
       const body = { products: newProducts}
       console.log(body)
       const response = await axios.put(`http://localhost:8888/cart/${currentCart?._id}`, body)
       const newCart = response.data
       console.log(newCart)
-      dispatch(updateCart({currentCart: newCart}))
+      dispatch(updateCart(newCart))
+    }
+  }
+
+  const handleChangeQuantity = async (e: ChangeEvent<HTMLSelectElement>) => {
+
+    if (currentCart && currentCart.products) {
+      const currentCartClone = { ...currentCart }
+      const products = currentCartClone?.products
+      const newProducts: Array<IProduct> = []
+
+      if (products) {
+        for (let product of products) {
+          let finalQuantity = product.quantity
+          if (product._id === productInfo._id) {
+            finalQuantity = Number(e.currentTarget.value)
+          }
+
+          newProducts.push({
+            productID: product.productID,
+            size: product.size,
+            quantity: finalQuantity,
+            retailPrice: product.retailPrice,
+            _id: product._id
+          })
+        }
+      }
+
+      console.log(products)
+      console.log(newProducts)
+
+      const body = { products: newProducts}
+      console.log(body)
+      const response = await axios.put(`http://localhost:8888/cart/${currentCart?._id}`, body)
+      const newCart = response.data
+      console.log(newCart)
+      dispatch(updateCart(newCart))
     }
   }
 
   const handleRemoveProduct = async () => {
     console.log('removing')
     console.log(currentCart)
+    console.log(productInfo)
     const newProducts = currentCart?.products?.filter((product) => product._id !== productInfo._id)
     const body = { products: newProducts}
     console.log(body)
     const response = await axios.put(`http://localhost:8888/cart/${currentCart?._id}`, body)
     const newCart = response.data
     console.log(newCart)
-    dispatch(updateCart({currentCart: newCart}))
+    dispatch(updateCart(newCart))
   }
 
   return (

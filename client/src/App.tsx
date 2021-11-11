@@ -31,7 +31,7 @@ const App = () => {
   return (
     <Router>
 
-      <div className="m-0 box-border">
+      <div className="m-0 box-border font-urbanist">
 
       {showModal ? <SearchModal showModal={showModal} setShowModal={setShowModal}/> : null}
       <Navbar setShowModal={setShowModal}/>

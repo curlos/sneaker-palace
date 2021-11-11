@@ -21,9 +21,6 @@ router.post('/:userID', async (req: Request, res: Response) => {
 // Update cart
 
 router.put('/:id', async (req: Request, res: Response) => {
-
-
-  
   const updatedCart = await Cart.findByIdAndUpdate(
     req.params.id,
     {
