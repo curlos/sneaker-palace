@@ -52,7 +52,10 @@ export interface UserType {
   itemsBought: Array<string>,
   lowerCaseEmail: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  shoeSize: number,
+  preferredGender: string,
+  unitOfMeasure: string
 }
 
 export interface IProduct {
