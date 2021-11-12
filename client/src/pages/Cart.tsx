@@ -4,15 +4,37 @@ import { useSelector, useDispatch } from "react-redux";
 import { UserType, ICart, IProduct, CartState } from "../types/types";
 import { RootState } from "../redux/store";
 import CartProduct from '../components/CartProduct'
-import axios from 'axios'
-import { updateCart } from '../redux/cartRedux';
+import {
+  CardElement,
+  Elements,
+  useStripe,
+  useElements,
+} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
+import CheckoutForm from './CheckoutForm'
+
+console.log(process.env.REACT_APP_STRIPE)
+
+const KEY = process.env.REACT_APP_STRIPE
 
 const Cart = () => {
-
+  
   const dispatch = useDispatch()
+  const [stripeToken, setStripeToken] = useState<string>('')
+  const stripePromise = KEY && loadStripe(KEY);
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart, total } = useSelector((state: RootState) => state.cart)
+
+  const onToken = (token: string) => {
+    setStripeToken(token)
+  }
+
+  // useEffect(() => {
+  //   const checkoutCart = async () => {
+
+  //   }
+  // }, [])
 
   console.log(currentCart)
   console.log(total)
@@ -52,9 +74,12 @@ const Cart = () => {
             <button className="bg-black text-white w-full py-4 px-9 rounded-full hover:bg-gray-900">Checkout</button>
           </div>
 
-          <div className="w-full mb-3">
-            <button className="bg-gray-200 border border-gray-300 w-full py-4 px-9 rounded-full hover:bg-gray-300">Paypal</button>
-          </div>
+          {stripePromise ? (
+            <Elements stripe={stripePromise}>
+              <CheckoutForm />
+            </Elements>
+          ) : null}
+          
         
         </div>
       </div>
