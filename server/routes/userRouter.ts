@@ -12,8 +12,11 @@ router.get('/:userID', async (req: Request, res: Response) => {
 router.put('/:userID', async (req: Request, res: Response) => {
   if (req.body.email) {
     const userFound = await User.findOne({email: req.body.email})
+    const currUser = await User.findOne({_id: req.params.userID})
 
-    if (userFound && userFound._id !== req.params.userID) {
+    console.log(userFound._id, currUser._id)
+
+    if (userFound && String(userFound._id) !== String(currUser._id)) {
       res.json({error: 'Email already in use'})
       return
     }
@@ -30,6 +33,11 @@ router.put('/:userID', async (req: Request, res: Response) => {
         process.env.PASS_SEC
       ).toString()
     }
+  }
+
+  updatedInfo = {
+    ...updatedInfo,
+    lowerCaseEmail: updatedInfo.email.toLowerCase()
   }
 
   const updatedUser = await User.findOneAndUpdate(req.params.id, 

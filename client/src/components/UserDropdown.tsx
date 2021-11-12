@@ -14,6 +14,8 @@ const classNames = (...classes: Array<string>) => {
   return classes.filter(Boolean).join(' ')
 }
 
+const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
+
 export const UserDropdown = ({ user, handleLogout }: Props) => {
   const handleClick = () => {
     handleLogout()
@@ -23,8 +25,8 @@ export const UserDropdown = ({ user, handleLogout }: Props) => {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="flex items-center">
-          {user['firstName'] && `Hi, ${user['firstName']}`}
-          {user['firstName'] && <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />}
+          <span>{user['firstName'] && `Hi, ${user['firstName']}`}</span>
+          <span>{user['firstName'] && <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />}</span>
         </Menu.Button>
       </div>
 

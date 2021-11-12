@@ -5,6 +5,8 @@ import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
 import { UserType } from '../types/types'
 
+const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
+
 const postImage = async (image: File) => {
   const formData = new FormData()
   formData.append('image', image)
@@ -27,24 +29,29 @@ const AccountDetails = () => {
   const [file, setFile] = useState<File>()
 
   const handleEdit = async () => {
+    let profilePicObj = null
+
+    if (file) {
+      const results = await postImage(file)
+      console.log(results)
+      profilePicObj = results.imagePath
+    }
+
     const body = {
       firstName,
       lastName,
       email,
-      password
+      password,
+      profilePic: profilePicObj
     }
-    const response = await axios.put(`http://localhost:8888/users/${user._id}`)
 
-    dispatch(updateUser(response.data.updatedUser))
-  }
+    console.log(body)
 
-  const uploadImage = async (e: React.FormEvent) => {
-    e.preventDefault()
+    const response = await axios.put(`http://localhost:8888/users/${user._id}`, body)
+    console.log(response.data)
     
-    if (file) {
-      const response = await postImage(file)
-      console.log(response.data)
-      return response.data
+    if (!response.data.error) {
+      dispatch(updateUser(response.data))
     }
   }
 
@@ -62,9 +69,11 @@ const AccountDetails = () => {
 
       <form>
         <div className="mb-4">
-          <img src="https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png" alt={user.firstName + ' ' + user.lastName + 'picture'} className="h-150 w-150"/>
+        {(file || profilePic) && (
+          <img src={file ? URL.createObjectURL(file) : `http://localhost:8888${profilePic}` } alt="" className="h-150 w-150 rounded-full object-cover mb-3"/>
+        )}
+
           <input onChange={handleSelectFile} type="file" accept="image/*"></input>
-          <button onClick={uploadImage}>Submit</button>
         </div>
 
         <div className="mb-4">
