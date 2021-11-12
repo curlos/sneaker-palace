@@ -18,6 +18,9 @@ const cartSlice = createSlice({
     updateCart: (state, action) => {
       state.currentCart = action.payload
       state.total = calcTotal(action.payload.products)
+    },
+    resetCart: (state) => {
+      return INITIAL_STATE
     }
   }
 })
@@ -38,9 +41,5 @@ const calcTotal = (products: Array<IProduct>) => {
   return total
 }
 
-const checkIfShoeInCart = () => {
-  
-}
-
-export const { updateCart } = cartSlice.actions
+export const { updateCart, resetCart } = cartSlice.actions
 export default cartSlice.reducer

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../redux/store'
@@ -12,6 +12,10 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
   const history = useHistory()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  })
   
   const handleLoginUser = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,7 +34,7 @@ const Login = () => {
         dispatch(loginSuccess(response.data))
         const userCart = await fetchUserCart(response.data)
         console.log(userCart)
-        dispatch(updateCart({currentCart: userCart}))
+        dispatch(updateCart(userCart))
         history.push('/')
       }
       console.log(response.data)

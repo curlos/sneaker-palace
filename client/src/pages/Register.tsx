@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import axios from 'axios'
 
@@ -9,6 +9,10 @@ const Register = () => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const history = useHistory()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  })
   
   const handleRegisterUser = async (e: React.FormEvent) => {
     e.preventDefault()

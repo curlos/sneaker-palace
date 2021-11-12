@@ -7,7 +7,7 @@ import { CartState, ICart, UserType } from "../types/types";
 import { UserDropdown } from "./UserDropdown";
 import { logout } from '../redux/userRedux'
 import axios from "axios";
-import { updateCart } from "../redux/cartRedux";
+import { resetCart, updateCart } from "../redux/cartRedux";
 import { useEffect } from "react";
 
 interface Props {
@@ -25,13 +25,19 @@ const Navbar = ({ setShowModal }: Props) => {
   const handleLogout = () => {
     console.log('log out')
     dispatch(logout())
+    dispatch(resetCart())
   }
 
   useEffect(() => {
     const fetchFromAPI = async () => {
-      const response = await axios.get(`http://localhost:8888/cart/find/${user?._id}`)
-      const newCart = response.data
-      dispatch(updateCart(newCart))
+
+      if (Object.keys(user).length > 0) {
+        const response = await axios.get(`http://localhost:8888/cart/find/${user?._id}`)
+        const newCart = response.data
+        dispatch(updateCart(newCart))
+      } else {
+        dispatch(resetCart())
+      }
     }
 
     fetchFromAPI()
@@ -48,7 +54,7 @@ const Navbar = ({ setShowModal }: Props) => {
       <div className="flex items-center gap-5">
         <Link to="/shoes">Sneakers</Link>
         <Link to="/brands">Brands</Link>
-        {user ? (
+        {Object.keys(user).length > 0 ? (
           <span>
             <UserDropdown user={user} handleLogout={handleLogout}/>
           </span> )

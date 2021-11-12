@@ -20,6 +20,7 @@ const userRouter = require('./routes/userRouter')
 const shoeRouter = require('./routes/shoeRouter')
 const cartRouter = require('./routes/cartRouter')
 const ratingRouter = require('./routes/ratingRouter')
+const stripeRouter = require('./routes/stripeRouter')
 const database = require('./database/connection')
 const User = require('./models/User')
 
@@ -39,6 +40,7 @@ app.use('/users', userRouter)
 app.use('/shoes', shoeRouter)
 app.use('/cart', cartRouter)
 app.use('/rating', ratingRouter)
+app.use('/checkout', stripeRouter)
 
 
 app.listen(PORT, () => {
