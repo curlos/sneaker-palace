@@ -5,10 +5,11 @@ import ListShoe from './ListShoe'
 
 interface Props {
   searchText: string,
+  finalSearchText: string,
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const SmallProductList = ({ searchText, setShowModal }: Props) => {
+const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) => {
 
   const [shoes, setShoes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -24,7 +25,7 @@ const SmallProductList = ({ searchText, setShowModal }: Props) => {
       setLoading(false)
     }
     fetchFromAPI()
-  }, [searchText])
+  }, [finalSearchText])
 
   return (
     loading ? <div className="flex justify-center py-4"><CircleLoader /></div> : (
