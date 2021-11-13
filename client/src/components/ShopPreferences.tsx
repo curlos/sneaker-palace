@@ -1,19 +1,48 @@
 import axios from 'axios'
 import React, { ChangeEvent, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../redux/store'
+import { updateUser } from '../redux/userRedux'
 import { UserType } from '../types/types'
+import FailureMessage from './FailureMessage'
+import SuccessMessage from './SuccessMessage'
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17' ]
 
 const ShopPreferences = () => {
+
+  const dispatch = useDispatch()
+
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const [preselectedShoeSize, setPreselectedShoeSize] = useState(user?.shoeSize || 8)
+  const [preselectedShoeSize, setPreselectedShoeSize] = useState(user.preselectedShoeSize || 8)
   const [preferredGender, setPreferredGender] = useState(user.preferredGender || 'men')
   const [unitOfMeasure, setUnitOfMeasure] = useState(user.unitOfMeasure || 'imperial')
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [showFailureMessage, setShowFailureMessage] = useState(false)
 
-  const handleEdit = async () => {
-    // const response = await axios.put()
+  const handleEdit = async (e: React.FormEvent) => {
+
+    e.preventDefault()
+
+    const body = {
+      preselectedShoeSize,
+      preferredGender,
+      unitOfMeasure,
+    }
+
+    console.log(body)
+
+    const response = await axios.put(`http://localhost:8888/users/${user._id}`, body)
+    console.log(response.data)
+    
+    if (!response.data.error) {
+      dispatch(updateUser(response.data))
+      setShowSuccessMessage(true)
+      setTimeout(() => {setShowSuccessMessage(false)}, 3000)
+    } else {
+      setShowFailureMessage(true)
+      setTimeout(() => {setShowFailureMessage(false)}, 3000)
+    }
   }
 
   return (
@@ -56,6 +85,9 @@ const ShopPreferences = () => {
             <label>Imperial</label>
           </div>
         </div>
+
+        { showSuccessMessage ? <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'}/> : null}
+        { showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'}/> : null}
 
         <div className="flex justify-end">
           <button onClick={handleEdit} className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700">Save</button>
