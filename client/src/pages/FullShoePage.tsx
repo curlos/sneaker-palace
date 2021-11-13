@@ -104,8 +104,17 @@ const FullShoePage = () => {
     return ratings
   }
 
+  const getAverageRating = (ratings: Array<IRating>) => {
+    const sumOfRatings = ratings.reduce( ( sum, { ratingNum } ) => sum + ratingNum , 0)
+
+    console.log(sumOfRatings)
+
+    return Number((sumOfRatings / ratings.length).toFixed(1))
+  }
+
   console.log(shoe)
   console.log(shoeRatings)
+  console.log(getAverageRating(shoeRatings))
 
   return (
 
@@ -208,22 +217,26 @@ const FullShoePage = () => {
               <div className="flex gap-2 items-center">
                 <StarRatingComponent
                     name={'Rating'}
-                    value={5}
+                    value={getAverageRating(shoeRatings) !== NaN ? getAverageRating(shoeRatings) : 0}
                     starCount={5}
                     editing={false}
                     starColor={'#F5B327'}
                 />
-                <span className="text-lg">4.8 out of 5</span>
+                {shoeRatings.length === 0 ? (
+                  <span className="text-lg">No reviews</span>
+                ) : (
+                  <span className="text-lg">{getAverageRating(shoeRatings)} out of 5</span>
+                )}
               </div>
 
               <div className="text-gray-700">{shoeRatings.length} global ratings</div>
               
               <div>
-                <StarRatingProgress rating={5}/>
-                <StarRatingProgress rating={4}/>
-                <StarRatingProgress rating={3}/>
-                <StarRatingProgress rating={2}/>
-                <StarRatingProgress rating={1}/>
+                <StarRatingProgress rating={5} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 5).length / shoeRatings.length}/>
+                <StarRatingProgress rating={4} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 4).length / shoeRatings.length}/>
+                <StarRatingProgress rating={3} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 3).length / shoeRatings.length}/>
+                <StarRatingProgress rating={2} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 2).length / shoeRatings.length}/>
+                <StarRatingProgress rating={1} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 1).length / shoeRatings.length}/>
               </div>
 
               <div className="">
@@ -240,7 +253,7 @@ const FullShoePage = () => {
 
               
               <div>
-              {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating}/>)}
+              {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe}/>)}
               </div>
             </div>
           </div>
