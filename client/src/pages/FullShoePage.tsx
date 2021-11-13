@@ -33,6 +33,7 @@ const FullShoePage = () => {
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
   const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([])
   const [selectedSize, setSelectedSize] = useState(AVERAGE_MAN_FOOT_SIZE)
+  const [imageNum, setImageNum] = useState(0)
   const [loading, setLoading] = useState(false)
   
 
@@ -113,7 +114,14 @@ const FullShoePage = () => {
         {loading ? <FullShoeSkeleton /> : (
           <div className="flex">
             <div className="flex-3">
-              <img src={shoe?.image?.original} alt={shoe.name}/>
+              {shoe && shoe.image && shoe.image["360"].length > 0 ? (
+                <div>
+                  <img src={shoe?.image["360"][imageNum]} alt={shoe.name}/>
+                  <input type="range" id="volume" name="volume" value={imageNum} onChange={(e) => setImageNum(Number(e.target.value))} min="0" max={shoe.image["360"].length - 1} className="w-full"></input>
+                </div>
+              ) : (
+                <img src={shoe?.image?.original} alt={shoe.name}/>
+              )}
             </div>
 
             <div className="flex-2 p-10">
