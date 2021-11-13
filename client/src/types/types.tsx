@@ -53,7 +53,7 @@ export interface UserType {
   lowerCaseEmail: string,
   createdAt: string,
   updatedAt: string,
-  shoeSize: number,
+  preselectedShoeSize: number,
   preferredGender: string,
   unitOfMeasure: string
 }

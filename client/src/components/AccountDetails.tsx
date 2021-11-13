@@ -5,6 +5,9 @@ import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
 import { UserType } from '../types/types'
 import { postImage } from '../utils/postImage'
+import FailureMessage from './FailureMessage'
+import NewPasswordModal from './NewPasswordModal'
+import SuccessMessage from './SuccessMessage'
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
@@ -18,9 +21,11 @@ const AccountDetails = () => {
   const [firstName, setFirstName] = useState(user?.firstName)
   const [lastName, setLastName] = useState(user?.lastName)
   const [email, setEmail] = useState(user?.email)
-  const [password, setPassword] = useState('***********')
-
   const [file, setFile] = useState<File>()
+
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [showFailureMessage, setShowFailureMessage] = useState(false)
+  const [showModal, setShowModal] = useState(false)
 
   const handleEdit = async () => {
     let profilePicObj = null
@@ -35,7 +40,6 @@ const AccountDetails = () => {
       firstName,
       lastName,
       email,
-      password,
       profilePic: profilePicObj
     }
 
@@ -45,7 +49,12 @@ const AccountDetails = () => {
     console.log(response.data)
     
     if (!response.data.error) {
+      setShowSuccessMessage(true)
+      setTimeout(() => {setShowSuccessMessage(false)}, 3000)
       dispatch(updateUser(response.data))
+    } else {
+      setShowFailureMessage(true)
+      setTimeout(() => {setShowFailureMessage(false)}, 3000)
     }
   }
 
@@ -89,13 +98,18 @@ const AccountDetails = () => {
 
         <div className="mb-4">
           <div className="mb-1">Password</div>
-          <input type="password" placeholder="Password" className="rounded-lg w-full" value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <input type="password" placeholder="Password" className="rounded-lg w-full" value={'*********'} onClick={() => setShowModal(true)}/>
         </div>
       </form>
+
+      { showSuccessMessage ? <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'}/> : null}
+      { showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'}/> : null}
 
       <div className="flex justify-end">
         <button onClick={handleEdit} className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700">Save</button>
       </div>
+
+      {showModal ? <NewPasswordModal showModal={showModal} setShowModal={setShowModal}/> : null}
     </div>
   )
 }

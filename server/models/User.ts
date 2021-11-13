@@ -9,8 +9,7 @@ const userSchema = new mongoose.Schema(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     isAdmin: { type: Boolean, default: false},
-    profilePic: { type: String },
-    shoeSize: { type: Number },
+    preselectedShoeSize: { type: Number },
     preferredGender: { type: String },
     unitOfMeasure: { type: String },
     ratings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }],
@@ -19,7 +18,7 @@ const userSchema = new mongoose.Schema(
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Shoe' }],
     lowerCaseEmail: {type: String, lowercase: true, trim: true, required: true },
     helpful: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }],
-    notHelpful: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }]
+    notHelpful: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }],
   },
   { timestamps: true}
 )

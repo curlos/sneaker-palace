@@ -43,7 +43,7 @@ const App = () => {
           </Route>
 
           <Route path="/register" exact>
-            {user ? <Redirect to='/' /> : (
+            {Object.keys(user).length > 0 ? <Redirect to='/' /> : (
               <span>
                 <Register />
               </span>

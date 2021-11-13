@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { IRating, UserType } from '../types/types'
 import StarRatingComponent from 'react-star-rating-component'
-import { ThumbUpIcon as ThumbUpSolid, ThumbDownIcon as ThumbDownSolid } from '@heroicons/react/outline'
+import { ThumbUpIcon as ThumbUpSolid, ThumbDownIcon as ThumbDownSolid } from '@heroicons/react/solid'
 import { ThumbUpIcon as ThumbUpOutline, ThumbDownIcon as ThumbDownOutline } from '@heroicons/react/outline'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
@@ -72,11 +72,11 @@ const Review = ({ shoeRating }: Props) => {
       <div className="text-sm flex gap-2">
         <div>Helpful? </div>
         <div className="flex">
-          <ThumbUpOutline className="h-5 w-5 cursor-pointer" onClick={handleLike}/>
+          {user.helpful?.includes(review._id) ? <ThumbUpSolid className="h-5 w-5 cursor-pointer" onClick={handleLike}/> : <ThumbUpOutline className="h-5 w-5 cursor-pointer" onClick={handleLike}/>}
           <span className="ml-1">{review.helpful.length}</span>
         </div>
         <div className="flex">
-          <ThumbDownOutline className="h-5 w-5 cursor-pointer" onClick={handleDislike}/>
+          {user.notHelpful?.includes(review._id) ? <ThumbDownSolid className="h-5 w-5 cursor-pointer" onClick={handleDislike}/> : <ThumbDownOutline className="h-5 w-5 cursor-pointer" onClick={handleDislike}/>}
           <span className="ml-1">{review.notHelpful.length}</span>
         </div>
       </div>

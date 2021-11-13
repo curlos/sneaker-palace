@@ -10,42 +10,60 @@ router.get('/:userID', async (req: Request, res: Response) => {
 })
 
 router.put('/:userID', async (req: Request, res: Response) => {
-  if (req.body.email) {
-    const userFound = await User.findOne({email: req.body.email})
-    const currUser = await User.findOne({_id: req.params.userID})
-
-    console.log(userFound._id, currUser._id)
-
-    if (userFound && String(userFound._id) !== String(currUser._id)) {
-      res.json({error: 'Email already in use'})
-      return
-    }
+  if (req.body.password) {
+    req.body.password = CryptoJS.AES.encrypt(
+      req.body.password,
+      process.env.PASS_SEC
+    ).toString();
   }
 
-  const { password, ...others } = req.body
-  let updatedInfo = req.body
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userID,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    );
+    console.log(updatedUser)
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.log(err)
+    res.json({error: err});
+  }
+})
 
-  if (password) {
-    updatedInfo = {
-      ...others,
-      password: CryptoJS.AES.encrypt(
-        req.body.password,
-        process.env.PASS_SEC
-      ).toString()
-    }
+router.put('/password/:userID', async (req: Request, res: Response) => {
+  const user = await User.findOne({ _id: req.params.userID })
+
+  console.log(user)
+
+  const hashedPassword = CryptoJS.AES.decrypt(
+    user.password,
+    process.env.PASS_SEC
+  )
+
+  const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8)
+
+  originalPassword !== req.body.currentPassword && res.json({err: 'Wrong credentials'})
+
+  const newPassword = {
+    password: CryptoJS.AES.encrypt(
+      req.body.newPassword,
+      process.env.PASS_SEC
+    ).toString(),
   }
 
-  updatedInfo = {
-    ...updatedInfo,
-    lowerCaseEmail: updatedInfo.email.toLowerCase()
-  }
 
-  const updatedUser = await User.findOneAndUpdate(req.params.id, 
-    { $set: updatedInfo }, 
-    { new: true })
-
+  const updatedUser = await User.findByIdAndUpdate(
+    req.params.userID,
+    {
+      $set: newPassword,
+    },
+    { new: true }
+  );
   console.log(updatedUser)
-  res.json(updatedUser)
+  res.status(200).json(updatedUser);
 })
 
 

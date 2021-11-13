@@ -1,6 +1,6 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { ShoppingBagIcon } from "@heroicons/react/outline";
-import { Link, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CartState, ICart, UserType } from "../types/types";
@@ -19,6 +19,7 @@ const Navbar = ({ setShowModal }: Props) => {
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart, total } = useSelector((state: RootState) => state.cart)
   const dispatch = useDispatch()
+  const history = useHistory()
 
   console.log(currentCart)
   
@@ -26,6 +27,8 @@ const Navbar = ({ setShowModal }: Props) => {
     console.log('log out')
     dispatch(logout())
     dispatch(resetCart())
+    history.push('/')
+    window.location.reload()
   }
 
   useEffect(() => {
