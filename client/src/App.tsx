@@ -66,6 +66,10 @@ const App = () => {
             <ReviewForm />
           </Route>
 
+          <Route path="/shoe/edit-review/:shoeID/:reviewID" exact>
+            <ReviewForm />
+          </Route>
+
           <Route path="/profile/:userID" exact>
             <Profile />
           </Route>

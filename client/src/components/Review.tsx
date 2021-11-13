@@ -1,25 +1,29 @@
 import React, { useState } from 'react'
-import { IRating, UserType } from '../types/types'
+import { IRating, Shoe, UserType } from '../types/types'
 import StarRatingComponent from 'react-star-rating-component'
 import { ThumbUpIcon as ThumbUpSolid, ThumbDownIcon as ThumbDownSolid } from '@heroicons/react/solid'
-import { ThumbUpIcon as ThumbUpOutline, ThumbDownIcon as ThumbDownOutline } from '@heroicons/react/outline'
+import { ThumbUpIcon as ThumbUpOutline, ThumbDownIcon as ThumbDownOutline, PencilAltIcon, TrashIcon } from '@heroicons/react/outline'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../redux/store'
 import axios from 'axios'
 import { updateUser } from '../redux/userRedux'
+import ReviewModal from './ReviewModal'
+import { Link } from 'react-router-dom'
 
 interface Props {
-  shoeRating: IRating
+  shoeRating: IRating,
+  shoe: Partial<Shoe>
 }
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
-const Review = ({ shoeRating }: Props) => {
+const Review = ({ shoeRating, shoe }: Props) => {
   
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const dispatch = useDispatch()
   const [review, setReview] = useState(shoeRating)
+  const [showModal, setShowModal] = useState(false)
 
   const handleLike = async () => {
     const body = {
@@ -28,8 +32,9 @@ const Review = ({ shoeRating }: Props) => {
     }
     const response = await axios.put(`http://localhost:8888/rating/like`, body)
     console.log(response)
-    setReview({...review, helpful: response.data.updatedRating.helpful})
+    setReview({...review, helpful: response.data.updatedRating.helpful, notHelpful: response.data.updatedRating.notHelpful})
     dispatch(updateUser(response.data.updatedUser))
+    
   }
 
   const handleDislike = async () => {
@@ -39,18 +44,34 @@ const Review = ({ shoeRating }: Props) => {
     }
     const response = await axios.put(`http://localhost:8888/rating/dislike`, body)
     console.log(response)
-    setReview({...review, notHelpful: response.data.updatedRating.notHelpful})
+    setReview({...review, notHelpful: response.data.updatedRating.notHelpful, helpful: response.data.updatedRating.helpful,})
     dispatch(updateUser(response.data.updatedUser))
   }
 
-  console.log(user)
+  console.log(review)
   
   return (
     <div className="mb-6">
-      <div className="flex gap-2 items-center">
-        <img src={review.postedByUser.profilePic ? `http://localhost:8888${review.postedByUser.profilePic}` : DEFAULT_AVATAR}  alt={review.postedByUser.firstName} className="h-9 w-9 rounded-full object-cover"/>
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2 items-center">
+          <img src={review.postedByUser.profilePic ? `http://localhost:8888${review.postedByUser.profilePic}` : DEFAULT_AVATAR}  alt={review.postedByUser.firstName} className="h-9 w-9 rounded-full object-cover"/>
 
-        <div className="text-sm">{review.postedByUser.firstName} {review.postedByUser.lastName}</div>
+          <div className="text-sm">{review.postedByUser.firstName} {review.postedByUser.lastName}</div>
+        </div>
+
+        {review.postedByUser._id === user._id ? (
+          <div className="flex gap-2">
+            <Link to={`/shoe/edit-review/${shoe.shoeID}/${review._id}`}>
+              <PencilAltIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer"/>
+            </Link>
+
+            <Link to="">
+              <TrashIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer"/>
+            </Link>
+          </div>
+        ) : (
+          <div></div>
+        )}
       </div>
       <div className="flex">
         <StarRatingComponent
@@ -67,7 +88,7 @@ const Review = ({ shoeRating }: Props) => {
       <div className="text-sm font-medium text-orange-700">Verified Purchase</div>
       <div className="text-sm my-2">{review.text}</div>
       
-      {review.photo ? <img src={`http://localhost:8888${review.photo}`} alt="" className="h-36 object-cover my-2"/> : null}
+      {review.photo ? <img src={`http://localhost:8888${review.photo}`} alt="" className="h-36 object-cover my-2 cursor-pointer" onClick={() => setShowModal(true)}/> : null}
 
       <div className="text-sm flex gap-2">
         <div>Helpful? </div>
@@ -80,6 +101,8 @@ const Review = ({ shoeRating }: Props) => {
           <span className="ml-1">{review.notHelpful.length}</span>
         </div>
       </div>
+
+      {showModal ? <ReviewModal showModal={showModal} setShowModal={setShowModal} review={review}/> : null}
     </div>
   )
 }
