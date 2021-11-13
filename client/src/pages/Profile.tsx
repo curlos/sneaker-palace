@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom'
 import SmallReview from '../components/SmallReview'
 import { IRating, UserType } from '../types/types'
 
+const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
+
 const Profile = () => {
 
   const { userID }: { userID: string } = useParams()
@@ -42,6 +44,7 @@ const Profile = () => {
 
   console.log(profileUser)
   console.log(profileUserReviews)
+  
 
   return (
     loading ? <div>Loading...</div> : (
@@ -49,7 +52,8 @@ const Profile = () => {
         <div>
           <div className="flex items-center mb-5 border border-gray-300 p-8 rounded-lg bg-white">
             <div className="">
-              <img src="https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png" alt={profileUser?.firstName} className="h-36 w-36"/>
+            
+          <img src={profileUser.profilePic ? `http://localhost:8888${profileUser.profilePic}` : DEFAULT_AVATAR} alt="" className="h-36 w-36 rounded-full object-cover mb-3"/>
             </div>
             <div className="text-2xl font-medium ml-2">{profileUser?.firstName} {profileUser?.lastName}</div>
           </div>

@@ -13,6 +13,8 @@ interface Props {
   shoeRating: IRating
 }
 
+const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
+
 const Review = ({ shoeRating }: Props) => {
   
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
@@ -46,7 +48,7 @@ const Review = ({ shoeRating }: Props) => {
   return (
     <div className="mb-6">
       <div className="flex gap-2 items-center">
-        <img src="https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png" alt={review.postedByUser.firstName} className="h-8 w-8"/>
+        <img src={review.postedByUser.profilePic ? `http://localhost:8888${review.postedByUser.profilePic}` : DEFAULT_AVATAR}  alt={review.postedByUser.firstName} className="h-9 w-9 rounded-full object-cover"/>
 
         <div className="text-sm">{review.postedByUser.firstName} {review.postedByUser.lastName}</div>
       </div>
@@ -64,6 +66,9 @@ const Review = ({ shoeRating }: Props) => {
       <div className="text-sm text-gray-600">Reviewed on {moment(review.createdAt).format('MMMM Do, YYYY')}</div>
       <div className="text-sm font-medium text-orange-700">Verified Purchase</div>
       <div className="text-sm my-2">{review.text}</div>
+      
+      {review.photo ? <img src={`http://localhost:8888${review.photo}`} alt="" className="h-36 object-cover my-2"/> : null}
+
       <div className="text-sm flex gap-2">
         <div>Helpful? </div>
         <div className="flex">

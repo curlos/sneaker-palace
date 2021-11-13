@@ -4,22 +4,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
 import { UserType } from '../types/types'
+import { postImage } from '../utils/postImage'
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
-const postImage = async (image: File) => {
-  const formData = new FormData()
-  formData.append('image', image)
 
-  const response = await axios.post('http://localhost:8888/images', formData, { headers: {'Content-Type': 'multipart/form-data'}})
-  return response.data
-}
 
 const AccountDetails = () => {
 
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-
   const [profilePic, setProfilePic] = useState(user?.profilePic)
   const [firstName, setFirstName] = useState(user?.firstName)
   const [lastName, setLastName] = useState(user?.lastName)
@@ -69,9 +63,11 @@ const AccountDetails = () => {
 
       <form>
         <div className="mb-4">
-        {(file || profilePic) && (
+        {(file || profilePic) ? (
           <img src={file ? URL.createObjectURL(file) : `http://localhost:8888${profilePic}` } alt="" className="h-150 w-150 rounded-full object-cover mb-3"/>
-        )}
+        ) : 
+          <img src={DEFAULT_AVATAR} alt="" className="h-150 w-150 rounded-full object-cover mb-3"/>
+        }
 
           <input onChange={handleSelectFile} type="file" accept="image/*"></input>
         </div>

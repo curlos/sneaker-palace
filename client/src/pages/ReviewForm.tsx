@@ -1,10 +1,11 @@
 import axios from 'axios'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, ChangeEvent } from 'react'
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom'
 import StarRatings from 'react-star-ratings';
 import { RootState } from '../redux/store';
 import { Shoe, UserType } from '../types/types'
+import { postImage } from '../utils/postImage';
 
 const ReviewForm = () => {
   const history = useHistory()
@@ -26,6 +27,7 @@ const ReviewForm = () => {
     quality: '',
     recommended: false,
   })
+  const [file, setFile] = useState<File>()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -41,7 +43,20 @@ const ReviewForm = () => {
 
   const handleSubmitReview = async () => {
     try {
-      const response = await axios.post(`http://localhost:8888/rating/rate`, reviewInfo)
+      let imagePath = null
+
+      if (file) {
+        const results = await postImage(file)
+        console.log(results)
+        imagePath = results.imagePath
+      }
+
+      const body = {
+        ...reviewInfo,
+        photo: imagePath
+      }
+
+      const response = await axios.post(`http://localhost:8888/rating/rate`, body)
       console.log(response.data.errors)
 
       if (!response.data.errors) {
@@ -51,6 +66,12 @@ const ReviewForm = () => {
     } catch (err) {
       console.log(err)
     }
+  }
+
+  const handleSelectFile = (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    const file: File = (target.files as FileList)[0]
+    setFile(file)
   }
 
 
@@ -257,7 +278,10 @@ const ReviewForm = () => {
 
             <div className="flex-2 w-full">
             <div className="text-gray-500 w-10/12">Upload photo</div>
-              <input placeholder="Upload photo" className="border border-black p-3 w-10/12" onChange={(e) => setReviewInfo({...reviewInfo, photo: e.target.value})}/>
+              {(file || reviewInfo.photo) && (
+                <img src={file ? URL.createObjectURL(file) : `http://localhost:8888${reviewInfo.photo}` } alt="" className="h-150 object-cover my-3"/>
+              )}
+              <input onChange={handleSelectFile} type="file" accept="image/*"></input>
               <div className="text-sm text-gray-500 w-10/12">Upload your .PNG or .JPG file</div>
             </div>
           </div>

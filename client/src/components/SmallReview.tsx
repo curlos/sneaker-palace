@@ -10,6 +10,8 @@ interface Props {
   author: Partial<UserType>
 }
 
+const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
+
 const SmallReview = ({ review, author }: Props) => {
 
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
@@ -33,7 +35,7 @@ const SmallReview = ({ review, author }: Props) => {
     <div className="border border-gray-300 rounded-lg bg-white mb-4">
       <div className="flex items-center gap-3 text-sm my-3 border-0 border-b border-solid border-gray-300 p-3">
         <div>
-          <img src="https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png" alt={author?.firstName} className="h-7 w-7"/>
+          <img src={author.profilePic ? `http://localhost:8888${author.profilePic}` : DEFAULT_AVATAR}  alt={author?.firstName} className="h-9 w-9 rounded-full object-cover"/>
         </div>
         <div>{author.firstName} {author.lastName}</div>
         <div className="text-gray-600 text-xs">reviewed a shoe • {moment(review.createdAt).format('MMMM Do, YYYY')}</div>
