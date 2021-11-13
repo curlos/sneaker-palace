@@ -14,8 +14,8 @@ const SearchModal = ({ showModal, setShowModal}: Props) => {
   const [searchText, setSearchText] = useState('')
   const [finalSearchText, setFinalSearchText] = useState('')
 
-  let timer = 1500
-  let timeoutVal = 1500
+  let timer = 1000
+  let timeoutVal = 1000
 
   const handleBubblingDownClick = (e: React.FormEvent) => {
     e.stopPropagation()
