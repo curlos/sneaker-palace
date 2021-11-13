@@ -46,7 +46,7 @@ const SmallShoe = ({ shoe }: Props) => {
   }
 
   return (
-    loading || shoe.shoeID === 'de4f41ea-be27-4954-9112-f519e1b00232' ? <SmallShoeSkeleton /> : (
+    loading ? <SmallShoeSkeleton /> : (
       <Link to={`/shoe/${shoe.shoeID}`}>
         <div className="flex flex-col w-96 wm-5 bg-white cursor-pointer mr-5 mb-5 px-3 ">
           <img src={shoe.image.original} alt={shoe.name} className="h-9/12 w-9/12"/>
