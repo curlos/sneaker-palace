@@ -66,6 +66,19 @@ router.post('/rate', async (req: Request, res: Response) => {
   res.json({updatedShoe, updatedUser, rating})
 })
 
+router.put('/edit/:id', async (req: Request, res: Response) => {
+
+  const updatedRating = await Rating.findByIdAndUpdate(
+    req.params.id,
+    {
+      $set: req.body,
+    },
+    { new: true }
+  );
+  
+  res.json(updatedRating)
+})
+
 router.put('/like', async (req: Request, res: Response) => {
   
   const rating = await Rating.findOne({_id: req.body.ratingID})
@@ -119,6 +132,12 @@ router.put('/dislike', async (req: Request, res: Response) => {
     res.json(err)
   }
   res.json(rating)
+})
+
+router.delete('/:id', async (req: Request, res: Response) => {
+  console.log(req.params)
+  const deletedRating = await Rating.findByIdAndDelete(req.params.id)
+  res.json(deletedRating)
 })
 
 

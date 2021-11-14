@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IRating, Shoe, UserType } from '../types/types'
 import StarRatingComponent from 'react-star-rating-component'
 import { ThumbUpIcon as ThumbUpSolid, ThumbDownIcon as ThumbDownSolid } from '@heroicons/react/solid'
@@ -13,12 +13,14 @@ import { Link } from 'react-router-dom'
 
 interface Props {
   shoeRating: IRating,
+  shoeRatings: Array<IRating>,
+  setShoeRatings: React.Dispatch<React.SetStateAction<Array<IRating>>>,
   shoe: Partial<Shoe>
 }
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
-const Review = ({ shoeRating, shoe }: Props) => {
+const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
   
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const dispatch = useDispatch()
@@ -48,6 +50,13 @@ const Review = ({ shoeRating, shoe }: Props) => {
     dispatch(updateUser(response.data.updatedUser))
   }
 
+  const handleDeleteReview = async () => {
+    console.log('click')
+    const response = await axios.delete(`http://localhost:8888/rating/${review._id}`)
+    console.log(response.data)
+    setShoeRatings(shoeRatings.filter((shoeRating) => shoeRating._id !== review._id))
+  }
+
   console.log(review)
   
   return (
@@ -65,9 +74,7 @@ const Review = ({ shoeRating, shoe }: Props) => {
               <PencilAltIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer"/>
             </Link>
 
-            <Link to="">
-              <TrashIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer"/>
-            </Link>
+            <TrashIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={handleDeleteReview}/>
           </div>
         ) : (
           <div></div>
