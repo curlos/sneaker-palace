@@ -24,7 +24,7 @@ router.put('/:userID', async (req: Request, res: Response) => {
         $set: req.body,
       },
       { new: true }
-    );
+    )
     console.log(updatedUser)
     res.status(200).json(updatedUser);
   } catch (err) {

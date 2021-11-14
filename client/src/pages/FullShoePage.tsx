@@ -32,7 +32,7 @@ const FullShoePage = () => {
   
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
   const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([])
-  const [selectedSize, setSelectedSize] = useState(AVERAGE_MAN_FOOT_SIZE)
+  const [selectedSize, setSelectedSize] = useState(String(user.preselectedShoeSize) || AVERAGE_MAN_FOOT_SIZE)
   const [imageNum, setImageNum] = useState(0)
   const [loading, setLoading] = useState(false)
   
@@ -253,7 +253,7 @@ const FullShoePage = () => {
 
               
               <div>
-              {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe}/>)}
+              {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings}/>)}
               </div>
             </div>
           </div>

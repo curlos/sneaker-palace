@@ -22,6 +22,7 @@ import Orders from "./pages/Orders";
 import Favorites from "./pages/Favorites";
 import Settings from "./pages/Settings";
 import SearchModal from "./components/SearchModal";
+import StripeContainer from "./components/StripeContainer";
 
 const App = () => {
 
@@ -52,6 +53,10 @@ const App = () => {
 
           <Route path="/cart" exact>
             <Cart />
+          </Route>
+
+          <Route path="/payment" exact>
+            <StripeContainer />
           </Route>
 
           <Route path="/shoes" exact>
