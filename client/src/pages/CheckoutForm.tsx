@@ -1,0 +1,136 @@
+import React, { useEffect, useState } from "react";
+import {
+  PaymentElement,
+  useStripe,
+  useElements
+} from "@stripe/react-stripe-js";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import CheckoutProduct from "../components/CheckoutProduct";
+import moment from "moment";
+
+export default function CheckoutForm() {
+  const stripe = useStripe();
+  const elements = useElements();
+
+  const { currentCart, total } = useSelector((state: RootState) => state.cart)
+
+  const [message, setMessage] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  console.log('fuck')
+  useEffect(() => {
+    if (!stripe) {
+      return;
+    }
+
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      "payment_intent_client_secret"
+    );
+
+    if (!clientSecret) {
+      return;
+    }
+
+    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+      if (paymentIntent) {
+        switch (paymentIntent.status) {
+          case "succeeded":
+            setMessage("Payment succeeded!");
+            break;
+          case "processing":
+            setMessage("Your payment is processing.");
+            break;
+          case "requires_payment_method":
+            setMessage("Your payment was not successful, please try again.");
+            break;
+          default:
+            setMessage("Something went wrong.");
+            break;
+        }
+      }
+    });
+  }, [stripe]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      // Stripe.js has not yet loaded.
+      // Make sure to disable form submission until Stripe.js has loaded.
+      return;
+    }
+
+    setIsLoading(true);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        // Make sure to change this to your payment completion page
+        return_url: "http://localhost:3000",
+      },
+    });
+
+    // This point will only be reached if there is an immediate error when
+    // confirming the payment. Otherwise, your customer will be redirected to
+    // your `return_url`. For some payment methods like iDEAL, your customer will
+    // be redirected to an intermediate site first to authorize the payment, then
+    // redirected to the `return_url`.
+    if (error.type === "card_error" || error.type === "validation_error") {
+      setMessage(error.message);
+    } else {
+      setMessage("An unexpected error occured.");
+    }
+
+    setIsLoading(false);
+  };
+
+  return (
+    <form id="payment-form" onSubmit={handleSubmit} className="flex gap-4 p-10">
+      <div className="flex-6">
+        <PaymentElement id="payment-element" />
+        <button disabled={isLoading || !stripe || !elements} id="submit" className="bg-black text-white p-3 rounded-lg mt-4 hover:bg-gray-700">
+          <span id="button-text">
+            {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+          </span>
+        </button>
+        {/* Show any error or success messages */}
+        {message && <div id="payment-message">{message}</div>}
+      </div>
+
+      <div className="flex-4 border border-gray-300">
+        <div className="p-5 bg-gray-300 font-bold">IN YOUR CART</div>
+        <div className="border-0 border-b border-solid border-gray-300 p-5 text-sm">
+          <div className="flex justify-between mb-1">
+            <div>Subtotal</div>
+            <div>$235.94</div>
+          </div>
+
+          <div className="flex justify-between mb-1">
+            <div>Estimated Shipping</div>
+            <div>$0.00</div>
+          </div>
+
+          <div className="flex justify-between mb-3">
+            <div>Estimated Tax</div>
+            <div>$16.52</div>
+          </div>
+
+          <div className="flex justify-between">
+            <div className="font-bold">TOTAL</div>
+            <div>$252.46</div>
+          </div>
+        </div>
+
+        <div className="p-5">
+          <div className="font-bold mb-4">ARRIVES BY {moment().add(5, 'days').format("ddd, MMM D").toUpperCase()}</div>
+
+          <div className="">
+            {currentCart.products?.map((product) => <CheckoutProduct product={product} />)}
+          </div>
+        </div>
+      </div>
+    </form>
+  );
+}

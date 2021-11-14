@@ -1,21 +1,48 @@
 import { Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
-import React from "react"
-import PaymentForm from "../pages/PaymentForm"
-
-interface Props {
-  
-}
+import axios from "axios"
+import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import CheckoutForm from "../pages/CheckoutForm"
+import { RootState } from "../redux/store"
 
 const REACT_APP_STRIPE = process.env.REACT_APP_STRIPE
-const stripeTestPromise = loadStripe(REACT_APP_STRIPE)
+const stripePromise = loadStripe(REACT_APP_STRIPE)
 
-export const StripeContainer = () => {
+const StripeContainer = () => {
 
+	const { currentCart, total } = useSelector((state: RootState) => state.cart)
+	const [clientSecret, setClientSecret] = useState("");
 
-	return (
-		<Elements stripe={stripeTestPromise}>
-			<PaymentForm />
-		</Elements>
-	)
+  useEffect(() => {
+    // Create PaymentIntent as soon as the page loads
+    const postToAPI = async () => {
+			const response: any = await axios.post("http://localhost:8888/checkout/create-payment-intent", {
+				items: currentCart.products,
+				total: total
+			})
+			setClientSecret(response.data.clientSecret)
+		}
+		postToAPI()
+  }, []);
+
+  const appearance: any = {
+    theme: 'stripe',
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+
+  return (
+    <div className="App">
+      {clientSecret && (
+        <Elements options={options} stripe={stripePromise}>
+          <CheckoutForm />
+        </Elements>
+      )}
+    </div>
+  );
 }
+
+export default StripeContainer
