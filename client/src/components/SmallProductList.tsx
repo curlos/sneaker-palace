@@ -28,7 +28,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) 
   }, [finalSearchText])
 
   return (
-    loading ? <div className="flex justify-center py-4"><CircleLoader /></div> : (
+    loading ? <div className="flex justify-center py-4"><CircleLoader size={16}/></div> : (
       <div>
 
         <div className="flex justify-between p-6 border-0 border-b border-solid border-gray-300 text-sm">

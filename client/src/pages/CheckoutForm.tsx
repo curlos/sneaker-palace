@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import CheckoutProduct from "../components/CheckoutProduct";
 import moment from "moment";
+import CircleLoader from "../skeleton_loaders/CircleLoader";
 
 export default function CheckoutForm() {
   const stripe = useStripe();
@@ -18,8 +19,6 @@ export default function CheckoutForm() {
   const [message, setMessage] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-
-  console.log('fuck')
   useEffect(() => {
     if (!stripe) {
       return;
@@ -68,7 +67,7 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000",
+        return_url: "http://localhost:3000/payment-success",
       },
     });
 
@@ -92,7 +91,7 @@ export default function CheckoutForm() {
         <PaymentElement id="payment-element" />
         <button disabled={isLoading || !stripe || !elements} id="submit" className="bg-black text-white p-3 rounded-lg mt-4 hover:bg-gray-700">
           <span id="button-text">
-            {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+            {isLoading ? <div className="flex justify-center"><CircleLoader size={5}/></div> : "Pay now"}
           </span>
         </button>
         {/* Show any error or success messages */}
@@ -127,7 +126,7 @@ export default function CheckoutForm() {
           <div className="font-bold mb-4">ARRIVES BY {moment().add(5, 'days').format("ddd, MMM D").toUpperCase()}</div>
 
           <div className="">
-            {currentCart.products?.map((product) => <CheckoutProduct product={product} />)}
+            {currentCart.products?.map((product) => <CheckoutProduct product={product} type="small"/>)}
           </div>
         </div>
       </div>

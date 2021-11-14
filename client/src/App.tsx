@@ -23,6 +23,7 @@ import Favorites from "./pages/Favorites";
 import Settings from "./pages/Settings";
 import SearchModal from "./components/SearchModal";
 import StripeContainer from "./components/StripeContainer";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const App = () => {
 
@@ -57,6 +58,10 @@ const App = () => {
 
           <Route path="/payment" exact>
             <StripeContainer />
+          </Route>
+
+          <Route path="/payment-success" exact>
+            <PaymentSuccess />
           </Route>
 
           <Route path="/shoes" exact>

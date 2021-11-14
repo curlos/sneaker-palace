@@ -1,9 +1,13 @@
 import React from 'react'
 
-const CircleLoader = () => {
+interface Props {
+  size: number
+}
+
+const CircleLoader = ({ size }: Props) => {
   return (
     <div>
-      <div style={{borderTopColor: "transparent"}} className="w-16 h-16 border-4 border-blue-400 border-solid rounded-full animate-spin"></div>
+      <div style={{borderTopColor: "transparent"}} className={`w-${size} h-${size} border-4 border-blue-400 border-solid rounded-full animate-spin`}></div>
     </div>
   )
 }

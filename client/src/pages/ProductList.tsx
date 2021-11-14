@@ -195,7 +195,7 @@ const ProductList = () => {
 
           <div className="flex-10 p-4">
             <SortDropdown sortType={sortType} setSortType={setSortType}/>
-            {loading ? <div className="flex justify-center"><CircleLoader /></div> : (
+            {loading ? <div className="flex justify-center"><CircleLoader size={16}/></div> : (
               <div>
                 <div className="flex justify-center flex-wrap">
                 {paginatedShoes.map((shoe: Shoe) => {

@@ -23,6 +23,8 @@ router.post('/payment', async (req: Request, res: Response) => {
 router.post("/create-payment-intent", async (req: Request, res: Response) => {
   const { items } = req.body;
 
+  console.log(req.body)
+
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: (Number(req.body.total) * 100),
@@ -30,6 +32,7 @@ router.post("/create-payment-intent", async (req: Request, res: Response) => {
     payment_method_types: [
       "card",
     ],
+    description: `Sneakers`
   });
 
   res.send({

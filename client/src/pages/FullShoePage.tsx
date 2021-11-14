@@ -210,7 +210,7 @@ const FullShoePage = () => {
           </div>
         )}
 
-        {loading ? <div className="flex justify-center"><CircleLoader /></div> : (
+        {loading ? <div className="flex justify-center"><CircleLoader size={16}/></div> : (
           <div className="border-t border-gray-300 flex pt-8">
             <div className="mr-12 flex-2">
               <div className="text-2xl font-bold">Customer reviews</div>
