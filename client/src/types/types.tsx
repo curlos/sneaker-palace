@@ -98,3 +98,41 @@ export interface IRating {
   updatedAt: string,
   postedByUser: UserType
 }
+
+export interface IOrder {
+  amount: number,
+  billingDetails: {
+    address: {
+      city: string | null,
+      country: string | null,
+      line1: string | null,
+      line2: string | null,
+      postal_code: string | null,
+      state: string | null
+    },
+    email?: string,
+    name?: string,
+    phone?: string
+  },
+  card: {
+    brand: string,
+    checks: {
+      address_line1_check: string | null,
+      address_postal_code_check: string | null,
+      cvc_check: string | null
+    },
+    country: string,
+    exp_month: number,
+    exp_year: number,
+    last4: number
+  },
+  createdAt: string,
+  deliveryDate: string,
+  orderDate: string,
+  paymentIntentID: string,
+  products: Array<IProduct>
+  status: string,
+  updatedAt: string,
+  userID: string,
+  _id: string,
+}

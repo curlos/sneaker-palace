@@ -24,20 +24,23 @@ import Settings from "./pages/Settings";
 import SearchModal from "./components/SearchModal";
 import StripeContainer from "./components/StripeContainer";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import CheckoutForm from "./pages/CheckoutForm";
+import OrderDetails from "./pages/OrderDetails";
 
 const App = () => {
 
   const user = useSelector((state: RootState) => state.user && state.user.currentUser)
   const [showModal, setShowModal] = useState(false)
-  
+
+
   return (
     <Router>
 
       <div className="m-0 box-border font-urbanist">
 
-      {showModal ? <SearchModal showModal={showModal} setShowModal={setShowModal}/> : null}
-      <Navbar setShowModal={setShowModal}/>
-        
+        {showModal ? <SearchModal showModal={showModal} setShowModal={setShowModal} /> : null}
+        <Navbar setShowModal={setShowModal} />
+
 
         <Switch>
           <Route path="/login" exact>
@@ -45,7 +48,7 @@ const App = () => {
           </Route>
 
           <Route path="/register" exact>
-            {Object.keys(user).length > 0 ? <Redirect to='/' /> : (
+            {user && Object.keys(user).length > 0 ? <Redirect to='/' /> : (
               <span>
                 <Register />
               </span>
@@ -57,11 +60,11 @@ const App = () => {
           </Route>
 
           <Route path="/payment" exact>
-            <StripeContainer />
+            <StripeContainer children={<CheckoutForm />} />
           </Route>
 
           <Route path="/payment-success" exact>
-            <PaymentSuccess />
+            <StripeContainer children={<PaymentSuccess />} />
           </Route>
 
           <Route path="/shoes" exact>
@@ -85,9 +88,17 @@ const App = () => {
           </Route>
 
           <Route path="/orders" exact>
-            {Object.keys(user).length > 0 ? <Redirect to='/' /> : (
+            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
               <span>
                 <Orders />
+              </span>
+            )}
+          </Route>
+
+          <Route path="/order-details/:id" exact>
+            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+              <span>
+                <OrderDetails />
               </span>
             )}
           </Route>
@@ -114,7 +125,7 @@ const App = () => {
         <Footer />
       </div>
 
-    
+
     </Router>
 
   );

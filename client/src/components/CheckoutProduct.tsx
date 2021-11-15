@@ -12,7 +12,6 @@ const CheckoutProduct = ({ product, type }: Props) => {
 
   const [shoe, setShoe] = useState<Partial<Shoe>>()
   const [loading, setLoading] = useState(true)
-  const totalCost = Number(product.quantity * product.retailPrice).toFixed(2)
 
   useEffect(() => {
     const fetchFromAPI = async () => {
@@ -21,11 +20,11 @@ const CheckoutProduct = ({ product, type }: Props) => {
       setLoading(false)
     }
     fetchFromAPI()
-  }, [])
+  }, [product])
 
   return (
 
-    loading ? <div className="flex py-10"><CircleLoader size={16}/></div> : (
+    loading ? <div className="flex py-10"><CircleLoader size={16} /></div> : (
       type === 'small' ? (
         <div className="flex mb-7 text-sm">
           <div>
@@ -36,8 +35,8 @@ const CheckoutProduct = ({ product, type }: Props) => {
             <div className="text-black">{shoe?.name}</div>
             <div>Size: {product.size}</div>
             <div>Colorway: {shoe?.colorway}</div>
-            <div>Qty: {product.quantity} @ {totalCost}</div>
-            <div>{totalCost}</div>
+            <div>Qty: {product.quantity} @ {shoe && shoe.retailPrice && Number(product.quantity * shoe?.retailPrice).toFixed(2)}</div>
+            <div>{shoe && shoe.retailPrice && Number(product.quantity * shoe?.retailPrice).toFixed(2)}</div>
           </div>
         </div>
       ) : (
@@ -55,7 +54,7 @@ const CheckoutProduct = ({ product, type }: Props) => {
             </div>
           </div>
 
-          <div className="text-lg font-medium">{totalCost}</div>
+          <div className="text-lg font-medium">{shoe && shoe.retailPrice && Number(product.quantity * shoe?.retailPrice).toFixed(2)}</div>
         </div>
       )
     )
