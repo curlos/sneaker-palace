@@ -9,7 +9,11 @@ import { RootState } from "../redux/store"
 const REACT_APP_STRIPE = process.env.REACT_APP_STRIPE
 const stripePromise = loadStripe(REACT_APP_STRIPE)
 
-const StripeContainer = () => {
+interface Props {
+  children: React.ReactNode
+}
+
+const StripeContainer = ({ children }: Props) => {
 
 	const { currentCart, total } = useSelector((state: RootState) => state.cart)
 	const [clientSecret, setClientSecret] = useState("");
@@ -38,7 +42,7 @@ const StripeContainer = () => {
     <div className="App">
       {clientSecret && (
         <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
+          {children}
         </Elements>
       )}
     </div>

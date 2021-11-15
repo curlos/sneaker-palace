@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from "react-redux";
 import { CartState, IProduct, IRating, UserType } from "../types/types";
@@ -17,7 +17,7 @@ import Review from '../components/Review';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 
-const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17' ]
+const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
 const AVERAGE_MAN_FOOT_SIZE = '10.5'
 const AVERAGE_WOMEN_FOOT_SIZE = '8.5'
@@ -29,13 +29,13 @@ const FullShoePage = () => {
 
   const { shoeID }: { shoeID: string } = useParams()
   const dispatch = useDispatch()
-  
+
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
   const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([])
   const [selectedSize, setSelectedSize] = useState(String(user.preselectedShoeSize) || AVERAGE_MAN_FOOT_SIZE)
   const [imageNum, setImageNum] = useState(0)
   const [loading, setLoading] = useState(false)
-  
+
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -63,7 +63,7 @@ const FullShoePage = () => {
       }
       const currentProducts = currentCart?.products
 
-      const body = { products: [...currentProducts, newProduct]}
+      const body = { products: [...currentProducts, newProduct] }
       console.log(body)
 
       const response = await axios.put(`http://localhost:8888/cart/${currentCart?._id}`, body)
@@ -97,7 +97,7 @@ const FullShoePage = () => {
         console.log(response.data)
         if (response.data !== null) {
           const authorResponse = await axios.get(`http://localhost:8888/users/${response.data.userID}`)
-          ratings.push({...response.data, postedByUser: authorResponse.data})
+          ratings.push({ ...response.data, postedByUser: authorResponse.data })
         }
       }
     }
@@ -105,7 +105,7 @@ const FullShoePage = () => {
   }
 
   const getAverageRating = (ratings: Array<IRating>) => {
-    const sumOfRatings = ratings.reduce( ( sum, { ratingNum } ) => sum + ratingNum , 0)
+    const sumOfRatings = ratings.reduce((sum, { ratingNum }) => sum + ratingNum, 0)
 
     console.log(sumOfRatings)
 
@@ -125,17 +125,17 @@ const FullShoePage = () => {
             <div className="flex-3">
               {shoe && shoe.image && shoe.image["360"].length > 0 ? (
                 <div>
-                  <img src={shoe?.image["360"][imageNum]} alt={shoe.name}/>
+                  <img src={shoe?.image["360"][imageNum]} alt={shoe.name} />
                   <input type="range" id="volume" name="volume" value={imageNum} onChange={(e) => setImageNum(Number(e.target.value))} min="0" max={shoe.image["360"].length - 1} className="w-full"></input>
                 </div>
               ) : (
-                <img src={shoe?.image?.original} alt={shoe.name}/>
+                <img src={shoe?.image?.original} alt={shoe.name} />
               )}
             </div>
 
             <div className="flex-2 p-10">
               <div className="text-2xl">{shoe.name}</div>
-              <div className="text-xl text-emerald-500">${shoe.retailPrice}</div>
+              <div className="text-xl text-red-800">${shoe.retailPrice}</div>
               <div className="my-5">{`SELECT US ${shoe?.gender?.toUpperCase()}S`}</div>
               <div className="flex flex-wrap">
                 {SHOE_SIZES.map((shoeSize) => {
@@ -182,45 +182,45 @@ const FullShoePage = () => {
               <div className="flex w-full my-5">
                 {shoe.links?.flightClub ? (
                   <a href={shoe.links.flightClub} target="_blank" rel="noreferrer">
-                    <img src="/assets/flight_club.png" alt={'Flight Club'} className="w-32"/>
+                    <img src="/assets/flight_club.png" alt={'Flight Club'} className="w-32" />
                   </a>
                 ) : null}
 
                 {shoe.links?.goat ? (
                   <a href={shoe.links.goat} target="_blank" rel="noreferrer">
-                    <img src="/assets/goat.png" alt={'Goat'} className="w-32"/>
+                    <img src="/assets/goat.png" alt={'Goat'} className="w-32" />
                   </a>
                 ) : null}
 
                 {shoe.links?.stadiumGoods ? (
                   <a href={shoe.links.stadiumGoods} target="_blank" rel="noreferrer">
-                    <img src="/assets/stadium_goods.svg" alt={'Stadium Goods'} className="w-32"/>
+                    <img src="/assets/stadium_goods.svg" alt={'Stadium Goods'} className="w-32" />
                   </a>
                 ) : null}
 
                 {shoe.links?.stockX ? (
                   <a href={shoe.links.stockX} target="_blank" rel="noreferrer">
-                    <img src="/assets/stockx.jpeg" alt={'Stock X'} className="w-32"/>
+                    <img src="/assets/stockx.jpeg" alt={'Stock X'} className="w-32" />
                   </a>
                 ) : null}
 
-                
+
               </div>
             </div>
           </div>
         )}
 
-        {loading ? <div className="flex justify-center"><CircleLoader size={16}/></div> : (
+        {loading ? <div className="flex justify-center"><CircleLoader size={16} /></div> : (
           <div className="border-t border-gray-300 flex pt-8">
             <div className="mr-12 flex-2">
               <div className="text-2xl font-bold">Customer reviews</div>
               <div className="flex gap-2 items-center">
                 <StarRatingComponent
-                    name={'Rating'}
-                    value={getAverageRating(shoeRatings) !== NaN ? getAverageRating(shoeRatings) : 0}
-                    starCount={5}
-                    editing={false}
-                    starColor={'#F5B327'}
+                  name={'Rating'}
+                  value={getAverageRating(shoeRatings) !== NaN ? getAverageRating(shoeRatings) : 0}
+                  starCount={5}
+                  editing={false}
+                  starColor={'#F5B327'}
                 />
                 {shoeRatings.length === 0 ? (
                   <span className="text-lg">No reviews</span>
@@ -230,13 +230,13 @@ const FullShoePage = () => {
               </div>
 
               <div className="text-gray-700">{shoeRatings.length} global ratings</div>
-              
+
               <div>
-                <StarRatingProgress rating={5} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 5).length / shoeRatings.length}/>
-                <StarRatingProgress rating={4} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 4).length / shoeRatings.length}/>
-                <StarRatingProgress rating={3} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 3).length / shoeRatings.length}/>
-                <StarRatingProgress rating={2} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 2).length / shoeRatings.length}/>
-                <StarRatingProgress rating={1} percentage={ shoeRatings.filter((rating) => rating.ratingNum === 1).length / shoeRatings.length}/>
+                <StarRatingProgress rating={5} percentage={shoeRatings.filter((rating) => rating.ratingNum === 5).length / shoeRatings.length} />
+                <StarRatingProgress rating={4} percentage={shoeRatings.filter((rating) => rating.ratingNum === 4).length / shoeRatings.length} />
+                <StarRatingProgress rating={3} percentage={shoeRatings.filter((rating) => rating.ratingNum === 3).length / shoeRatings.length} />
+                <StarRatingProgress rating={2} percentage={shoeRatings.filter((rating) => rating.ratingNum === 2).length / shoeRatings.length} />
+                <StarRatingProgress rating={1} percentage={shoeRatings.filter((rating) => rating.ratingNum === 1).length / shoeRatings.length} />
               </div>
 
               <div className="">
@@ -251,9 +251,9 @@ const FullShoePage = () => {
                 Top reviews from the United States
               </div>
 
-              
+
               <div>
-              {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings}/>)}
+                {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />)}
               </div>
             </div>
           </div>

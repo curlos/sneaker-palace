@@ -88,7 +88,7 @@ export default function CheckoutForm() {
   return (
     <form id="payment-form" onSubmit={handleSubmit} className="flex gap-4 p-10">
       <div className="flex-6">
-        <PaymentElement id="payment-element" />
+        <PaymentElement id="payment-element" onChange={(details) => console.log(details)}/>
         <button disabled={isLoading || !stripe || !elements} id="submit" className="bg-black text-white p-3 rounded-lg mt-4 hover:bg-gray-700">
           <span id="button-text">
             {isLoading ? <div className="flex justify-center"><CircleLoader size={5}/></div> : "Pay now"}
@@ -123,7 +123,7 @@ export default function CheckoutForm() {
         </div>
 
         <div className="p-5">
-          <div className="font-bold mb-4">ARRIVES BY {moment().add(5, 'days').format("ddd, MMM D").toUpperCase()}</div>
+          <div className="font-bold mb-4">ARRIVES BY {moment().add(2, 'days').format("ddd, MMM D").toUpperCase()}</div>
 
           <div className="">
             {currentCart.products?.map((product) => <CheckoutProduct product={product} type="small"/>)}

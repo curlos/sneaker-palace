@@ -1,10 +1,35 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import SmallOrder from '../components/SmallOrder'
+import { RootState } from '../redux/store'
+import { IOrder, UserType } from '../types/types'
 
 const Orders = () => {
+
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchFromAPI = async () => {
+      const response = await axios.get(`http://localhost:8888/orders/user/${user._id}`)
+      console.log(response.data)
+      setOrders(response.data)
+      setLoading(false)
+    }
+
+    fetchFromAPI()
+  }, [])
+
+  console.log(orders)
+
   return (
-    <div className="px-36 py-">
-      Your Orders
-    </div>
+    loading ? <div>Loading...</div> :
+      <div className="px-36">
+        <div className="text-3xl border-0 border-b border-solid border-gray-400 py-7">Your Orders</div>
+        {orders && orders.map((order: IOrder) => order.products.length > 0 && <SmallOrder order={order} />)}
+      </div>
   )
 }
 
