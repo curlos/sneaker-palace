@@ -45,7 +45,6 @@ const getAverageRating = async (ratingIDs: Array<string>) => {
 }
 
 router.post('/rate', async (req: Request, res: Response) => {
-  console.log('new fuck')
   const rating = new Rating(req.body)
   const shoe = await Shoe.findOne({ shoeID: req.body.shoeID})
   const user = await User.findById(req.body.userID)

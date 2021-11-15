@@ -4,22 +4,6 @@ import { Request, Response } from 'express'
 const router = require('express').Router()
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
-router.post('/payment', async (req: Request, res: Response) => {
-  let { amount, id } = req.body
-	const payment = await stripe.paymentIntents.create({
-    amount,
-    currency: "USD",
-    description: "Spatula company",
-    payment_method: id,
-    confirm: true
-  })
-  console.log("Payment", payment)
-  res.json({
-    message: "Payment successful",
-    success: true
-  })
-})
-
 router.post("/create-payment-intent", async (req: Request, res: Response) => {
   const { items } = req.body;
 
@@ -32,12 +16,21 @@ router.post("/create-payment-intent", async (req: Request, res: Response) => {
     payment_method_types: [
       "card",
     ],
-    description: `Sneakers`
+    description: `Sneakers`,
+    receipt_email: 'curlosmart@gmail.com'
   });
 
   res.send({
     clientSecret: paymentIntent.client_secret,
   });
 });
+
+router.get('/payment-method/:paymentMethodID', async (req: Request, res: Response) => {
+  const paymentMethod = await stripe.paymentMethods.retrieve(
+    req.params.paymentMethodID
+  );
+  
+  res.json(paymentMethod)
+})
 
 module.exports = router;
