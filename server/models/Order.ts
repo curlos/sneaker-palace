@@ -12,7 +12,11 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     amount: { type: Number, required: true},
-    address: { type: Object, required: true},
+    card: {type: Object, required: true},
+    billingDetails: { type: Object, required: true},
+    paymentIntentID: { type: String, required: true},
+    orderDate: { type: String, required: true},
+    deliveryDate: {type: String, required: true},
     status: { type: String, default: "pending" },
   },
   { timestamps: true }
