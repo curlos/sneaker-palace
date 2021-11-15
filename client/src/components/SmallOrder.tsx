@@ -36,22 +36,22 @@ const SmallOrder = ({ order }: Props) => {
   console.log(order)
 
   return (
-    <div className="border-0 border-b border-solid border-gray-400 py-5 text-gray-800">
+    <div className="border border-gray-300 rounded-lg my-4 p-5 text-gray-800">
       <div className="flex justify-between mb-4 text-sm">
         <div className="flex gap-10">
           <div>
-            <div>ORDER PLACED</div>
+            <div className="font-bold">ORDER PLACED</div>
             <div>{moment(order.orderDate).format('MMMM Do YYYY')}</div>
           </div>
 
           <div>
-            <div>TOTAL</div>
+            <div className="font-bold">TOTAL</div>
             <div>${order.amount}.00</div>
           </div>
         </div>
 
         <div>
-          <div>ORDER #{order._id}</div>
+          <div className="font-bold">ORDER #{order._id}</div>
           <Link to={`/order-details/${order._id}`} className="text-blue-400 hover:underline">View order details</Link>
         </div>
       </div>

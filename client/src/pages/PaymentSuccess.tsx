@@ -9,8 +9,11 @@ import { updateCart } from '../redux/cartRedux';
 import { Shoe, UserType } from '../types/types'
 import { useStripe } from '@stripe/react-stripe-js';
 import moment from 'moment'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
 
 const PaymentSuccess = () => {
+
+  console.log('fuck you')
 
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
@@ -66,55 +69,48 @@ const PaymentSuccess = () => {
 
           console.log(body)
 
-          const response: any = await axios.post(`http://localhost:8888/orders/`, body)
+          try {
+            const response: any = await axios.post(`http://localhost:8888/orders/`, body)
 
-          console.log(response.data)
+            console.log(response.data)
 
-          if (response && response.data.error) {
-            setOrderID(response.data.orderID)
-          } else {
-            const { order, updatedUser, updatedCart } = response.data
+            if (response && response.data.error) {
+              setOrderID(response.data.orderID)
+            } else {
+              const { order, updatedUser, updatedCart } = response.data
 
-            setOrderID(order.order_id)
-            setLoading(false)
-            dispatch(updateUser(updatedUser))
-            dispatch(updateCart(updatedCart))
+              setOrderID(order._id)
+              dispatch(updateUser(updatedUser))
+              dispatch(updateCart(updatedCart))
+            }
+          } catch (err) {
+
           }
+
+          setLoading(false)
         }
       }
       addToOrders()
     }
   }, [paymentInfo])
 
-  useEffect(() => {
-    setLoading(true)
-    const getOrder = async () => {
-      const response = await axios.get(`http://localhost:8888/orders/${orderID}`)
-      setOrder(response.data)
-      setLoading(false)
-    }
-    getOrder()
-  }, [orderID])
-
-  console.log(order)
+  console.log('fuck you')
 
 
 
   return (
-    loading ? <div>Loading...</div> : (
-      <div className="px-24 py-7">
+    loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
+      <div className="px-24 py-7 h-screen">
         <div className="text-lg">
           <div className="text-4xl">Hello {user.firstName} {user.lastName},</div>
           <div>We'll email you an order confirmation with details and tracking info.</div>
-
-          {/* <OrderDetails order={order} /> */}
 
           <div className="flex gap-3 mt-3">
             <button className="bg-black p-4 text-white rounded-full">
               <Link to="/shoes" className="">Continue Shopping</Link>
             </button>
             <button className="bg-white p-4 text-black border border-black rounded-full">
-              <Link to="/orders">View or manage order</Link>
+              <Link to={`/order-details/${orderID}`}>View or manage order</Link>
             </button>
           </div>
         </div>

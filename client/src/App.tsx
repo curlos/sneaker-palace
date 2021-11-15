@@ -116,7 +116,7 @@ const App = () => {
           </Route>
 
 
-          <Route path="/" exact>
+          <Route path="/">
             <Home />
           </Route>
 

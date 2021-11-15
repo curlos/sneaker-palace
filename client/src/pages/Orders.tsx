@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import SmallOrder from '../components/SmallOrder'
 import { RootState } from '../redux/store'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { IOrder, UserType } from '../types/types'
 
 const Orders = () => {
@@ -25,9 +26,9 @@ const Orders = () => {
   console.log(orders)
 
   return (
-    loading ? <div>Loading...</div> :
+    loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> :
       <div className="px-36">
-        <div className="text-3xl border-0 border-b border-solid border-gray-400 py-7">Your Orders</div>
+        <div className="text-3xl py-5">Your Orders</div>
         {orders && orders.map((order: IOrder) => order.products.length > 0 && <SmallOrder order={order} />)}
       </div>
   )

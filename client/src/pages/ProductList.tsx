@@ -24,7 +24,7 @@ const ProductList = () => {
 
   const query = useQuery()
 
-  const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17' ]
+  const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
   const [shoes, setShoes] = useState([])
   const [filteredShoes, setFilteredShoes] = useState<Array<Shoe>>([])
@@ -114,12 +114,12 @@ const ProductList = () => {
           high: null
         },
         checked: false
-        
+
       }
 
     },
     shoeSizes: {
-      ...SHOE_SIZES.reduce((a, v) => ({ ...a, [v]: false}), {}) 
+      ...SHOE_SIZES.reduce((a, v) => ({ ...a, [v]: false }), {})
     }
   })
 
@@ -137,10 +137,10 @@ const ProductList = () => {
       console.log(API_URL)
       const response = await axios.get(API_URL)
       console.log(response.data)
-      const newSortedShoes : Array<Shoe> = getSortedShoes(response.data)
+      const newSortedShoes: Array<Shoe> = getSortedShoes(response.data)
       setShoes(response.data)
       setSortedShoes(newSortedShoes)
-      
+
       setLoading(false)
     }
 
@@ -148,7 +148,7 @@ const ProductList = () => {
   }, [query.get('query')])
 
   useEffect(() => {
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
     const newShoes: Array<Shoe> = getFilteredShoes(shoes)
     const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
     console.log(newSortedShoes)
@@ -189,30 +189,30 @@ const ProductList = () => {
   }
 
   return (
-      <div className="text-xl-lg">
-        <div className="flex">
-          <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES}/>
+    <div className="text-xl-lg">
+      <div className="flex">
+        <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES} />
 
-          <div className="flex-10 p-4">
-            <SortDropdown sortType={sortType} setSortType={setSortType}/>
-            {loading ? <div className="flex justify-center"><CircleLoader size={16}/></div> : (
-              <div>
-                <div className="flex justify-center flex-wrap">
+        <div className="flex-10 p-4">
+          <SortDropdown sortType={sortType} setSortType={setSortType} />
+          {loading ? <div className="flex justify-center h-screen"><CircleLoader size={16} /></div> : (
+            <div>
+              <div className="flex justify-center flex-wrap">
                 {paginatedShoes.map((shoe: Shoe) => {
                   return (
                     <SmallShoe key={shoe.shoeID} shoe={shoe} />
                   )
-                  })}
-                </div>
-
-                <Pagination data={sortedShoes} pageLimit={Math.round(sortedShoes.length / 10)} dataLimit={10} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick}/>
+                })}
               </div>
-            )}
-          </div>
-          
+
+              <Pagination data={sortedShoes} pageLimit={Math.round(sortedShoes.length / 10)} dataLimit={10} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} />
+            </div>
+          )}
         </div>
+
       </div>
-    )
+    </div>
+  )
 }
 
 export default ProductList

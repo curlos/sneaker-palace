@@ -88,18 +88,18 @@ export default function CheckoutForm() {
   return (
     <form id="payment-form" onSubmit={handleSubmit} className="flex gap-4 p-10">
       <div className="flex-6">
-        <PaymentElement id="payment-element" onChange={(details) => console.log(details)}/>
+        <PaymentElement id="payment-element" onChange={(details) => console.log(details)} />
         <button disabled={isLoading || !stripe || !elements} id="submit" className="bg-black text-white p-3 rounded-lg mt-4 hover:bg-gray-700">
           <span id="button-text">
-            {isLoading ? <div className="flex justify-center"><CircleLoader size={5}/></div> : "Pay now"}
+            {isLoading ? <div className="flex justify-center"><CircleLoader size={5} /></div> : "Pay now"}
           </span>
         </button>
         {/* Show any error or success messages */}
         {message && <div id="payment-message">{message}</div>}
       </div>
 
-      <div className="flex-4 border border-gray-300">
-        <div className="p-5 bg-gray-300 font-bold">IN YOUR CART</div>
+      <div className="flex-4 border border-gray-300 rounded-lg">
+        <div className="p-5 bg-gray-200 font-bold rounded-t-lg">IN YOUR CART</div>
         <div className="border-0 border-b border-solid border-gray-300 p-5 text-sm">
           <div className="flex justify-between mb-1">
             <div>Subtotal</div>
@@ -126,7 +126,7 @@ export default function CheckoutForm() {
           <div className="font-bold mb-4">ARRIVES BY {moment().add(2, 'days').format("ddd, MMM D").toUpperCase()}</div>
 
           <div className="">
-            {currentCart.products?.map((product) => <CheckoutProduct product={product} type="small"/>)}
+            {currentCart.products?.map((product) => <CheckoutProduct product={product} type="small" />)}
           </div>
         </div>
       </div>

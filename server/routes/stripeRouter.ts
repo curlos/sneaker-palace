@@ -1,4 +1,4 @@
-export {}
+export { }
 import { Request, Response } from 'express'
 
 const router = require('express').Router()
@@ -9,27 +9,32 @@ router.post("/create-payment-intent", async (req: Request, res: Response) => {
 
   console.log(req.body)
 
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: (Number(req.body.total) * 100),
-    currency: "usd",
-    payment_method_types: [
-      "card",
-    ],
-    description: `Sneakers`,
-    receipt_email: 'curlosmart@gmail.com'
-  });
+  try {
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: (Number(req.body.total) * 100),
+      currency: "usd",
+      payment_method_types: [
+        "card",
+      ],
+      description: `Sneakers`,
+      receipt_email: 'curlosmart@gmail.com'
+    });
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (err) {
+    console.log(err)
+    res.json({ error: err })
+  }
 });
 
 router.get('/payment-method/:paymentMethodID', async (req: Request, res: Response) => {
   const paymentMethod = await stripe.paymentMethods.retrieve(
     req.params.paymentMethodID
   );
-  
+
   res.json(paymentMethod)
 })
 

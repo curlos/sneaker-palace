@@ -10,6 +10,7 @@ import { userInfo } from 'os'
 import SmallOrder from '../components/SmallOrderShoe'
 import SmallOrderShoe from '../components/SmallOrderShoe'
 import MoreShoes from '../components/MoreShoes'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
 
 const OrderDetails = () => {
 
@@ -42,7 +43,7 @@ const OrderDetails = () => {
   }
 
   return (
-    loading ? <div>Loading...</div> : (
+    loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       order ? (
         <div className="p-10">
           <div className="text-3xl mb-3">Order Details</div>
