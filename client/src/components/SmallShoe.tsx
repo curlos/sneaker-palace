@@ -30,7 +30,7 @@ const SmallShoe = ({ shoe }: Props) => {
         console.log(response.data)
         if (response.data !== null) {
           const authorResponse = await axios.get(`http://localhost:8888/users/${response.data.userID}`)
-          ratings.push({...response.data, postedByUser: authorResponse.data})
+          ratings.push({ ...response.data, postedByUser: authorResponse.data })
         }
       }
     }
@@ -38,7 +38,7 @@ const SmallShoe = ({ shoe }: Props) => {
   }
 
   const getAverageRating = (ratings: Array<IRating>) => {
-    const sumOfRatings = ratings.reduce( ( sum, { ratingNum } ) => sum + ratingNum , 0)
+    const sumOfRatings = ratings.reduce((sum, { ratingNum }) => sum + ratingNum, 0)
 
     console.log(sumOfRatings)
 
@@ -47,19 +47,19 @@ const SmallShoe = ({ shoe }: Props) => {
 
   return (
     loading ? <SmallShoeSkeleton /> : (
-      <Link to={`/shoe/${shoe.shoeID}`}>
-        <div className="flex flex-col w-96 wm-5 bg-white cursor-pointer mr-5 mb-5 px-3 ">
-          <img src={shoe.image.original} alt={shoe.name} className="h-9/12 w-9/12"/>
+      <Link to={`/shoe/${shoe.shoeID}`} className="w-4/12">
+        <div className="flex flex-col wm-5 bg-white cursor-pointer mr-5 mb-5 px-3 ">
+          <img src={shoe.image.original} alt={shoe.name} className="h-9/12 w-9/12" />
           <div className="font-medium">{shoe.name}</div>
           <div className="text-gray-500"><span className="capitalize">{shoe.gender}'s</span> Shoe</div>
           <div className="text-gray-500"><span className="capitalize">{shoe.colorway}</span></div>
           <div className="flex items-center">
             <StarRatingComponent
-                name={'Rating'}
-                value={getAverageRating(ratings)}
-                starCount={5}
-                editing={false}
-                starColor={'#F5B327'}
+              name={'Rating'}
+              value={getAverageRating(ratings)}
+              starCount={5}
+              editing={false}
+              starColor={'#F5B327'}
             />
             <span className="flex items-center"><ChevronDownIcon className="h-5 w-5" aria-hidden="true" />{ratings.length}</span>
           </div>

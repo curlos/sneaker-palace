@@ -9,6 +9,7 @@ import moment from 'moment'
 import { userInfo } from 'os'
 import SmallOrder from '../components/SmallOrderShoe'
 import SmallOrderShoe from '../components/SmallOrderShoe'
+import MoreShoes from '../components/MoreShoes'
 
 const OrderDetails = () => {
 
@@ -81,7 +82,7 @@ const OrderDetails = () => {
 
                 <div className="flex justify-between">
                   <div>Estimated tax to be collected:</div>
-                  <div>${order.amount}.00</div>
+                  <div>${0}.00</div>
                 </div>
 
                 <div className="flex justify-between">
@@ -95,6 +96,12 @@ const OrderDetails = () => {
           <div className="p-5 border border-gray-300 rounded-lg">
             {shoes.map((shoe) => <SmallOrderShoe shoe={shoe} />)}
           </div>
+
+          <div className="py-10">
+            <div className="text-2xl">More shoes</div>
+            <MoreShoes />
+          </div>
+
         </div>
       ) : (
         <div></div>
