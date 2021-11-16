@@ -14,7 +14,7 @@ interface Props {
 }
 
 const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
-  
+
   const [showColors, setShowColors] = useState(false)
   const [showBrands, setShowBrands] = useState(false)
   const [showGender, setShowGender] = useState(false)
@@ -22,32 +22,32 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
   const [showSizes, setShowSizes] = useState(false)
 
   const handleColorClick = (color: string) => {
-    setFilters({...filters, colors: {...filters.colors, [color]: !filters.colors[color] }})
+    setFilters({ ...filters, colors: { ...filters.colors, [color]: !filters.colors[color] } })
   }
 
   const handleBrandClick = (brand: string) => {
-    setFilters({...filters, brands: {...filters.brands, [brand]: !filters.brands[brand] }})
+    setFilters({ ...filters, brands: { ...filters.brands, [brand]: !filters.brands[brand] } })
   }
 
   const handleGenderClick = (gender: string) => {
-    setFilters({...filters, genders: {...filters.genders, [gender]: !filters.genders[gender] }})
+    setFilters({ ...filters, genders: { ...filters.genders, [gender]: !filters.genders[gender] } })
   }
 
   const handlePriceClick = (priceRange: string) => {
-    setFilters({...filters, priceRanges: {...filters.priceRanges, [priceRange]: {...filters.priceRanges[priceRange], checked: !filters.priceRanges[priceRange].checked} }})
+    setFilters({ ...filters, priceRanges: { ...filters.priceRanges, [priceRange]: { ...filters.priceRanges[priceRange], checked: !filters.priceRanges[priceRange].checked } } })
   }
 
   const handleSizeClick = (size: string) => {
-    setFilters({...filters, shoeSizes: {...filters.shoeSizes, [size]: !filters.shoeSizes[size] }})
+    setFilters({ ...filters, shoeSizes: { ...filters.shoeSizes, [size]: !filters.shoeSizes[size] } })
   }
 
   return (
     <aside className="top-0 p-5 w-full flex-2 flex-grow-1 overflow-y-auto bg-white">
 
       <div className="border-0 border-b border-solid border-gray-300 py-3">
-        
+
         <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowColors(!showColors)}>
-          <div className="font-bold mb-3">Color</div> {showColors ? <ChevronUpIcon className="h-6 w-6"/> : <ChevronDownIcon className="h-6 w-6"/>}
+          <div className="font-bold mb-3">Color</div> {showColors ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}
         </div>
         {showColors ? (
           <div className="flex flex-wrap justify-center gap-5 p-3">
@@ -60,15 +60,15 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
                   <div className="capitalize">{color}</div>
                 </div>
               )
-            })} 
+            })}
           </div>
         ) : null}
-        
+
       </div>
 
       <div className="border-0 border-b border-solid border-gray-300 py-3">
         <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowBrands(!showBrands)}>
-          <span className="font-bold mb-3">Brand</span> {showBrands ? <ChevronUpIcon className="h-6 w-6"/> : <ChevronDownIcon className="h-6 w-6"/>}
+          <span className="font-bold mb-3">Brand</span> {showBrands ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}
         </div>
 
         {showBrands ? (
@@ -79,7 +79,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.brands[brand]} onClick={() => handleBrandClick(brand)}></input>
                   <span>{brand}</span>
                 </label>
-                
+
               )
             })}
           </div>
@@ -88,7 +88,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
 
       <div className="border-0 border-b border-solid border-gray-300 py-3">
         <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowGender(!showGender)}>
-          <span className="font-bold mb-3">Gender</span> {showGender ? <ChevronUpIcon className="h-6 w-6"/> : <ChevronDownIcon className="h-6 w-6"/>}
+          <span className="font-bold mb-3">Gender</span> {showGender ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}
         </div>
 
         {showGender ? (
@@ -99,7 +99,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.genders[gender]} onClick={() => handleGenderClick(gender)}></input>
                   <span>{gender}</span>
                 </label>
-                
+
               )
             })}
           </div>
@@ -108,7 +108,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
 
       <div className="border-0 border-b border-solid border-gray-300 py-3">
         <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowPriceRanges(!showPriceRanges)}>
-          <span className="font-bold mb-3">Shop by Price</span> {showPriceRanges ? <ChevronUpIcon className="h-6 w-6"/> : <ChevronDownIcon className="h-6 w-6"/>}
+          <span className="font-bold mb-3">Shop by Price</span> {showPriceRanges ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}
         </div>
 
         {showPriceRanges ? (
@@ -119,7 +119,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.priceRanges[priceRange].checked} onClick={() => handlePriceClick(priceRange)}></input>
                   <span>{priceRange}</span>
                 </label>
-                
+
               )
             })}
           </div>
@@ -128,14 +128,14 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
 
       <div className="py-3">
         <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowSizes(!showSizes)}>
-          <span className="font-bold mb-3">Size</span> {showSizes ? <ChevronUpIcon className="h-6 w-6"/> : <ChevronDownIcon className="h-6 w-6"/>}
+          <span className="font-bold mb-3">Size</span> {showSizes ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}
         </div>
 
         {showSizes ? (
           <div className="flex flex-wrap">
             {shoeSizes.map((shoeSize) => {
               return (
-                <div className={`h-10 w-12 inline-flex items-center justify-center ${filters.shoeSizes[shoeSize] ? ' border-2 border-black' : 'border border-gray-300'} m-1 rounded-lg cursor-pointer`} onClick={() => handleSizeClick(shoeSize)}>{shoeSize}</div>
+                <div className={`h-10 w-3/12 inline-flex items-center justify-center ${filters.shoeSizes[shoeSize] ? ' border-2 border-black' : 'border border-gray-300'} m-1 rounded-lg cursor-pointer`} onClick={() => handleSizeClick(shoeSize)}>{shoeSize}</div>
               )
             })}
           </div>

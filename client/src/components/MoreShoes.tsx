@@ -1,5 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
+import CircleLoader from "../skeleton_loaders/CircleLoader"
 import { Shoe } from "../types/types"
 import SmallShoe from "./SmallShoe"
 
@@ -36,7 +37,7 @@ const MoreShoes = () => {
   console.log(shoes)
 
   return (
-    loading ? <div>Loading...</div> : (
+    loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (
       <div className="flex flex-wrap">
         {shoes?.map((shoe) => <SmallShoe shoe={shoe} />)}
       </div>

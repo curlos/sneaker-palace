@@ -150,6 +150,7 @@ const ProductList = () => {
     const newShoes: Array<Shoe> = getFilteredShoes(shoes)
     const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
     setSortedShoes(newSortedShoes)
+    setCurrentPage(1)
   }, [filters, sortType, query.get('query')])
 
   // useEffect(() => {
@@ -158,8 +159,8 @@ const ProductList = () => {
 
 
   const getFilteredShoes = (shoesToFilter: Array<Shoe>) => {
-    const colorShoes = filterByBrand(filters, shoesToFilter)
-    const brandShoes = filterByColor(filters, colorShoes)
+    const colorShoes = filterByColor(filters, shoesToFilter)
+    const brandShoes = filterByBrand(filters, colorShoes)
     const genderShoes = filterByGender(filters, brandShoes)
     const priceShoes = filterByPrice(filters, genderShoes)
 

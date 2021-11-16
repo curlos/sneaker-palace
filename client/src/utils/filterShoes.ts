@@ -1,12 +1,12 @@
 import { Shoe } from "../types/types"
 
-export {}
+export { }
 
 export const filterByColor = (filters: any, shoesToFilter: Array<Shoe>) => {
   if (Object.values(filters.colors).every((v) => v === false)) {
     return shoesToFilter
-  } 
-  
+  }
+
   return shoesToFilter.filter((shoe) => {
     let colorIncluded = false
     for (let color of Object.keys(filters.colors)) {
@@ -25,7 +25,7 @@ export const filterByBrand = (filters: any, shoesToFilter: Array<Shoe>) => {
     return shoesToFilter
   }
 
-  return shoesToFilter.filter((shoe: Shoe) => filters.brands[shoe.brand])
+  return shoesToFilter.filter((shoe: Shoe) => filters.brands[titleCase(shoe.brand)])
 }
 
 export const filterByGender = (filters: any, shoesToFilter: Array<Shoe>) => {
@@ -70,10 +70,10 @@ export const filterByPrice = (filters: any, shoesToFilter: Array<Shoe>) => {
   })
 }
 
-const titleCase = (str: string) => {
+export const titleCase = (str: string) => {
   let strLowerCase = str.toLowerCase();
-  let wordArr = strLowerCase.split(" ").map(function(currentValue) {
-      return currentValue[0].toUpperCase() + currentValue.substring(1);
+  let wordArr = strLowerCase.split(" ").map(function (currentValue) {
+    return currentValue[0].toUpperCase() + currentValue.substring(1);
   });
 
   return wordArr.join(" ");
