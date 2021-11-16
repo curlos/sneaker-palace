@@ -23,11 +23,11 @@ const SmallShoe = ({ shoe }: Props) => {
 
   const fetchAllRatings = async (ratingIDs: Array<string>) => {
     const ratings = []
-    console.log(ratingIDs)
+
     if (ratingIDs) {
       for (let ratingID of ratingIDs) {
         const response = await axios.get(`http://localhost:8888/rating/${ratingID}`)
-        console.log(response.data)
+
         if (response.data !== null) {
           const authorResponse = await axios.get(`http://localhost:8888/users/${response.data.userID}`)
           ratings.push({ ...response.data, postedByUser: authorResponse.data })
@@ -39,8 +39,6 @@ const SmallShoe = ({ shoe }: Props) => {
 
   const getAverageRating = (ratings: Array<IRating>) => {
     const sumOfRatings = ratings.reduce((sum, { ratingNum }) => sum + ratingNum, 0)
-
-    console.log(sumOfRatings)
 
     return Number((sumOfRatings / ratings.length).toFixed(1))
   }

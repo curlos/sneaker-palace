@@ -134,9 +134,7 @@ const ProductList = () => {
         API_URL = `http://localhost:8888/shoes/query/${query.get('query')}`
       }
 
-      console.log(API_URL)
       const response = await axios.get(API_URL)
-      console.log(response.data)
       const newSortedShoes: Array<Shoe> = getSortedShoes(response.data)
       setShoes(response.data)
       setSortedShoes(newSortedShoes)
@@ -151,9 +149,12 @@ const ProductList = () => {
     window.scrollTo(0, 0)
     const newShoes: Array<Shoe> = getFilteredShoes(shoes)
     const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
-    console.log(newSortedShoes)
     setSortedShoes(newSortedShoes)
-  }, [filters, sortType, paginatedShoes, query.get('query')])
+  }, [filters, sortType, query.get('query')])
+
+  // useEffect(() => {
+  //   handleNewPageClick()
+  // }, [sortType, filters])
 
 
   const getFilteredShoes = (shoesToFilter: Array<Shoe>) => {
@@ -197,6 +198,9 @@ const ProductList = () => {
           <SortDropdown sortType={sortType} setSortType={setSortType} />
           {loading ? <div className="flex justify-center h-screen"><CircleLoader size={16} /></div> : (
             <div>
+
+              <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 10)} dataLimit={10} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
+
               <div className="flex justify-center flex-wrap">
                 {paginatedShoes.map((shoe: Shoe) => {
                   return (
@@ -204,8 +208,6 @@ const ProductList = () => {
                   )
                 })}
               </div>
-
-              <Pagination data={sortedShoes} pageLimit={Math.round(sortedShoes.length / 10)} dataLimit={10} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} />
             </div>
           )}
         </div>

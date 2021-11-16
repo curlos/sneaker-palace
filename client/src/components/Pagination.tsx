@@ -7,19 +7,19 @@ interface Props {
   pageLimit: number,
   dataLimit: number,
   currentPage: number,
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
+  filters: any,
+  sortType: string
 }
 
-export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, currentPage, setCurrentPage }: Props) => {
+export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType }: Props) => {
   const [pages] = useState(Math.round(data.length / dataLimit))
-  
-
-  console.log(data)
 
   useEffect(() => {
     console.log('rerender')
+    console.log(sortType)
     setPaginatedData()
-  }, [currentPage])
+  }, [currentPage, filters, sortType, data])
 
   const goToNextPage = () => {
     if (currentPage === pageLimit) {
@@ -47,11 +47,14 @@ export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, cur
     const endIndex = startIndex + dataLimit;
     console.log(data.slice(startIndex, endIndex))
     console.log('updating posts')
+    console.log(data.slice(startIndex, endIndex))
     handleNewPageClick(data.slice(startIndex, endIndex))
   }
 
   const getPaginationGroup = () => {
     let start = Math.floor((currentPage - 1) / pageLimit) * pageLimit;
+
+
     return new Array(pageLimit).fill(undefined).map((_, idx) => start + idx + 1);
   };
 
@@ -63,7 +66,7 @@ export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, cur
         <div className="p-3 px-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg" onClick={goToPreviousPage}><i className="fas fa-chevron-left"></i></div>
 
         {getPaginationGroup().map((pageNum) => <div className={`p-3 px-4 border border-gray-300 cursor-pointer ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)}
-        
+
         <div className="p-3 px-3 border border-gray-300 border-r-1 rounded-tr-lg rounded-br-lg cursor-pointer" onClick={goToNextPage}><i className="fas fa-chevron-right"></i></div>
 
       </div>
