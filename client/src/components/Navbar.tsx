@@ -55,16 +55,17 @@ const Navbar = ({ setShowModal }: Props) => {
       </div>
 
       <div className="flex items-center gap-5">
-        <Link to="/shoes">Sneakers</Link>
-        <Link to="/brands">Brands</Link>
+        <Link to="/shoes" className="sm:hidden">Sneakers</Link>
+        <Link to="/shoes" className="sm:hidden">Men</Link>
+        <Link to="/shoes" className="sm:hidden">Women</Link>
         {user && Object.keys(user).length > 0 ? (
           <span>
             <UserDropdown user={user} handleLogout={handleLogout} />
           </span>)
           : (
             <span className="flex items-center gap-5">
-              <Link to="/login">Login</Link>
-              <Link to="/register">Sign Up</Link>
+              <Link to="/login" className="sm:hidden">Login</Link>
+              <Link to="/register" className="sm:hidden">Sign Up</Link>
             </span>
           )}
         <SearchIcon className="h-5 w-5 cursor-pointer" onClick={() => setShowModal(true)} />

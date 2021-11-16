@@ -22,7 +22,7 @@ export const UserDropdown = ({ user, handleLogout }: Props) => {
   }
 
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="relative inline-block text-left sm:hidden">
       <div>
         <Menu.Button className="flex items-center">
           <span>{user['firstName'] && `Hi, ${user['firstName']}`}</span>
