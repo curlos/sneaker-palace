@@ -63,7 +63,7 @@ router.put('/favorite', async (req: Request, res: Response) => {
 
 
 router.post('/newShoes', async (req: Request, res: Response) => {
-  const result = await addAllShoes(0)
+  const result = await addAllShoes(Number(req.body.page))
   res.json(result)
 })
 
