@@ -14,42 +14,43 @@ const Cart = () => {
   const { currentCart, total } = useSelector((state: RootState) => state.cart)
 
   return (
-    <div className="w-full px-16 py-12 flex flex-start">
-        <div className="flex-6">
-          <div className="font-medium text-xl mb-5">Bag</div>
-          {currentCart?.products?.map((product: IProduct) => <CartProduct productInfo={product}/>)}
-        </div>
-
-        <div className="flex-2 px-7">
-          <div className="font-medium text-xl mb-5">Summary</div>
-          <div className="flex justify-between items-center mb-2">
-            <div>Subtotal</div>
-            <div>${total}.00</div>
-          </div>
-
-          <div className="flex justify-between items-center mb-2">
-            <div>Estimated Shipping & Handling</div>
-            <div>$0.00</div>
-          </div>
-
-          <div className="flex justify-between items-center mb-2">
-            <div>Estimated Tax</div>
-            <div>-</div>
-          </div>
-
-          <div className="border-0 border-b border-solid border-gray-300 my-3"></div>
-          <div className="flex justify-between items-center">
-            <div>Total</div>
-            <div>${total}.00</div>
-          </div>
-          <div className="border-0 border-b border-solid border-gray-300 my-3"></div>
-
-          <button className="my-3">
-            <Link to={'/payment'} className="bg-black text-white w-full py-4 px-9 rounded-full hover:bg-gray-900">Checkout</Link>
-          </button>
-        
-        </div>
+    <div className="w-full px-16 py-12 flex flex-start min-h-screen sm:p-4 sm:block">
+      <div className="flex-6">
+        <div className="font-medium text-xl mb-5">Bag</div>
+        {currentCart?.products?.map((product: IProduct) => <CartProduct productInfo={product} />)}
       </div>
+
+      <div className="flex-2 px-7 sm:px-0">
+        <div className="font-medium text-xl mb-5">Summary</div>
+        <div className="flex justify-between items-center mb-2">
+          <div>Subtotal</div>
+          <div>${total}.00</div>
+        </div>
+
+        <div className="flex justify-between items-center mb-2">
+          <div>Estimated Shipping & Handling</div>
+          <div>$0.00</div>
+        </div>
+
+        <div className="flex justify-between items-center mb-2">
+          <div>Estimated Tax</div>
+          <div>-</div>
+        </div>
+
+        <div className="border-0 border-b border-solid border-gray-300 my-3"></div>
+        <div className="flex justify-between items-center">
+          <div>Total</div>
+          <div>${total}.00</div>
+        </div>
+        <div className="border-0 border-b border-solid border-gray-300 my-3"></div>
+
+        <div className="bg-black text-white my-4 w-full py-4 px-9 rounded-full hover:bg-gray-900 text-center">
+          <Link to={'/payment'}>Checkout</Link>
+        </div>
+
+
+      </div>
+    </div>
   )
 }
 

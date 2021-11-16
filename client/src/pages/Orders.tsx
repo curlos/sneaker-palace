@@ -27,7 +27,7 @@ const Orders = () => {
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> :
-      <div className="px-36">
+      <div className="px-36 sm:px-4">
         <div className="text-3xl py-5">Your Orders</div>
         {orders && orders.map((order: IOrder) => order.products.length > 0 && <SmallOrder order={order} />)}
       </div>

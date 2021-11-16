@@ -17,8 +17,7 @@ export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, cur
   const [pages] = useState(Math.round(data.length / dataLimit))
 
   useEffect(() => {
-    console.log('rerender')
-    console.log(sortType)
+    window.scrollTo(0, 0)
     setPaginatedData()
   }, [currentPage, filters, sortType, data])
 
@@ -68,23 +67,31 @@ export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, cur
   };
 
   return (
-    <div className="flex justify-between items-center my-4 text-black">
-      <div className="pagResults">Showing <strong>{(currentPage * dataLimit - dataLimit) + 1}</strong> to <strong>{(currentPage * dataLimit - dataLimit) + dataLimit - 1 >= data.length ? data.length : (currentPage * dataLimit - dataLimit) + dataLimit}</strong> of <strong>{data.length}</strong> results</div>
+    <div className="flex justify-between items-center my-4 text-black sm:justify-between sm:px-3">
+      <div className="pagResults sm:hidden">Showing <strong>{(currentPage * dataLimit - dataLimit) + 1}</strong> to <strong>{(currentPage * dataLimit - dataLimit) + dataLimit - 1 >= data.length ? data.length : (currentPage * dataLimit - dataLimit) + dataLimit}</strong> of <strong>{data.length}</strong> results</div>
 
-      <div className="flex w-1/2 justify-end">
-        <div className="p-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg flex items-center justify-center" onClick={goToFirstPage}><ChevronDoubleLeftIcon className="h-5 w-5" /></div>
+      <div className="flex w-1/2 justify-end sm:justify-between sm:w-full sm:gap-4">
+        <div className="p-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg flex items-center justify-center sm:hidden" onClick={goToFirstPage}><ChevronDoubleLeftIcon className="h-5 w-5" /></div>
 
-        <div className="p-3 px-3 border border-gray-300 border-r-0 cursor-pointer flex items-center justify-center" onClick={goToPreviousPage}><ChevronLeftIcon className="h-5 w-5" /></div>
+        <div className="p-3 px-3 border border-gray-300 border-r-0 cursor-pointer flex items-center justify-center sm:border-l sm:w-1/2 sm:border-r sm:rounded-lg" onClick={goToPreviousPage}>
+          <ChevronLeftIcon className="h-5 w-5 sm:hidden" />
+          <span className="hidden sm:block">Previous</span>
+        </div>
 
         {pageLimit - currentPage < 5 ? (
-          getPaginationGroup().slice(pageLimit - 5, pageLimit).map((pageNum) => <div className={`p-3 border border-gray-300 cursor-pointer ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)
+          getPaginationGroup().slice(pageLimit - 5, pageLimit).map((pageNum) => <div className={`p-3 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)
         ) : (
-          getPaginationGroup().slice(currentPage - 1, currentPage + 4).map((pageNum) => <div className={`p-3 px-4 border border-gray-300 cursor-pointer ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)
+          getPaginationGroup().slice(currentPage - 1, currentPage + 4).map((pageNum) => <div className={`p-3 px-4 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)
         )}
 
-        <div className="p-3 border border-r-0 border-gray-300 cursor-pointer flex items-center justify-center" onClick={goToNextPage}><ChevronRightIcon className="h-5 w-5" /></div>
+        <div className="p-3 border border-r-0 border-gray-300 cursor-pointer flex items-center justify-center sm:border-r sm:w-1/2  sm:rounded-lg" onClick={goToNextPage}>
+          <ChevronRightIcon className="h-5 w-5 sm:hidden" />
+          <span className="hidden sm:block">Next</span>
+        </div>
 
-        <div className="p-3 border border-gray-300 border-r-1 rounded-tr-lg rounded-br-lg cursor-pointer flex items-center justify-center" onClick={goToLastPage}><ChevronDoubleRightIcon className="h-5 w-5" /></div>
+        <div className="p-3 border border-gray-300 border-r-1 rounded-tr-lg rounded-br-lg cursor-pointer flex items-center justify-center sm:hidden" onClick={goToLastPage}>
+          <ChevronDoubleRightIcon className="h-5 w-5" />
+        </div>
 
       </div>
     </div>

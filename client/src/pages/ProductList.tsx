@@ -154,10 +154,6 @@ const ProductList = () => {
     setCurrentPage(1)
   }, [filters, sortType, query.get('query')])
 
-  // useEffect(() => {
-  //   handleNewPageClick()
-  // }, [sortType, filters])
-
 
   const getFilteredShoes = (shoesToFilter: Array<Shoe>) => {
     const colorShoes = filterByColor(filters, shoesToFilter)
@@ -196,12 +192,10 @@ const ProductList = () => {
       <div className="flex">
         <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES} />
 
-        <div className="flex-10 p-4 sm:p-0">
+        <div className="flex-10 p-4 sm:p-3">
           <SortDropdown sortType={sortType} setSortType={setSortType} />
           {loading ? <div className="flex justify-center h-screen"><CircleLoader size={16} /></div> : (
             <div>
-
-              <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 10)} dataLimit={9} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
 
               <div className="flex justify-center flex-wrap sm:justify-between">
                 {paginatedShoes.map((shoe: Shoe) => {
@@ -210,6 +204,8 @@ const ProductList = () => {
                   )
                 })}
               </div>
+
+              <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 10)} dataLimit={9} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
             </div>
           )}
         </div>

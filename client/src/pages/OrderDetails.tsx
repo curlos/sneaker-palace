@@ -45,12 +45,12 @@ const OrderDetails = () => {
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       order ? (
-        <div className="p-10">
+        <div className="p-10 sm:px-3">
           <div className="text-3xl mb-3">Order Details</div>
-          <span className="border-0 border-r border-gray-300 pr-3">Ordered on {moment(order.orderDate).format('MMMM Do YYYY')}</span>
-          <span className="px-3">Order# {order._id}</span>
+          <span className="border-0 border-r border-gray-300 pr-3 sm:border-none">Ordered on {moment(order.orderDate).format('MMMM Do YYYY')}</span>
+          <span className="px-3 sm:block sm:px-0">Order# {order._id}</span>
 
-          <div className="py-4 flex">
+          <div className="py-4 flex sm:flex-col sm:gap-4">
             <div className="flex-2">
               <div className="font-bold">Shipping Address</div>
               <div>{user.firstName} {user.lastName}</div>

@@ -38,7 +38,7 @@ const MoreShoes = () => {
 
   return (
     loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap sm:justify-between">
         {shoes?.map((shoe) => <SmallShoe shoe={shoe} />)}
       </div>
     )

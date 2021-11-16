@@ -100,12 +100,12 @@ const PaymentSuccess = () => {
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
-      <div className="px-24 py-7 h-screen">
+      <div className="px-24 py-7 h-screen sm:px-4">
         <div className="text-lg">
           <div className="text-4xl">Hello {user.firstName} {user.lastName},</div>
           <div>We'll email you an order confirmation with details and tracking info.</div>
 
-          <div className="flex gap-3 mt-3">
+          <div className="flex gap-3 mt-3 sm:flex-col">
             <button className="bg-black p-4 text-white rounded-full">
               <Link to="/shoes" className="">Continue Shopping</Link>
             </button>

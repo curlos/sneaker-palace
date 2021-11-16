@@ -128,7 +128,7 @@ const FullShoePage = () => {
             <div className="flex sm:block">
               <div className="flex-3">
                 {shoe && shoe.image && shoe.image["360"].length > 0 ? (
-                  <div>
+                  <div className="sm:px-4">
                     <img src={shoe?.image["360"][imageNum]} alt={shoe.name} />
                     <input type="range" id="volume" name="volume" value={imageNum} onChange={(e) => setImageNum(Number(e.target.value))} min="0" max={shoe.image["360"].length - 1} className="w-full"></input>
                   </div>
@@ -137,7 +137,7 @@ const FullShoePage = () => {
                 )}
               </div>
 
-              <div className="flex-2 p-10">
+              <div className="flex-2 p-10 sm:p-4">
                 <div className="text-2xl">{shoe.name}</div>
                 <div className="text-xl text-red-800">${shoe.retailPrice}</div>
                 <div className="my-5">{`SELECT US ${shoe?.gender?.toUpperCase()}S`}</div>
@@ -151,12 +151,12 @@ const FullShoePage = () => {
                   })}
                 </div>
 
-                <div className="flex justify-center flex-wrap sm:block">
-                  <button className="bg-black text-white rounded-full flex-2 py-3 mr-5 my-5 hover:bg-gray-700 sm:w-full sm:mb-0" onClick={handleAddToCart}>
+                <div className="flex justify-between sm:block gap-2">
+                  <button className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 w-1/2 sm:w-full sm:mb-0" onClick={handleAddToCart}>
                     Add to Bag
                   </button>
 
-                  <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full flex-2 py-3 mr-5 my-5 hover:border-gray-600 sm:w-full sm:mb-0" onClick={handleFavorite}>
+                  <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3  my-5 hover:border-gray-600 w-1/2 sm:w-full sm:mb-0" onClick={handleFavorite}>
                     {user && shoe?._id && user?.favorites?.includes(shoe?._id) ? <span className="inline-flex items-center"> <HeartSolid className="mr-2 h-5 w-5" /></span> : <span className="inline-flex items-center"> <HeartOutline className="mr-2 h-5 w-5" /></span>}
                     {shoe?.favorites?.length}
                   </button>
