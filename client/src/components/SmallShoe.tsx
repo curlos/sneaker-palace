@@ -45,9 +45,9 @@ const SmallShoe = ({ shoe }: Props) => {
 
   return (
     loading ? <SmallShoeSkeleton /> : (
-      <Link to={`/shoe/${shoe.shoeID}`} className="w-4/12">
-        <div className="flex flex-col wm-5 bg-white cursor-pointer mr-5 mb-5 px-3 ">
-          <img src={shoe.image.original} alt={shoe.name} className="h-9/12 w-9/12" />
+      <Link to={`/shoe/${shoe.shoeID}`} className="w-4/12 sm:w-5/12">
+        <div className="flex flex-col bg-white cursor-pointer mr-5 mb-5 px-3 sm:mr-0">
+          <img src={shoe.image.original} alt={shoe.name} className="h-9/12 w-9/12 sm:w-full" />
           <div className="font-medium">{shoe.name}</div>
           <div className="text-gray-500"><span className="capitalize">{shoe.gender}'s</span> Shoe</div>
           <div className="text-gray-500"><span className="capitalize">{shoe.colorway}</span></div>

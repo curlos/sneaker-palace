@@ -127,6 +127,7 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       let API_URL = `http://localhost:8888/shoes`
 
@@ -195,14 +196,14 @@ const ProductList = () => {
       <div className="flex">
         <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES} />
 
-        <div className="flex-10 p-4">
+        <div className="flex-10 p-4 sm:p-0">
           <SortDropdown sortType={sortType} setSortType={setSortType} />
           {loading ? <div className="flex justify-center h-screen"><CircleLoader size={16} /></div> : (
             <div>
 
-              <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 10)} dataLimit={10} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
+              <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 10)} dataLimit={9} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
 
-              <div className="flex justify-center flex-wrap">
+              <div className="flex justify-center flex-wrap sm:justify-between">
                 {paginatedShoes.map((shoe: Shoe) => {
                   return (
                     <SmallShoe key={shoe.shoeID} shoe={shoe} />

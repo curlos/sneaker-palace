@@ -122,10 +122,10 @@ const FullShoePage = () => {
   return (
 
     <div>
-      <div className="p-5 px-28 w-full h-full">
+      <div className="p-5 px-28 w-full h-full sm:px-0">
         <div className="w-full h-full">
           {loading ? <FullShoeSkeleton /> : (
-            <div className="flex">
+            <div className="flex sm:block">
               <div className="flex-3">
                 {shoe && shoe.image && shoe.image["360"].length > 0 ? (
                   <div>
@@ -141,22 +141,22 @@ const FullShoePage = () => {
                 <div className="text-2xl">{shoe.name}</div>
                 <div className="text-xl text-red-800">${shoe.retailPrice}</div>
                 <div className="my-5">{`SELECT US ${shoe?.gender?.toUpperCase()}S`}</div>
-                <div className="flex flex-wrap">
+                <div className="flex flex-wrap box-border justify-between">
                   {SHOE_SIZES.map((shoeSize) => {
                     return (
-                      <div className={`cursor-pointer text-center border py-2 mb-2 mr-2 hover:border-gray-600 h-15 w-20 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
+                      <div className={`box-border cursor-pointer text-center border py-2  hover:border-gray-600 w-4/12 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
                         {shoeSize}
                       </div>
                     )
                   })}
                 </div>
 
-                <div className="flex justify-center flex-wrap">
-                  <button className="bg-black text-white rounded-full flex-2 py-3 mr-5 my-5 hover:bg-gray-700" onClick={handleAddToCart}>
+                <div className="flex justify-center flex-wrap sm:block">
+                  <button className="bg-black text-white rounded-full flex-2 py-3 mr-5 my-5 hover:bg-gray-700 sm:w-full sm:mb-0" onClick={handleAddToCart}>
                     Add to Bag
                   </button>
 
-                  <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full flex-2 my-5 hover:border-gray-600" onClick={handleFavorite}>
+                  <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full flex-2 py-3 mr-5 my-5 hover:border-gray-600 sm:w-full sm:mb-0" onClick={handleFavorite}>
                     {user && shoe?._id && user?.favorites?.includes(shoe?._id) ? <span className="inline-flex items-center"> <HeartSolid className="mr-2 h-5 w-5" /></span> : <span className="inline-flex items-center"> <HeartOutline className="mr-2 h-5 w-5" /></span>}
                     {shoe?.favorites?.length}
                   </button>
@@ -219,8 +219,8 @@ const FullShoePage = () => {
           )}
 
           {loading ? <div className="flex justify-center"><CircleLoader size={16} /></div> : (
-            <div className="border-t border-gray-300 flex pt-8">
-              <div className="mr-12 flex-2">
+            <div className="border-t border-gray-300 flex pt-8 sm:block sm:px-4">
+              <div className="mr-12 flex-2 sm:mb-10">
                 <div className="text-2xl font-bold">Customer reviews</div>
                 <div className="flex gap-2 items-center">
                   <StarRatingComponent
@@ -254,16 +254,18 @@ const FullShoePage = () => {
                 </div>
               </div>
 
-              <div className="flex-8">
-                <div className="text-2xl font-bold mb-4">
-                  Top reviews from the United States
-                </div>
+              {shoeRatings.length > 0 ? (
+                <div className="flex-8">
+                  <div className="text-2xl font-bold mb-4">
+                    Top reviews from the United States
+                  </div>
 
 
-                <div>
-                  {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />)}
+                  <div>
+                    {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />)}
+                  </div>
                 </div>
-              </div>
+              ) : null}
             </div>
           )}
 

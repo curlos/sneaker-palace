@@ -42,7 +42,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
   }
 
   return (
-    <aside className="top-0 p-5 w-full flex-2 flex-grow-1 overflow-y-auto bg-white">
+    <aside className="top-0 p-5 w-full flex-2 flex-grow-1 overflow-y-auto bg-white sm:hidden">
 
       <div className="border-0 border-b border-solid border-gray-300 py-3">
 
