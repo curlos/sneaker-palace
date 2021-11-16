@@ -14,7 +14,7 @@ const getAllBrands = async () => {
       'x-rapidapi-key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f'
     }
   };
-  
+
   try {
     const response = await axios.request(options)
     const allBrands = await response.data.results
@@ -24,35 +24,34 @@ const getAllBrands = async () => {
   }
 }
 
-const addShoeToDatabase = async (options: Object, collectionName: String) => {
-  
+const addShoesToDatabase = async (options: Object) => {
   try {
     const response = await axios.request(options)
-    const brandShoes = response.data.results
+    const shoes = response.data.results
 
-    brandShoes.forEach(async (shoe: any) => {
-      const {id, sku, brand, name, colorway, gender, silhouette, releaseYear, releaseDate, retailPrice, estimatedMarketValue, story, image, links} = shoe
+    shoes.forEach(async (shoe: any) => {
+      const { id, sku, brand, name, colorway, gender, silhouette, releaseYear, releaseDate, retailPrice, estimatedMarketValue, story, image, links } = shoe
 
       const newShoe = new Shoe(
         {
-          shoeID: id, 
-          sku, 
-          brand, 
-          name, 
-          colorway, 
-          gender, 
-          silhouette, 
-          releaseYear, 
-          releaseDate, 
-          retailPrice, 
-          estimatedMarketValue, 
-          story, 
+          shoeID: id,
+          sku,
+          brand,
+          name,
+          colorway,
+          gender,
+          silhouette,
+          releaseYear,
+          releaseDate,
+          retailPrice,
+          estimatedMarketValue,
+          story,
           image: {
             "360": image["360"],
             original: image.original,
             small: image.small,
             thumbnail: image.thumbnail,
-          }, 
+          },
           links,
         }
       )
@@ -64,6 +63,8 @@ const addShoeToDatabase = async (options: Object, collectionName: String) => {
         if (err) return console.error(err)
         console.log(result.name + " saved to sneaker collection")
       })
+
+      console.log("All shoes have been added to database!")
     })
 
     return response.data.results
@@ -76,14 +77,14 @@ const getShoesFromBrand = async (brand: String) => {
   const options = {
     method: 'GET',
     url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
-    params: {limit: '20', brand: brand},
+    params: { limit: '20', brand: brand },
     headers: {
       'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
       'x-rapidapi-key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f'
     }
   };
 
-  return addShoeToDatabase(options, brand)
+  return addShoesToDatabase(options)
 }
 
 const getShoesFromAllBrands = async () => {
@@ -102,8 +103,23 @@ const getShoesFromAllBrands = async () => {
   console.log('All shoes have been retrieved!')
 }
 
+const addAllShoes = async (pageNum: number) => {
+  const options = {
+    method: 'GET',
+    url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
+    params: { limit: '100', page: pageNum },
+    headers: {
+      'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
+      'x-rapidapi-key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f'
+    }
+  }
+
+  return addShoesToDatabase(options)
+}
+
 module.exports = {
   getAllBrands,
   getShoesFromBrand,
   getShoesFromAllBrands,
+  addAllShoes
 }

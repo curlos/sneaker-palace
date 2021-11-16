@@ -103,7 +103,7 @@ export default function CheckoutForm() {
         <div className="border-0 border-b border-solid border-gray-300 p-5 text-sm">
           <div className="flex justify-between mb-1">
             <div>Subtotal</div>
-            <div>$235.94</div>
+            <div>${total}.00</div>
           </div>
 
           <div className="flex justify-between mb-1">
@@ -113,12 +113,12 @@ export default function CheckoutForm() {
 
           <div className="flex justify-between mb-3">
             <div>Estimated Tax</div>
-            <div>$16.52</div>
+            <div>$0.00</div>
           </div>
 
           <div className="flex justify-between">
             <div className="font-bold">TOTAL</div>
-            <div>$252.46</div>
+            <div>${total}.00</div>
           </div>
         </div>
 

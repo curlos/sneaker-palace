@@ -168,6 +168,10 @@ const FullShoePage = () => {
                 </div>
 
                 <div>
+                  <span className="font-bold">Brand:</span> {shoe?.brand}
+                </div>
+
+                <div>
                   <span className="font-bold">Colorway:</span> {shoe?.colorway}
                 </div>
 
