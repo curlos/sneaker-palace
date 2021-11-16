@@ -45,16 +45,16 @@ const AccountDetails = () => {
 
     console.log(body)
 
-    const response = await axios.put(`http://localhost:8888/users/${user._id}`, body)
+    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/${user._id}`, body)
     console.log(response.data)
-    
+
     if (!response.data.error) {
       setShowSuccessMessage(true)
-      setTimeout(() => {setShowSuccessMessage(false)}, 3000)
+      setTimeout(() => { setShowSuccessMessage(false) }, 3000)
       dispatch(updateUser(response.data))
     } else {
       setShowFailureMessage(true)
-      setTimeout(() => {setShowFailureMessage(false)}, 3000)
+      setTimeout(() => { setShowFailureMessage(false) }, 3000)
     }
   }
 
@@ -67,49 +67,49 @@ const AccountDetails = () => {
   console.log(file)
 
   return (
-    <div className="w-1/2">
+    <div className="w-1/2 sm:w-full sm:mt-8">
       <div className="text-2xl font-medium mb-4">Account Details</div>
 
       <form>
         <div className="mb-4">
-        {(file || profilePic) ? (
-          <img src={file ? URL.createObjectURL(file) : `http://localhost:8888${profilePic}` } alt="" className="h-150 w-150 rounded-full object-cover mb-3"/>
-        ) : 
-          <img src={DEFAULT_AVATAR} alt="" className="h-150 w-150 rounded-full object-cover mb-3"/>
-        }
+          {(file || profilePic) ? (
+            <img src={file ? URL.createObjectURL(file) : `${process.env.REACT_APP_DEV_URL}${profilePic}`} alt="" className="h-150 w-150 rounded-full object-cover mb-3" />
+          ) :
+            <img src={DEFAULT_AVATAR} alt="" className="h-150 w-150 rounded-full object-cover mb-3" />
+          }
 
           <input onChange={handleSelectFile} type="file" accept="image/*"></input>
         </div>
 
         <div className="mb-4">
           <div className="mb-1">First Name</div>
-          <input type="text" placeholder="Email" className="rounded-lg w-full" value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
+          <input type="text" placeholder="Email" className="rounded-lg w-full" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
         </div>
 
         <div className="mb-4">
           <div className="mb-1">Last Name</div>
-          <input type="text" placeholder="Last Name" className="rounded-lg w-full" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
+          <input type="text" placeholder="Last Name" className="rounded-lg w-full" value={lastName} onChange={(e) => setLastName(e.target.value)} />
         </div>
 
         <div className="mb-4">
           <div className="mb-1">Email</div>
-          <input type="text" placeholder="Email" className="rounded-lg w-full" value={email} onChange={(e) => setEmail(e.target.value)}/>
+          <input type="text" placeholder="Email" className="rounded-lg w-full" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
 
         <div className="mb-4">
           <div className="mb-1">Password</div>
-          <input type="password" placeholder="Password" className="rounded-lg w-full" value={'*********'} onClick={() => setShowModal(true)}/>
+          <input type="password" placeholder="Password" className="rounded-lg w-full" value={'*********'} onClick={() => setShowModal(true)} />
         </div>
       </form>
 
-      { showSuccessMessage ? <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'}/> : null}
-      { showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'}/> : null}
+      {showSuccessMessage ? <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'} /> : null}
+      {showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'} /> : null}
 
       <div className="flex justify-end">
         <button onClick={handleEdit} className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700">Save</button>
       </div>
 
-      {showModal ? <NewPasswordModal showModal={showModal} setShowModal={setShowModal}/> : null}
+      {showModal ? <NewPasswordModal showModal={showModal} setShowModal={setShowModal} /> : null}
     </div>
   )
 }

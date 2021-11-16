@@ -22,7 +22,7 @@ const OrderDetails = () => {
 
   useEffect(() => {
     const fetchFromAPI = async () => {
-      const response = await axios.get(`http://localhost:8888/orders/${id}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/orders/${id}`)
       const newShoes = await getAllShoes(response.data.products)
       setShoes(newShoes)
       setOrder(response.data)
@@ -36,7 +36,7 @@ const OrderDetails = () => {
     const newShoes = []
     for (let product of products) {
       const { productID } = product
-      const response = await axios.get(`http://localhost:8888/shoes/${productID}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${productID}`)
       newShoes.push(response.data)
     }
     return newShoes

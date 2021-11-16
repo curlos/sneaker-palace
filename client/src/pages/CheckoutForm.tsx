@@ -20,6 +20,7 @@ export default function CheckoutForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (!stripe) {
       return;
     }

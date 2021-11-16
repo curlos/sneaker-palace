@@ -12,7 +12,7 @@ const MoreShoes = () => {
 
   useEffect(() => {
     const fetchShoes = async () => {
-      const response = await axios.get(`http://localhost:8888/shoes`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes`)
       const randomShoes = await getRandomShoes(response.data)
       setShoes(randomShoes)
       setLoading(false)

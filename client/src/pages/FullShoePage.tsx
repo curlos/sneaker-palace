@@ -45,7 +45,7 @@ const FullShoePage = () => {
 
     const fetchFromAPI = async () => {
       console.log(shoeID)
-      const response = await axios.get(`http://localhost:8888/shoes/${shoeID}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`)
       const ratings = await fetchAllRatings(response.data.ratings)
       setShoe(response.data)
       setShoeRatings(ratings)
@@ -68,12 +68,11 @@ const FullShoePage = () => {
       const body = { products: [...currentProducts, newProduct] }
       console.log(body)
 
-      const response = await axios.put(`http://localhost:8888/cart/${currentCart?._id}`, body)
+      const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
       const newCart = response.data
       console.log(newCart)
       dispatch(updateCart(newCart))
     }
-    setShowModal(true)
   }
 
   const handleFavorite = async () => {
@@ -85,7 +84,7 @@ const FullShoePage = () => {
       shoeID: shoeID,
       userID: user['_id']
     }
-    const response = await axios.put('http://localhost:8888/shoes/favorite', body)
+    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/shoes/favorite`, body)
     console.log(response.data)
     dispatch(updateUser(response.data.updatedUser))
     setShoe(response.data.updatedShoe)
@@ -96,10 +95,10 @@ const FullShoePage = () => {
     console.log(ratingIDs)
     if (ratingIDs) {
       for (let ratingID of ratingIDs) {
-        const response = await axios.get(`http://localhost:8888/rating/${ratingID}`)
+        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${ratingID}`)
         console.log(response.data)
         if (response.data !== null) {
-          const authorResponse = await axios.get(`http://localhost:8888/users/${response.data.userID}`)
+          const authorResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`)
           ratings.push({ ...response.data, postedByUser: authorResponse.data })
         }
       }
@@ -122,7 +121,7 @@ const FullShoePage = () => {
   return (
 
     <div>
-      <div className="p-5 px-28 w-full h-full sm:px-0">
+      <div className="p-5 px-28 w-full h-full sm:px-0 md:px-6">
         <div className="w-full h-full">
           {loading ? <FullShoeSkeleton /> : (
             <div className="flex sm:block">

@@ -20,9 +20,9 @@ const useQuery = () => {
 
 
 const ProductList = () => {
-
-
   const query = useQuery()
+
+  console.log(process.env)
 
   const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
@@ -129,10 +129,10 @@ const ProductList = () => {
   useEffect(() => {
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
-      let API_URL = `http://localhost:8888/shoes`
+      let API_URL = `${process.env.REACT_APP_DEV_URL}/shoes`
 
       if (query.get('query')) {
-        API_URL = `http://localhost:8888/shoes/query/${query.get('query')}`
+        API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}`
       }
 
       const response = await axios.get(API_URL)

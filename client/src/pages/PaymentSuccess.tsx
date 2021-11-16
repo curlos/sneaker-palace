@@ -39,7 +39,7 @@ const PaymentSuccess = () => {
 
           if (paymentIntent && paymentIntent.paymentIntent) {
             console.log('2')
-            axios.get(`http://localhost:8888/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`).then((result) => {
+            axios.get(`${process.env.REACT_APP_DEV_URL}/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`).then((result) => {
               console.log(result)
               setPaymentInfo({ paymentMethod: result.data, paymentIntentID: paymentIntent.paymentIntent.id })
             })
@@ -70,7 +70,7 @@ const PaymentSuccess = () => {
           console.log(body)
 
           try {
-            const response: any = await axios.post(`http://localhost:8888/orders/`, body)
+            const response: any = await axios.post(`${process.env.REACT_APP_DEV_URL}/orders/`, body)
 
             console.log(response.data)
 

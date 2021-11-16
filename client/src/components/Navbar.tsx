@@ -35,7 +35,7 @@ const Navbar = ({ setShowModal }: Props) => {
     const fetchFromAPI = async () => {
 
       if (user && Object.keys(user).length > 0) {
-        const response = await axios.get(`http://localhost:8888/cart/find/${user?._id}`)
+        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/cart/find/${user?._id}`)
         const newCart = response.data
         dispatch(updateCart(newCart))
       } else {

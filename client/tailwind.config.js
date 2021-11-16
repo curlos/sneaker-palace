@@ -62,7 +62,7 @@ module.exports = {
       extend: {
         backgroundImage: {
           'login-image': "url('https://i.pinimg.com/originals/a1/b6/80/a1b68042f24f520d7a1e505bde40a24a.jpg')",
-          'kobe-hof-shoes': "url('http://localhost:8888/assets/kobes.jpeg')",
+          'kobe-hof-shoes': `url('${process.env.REACT_APP_DEV_URL}/assets/kobes.jpeg')`,
         },
         colors: {
           brown: {

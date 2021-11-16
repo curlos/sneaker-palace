@@ -15,7 +15,7 @@ interface Props {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NewPasswordModal = ({ showModal, setShowModal}: Props) => {
+const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -40,16 +40,16 @@ const NewPasswordModal = ({ showModal, setShowModal}: Props) => {
 
     console.log(body)
 
-    const response = await axios.put(`http://localhost:8888/users/password/${user._id}`, body)
+    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/password/${user._id}`, body)
     console.log(response.data)
-    
+
     if (!response.data.error) {
       setShowSuccessMessage(true)
-      setTimeout(() => {setShowSuccessMessage(false)}, 3000)
+      setTimeout(() => { setShowSuccessMessage(false) }, 3000)
       dispatch(updateUser(response.data))
     } else {
       setShowFailureMessage(true)
-      setTimeout(() => {setShowFailureMessage(false)}, 3000)
+      setTimeout(() => { setShowFailureMessage(false) }, 3000)
     }
   }
 
@@ -58,7 +58,7 @@ const NewPasswordModal = ({ showModal, setShowModal}: Props) => {
       <form className="w-1/2 h-10/12 bg-white rounded-3xl p-12 placeholder-gray-400">
         <div className="flex justify-between text-lg">
           <div>Edit password</div>
-          <XIcon className="h-5 w-5 text-gray-600 hover:text-gray-800 cursor-pointer" onClick={() => setShowModal(false)}/>
+          <XIcon className="h-5 w-5 text-gray-600 hover:text-gray-800 cursor-pointer" onClick={() => setShowModal(false)} />
         </div>
         <div className="text-gray-400">Current Password*</div>
         <input type="text" className="w-full rounded-lg mb-4 placeholder-gray-400" placeholder="Current Password*" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} onClick={handleBubblingDownClick}></input>
@@ -68,8 +68,8 @@ const NewPasswordModal = ({ showModal, setShowModal}: Props) => {
         <div className="text-gray-400">Confirm New Password*</div>
         <input type="text" className="w-full rounded-lg mb-4 placeholder-gray-400" placeholder="Confirm New Password*" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} onClick={handleBubblingDownClick}></input>
 
-        { showSuccessMessage ? <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'}/> : null}
-        { showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'}/> : null}
+        {showSuccessMessage ? <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'} /> : null}
+        {showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'} /> : null}
 
         <div className="flex justify-end">
           <button onClick={handleEditPassword} className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700">Save</button>

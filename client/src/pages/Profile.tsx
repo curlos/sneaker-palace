@@ -12,11 +12,11 @@ const Profile = () => {
   const [profileUser, setProfileUser] = useState<Partial<UserType>>({})
   const [profileUserReviews, setProfileUserReviews] = useState<Array<IRating>>([])
   const [loading, setLoading] = useState(true)
-  
+
 
   useEffect(() => {
     const fetchProfileUserFromAPI = async () => {
-      const response = await axios.get(`http://localhost:8888/users/${userID}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${userID}`)
       const newProfileUserReviews = await fetchAllReviews(response.data.ratings)
       setProfileUser(response.data)
       setProfileUserReviews(newProfileUserReviews)
@@ -31,11 +31,11 @@ const Profile = () => {
     console.log(reviewIDs)
     if (reviewIDs) {
       for (let reviewID of reviewIDs) {
-        const response = await axios.get(`http://localhost:8888/rating/${reviewID}`)
+        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${reviewID}`)
         console.log(response.data)
         if (response.data !== null) {
-          const authorResponse = await axios.get(`http://localhost:8888/users/${response.data.userID}`)
-          ratings.push({...response.data, postedByUser: authorResponse.data})
+          const authorResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`)
+          ratings.push({ ...response.data, postedByUser: authorResponse.data })
         }
       }
     }
@@ -44,7 +44,7 @@ const Profile = () => {
 
   console.log(profileUser)
   console.log(profileUserReviews)
-  
+
 
   return (
     loading ? <div>Loading...</div> : (
@@ -52,8 +52,8 @@ const Profile = () => {
         <div>
           <div className="flex items-center mb-5 border border-gray-300 p-8 rounded-lg bg-white">
             <div className="">
-            
-          <img src={profileUser.profilePic ? `http://localhost:8888${profileUser.profilePic}` : DEFAULT_AVATAR} alt="" className="h-36 w-36 rounded-full object-cover mb-3"/>
+
+              <img src={profileUser.profilePic ? `${process.env.REACT_APP_DEV_URL}${profileUser.profilePic}` : DEFAULT_AVATAR} alt="" className="h-36 w-36 rounded-full object-cover mb-3" />
             </div>
             <div className="text-2xl font-medium ml-2">{profileUser?.firstName} {profileUser?.lastName}</div>
           </div>
@@ -86,7 +86,7 @@ const Profile = () => {
           <div className="">
             <div className="font-medium border border-gray-300 border-b-0 rounded-lg bg-white p-3">Reviews</div>
             <div className="">
-              {profileUserReviews.map((review) => <SmallReview review={review} author={profileUser}/>)}
+              {profileUserReviews.map((review) => <SmallReview review={review} author={profileUser} />)}
             </div>
           </div>
         </div>

@@ -15,7 +15,7 @@ const CheckoutProduct = ({ product, type }: Props) => {
 
   useEffect(() => {
     const fetchFromAPI = async () => {
-      const response = await axios.get(`http://localhost:8888/shoes/${product.productID}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${product.productID}`)
       setShoe(response.data)
       setLoading(false)
     }

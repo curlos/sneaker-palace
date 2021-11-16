@@ -15,11 +15,11 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    
+
     setLoading(true)
 
     const fetchFromAPI = async () => {
-      const response = await axios.get(`http://localhost:8888/shoes/query/${searchText}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/query/${searchText}`)
       console.log(response.data)
       setShoes(response.data)
       setLoading(false)
@@ -28,7 +28,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) 
   }, [finalSearchText])
 
   return (
-    loading ? <div className="flex justify-center py-4"><CircleLoader size={16}/></div> : (
+    loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (
       <div>
 
         <div className="flex justify-between p-6 border-0 border-b border-solid border-gray-300 text-sm">
@@ -38,7 +38,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) 
 
         <div className="p-6 pt-0">
           <div className="py-4 border-0 border-b border-solid border-gray-300 text-gray-500 text-sm">Results</div>
-          {shoes && shoes.slice(0, 5).map((shoe) => <ListShoe shoe={shoe} setShowModal={setShowModal}/>)}
+          {shoes && shoes.slice(0, 5).map((shoe) => <ListShoe shoe={shoe} setShowModal={setShowModal} />)}
         </div>
       </div>
     )

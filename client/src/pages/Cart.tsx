@@ -10,6 +10,10 @@ const KEY = process.env.REACT_APP_STRIPE
 
 const Cart = () => {
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart, total } = useSelector((state: RootState) => state.cart)
 

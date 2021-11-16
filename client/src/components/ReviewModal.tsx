@@ -18,7 +18,7 @@ interface Props {
   review: IRating
 }
 
-const ReviewModal = ({ showModal, setShowModal, review}: Props) => {
+const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -43,16 +43,16 @@ const ReviewModal = ({ showModal, setShowModal, review}: Props) => {
 
     console.log(body)
 
-    const response = await axios.put(`http://localhost:8888/users/password/${user._id}`, body)
+    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/password/${user._id}`, body)
     console.log(response.data)
-    
+
     if (!response.data.error) {
       setShowSuccessMessage(true)
-      setTimeout(() => {setShowSuccessMessage(false)}, 3000)
+      setTimeout(() => { setShowSuccessMessage(false) }, 3000)
       dispatch(updateUser(response.data))
     } else {
       setShowFailureMessage(true)
-      setTimeout(() => {setShowFailureMessage(false)}, 3000)
+      setTimeout(() => { setShowFailureMessage(false) }, 3000)
     }
   }
 
@@ -61,13 +61,13 @@ const ReviewModal = ({ showModal, setShowModal, review}: Props) => {
       <div className="w-3/4 h-10/12 placeholder-gray-400">
 
         <div className="w-full flex justify-end rounded-t-2xl bg-gray-300 border-0 border-b border-solid border-gray-400 p-3">
-          <XIcon className="h-6 w-6 cursor-pointer" onClick={() => setShowModal(false)}/>
+          <XIcon className="h-6 w-6 cursor-pointer" onClick={() => setShowModal(false)} />
         </div>
-        
+
         <div className="overflow-y bg-white">
           <div className="p-3 flex">
             <div className="flex-2">
-              <img src={`http://localhost:8888${review.photo}`} alt="" className="mr-4" />
+              <img src={`${process.env.REACT_APP_DEV_URL}${review.photo}`} alt="" className="mr-4" />
             </div>
 
             <div className="flex-2 ml-4">
@@ -94,7 +94,7 @@ const ReviewModal = ({ showModal, setShowModal, review}: Props) => {
         </div>
 
         <div className="w-full flex justify-end rounded-b-2xl bg-white p-3 h-7">
-          
+
         </div>
       </div>
     </div>

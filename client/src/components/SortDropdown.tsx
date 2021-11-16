@@ -89,34 +89,6 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
                   </span>
                 )}
               </Menu.Item>
-
-              <Menu.Item>
-                {({ active }) => (
-                  <span
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                      'block px-4 py-2 text-sm cursor-pointer'
-                    )}
-                    onClick={() => setSortType('Most Likes')}
-                  >
-                    Most Likes
-                  </span>
-                )}
-              </Menu.Item>
-
-              <Menu.Item>
-                {({ active }) => (
-                  <span
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                      'block px-4 py-2 text-sm cursor-pointer'
-                    )}
-                    onClick={() => setSortType('Most Reviews')}
-                  >
-                    Most Reviews
-                  </span>
-                )}
-              </Menu.Item>
             </div>
           </Menu.Items>
         </Transition>

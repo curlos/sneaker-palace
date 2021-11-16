@@ -16,7 +16,7 @@ const Login = () => {
   useEffect(() => {
     window.scrollTo(0, 0)
   })
-  
+
   const handleLoginUser = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -25,11 +25,11 @@ const Login = () => {
       password,
     }
     console.log(body)
-    
+
     try {
       dispatch(loginStart())
-      const response = await axios.post(`http://localhost:8888/auth/login`, body)
-      
+      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/auth/login`, body)
+
       if (response.data) {
         dispatch(loginSuccess(response.data))
         const userCart = await fetchUserCart(response.data)
@@ -45,7 +45,7 @@ const Login = () => {
   }
 
   const fetchUserCart = async (loggedInUser: UserType) => {
-    const response = await axios.get(`http://localhost:8888/cart/find/${loggedInUser._id}`)
+    const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/cart/find/${loggedInUser._id}`)
 
     return response.data
   }

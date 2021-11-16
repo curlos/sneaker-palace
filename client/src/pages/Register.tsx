@@ -13,7 +13,7 @@ const Register = () => {
   useEffect(() => {
     window.scrollTo(0, 0)
   })
-  
+
   const handleRegisterUser = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -25,8 +25,8 @@ const Register = () => {
     }
     console.log(body)
     try {
-      const response = await axios.post(`http://localhost:8888/auth/register`, body)
-      const cartResponse = await axios.post(`http://localhost:8888/cart/${response.data._id}`)
+      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/auth/register`, body)
+      const cartResponse = await axios.post(`${process.env.REACT_APP_DEV_URL}/cart/${response.data._id}`)
       console.log(response.data)
       history.push('/')
     } catch (err) {

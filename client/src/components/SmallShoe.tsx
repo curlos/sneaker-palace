@@ -26,10 +26,10 @@ const SmallShoe = ({ shoe }: Props) => {
 
     if (ratingIDs) {
       for (let ratingID of ratingIDs) {
-        const response = await axios.get(`http://localhost:8888/rating/${ratingID}`)
+        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${ratingID}`)
 
         if (response.data !== null) {
-          const authorResponse = await axios.get(`http://localhost:8888/users/${response.data.userID}`)
+          const authorResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`)
           ratings.push({ ...response.data, postedByUser: authorResponse.data })
         }
       }

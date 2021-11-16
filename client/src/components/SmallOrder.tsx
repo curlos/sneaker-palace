@@ -25,7 +25,7 @@ const SmallOrder = ({ order }: Props) => {
     const newShoes = []
     for (let product of products) {
       const { productID } = product
-      const response = await axios.get(`http://localhost:8888/shoes/${productID}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${productID}`)
       newShoes.push(response.data)
     }
     return newShoes

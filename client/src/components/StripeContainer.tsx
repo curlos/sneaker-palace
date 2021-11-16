@@ -25,7 +25,7 @@ const StripeContainer = ({ children }: Props) => {
     // Create PaymentIntent as soon as the page loads
     const postToAPI = async () => {
       try {
-        const response: any = await axios.post("http://localhost:8888/checkout/create-payment-intent", {
+        const response: any = await axios.post(`${process.env.REACT_APP_DEV_URL}/checkout/create-payment-intent`, {
           items: currentCart.products,
           total: total
         })

@@ -29,7 +29,7 @@ const Favorites = () => {
 
     if (user.favorites) {
       for (let id of user.favorites) {
-        const response = await axios.get(`http://localhost:8888/shoes/objectID/${id}`)
+        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/objectID/${id}`)
         favorites.push(response.data)
       }
     }
@@ -39,16 +39,12 @@ const Favorites = () => {
 
   console.log(user)
   console.log(favoriteShoes)
-  
+
 
   return (
     loading ? <div>Loading...</div> : (
-      <div className="flex flex-wrap justify-center">
-        {favoriteShoes.map((shoe) => {
-          return (
-            <SmallShoe shoe={shoe} />
-          )
-        })}
+      <div className="flex flex-wrap justify-center min-h-screen">
+        {favoriteShoes.map((shoe) => shoe && <SmallShoe shoe={shoe} />)}
       </div>
     )
   )

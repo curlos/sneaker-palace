@@ -35,12 +35,12 @@ const ReviewForm = () => {
 
   useEffect(() => {
     const fetchFromAPI = async () => {
-      const response = await axios.get(`http://localhost:8888/shoes/${shoeID}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`)
       console.log(response.data)
       setShoe(response.data)
 
       if (reviewID) {
-        const reviewResponse = await axios.get(`http://localhost:8888/rating/${reviewID}`)
+        const reviewResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${reviewID}`)
         setReviewInfo({ ...reviewInfo, ...reviewResponse.data })
       } else {
         setReviewInfo({ ...reviewInfo, shoeID: response.data.shoeID })
@@ -65,7 +65,7 @@ const ReviewForm = () => {
         photo: imagePath
       }
 
-      const response = await axios.post(`http://localhost:8888/rating/rate`, body)
+      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/rating/rate`, body)
       console.log(response.data.errors)
 
       if (!response.data.errors) {
@@ -98,7 +98,7 @@ const ReviewForm = () => {
         photo: imagePath
       }
 
-      const response = await axios.put(`http://localhost:8888/rating/edit/${reviewID}`, body)
+      const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/edit/${reviewID}`, body)
       console.log(response.data)
 
       if (!response.data.errors) {
@@ -315,7 +315,7 @@ const ReviewForm = () => {
             <div className="flex-2 w-full sm:mb-5">
               <div className="text-gray-500 w-10/12">Upload photo</div>
               {(file || reviewInfo.photo) && (
-                <img src={file ? URL.createObjectURL(file) : `http://localhost:8888${reviewInfo.photo}`} alt="" className="h-150 object-cover my-3" />
+                <img src={file ? URL.createObjectURL(file) : `${process.env.REACT_APP_DEV_URL}${reviewInfo.photo}`} alt="" className="h-150 object-cover my-3" />
               )}
               <input onChange={handleSelectFile} type="file" accept="image/*" className="w-full"></input>
               <div className="text-sm text-gray-500 w-10/12 sm:w-full">Upload your .PNG or .JPG file</div>
