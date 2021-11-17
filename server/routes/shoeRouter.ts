@@ -7,20 +7,34 @@ const queryString = require('query-string');
 const Shoe = require('../models/Shoe')
 const User = require('../models/User')
 const { getFullURL } = require('../utils/getFullURL')
-const { addAllShoes } = require('../utils/sneakerV2_API')
+const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sneakerV2_API')
 
 
 const router = express.Router()
 
 router.get('/', async (req: Request, res: Response) => {
+  console.log('finding...')
   const allShoes = await Shoe.find({})
-  res.json(allShoes)
+    .select('shoeID image.original name gender colorway ratings retailPrice brand')
+    .lean().exec((err: any, results: any) => {
+      res.json(results)
+    })
 })
 
 router.get('/:shoeID', async (req: Request, res: Response) => {
+  console.log('searching...')
   const shoe = await Shoe.findOne({ shoeID: req.params.shoeID })
   res.json(shoe)
 })
+
+
+
+
+
+
+
+
+
 
 router.get('/objectID/:id', async (req: Request, res: Response) => {
   const shoe = await Shoe.findOne({ _id: req.params.id })
@@ -28,14 +42,8 @@ router.get('/objectID/:id', async (req: Request, res: Response) => {
 })
 
 router.get('/query/:queryString', async (req: Request, res: Response) => {
-  console.log(req.params.queryString)
-  const queryObject = queryString.parse(req)
-  console.log(queryObject)
-  console.log(queryObject.query)
-  console.log(queryObject.gender)
-
   const shoes = await Shoe
-    .find({ "name": { "$regex": req.params.queryString.trim(), "$options": "i" } })
+    .find({ "name": { "$regex": req.params.queryString.trim(), "$options": "i" } }).lean()
   console.log(shoes.length)
   res.json(shoes)
 })
@@ -72,6 +80,16 @@ router.put('/favorite', async (req: Request, res: Response) => {
 
 router.post('/newShoes', async (req: Request, res: Response) => {
   const result = await addAllShoes(Number(req.body.page))
+  res.json(result)
+})
+
+router.post('/newShoes/brand', async (req: Request, res: Response) => {
+  const result = await addAllShoesByBrand(req.body.brand)
+  res.json(result)
+})
+
+router.post('/newShoe', async (req: Request, res: Response) => {
+  const result = await addShoeByName(req.body.name)
   res.json(result)
 })
 

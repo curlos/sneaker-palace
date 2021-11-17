@@ -25,7 +25,7 @@ export const filterByBrand = (filters: any, shoesToFilter: Array<Shoe>) => {
     return shoesToFilter
   }
 
-  return shoesToFilter.filter((shoe: Shoe) => filters.brands[titleCase(shoe.brand)])
+  return shoesToFilter.filter((shoe: Shoe) => filters.brands[shoe.brand.toUpperCase()])
 }
 
 export const filterByGender = (filters: any, shoesToFilter: Array<Shoe>) => {

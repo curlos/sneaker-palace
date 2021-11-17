@@ -73,6 +73,58 @@ const addShoesToDatabase = async (options: Object) => {
   }
 }
 
+const addOneShoeToDatabase = async (options: Object) => {
+  try {
+    const response = await axios.request(options)
+    const shoes = response.data.results
+    const shoe = shoes[0]
+
+    console.log(shoes)
+
+    console.log(shoe)
+
+    const { id, sku, brand, name, colorway, gender, silhouette, releaseYear, releaseDate, retailPrice, estimatedMarketValue, story, image, links } = shoe
+
+    const newShoe = new Shoe(
+      {
+        shoeID: id,
+        sku,
+        brand,
+        name,
+        colorway,
+        gender,
+        silhouette,
+        releaseYear,
+        releaseDate,
+        retailPrice,
+        estimatedMarketValue,
+        story,
+        image: {
+          "360": image["360"],
+          original: image.original,
+          small: image.small,
+          thumbnail: image.thumbnail,
+        },
+        links,
+      }
+    )
+
+    console.log('Saving: ')
+
+    await newShoe.save((err: Error, result: typeof Shoe) => {
+      console.log(result)
+      if (err) return console.error(err)
+      console.log(result.name + " saved to sneaker collection")
+    })
+
+    return response.data.results
+  } catch (err) {
+    console.log('rip')
+    console.error(err)
+  }
+}
+
+
 const getShoesFromBrand = async (brand: String) => {
   const options = {
     method: 'GET',
@@ -117,9 +169,39 @@ const addAllShoes = async (pageNum: number) => {
   return addShoesToDatabase(options)
 }
 
+const addAllShoesByBrand = async (brand: string) => {
+  const options = {
+    method: 'GET',
+    url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
+    params: { limit: '100', brand: brand },
+    headers: {
+      'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
+      'x-rapidapi-key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f'
+    }
+  };
+
+  return addShoesToDatabase(options)
+}
+
+const addShoeByName = async (name: string) => {
+  const options = {
+    method: 'GET',
+    url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
+    params: { limit: '100', name: 'Nike Kobe 5 Protro Undefeated Hall of Fame' },
+    headers: {
+      'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
+      'x-rapidapi-key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f'
+    }
+  };
+
+  return addOneShoeToDatabase(options)
+}
+
 module.exports = {
   getAllBrands,
   getShoesFromBrand,
   getShoesFromAllBrands,
-  addAllShoes
+  addAllShoes,
+  addShoeByName,
+  addAllShoesByBrand
 }
