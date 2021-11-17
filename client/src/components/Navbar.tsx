@@ -50,18 +50,18 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
   console.log(user)
 
   return (
-    <div className="sticky top-0 z-10 w-full bg-white flex justify-between items-center p-5 border-b border-gray-300">
+    <div className="sticky top-0 z-10 w-full bg-white flex justify-between items-center p-4 border-b border-gray-300">
       <div className="flex items-center w-6/12">
-        <div><Link to="/">Shoe Shop</Link></div>
+        <div><Link to="/"><img src="/assets/icon.png" className="h-10 w-10" /></Link></div>
       </div>
 
       <div className="flex items-center gap-5">
-        <Link to="/shoes" className="sm:hidden">Sneakers</Link>
-        <div className="sm:hidden">
+        <Link to="/shoes" className="lg:hidden">Sneakers</Link>
+        <div className="lg:hidden">
           <Link to={{ pathname: "/shoes", state: { gender: 'men' } }} onClick={() => setShowSidenavModal(false)}>Men</Link>
         </div>
 
-        <div className="sm:hidden">
+        <div className="lg:hidden">
           <Link to={{ pathname: "/shoes", state: { gender: 'women' } }} onClick={() => setShowSidenavModal(false)}>Women</Link>
         </div>
         {user && Object.keys(user).length > 0 ? (
@@ -70,8 +70,8 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
           </span>)
           : (
             <span className="flex items-center gap-5">
-              <Link to="/login" className="sm:hidden">Login</Link>
-              <Link to="/register" className="sm:hidden">Sign Up</Link>
+              <Link to="/login" className="lg:hidden">Login</Link>
+              <Link to="/register" className="lg:hidden">Sign Up</Link>
             </span>
           )}
         <SearchIcon className="h-5 w-5 cursor-pointer" onClick={() => setShowSearchModal(true)} />
@@ -80,7 +80,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
           <span className="z-10 inline-flex justify-center items-center text-white text-sm bg-red-800 h-5 w-5 border rounded-full absolute ml-4">{currentCart && currentCart.products && currentCart?.products?.length}</span>
         </Link>
 
-        <MenuIcon className="h-5 w-5 cursor-pointer" onClick={() => setShowSidenavModal(true)} />
+        <MenuIcon className="h-5 w-5 cursor-pointer hidden lg:block" onClick={() => setShowSidenavModal(true)} />
       </div>
     </div>
   )

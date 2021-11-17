@@ -17,7 +17,7 @@ const classNames = (...classes: Array<string>) => {
 export const SortDropdown = ({ sortType, setSortType }: Props) => {
 
   return (
-    <div className="flex justify-end sm:pr-3 sm:pt-3">
+    <div className="flex justify-end">
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="flex items-center">

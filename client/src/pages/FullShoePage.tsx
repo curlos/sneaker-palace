@@ -121,7 +121,7 @@ const FullShoePage = () => {
   return (
 
     <div>
-      <div className="p-5 px-28 w-full h-full sm:px-0 md:px-6">
+      <div className="p-5 px-28 w-full h-full sm:px-0 lg:px-6">
         <div className="w-full h-full">
           {loading ? <FullShoeSkeleton /> : (
             <div className="flex sm:block">

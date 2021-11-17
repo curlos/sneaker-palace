@@ -30,7 +30,6 @@ const SmallReview = ({ review, author }: Props) => {
     fetchFromAPI()
   }, [])
 
-
   return (
     <div className="border border-gray-300 rounded-lg bg-white mb-4">
       <div className="flex items-center gap-3 text-sm my-3 border-0 border-b border-solid border-gray-300 p-3">
@@ -45,7 +44,7 @@ const SmallReview = ({ review, author }: Props) => {
           <StarRatingComponent
             name={'Rating'}
             value={review.ratingNum}
-            starCount={5}
+            starCount={review.ratingNum}
             editing={false}
             starColor={'#F5B327'}
           />

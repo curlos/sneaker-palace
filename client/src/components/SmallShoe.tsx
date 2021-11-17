@@ -14,8 +14,8 @@ const SmallShoe = ({ shoe }: Props) => {
 
   useEffect(() => {
     const fetchRatings = async () => {
-      const newRatings = await fetchAllRatings(shoe.ratings)
-      setRatings(newRatings)
+      // const newRatings = await fetchAllRatings(shoe.ratings)
+      // setRatings(newRatings)
       setLoading(false)
     }
     fetchRatings()
@@ -54,7 +54,7 @@ const SmallShoe = ({ shoe }: Props) => {
           <div className="flex items-center">
             <StarRatingComponent
               name={'Rating'}
-              value={getAverageRating(ratings)}
+              value={0}
               starCount={5}
               editing={false}
               starColor={'#F5B327'}

@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import SmallReview from '../components/SmallReview'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { IRating, UserType } from '../types/types'
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
@@ -47,7 +48,7 @@ const Profile = () => {
 
 
   return (
-    loading ? <div>Loading...</div> : (
+    loading ? <div className="flex justify-center py-4 h-screen w-screen"><CircleLoader size={16} /></div> : (
       <div className="px-48 py-10 bg-gray-100 sm:px-4">
         <div>
           <div className="flex items-center mb-5 border border-gray-300 p-8 rounded-lg bg-white">

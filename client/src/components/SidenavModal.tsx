@@ -29,7 +29,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
         <div className="p-10 text-2xl font-medium flex flex-col justify-between h-screen">
           <div className="flex flex-col gap-5">
             <div>
-              <Link to="/shoes">Sneakers</Link>
+              <Link to="/shoes" onClick={() => setShowSidenavModal(false)}>Sneakers</Link>
             </div>
 
             <div>

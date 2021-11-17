@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import SmallShoe from '../components/SmallShoe'
 import { RootState } from '../redux/store'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { Shoe, UserType } from '../types/types'
 
 const Favorites = () => {
@@ -42,8 +43,8 @@ const Favorites = () => {
 
 
   return (
-    loading ? <div>Loading...</div> : (
-      <div className="flex flex-wrap justify-center min-h-screen">
+    loading ? <div className="flex justify-center py-4 h-screen"><CircleLoader size={16} /></div> : (
+      <div className="flex flex-wrap min-h-screen">
         {favoriteShoes.map((shoe) => shoe && <SmallShoe shoe={shoe} />)}
       </div>
     )
