@@ -26,7 +26,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     {
       $set: req.body,
     },
-    { new: true}
+    { new: true }
   )
 
   console.log()
@@ -41,7 +41,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     {
       $set: req.body,
     },
-    { new: true}
+    { new: true }
   )
   res.status(200).json(updatedCart)
 })
@@ -50,14 +50,14 @@ router.put('/:id', async (req: Request, res: Response) => {
 // Get user's cart
 
 router.get('/find/:userID', async (req: Request, res: Response) => {
-  const cart = await Cart.findOne({ userID: req.params.userID })
+  const cart = await Cart.findOne({ userID: req.params.userID }).lean()
   res.status(200).json(cart)
 })
 
 // Delete 
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    await Cart.findByIdAndDelete(req.params.id)
+    await Cart.findByIdAndDelete(req.params.id).lean()
     res.status(200).json('Cart has been deleted...')
   } catch (err) {
     res.status(500).json(err)

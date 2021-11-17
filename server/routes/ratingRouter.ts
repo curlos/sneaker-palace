@@ -10,7 +10,7 @@ const User = require('../models/User')
 const router = express.Router()
 
 router.get('/:ratingID', async (req: Request, res: Response) => {
-  const rating = await Rating.findById(req.params.ratingID)
+  const rating = await Rating.findById(req.params.ratingID).lean()
   res.json(rating)
 })
 
