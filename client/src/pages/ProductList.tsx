@@ -11,6 +11,14 @@ import { sortByHighestPrice, sortByLowestPrice, sortByNewest, sortByOldest } fro
 import { Pagination } from '../components/Pagination'
 import { useLocation } from 'react-router-dom'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
+import { titleCase } from '../utils/filterShoes'
+
+const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
+
+interface stateType {
+  brand?: string,
+  gender?: string
+}
 
 const useQuery = () => {
   const { search } = useLocation()
@@ -18,21 +26,9 @@ const useQuery = () => {
   return React.useMemo(() => new URLSearchParams(search), [search])
 }
 
+const getInitialFilters = (state: stateType) => {
 
-const ProductList = () => {
-  const query = useQuery()
-
-  console.log(process.env)
-
-  const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
-
-  const [shoes, setShoes] = useState([])
-  const [filteredShoes, setFilteredShoes] = useState<Array<Shoe>>([])
-  const [sortedShoes, setSortedShoes] = useState<Array<Shoe>>([])
-  const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
-  const [displayedShoes, setDisplayedShoes] = useState<Array<Shoe>>([])
-  const [sortType, setSortType] = useState('Newest')
-  const [filters, setFilters] = useState<any>({
+  let filters: any = {
     colors: {
       'red': false as boolean,
       'white': false as boolean,
@@ -121,7 +117,36 @@ const ProductList = () => {
     shoeSizes: {
       ...SHOE_SIZES.reduce((a, v) => ({ ...a, [v]: false }), {})
     }
-  })
+  }
+
+  if (state && state.gender) {
+    filters['genders'][titleCase(state.gender)] = true
+  }
+
+  if (state && state.brand) {
+    filters['brands'][titleCase(state.brand)] = true
+  }
+
+  console.log(state)
+  console.log(filters)
+
+  return filters
+}
+
+
+const ProductList = () => {
+  const query = useQuery()
+
+  console.log(process.env)
+  const { state } = useLocation<stateType>();
+
+  const [shoes, setShoes] = useState([])
+  const [filteredShoes, setFilteredShoes] = useState<Array<Shoe>>([])
+  const [sortedShoes, setSortedShoes] = useState<Array<Shoe>>([])
+  const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
+  const [displayedShoes, setDisplayedShoes] = useState<Array<Shoe>>([])
+  const [sortType, setSortType] = useState('Newest')
+  const [filters, setFilters] = useState<any>(getInitialFilters(state))
 
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -136,7 +161,8 @@ const ProductList = () => {
       }
 
       const response = await axios.get(API_URL)
-      const newSortedShoes: Array<Shoe> = getSortedShoes(response.data)
+      const newShoes: Array<Shoe> = getFilteredShoes(response.data)
+      const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
       setShoes(response.data)
       setSortedShoes(newSortedShoes)
 
@@ -144,7 +170,7 @@ const ProductList = () => {
     }
 
     fetchFromAPI()
-  }, [query.get('query')])
+  }, [query.get('query'), state])
 
   useEffect(() => {
     window.scrollTo(0, 0)

@@ -26,11 +26,13 @@ import StripeContainer from "./components/StripeContainer";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import CheckoutForm from "./pages/CheckoutForm";
 import OrderDetails from "./pages/OrderDetails";
+import SidenavModal from "./components/SidenavModal";
 
 const App = () => {
 
   const user = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const [showModal, setShowModal] = useState(false)
+  const [showSearchModal, setShowSearchModal] = useState(false)
+  const [showSidenavModal, setShowSidenavModal] = useState(false)
 
 
   return (
@@ -38,8 +40,11 @@ const App = () => {
 
       <div className="m-0 box-border font-urbanist">
 
-        {showModal ? <SearchModal showModal={showModal} setShowModal={setShowModal} /> : null}
-        <Navbar setShowModal={setShowModal} />
+        {showSearchModal ? <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} /> : null}
+
+        {showSidenavModal ? <SidenavModal showSidenavModal={showSidenavModal} setShowSidenavModal={setShowSidenavModal} /> : null}
+
+        <Navbar setShowSearchModal={setShowSearchModal} setShowSidenavModal={setShowSidenavModal} />
 
 
         <Switch>
