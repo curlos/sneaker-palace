@@ -156,9 +156,15 @@ const ProductList = () => {
     const fetchFromAPI = async () => {
       let API_URL = `${process.env.REACT_APP_DEV_URL}/shoes`
 
+      const url = window.location.href
+      var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+
+      console.log(queryString)
+
       if (query.get('query')) {
-        API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}`
+        API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${queryString}}`
       }
+
 
       const response = await axios.get(API_URL)
       const newShoes: Array<Shoe> = getFilteredShoes(response.data)
@@ -170,7 +176,7 @@ const ProductList = () => {
     }
 
     fetchFromAPI()
-  }, [query.get('query'), state])
+  }, [query.get('query')])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -178,7 +184,11 @@ const ProductList = () => {
     const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
     setSortedShoes(newSortedShoes)
     setCurrentPage(1)
-  }, [filters, sortType, query.get('query')])
+  }, [filters, sortType, query.get('query'), query.get('gender'), query.get('brand')])
+
+  useEffect(() => {
+    setFilters(getInitialFilters(state))
+  }, [state && state['gender'], state && state['brand']])
 
 
   const getFilteredShoes = (shoesToFilter: Array<Shoe>) => {
@@ -213,6 +223,10 @@ const ProductList = () => {
     setPaginatedShoes(newPaginatedShoes)
   }
 
+  console.log(query)
+  console.log(query.get('gender'))
+  console.log(query.get('brand'))
+
   return (
     <div className="text-xl-lg">
       <div className="flex">
@@ -231,7 +245,7 @@ const ProductList = () => {
                 })}
               </div>
 
-              <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 10)} dataLimit={9} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
+              <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
             </div>
           )}
         </div>

@@ -3,9 +3,12 @@ import { Request, Response } from 'express'
 
 const express = require('express')
 const mongoose = require('mongoose')
+const queryString = require('query-string');
 const Shoe = require('../models/Shoe')
 const User = require('../models/User')
+const { getFullURL } = require('../utils/getFullURL')
 const { addAllShoes } = require('../utils/sneakerV2_API')
+
 
 const router = express.Router()
 
@@ -24,12 +27,17 @@ router.get('/objectID/:id', async (req: Request, res: Response) => {
   res.json(shoe)
 })
 
-router.get('/query/:queryText', async (req: Request, res: Response) => {
+router.get('/query/:queryString', async (req: Request, res: Response) => {
+  console.log(req.params.queryString)
+  const queryObject = queryString.parse(req)
+  console.log(queryObject)
+  console.log(queryObject.query)
+  console.log(queryObject.gender)
+
   const shoes = await Shoe
-    .find({ "name": { "$regex": req.params.queryText.trim(), "$options": "i" } })
+    .find({ "name": { "$regex": req.params.queryString.trim(), "$options": "i" } })
   console.log(shoes.length)
   res.json(shoes)
-
 })
 
 router.put('/favorite', async (req: Request, res: Response) => {

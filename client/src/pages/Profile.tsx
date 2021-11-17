@@ -48,7 +48,7 @@ const Profile = () => {
 
   return (
     loading ? <div>Loading...</div> : (
-      <div className="px-48 py-10 bg-gray-100">
+      <div className="px-48 py-10 bg-gray-100 sm:px-4">
         <div>
           <div className="flex items-center mb-5 border border-gray-300 p-8 rounded-lg bg-white">
             <div className="">
@@ -60,7 +60,7 @@ const Profile = () => {
 
           <div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
             <div className="font-medium">Insights</div>
-            <div className="flex gap-6">
+            <div className="flex gap-6 sm:block">
               <div>
                 <div className="font-bold text-2xl">0</div>
                 <div>Helpful votes</div>

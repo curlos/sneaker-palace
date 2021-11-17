@@ -57,8 +57,13 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 
       <div className="flex items-center gap-5">
         <Link to="/shoes" className="sm:hidden">Sneakers</Link>
-        <Link to="/shoes" className="sm:hidden">Men</Link>
-        <Link to="/shoes" className="sm:hidden">Women</Link>
+        <div className="sm:hidden">
+          <Link to={{ pathname: "/shoes", state: { gender: 'men' } }} onClick={() => setShowSidenavModal(false)}>Men</Link>
+        </div>
+
+        <div className="sm:hidden">
+          <Link to={{ pathname: "/shoes", state: { gender: 'women' } }} onClick={() => setShowSidenavModal(false)}>Women</Link>
+        </div>
         {user && Object.keys(user).length > 0 ? (
           <span>
             <UserDropdown user={user} handleLogout={handleLogout} />
