@@ -1,6 +1,6 @@
 const axios = require('axios')
 const mongoose = require('mongoose')
-const database = require('../database/connection')
+// const database = require('../database/connection')
 const Shoe = require('../models/Shoe')
 
 const timer = (ms: number | undefined) => new Promise(res => setTimeout(res, ms))

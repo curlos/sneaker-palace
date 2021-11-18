@@ -50,14 +50,14 @@ router.put('/:id', async (req: Request, res: Response) => {
 // Get user's cart
 
 router.get('/find/:userID', async (req: Request, res: Response) => {
-  const cart = await Cart.findOne({ userID: req.params.userID }).lean()
+  const cart = await Cart.findOne({ userID: req.params.userID })
   res.status(200).json(cart)
 })
 
 // Delete 
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    await Cart.findByIdAndDelete(req.params.id).lean()
+    await Cart.findByIdAndDelete(req.params.id)
     res.status(200).json('Cart has been deleted...')
   } catch (err) {
     res.status(500).json(err)

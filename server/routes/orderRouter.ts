@@ -1,4 +1,3 @@
-export { }
 import { Request, Response } from 'express'
 
 const express = require('express')
@@ -12,12 +11,12 @@ const Order = require('../models/Order')
 const router = express.Router()
 
 router.get('/:orderID', async (req: Request, res: Response) => {
-  const order = await Order.findById(req.params.orderID).lean()
+  const order = await Order.findById(req.params.orderID)
   res.json(order)
 })
 
 router.get('/user/:userID', async (req: Request, res: Response) => {
-  const orders = await Order.find({ userID: req.params.userID }).lean()
+  const orders = await Order.find({ userID: req.params.userID })
   res.json(orders)
 })
 
@@ -31,8 +30,8 @@ router.post('/', async (req: Request, res: Response) => {
     res.json({ error: 'Already ordered', orderID: orderFound._id })
   }
 
-  const user = await User.findById(req.body.userID).lean()
-  const cart = await Cart.findOne({ userID: req.body.userID }).lean()
+  const user = await User.findById(req.body.userID)
+  const cart = await Cart.findOne({ userID: req.body.userID })
   cart.products = []
 
   const order = new Order({
@@ -43,8 +42,8 @@ router.post('/', async (req: Request, res: Response) => {
   await cart.save()
   await order.save()
 
-  const updatedUser = await User.findById(req.body.userID).lean()
-  const updatedCart = await Cart.findOne({ userID: req.body.userID }).lean()
+  const updatedUser = await User.findById(req.body.userID)
+  const updatedCart = await Cart.findOne({ userID: req.body.userID })
 
   res.json({ order, updatedUser, updatedCart })
 })

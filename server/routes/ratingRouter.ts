@@ -1,4 +1,3 @@
-export { }
 import { Request, Response } from 'express'
 
 const express = require('express')
@@ -10,7 +9,7 @@ const User = require('../models/User')
 const router = express.Router()
 
 router.get('/:ratingID', async (req: Request, res: Response) => {
-  const rating = await Rating.findById(req.params.ratingID).lean()
+  const rating = await Rating.findById(req.params.ratingID)
   res.json(rating)
 })
 

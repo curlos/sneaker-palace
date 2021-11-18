@@ -1,4 +1,3 @@
-export { }
 import { Request, Response } from 'express'
 
 const url = require('url');
