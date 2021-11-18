@@ -1,9 +1,8 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import { UserType } from '../types/types'
+import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
+import { UserType } from '../types/types'
 
 interface Props {
   user: Partial<UserType>,
@@ -13,8 +12,6 @@ interface Props {
 const classNames = (...classes: Array<string>) => {
   return classes.filter(Boolean).join(' ')
 }
-
-const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
 export const UserDropdown = ({ user, handleLogout }: Props) => {
   const handleClick = () => {

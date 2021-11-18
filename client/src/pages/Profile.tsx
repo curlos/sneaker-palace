@@ -25,7 +25,7 @@ const Profile = () => {
     }
 
     fetchProfileUserFromAPI()
-  }, [])
+  }, [userID])
 
   const fetchAllReviews = async (reviewIDs: Array<string>) => {
     const ratings = []

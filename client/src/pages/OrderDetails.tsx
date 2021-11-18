@@ -1,16 +1,13 @@
 import axios from 'axios'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '../redux/store'
-import { IOrder, IProduct, UserType } from '../types/types'
-import CheckoutProduct from '../components/CheckoutProduct'
 import { useParams } from 'react-router-dom'
-import moment from 'moment'
-import { userInfo } from 'os'
-import SmallOrder from '../components/SmallOrderShoe'
-import SmallOrderShoe from '../components/SmallOrderShoe'
 import MoreShoes from '../components/MoreShoes'
+import SmallOrderShoe from '../components/SmallOrderShoe'
+import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
+import { IOrder, IProduct, UserType } from '../types/types'
 
 const OrderDetails = () => {
 
@@ -29,7 +26,7 @@ const OrderDetails = () => {
       setLoading(false)
     }
     fetchFromAPI()
-  }, [])
+  }, [id])
 
 
   const getAllShoes = async (products: Array<IProduct>) => {

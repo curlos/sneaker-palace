@@ -1,10 +1,9 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../redux/store'
-import { loginStart, loginFailure, loginSuccess } from '../redux/userRedux'
 import { updateCart } from '../redux/cartRedux'
+import { loginFailure, loginStart, loginSuccess } from '../redux/userRedux'
 import { UserType } from '../types/types'
 
 const Login = () => {

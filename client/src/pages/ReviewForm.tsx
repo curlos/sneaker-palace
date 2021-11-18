@@ -1,10 +1,10 @@
-import axios from 'axios'
-import React, { useState, useEffect, ChangeEvent } from 'react'
+import axios from 'axios';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import { RootState } from '../redux/store';
-import { IRating, Shoe, UserType } from '../types/types'
+import { Shoe, UserType } from '../types/types';
 import { postImage } from '../utils/postImage';
 
 const ReviewForm = () => {
@@ -13,7 +13,7 @@ const ReviewForm = () => {
 
   const { shoeID, reviewID }: { shoeID: string, reviewID: string } = useParams()
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
-  const [ratingNum, setRatingNum] = useState(0)
+
   const [reviewInfo, setReviewInfo] = useState<any>({
     userID: user._id,
     shoeID: '',
@@ -48,6 +48,7 @@ const ReviewForm = () => {
       setLoading(false)
     }
     fetchFromAPI()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shoeID])
 
   const handleSubmitReview = async () => {

@@ -4,7 +4,6 @@ import axios from "axios"
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { Redirect } from "react-router"
-import CheckoutForm from "../pages/CheckoutForm"
 import { RootState } from "../redux/store"
 import CircleLoader from "../skeleton_loaders/CircleLoader"
 
@@ -41,7 +40,7 @@ const StripeContainer = ({ children }: Props) => {
       setLoading(false)
     }
     postToAPI()
-  }, []);
+  }, [currentCart.products, total]);
 
   const appearance: any = {
     theme: 'stripe',

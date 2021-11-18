@@ -1,32 +1,29 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { useSelector, useDispatch } from "react-redux";
-import { CartState, IProduct, IRating, UserType } from "../types/types";
-import { RootState } from "../redux/store";
-import axios from 'axios'
-import moment from 'moment'
-import { HeartIcon as HeartSolid } from '@heroicons/react/solid'
-import { HeartIcon as HeartOutline } from '@heroicons/react/outline'
-import { Shoe } from '../types/types'
-import { updateUser } from '../redux/userRedux'
-import { updateCart } from '../redux/cartRedux';
-import { current } from '@reduxjs/toolkit';
-import StarRatingComponent from 'react-star-rating-component'
-import StarRatingProgress from '../components/StarRatingProgress';
+import { HeartIcon as HeartOutline } from '@heroicons/react/outline';
+import { HeartIcon as HeartSolid } from '@heroicons/react/solid';
+import axios from 'axios';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from 'react-router-dom';
+import StarRatingComponent from 'react-star-rating-component';
 import Review from '../components/Review';
-import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
-import CircleLoader from '../skeleton_loaders/CircleLoader';
 import ShoppingCartModal from '../components/ShoppingCartModal';
+import StarRatingProgress from '../components/StarRatingProgress';
+import { updateCart } from '../redux/cartRedux';
+import { RootState } from "../redux/store";
+import { updateUser } from '../redux/userRedux';
+import CircleLoader from '../skeleton_loaders/CircleLoader';
+import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
+import { IProduct, IRating, Shoe, UserType } from "../types/types";
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
 const AVERAGE_MAN_FOOT_SIZE = '10.5'
-const AVERAGE_WOMEN_FOOT_SIZE = '8.5'
 
 const FullShoePage = () => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const { currentCart, total } = useSelector((state: RootState) => state.cart)
+  const { currentCart } = useSelector((state: RootState) => state.cart)
 
   const { shoeID }: { shoeID: string } = useParams()
   const dispatch = useDispatch()
@@ -224,7 +221,7 @@ const FullShoePage = () => {
                 <div className="flex gap-2 items-center">
                   <StarRatingComponent
                     name={'Rating'}
-                    value={getAverageRating(shoeRatings) !== NaN ? getAverageRating(shoeRatings) : 0}
+                    value={0}
                     starCount={5}
                     editing={false}
                     starColor={'#F5B327'}

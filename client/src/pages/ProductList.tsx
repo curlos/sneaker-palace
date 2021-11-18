@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { ChevronLeftIcon, ChevronRightIcon, LockClosedIcon, MenuIcon, XIcon } from '@heroicons/react/solid'
+import { MenuIcon, XIcon } from '@heroicons/react/solid'
 import axios from 'axios'
-import Navbar from '../components/Navbar'
+import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { Pagination } from '../components/Pagination'
 import Sidebar from '../components/Sidebar'
 import SmallShoe from '../components/SmallShoe'
+import { SortDropdown } from '../components/SortDropdown'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { Shoe } from '../types/types'
 import { filterByBrand, filterByColor, filterByGender, filterByPrice } from '../utils/filterShoes'
-import { SortDropdown } from '../components/SortDropdown'
-import { sortByHighestPrice, sortByLowestPrice, sortByNewest, sortByOldest } from '../utils/sortShoes'
-import { Pagination } from '../components/Pagination'
-import { useLocation } from 'react-router-dom'
-import CircleLoader from '../skeleton_loaders/CircleLoader'
-import { titleCase } from '../utils/filterShoes'
 import getInitialFilters from '../utils/getInitialFilters'
+import { sortByHighestPrice, sortByLowestPrice, sortByNewest, sortByOldest } from '../utils/sortShoes'
 
 interface stateType {
   brand?: string,
@@ -33,10 +31,8 @@ const ProductList = () => {
   const { state } = useLocation<stateType>();
 
   const [shoes, setShoes] = useState([])
-  const [filteredShoes, setFilteredShoes] = useState<Array<Shoe>>([])
   const [sortedShoes, setSortedShoes] = useState<Array<Shoe>>([])
   const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
-  const [displayedShoes, setDisplayedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>(getInitialFilters(state))
 
@@ -64,6 +60,7 @@ const ProductList = () => {
     }
 
     fetchFromAPI()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.get('query')])
 
   useEffect(() => {
@@ -72,10 +69,12 @@ const ProductList = () => {
     const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
     setSortedShoes(newSortedShoes)
     setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, sortType, query.get('query')])
 
   useEffect(() => {
     setFilters(getInitialFilters(state))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state && state['gender'], state && state['brand']])
 
 

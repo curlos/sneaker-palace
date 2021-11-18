@@ -19,27 +19,27 @@ const Home = () => {
         </div>
         <div className="flex flex-wrap gap-2 items-center sm:justify-between sm:mt-4">
           <div className="w-2/12 sm:w-5/12">
-            <img src="/assets/brand_logos/nike.svg" className="w-full" />
+            <img src="/assets/brand_logos/nike.svg" className="w-full" alt="" />
           </div>
 
           <div className="w-2/12 sm:w-5/12">
-            <img src="/assets/brand_logos/jordan.svg" className="w-full" />
+            <img src="/assets/brand_logos/jordan.svg" className="w-full" alt="" />
           </div>
 
           <div className="w-2/12 sm:w-5/12">
-            <img src="/assets/brand_logos/adidas.svg" className="w-full" />
+            <img src="/assets/brand_logos/adidas.svg" className="w-full" alt="" />
           </div>
 
           <div className="w-2/12 sm:w-5/12">
-            <img src="/assets/brand_logos/new balance.svg" className="w-full" />
+            <img src="/assets/brand_logos/new balance.svg" className="w-full" alt="" />
           </div>
 
           <div className="w-2/12 sm:w-5/12">
-            <img src="/assets/brand_logos/louis vuitton.svg" className="w-full" />
+            <img src="/assets/brand_logos/louis vuitton.svg" className="w-full" alt="" />
           </div>
 
           <div className="w-2/12 sm:w-5/12">
-            <img src="/assets/brand_logos/gucci.svg" className="w-full" />
+            <img src="/assets/brand_logos/gucci.svg" className="w-full" alt="" />
           </div>
 
 

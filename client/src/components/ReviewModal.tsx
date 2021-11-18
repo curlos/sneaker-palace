@@ -1,16 +1,8 @@
-import { SearchIcon, XIcon } from '@heroicons/react/outline'
-import axios from 'axios'
+import { XIcon } from '@heroicons/react/outline'
 import moment from 'moment'
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import React from 'react'
 import StarRatingComponent from 'react-star-rating-component'
-import { RootState } from '../redux/store'
-import { updateUser } from '../redux/userRedux'
-import { IRating, UserType } from '../types/types'
-import FailureMessage from './FailureMessage'
-import SmallProductList from './SmallProductList'
-import SuccessMessage from './SuccessMessage'
+import { IRating } from '../types/types'
 
 interface Props {
   showModal: boolean,
@@ -19,42 +11,6 @@ interface Props {
 }
 
 const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
-
-  const dispatch = useDispatch()
-  const history = useHistory()
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmNewPassword, setConfirmNewPassword] = useState('')
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
-  const [showFailureMessage, setShowFailureMessage] = useState(false)
-
-  const handleBubblingDownClick = (e: React.FormEvent) => {
-    e.stopPropagation()
-  }
-
-  const handleEditPassword = async () => {
-
-    const body = {
-      currentPassword,
-      newPassword
-    }
-
-    console.log(body)
-
-    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/password/${user._id}`, body)
-    console.log(response.data)
-
-    if (!response.data.error) {
-      setShowSuccessMessage(true)
-      setTimeout(() => { setShowSuccessMessage(false) }, 3000)
-      dispatch(updateUser(response.data))
-    } else {
-      setShowFailureMessage(true)
-      setTimeout(() => { setShowFailureMessage(false) }, 3000)
-    }
-  }
 
   return (
     <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40 p-24 top-0 left-0 flex justify-center items-center" onClick={() => setShowModal(!showModal)}>

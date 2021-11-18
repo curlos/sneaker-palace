@@ -1,5 +1,4 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { Shoe } from '../types/types'
 import { titleCase } from '../utils/filterShoes'
@@ -13,7 +12,7 @@ const SmallOrder = ({ shoe }: Props) => {
   return (
     <div className="flex sm:mb-4 sm:gap-3">
       <div className="flex-2">
-        <img src={shoe?.image?.original} className="" />
+        <img src={shoe?.image?.original} className="" alt="" />
       </div>
 
       <div className="flex-8 sm:flex-4">

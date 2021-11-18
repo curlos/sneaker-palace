@@ -1,9 +1,6 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import { UserType } from '../types/types'
-import { Link } from 'react-router-dom'
+import { Fragment } from 'react'
 
 interface Props {
   sortType: string,

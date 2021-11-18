@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
 import {
-  PaymentElement,
-  useStripe,
-  useElements
+  PaymentElement, useElements, useStripe
 } from "@stripe/react-stripe-js";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import CheckoutProduct from "../components/CheckoutProduct";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import CheckoutProduct from "../components/CheckoutProduct";
+import { RootState } from "../redux/store";
 import CircleLoader from "../skeleton_loaders/CircleLoader";
 
 export default function CheckoutForm() {

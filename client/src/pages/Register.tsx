@@ -1,6 +1,6 @@
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import axios from 'axios'
 
 const Register = () => {
 
@@ -26,7 +26,6 @@ const Register = () => {
     console.log(body)
     try {
       const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/auth/register`, body)
-      const cartResponse = await axios.post(`${process.env.REACT_APP_DEV_URL}/cart/${response.data._id}`)
       console.log(response.data)
       history.push('/')
     } catch (err) {

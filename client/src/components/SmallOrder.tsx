@@ -19,7 +19,7 @@ const SmallOrder = ({ order }: Props) => {
       setShoes(newShoes)
     }
     fetchFromAPI()
-  }, [])
+  }, [order.products])
 
   const getAllShoes = async (products: Array<IProduct>) => {
     const newShoes = []

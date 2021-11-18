@@ -1,5 +1,5 @@
+import { SwitchHorizontalIcon, UserIcon } from '@heroicons/react/outline'
 import React, { useState } from 'react'
-import { UserIcon, CreditCardIcon, TruckIcon, SwitchHorizontalIcon } from '@heroicons/react/outline'
 import AccountDetails from '../components/AccountDetails'
 import ShopPreferences from '../components/ShopPreferences'
 

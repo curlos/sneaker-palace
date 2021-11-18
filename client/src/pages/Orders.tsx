@@ -21,7 +21,7 @@ const Orders = () => {
     }
 
     fetchFromAPI()
-  }, [])
+  }, [user._id])
 
   console.log(orders)
 

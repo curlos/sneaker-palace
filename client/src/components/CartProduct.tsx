@@ -1,11 +1,11 @@
-import axios from 'axios'
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import axios from 'axios';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { updateCart } from '../redux/cartRedux';
 import { RootState } from '../redux/store';
 import CartProductSkeleton from '../skeleton_loaders/CartProductSkeleton';
-import { Shoe, ICart, IProduct, CartState } from "../types/types";
+import { IProduct, Shoe } from "../types/types";
 
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
@@ -18,7 +18,7 @@ interface Props {
 const CartProduct = ({ productInfo }: Props) => {
 
   const dispatch = useDispatch()
-  const { currentCart, total } = useSelector((state: RootState) => state.cart)
+  const { currentCart } = useSelector((state: RootState) => state.cart)
 
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
   const [loading, setLoading] = useState(true)

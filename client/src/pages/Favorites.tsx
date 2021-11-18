@@ -1,7 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import SmallShoe from '../components/SmallShoe'
 import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
@@ -9,8 +8,6 @@ import { Shoe, UserType } from '../types/types'
 
 const Favorites = () => {
 
-  const dispatch = useDispatch()
-  const history = useHistory()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
 
   const [favoriteShoes, setFavoriteShoes] = useState<Array<Shoe>>([])
@@ -23,6 +20,7 @@ const Favorites = () => {
       setLoading(false)
     }
     fetchFromAPI()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getAllFavorites = async () => {

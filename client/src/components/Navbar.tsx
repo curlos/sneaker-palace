@@ -1,14 +1,14 @@
-import { MenuIcon, SearchIcon } from "@heroicons/react/solid";
 import { ShoppingBagIcon } from "@heroicons/react/outline";
-import { Link, useHistory, useParams } from 'react-router-dom'
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { CartState, ICart, UserType } from "../types/types";
-import { UserDropdown } from "./UserDropdown";
-import { logout } from '../redux/userRedux'
+import { MenuIcon, SearchIcon } from "@heroicons/react/solid";
 import axios from "axios";
-import { resetCart, updateCart } from "../redux/cartRedux";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from 'react-router-dom';
+import { resetCart, updateCart } from "../redux/cartRedux";
+import { RootState } from "../redux/store";
+import { logout } from '../redux/userRedux';
+import { UserType } from "../types/types";
+import { UserDropdown } from "./UserDropdown";
 
 interface Props {
   setShowSearchModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -18,7 +18,7 @@ interface Props {
 const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const { currentCart, total } = useSelector((state: RootState) => state.cart)
+  const { currentCart } = useSelector((state: RootState) => state.cart)
   const dispatch = useDispatch()
   const history = useHistory()
 
@@ -45,14 +45,14 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
     }
 
     fetchFromAPI()
-  }, [])
+  }, [dispatch, user])
 
   console.log(user)
 
   return (
     <div className="sticky top-0 z-10 w-full bg-white flex justify-between items-center p-4 border-b border-gray-300">
       <div className="flex items-center w-6/12">
-        <div><Link to="/"><img src="/assets/icon.png" className="h-10 w-10" /></Link></div>
+        <div><Link to="/"><img src="/assets/icon.png" className="h-10 w-10" alt="" /></Link></div>
       </div>
 
       <div className="flex items-center gap-5">

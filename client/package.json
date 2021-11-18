@@ -33,6 +33,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "start:prod": "REACT_APP_DEV_URL=https://sneakers-app-server.herokuapp.com && craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"

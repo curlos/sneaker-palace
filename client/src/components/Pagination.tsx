@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/solid'
+import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid'
+import React, { useEffect } from 'react'
 import { Shoe } from '../types/types'
 
 interface Props {
@@ -14,11 +14,11 @@ interface Props {
 }
 
 export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType }: Props) => {
-  const [pages] = useState(Math.round(data.length / dataLimit))
 
   useEffect(() => {
     window.scrollTo(0, 0)
     setPaginatedData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, filters, sortType, data])
 
   const goToNextPage = () => {

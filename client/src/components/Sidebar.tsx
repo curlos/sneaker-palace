@@ -1,5 +1,5 @@
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid";
 import React, { useState } from 'react';
-import { ChevronUpIcon, ChevronDownIcon, CheckIcon } from "@heroicons/react/solid";
 
 interface Props {
   filters: {

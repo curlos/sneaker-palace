@@ -17,7 +17,6 @@ const AccountDetails = () => {
 
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const [profilePic, setProfilePic] = useState(user?.profilePic)
   const [firstName, setFirstName] = useState(user?.firstName)
   const [lastName, setLastName] = useState(user?.lastName)
   const [email, setEmail] = useState(user?.email)
@@ -27,8 +26,10 @@ const AccountDetails = () => {
   const [showFailureMessage, setShowFailureMessage] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
+  console.log(user)
+
   const handleEdit = async () => {
-    let profilePicObj = null
+    let profilePicObj = user?.profilePic
 
     if (file) {
       const results = await postImage(file)
@@ -51,6 +52,7 @@ const AccountDetails = () => {
     if (!response.data.error) {
       setShowSuccessMessage(true)
       setTimeout(() => { setShowSuccessMessage(false) }, 3000)
+      console.log(response.data)
       dispatch(updateUser(response.data))
     } else {
       setShowFailureMessage(true)
@@ -72,8 +74,8 @@ const AccountDetails = () => {
 
       <form>
         <div className="mb-4">
-          {(file || profilePic) ? (
-            <img src={file ? URL.createObjectURL(file) : `${process.env.REACT_APP_DEV_URL}${profilePic}`} alt="" className="h-150 w-150 rounded-full object-cover mb-3" />
+          {(file || user?.profilePic) ? (
+            <img src={file ? URL.createObjectURL(file) : `${process.env.REACT_APP_DEV_URL}${user?.profilePic}`} alt="" className="h-150 w-150 rounded-full object-cover mb-3" />
           ) :
             <img src={DEFAULT_AVATAR} alt="" className="h-150 w-150 rounded-full object-cover mb-3" />
           }

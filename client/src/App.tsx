@@ -1,32 +1,28 @@
 import React, { useState } from "react";
+import { useSelector } from 'react-redux';
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect
+  BrowserRouter as Router, Redirect, Route, Switch
 } from "react-router-dom";
-import ProductList from "./pages/ProductList";
-import Navbar from "./components/Navbar";
-import Home from './pages/Home'
-import FullShoePage from './pages/FullShoePage'
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Cart from "./pages/Cart";
 import { Footer } from "./components/Footer";
-import { useSelector } from 'react-redux'
-import { RootState } from "./redux/store";
-import ReviewForm from "./pages/ReviewForm";
-import Profile from "./pages/Profile";
-import Orders from "./pages/Orders";
-import Favorites from "./pages/Favorites";
-import Settings from "./pages/Settings";
+import Navbar from "./components/Navbar";
 import SearchModal from "./components/SearchModal";
-import StripeContainer from "./components/StripeContainer";
-import PaymentSuccess from "./pages/PaymentSuccess";
-import CheckoutForm from "./pages/CheckoutForm";
-import OrderDetails from "./pages/OrderDetails";
 import SidenavModal from "./components/SidenavModal";
+import StripeContainer from "./components/StripeContainer";
+import Cart from "./pages/Cart";
+import CheckoutForm from "./pages/CheckoutForm";
+import Favorites from "./pages/Favorites";
+import FullShoePage from './pages/FullShoePage';
+import Home from './pages/Home';
+import Login from "./pages/Login";
+import OrderDetails from "./pages/OrderDetails";
+import Orders from "./pages/Orders";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import ProductList from "./pages/ProductList";
+import Profile from "./pages/Profile";
+import Register from "./pages/Register";
+import ReviewForm from "./pages/ReviewForm";
+import Settings from "./pages/Settings";
+import { RootState } from "./redux/store";
 
 const App = () => {
 

@@ -1,13 +1,11 @@
-import { SearchIcon, XIcon } from '@heroicons/react/outline'
+import { XIcon } from '@heroicons/react/outline'
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
 import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
 import { UserType } from '../types/types'
 import FailureMessage from './FailureMessage'
-import SmallProductList from './SmallProductList'
 import SuccessMessage from './SuccessMessage'
 
 interface Props {
@@ -18,7 +16,6 @@ interface Props {
 const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
 
   const dispatch = useDispatch()
-  const history = useHistory()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')

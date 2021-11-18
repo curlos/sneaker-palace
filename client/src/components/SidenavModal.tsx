@@ -1,10 +1,8 @@
-import { SearchIcon } from '@heroicons/react/outline'
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { RootState } from '../redux/store'
 import { UserType } from '../types/types'
-import SmallProductList from './SmallProductList'
 
 interface Props {
   showSidenavModal: boolean,
@@ -12,12 +10,7 @@ interface Props {
 }
 
 const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
-
-  const history = useHistory()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-
-  let timer = 1000
-  let timeoutVal = 1000
 
   const handleBubblingDownClick = (e: React.FormEvent) => {
     e.stopPropagation()

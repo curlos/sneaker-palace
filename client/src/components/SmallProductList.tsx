@@ -25,6 +25,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) 
       setLoading(false)
     }
     fetchFromAPI()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalSearchText])
 
   return (

@@ -1,15 +1,14 @@
+import { useStripe } from '@stripe/react-stripe-js'
 import axios from 'axios'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import OrderDetails from './OrderDetails'
+import { updateCart } from '../redux/cartRedux'
 import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
-import { updateCart } from '../redux/cartRedux';
-import { Shoe, UserType } from '../types/types'
-import { useStripe } from '@stripe/react-stripe-js';
-import moment from 'moment'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
+import { UserType } from '../types/types'
 
 const PaymentSuccess = () => {
 
@@ -18,10 +17,8 @@ const PaymentSuccess = () => {
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart, total } = useSelector((state: RootState) => state.cart)
-  const [firstProduct, setFirstProduct] = useState<Shoe>()
   const [loading, setLoading] = useState(true)
   const [orderID, setOrderID] = useState<any>({})
-  const [order, setOrder] = useState<any>({})
 
   const stripe = useStripe();
   const [paymentInfo, setPaymentInfo] = useState<any>({})
@@ -92,9 +89,7 @@ const PaymentSuccess = () => {
       }
       addToOrders()
     }
-  }, [paymentInfo])
-
-  console.log('fuck you')
+  }, [currentCart, dispatch, paymentInfo, total, user._id])
 
 
 
