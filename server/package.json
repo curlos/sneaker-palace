@@ -31,8 +31,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.ts",
-    "devStart": "nodemon server.ts"
+    "start": "tsc node dist/server.js",
+    "devStart": "nodemon server.ts",
+    "tsc": "tsc",
+    "start:prod": "node dist/server.js"
   },
   "author": "",
   "license": "ISC"
