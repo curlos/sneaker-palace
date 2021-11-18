@@ -4,6 +4,7 @@ import StarRatingComponent from 'react-star-rating-component'
 import { Props } from '../types/types'
 
 const SmallShoe = ({ shoe }: Props) => {
+
   return (
     <Link to={`/shoe/${shoe.shoeID}`} className="w-4/12 sm:w-6/12">
       <div className="flex flex-col bg-white cursor-pointer mr-5 mb-5 px-3 sm:mr-0">

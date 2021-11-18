@@ -6,7 +6,7 @@ import { Pagination } from '../components/Pagination'
 import Sidebar from '../components/Sidebar'
 import SmallShoe from '../components/SmallShoe'
 import { SortDropdown } from '../components/SortDropdown'
-import CircleLoader from '../skeleton_loaders/CircleLoader'
+import SmallShoeSkeleton from '../skeleton_loaders/SmallShoeSkeleton'
 import { Shoe } from '../types/types'
 import { filterByBrand, filterByColor, filterByGender, filterByPrice } from '../utils/filterShoes'
 import getInitialFilters from '../utils/getInitialFilters'
@@ -69,6 +69,7 @@ const ProductList = () => {
     const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
     setSortedShoes(newSortedShoes)
     setCurrentPage(1)
+    console.log(newSortedShoes)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, sortType, query.get('query')])
 
@@ -97,10 +98,6 @@ const ProductList = () => {
         return sortByHighestPrice(shoesToSort)
       case 'Price: Low-High':
         return sortByLowestPrice(shoesToSort)
-      case 'Most Likes':
-        return sortByLowestPrice(shoesToSort)
-      case 'Most Reviews':
-        return sortByLowestPrice(shoesToSort)
       default:
         return shoesToSort
     }
@@ -114,8 +111,8 @@ const ProductList = () => {
 
   return (
     <div className="text-xl-lg">
-      <div className="flex lg:block min-h-screen">
-        {showSidebar ? <div className="flex justify-end p-3 pb-0 cursor-pointer hidden lg:block"><XIcon className="h-5 w-5" onClick={() => setShowSidebar(false)} /> </div> : null}
+      <div className="flex xl:block min-h-screen">
+        {showSidebar ? <div className="flex justify-end p-3 pb-0 cursor-pointer hidden xl:block"><XIcon className="h-5 w-5" onClick={() => setShowSidebar(false)} /> </div> : null}
 
         {showSidebar ? <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES} /> : null}
 
@@ -126,20 +123,34 @@ const ProductList = () => {
               <MenuIcon className="h-5 w-5" /></div>
             <SortDropdown sortType={sortType} setSortType={setSortType} />
           </div>
-          {loading ? <div className="flex justify-center h-screen"><CircleLoader size={16} /></div> : (
-            <div>
+          {loading ?
+            <div className="flex justify-center flex-wrap lg:justify-between py-4">
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+              <SmallShoeSkeleton />
+            </div> : (
+              <div>
 
-              <div className="flex justify-center flex-wrap lg:justify-between">
-                {paginatedShoes.map((shoe: Shoe) => {
-                  return (
-                    <SmallShoe key={shoe.shoeID} shoe={shoe} />
-                  )
-                })}
+                <div className="flex justify-center flex-wrap lg:justify-between">
+                  {paginatedShoes.map((shoe: Shoe) => {
+                    return (
+                      <SmallShoe key={shoe.shoeID} shoe={shoe} />
+                    )
+                  })}
+                </div>
+
+                <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
               </div>
-
-              <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
-            </div>
-          )}
+            )}
         </div>
 
       </div>

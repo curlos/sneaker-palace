@@ -2,7 +2,7 @@ import { HeartIcon as HeartOutline } from '@heroicons/react/outline';
 import { HeartIcon as HeartSolid } from '@heroicons/react/solid';
 import axios from 'axios';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from 'react-router-dom';
 import StarRatingComponent from 'react-star-rating-component';
@@ -118,13 +118,15 @@ const FullShoePage = () => {
   return (
 
     <div>
-      <div className="p-5 px-28 w-full h-full sm:px-0 lg:px-6">
+      <div className="p-5 px-28 w-full h-full sm:px-0 xl:px-6">
         <div className="w-full h-full">
-          {loading ? <FullShoeSkeleton /> : (
-            <div className="flex sm:block">
+          {loading || shoe.shoeID === 'd8efc352-2ae6-473a-b20a-70b810f388ee' ? 
+          <div className="flex justify-center items-center h-screen"><CircleLoader size={16} /></div> 
+          : (
+            <div className="flex xl:block">
               <div className="flex-3">
                 {shoe && shoe.image && shoe.image["360"].length > 0 ? (
-                  <div className="sm:px-4">
+                  <div className="xl:px-4">
                     <img src={shoe?.image["360"][imageNum]} alt={shoe.name} />
                     <input type="range" id="volume" name="volume" value={imageNum} onChange={(e) => setImageNum(Number(e.target.value))} min="0" max={shoe.image["360"].length - 1} className="w-full"></input>
                   </div>
@@ -133,7 +135,7 @@ const FullShoePage = () => {
                 )}
               </div>
 
-              <div className="flex-2 p-10 sm:p-4">
+              <div className="flex-2 p-10 xl:p-4">
                 <div className="text-2xl">{shoe.name}</div>
                 <div className="text-xl text-red-800">${shoe.retailPrice}</div>
                 <div className="my-5">{`SELECT US ${shoe?.gender?.toUpperCase()}S`}</div>
@@ -147,12 +149,12 @@ const FullShoePage = () => {
                   })}
                 </div>
 
-                <div className="flex justify-between sm:block gap-2">
-                  <button className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 w-1/2 sm:w-full sm:mb-0" onClick={handleAddToCart}>
+                <div className="flex justify-between xl:block gap-2">
+                  <button className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 w-1/2 xl:w-full xl:mb-0" onClick={handleAddToCart}>
                     Add to Bag
                   </button>
 
-                  <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3  my-5 hover:border-gray-600 w-1/2 sm:w-full sm:mb-0" onClick={handleFavorite}>
+                  <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3  my-5 hover:border-gray-600 w-1/2 xl:w-full xl:mb-0" onClick={handleFavorite}>
                     {user && shoe?._id && user?.favorites?.includes(shoe?._id) ? <span className="inline-flex items-center"> <HeartSolid className="mr-2 h-5 w-5" /></span> : <span className="inline-flex items-center"> <HeartOutline className="mr-2 h-5 w-5" /></span>}
                     {shoe?.favorites?.length}
                   </button>
@@ -215,8 +217,8 @@ const FullShoePage = () => {
           )}
 
           {loading ? <div className="flex justify-center"><CircleLoader size={16} /></div> : (
-            <div className="border-t border-gray-300 flex pt-8 sm:block sm:px-4">
-              <div className="mr-12 flex-2 sm:mb-10">
+            <div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
+              <div className="mr-12 flex-2 xl:mb-10">
                 <div className="text-2xl font-bold">Customer reviews</div>
                 <div className="flex gap-2 items-center">
                   <StarRatingComponent

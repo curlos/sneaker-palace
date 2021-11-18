@@ -4,7 +4,7 @@ const Home = () => {
 
   return (
     <div>
-      <div className="bg-kobe-hof-shoes h-screen bg-cover flex items-center text-white font-bold sm:h-800">
+      <div className="bg-kobe-hof-shoes h-screen bg-cover flex items-center text-white font-bold">
         <div className="ml-10 pb-10 w-1/4 sm:w-3/4">
           <div className="text-5xl mb-3 sm:text-5xl">Nike Kobe 5 Protro Undefeated 'Hall of Fame'</div>
           <Link to={`/shoe/d8efc352-2ae6-473a-b20a-70b810f388ee`} className="underline">Shop Now</Link>

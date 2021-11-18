@@ -20,7 +20,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
     <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40" onClick={() => setShowSidenavModal(!showSidenavModal)}>
       <aside className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll sm:no-scrollbar ease-in-out transition-all duration-1000 ${showSidenavModal ? 'translate-x-0' : 'translate-x-full'} sm:w-10/12`} onClick={handleBubblingDownClick}>
         <div className="p-10 text-2xl font-medium flex flex-col justify-between h-screen">
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 pb-24">
             <div>
               <Link to="/shoes" onClick={() => setShowSidenavModal(false)}>Sneakers</Link>
             </div>

@@ -77,15 +77,27 @@ const App = () => {
           </Route>
 
           <Route path="/shoe/submit-review/:shoeID" exact>
-            <ReviewForm />
+            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+              <span>
+                <ReviewForm />
+              </span>
+            )}
           </Route>
 
           <Route path="/shoe/edit-review/:shoeID/:reviewID" exact>
-            <ReviewForm />
+            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+              <span>
+                <ReviewForm />
+              </span>
+            )}
           </Route>
 
           <Route path="/profile/:userID" exact>
-            <Profile />
+            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+              <span>
+                <Profile />
+              </span>
+            )}
           </Route>
 
           <Route path="/orders" exact>
@@ -105,7 +117,11 @@ const App = () => {
           </Route>
 
           <Route path="/favorites" exact>
-            <Favorites />
+            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+              <span>
+                <Favorites />
+              </span>
+            )}
           </Route>
 
           <Route path="/settings" exact>

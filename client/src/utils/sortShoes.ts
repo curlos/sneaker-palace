@@ -1,6 +1,6 @@
 import { Shoe } from "../types/types"
 
-export {}
+export { }
 
 export const sortByOldest = (shoesToSort: Array<Shoe>) => {
   const shoesToSortClone = [...shoesToSort]
@@ -27,4 +27,3 @@ export const sortByNewest = (shoesToSort: Array<Shoe>) => {
 export const sortByLowestPrice = (shoesToSort: Array<Shoe>) => [...shoesToSort].sort((shoeOne, shoeTwo) => shoeOne.retailPrice > shoeTwo.retailPrice ? 1 : -1)
 
 export const sortByHighestPrice = (shoesToSort: Array<Shoe>) => [...shoesToSort].sort((shoeOne, shoeTwo) => shoeOne.retailPrice > shoeTwo.retailPrice ? -1 : 1)
-
