@@ -1,7 +1,9 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, useHistory } from 'react-router-dom'
+import { resetCart } from '../redux/cartRedux'
 import { RootState } from '../redux/store'
+import { logout } from '../redux/userRedux'
 import { UserType } from '../types/types'
 
 interface Props {
@@ -10,10 +12,21 @@ interface Props {
 }
 
 const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
+  const history = useHistory()
+  const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
 
   const handleBubblingDownClick = (e: React.FormEvent) => {
     e.stopPropagation()
+  }
+
+  const handleLogout = () => {
+    setShowSidenavModal(false)
+    console.log('log out')
+    dispatch(logout())
+    dispatch(resetCart())
+    history.push('/')
+    window.location.reload()
   }
 
   return (
@@ -54,27 +67,40 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-5">
-            <div>
-              <Link to={`/profile/${user && user._id}`} onClick={() => setShowSidenavModal(false)}>Profile</Link>
-            </div>
+          {!user || Object.keys(user).length === 0 ? (
+            <div className="flex flex-col gap-5">
+              <div>
+                <Link to="/login" onClick={() => setShowSidenavModal(false)}>Login</Link>
+              </div>
 
-            <div>
-              <Link to="/orders" onClick={() => setShowSidenavModal(false)}>Orders</Link>
+              <div>
+                <Link to="/register" onClick={() => setShowSidenavModal(false)}>Register</Link>
+              </div>
             </div>
+          ) : (
+            <div className="flex flex-col gap-5">
+              <div>
+                <Link to={`/profile/${user && user._id}`} onClick={() => setShowSidenavModal(false)}>Profile</Link>
+              </div>
 
-            <div>
-              <Link to="/favorites" onClick={() => setShowSidenavModal(false)}>Favorites</Link>
-            </div>
+              <div>
+                <Link to="/orders" onClick={() => setShowSidenavModal(false)}>Orders</Link>
+              </div>
 
-            <div>
-              <Link to="/settings" onClick={() => setShowSidenavModal(false)}>Settings</Link>
-            </div>
+              <div>
+                <Link to="/favorites" onClick={() => setShowSidenavModal(false)}>Favorites</Link>
+              </div>
 
-            <div>
-              <Link to="/" onClick={() => setShowSidenavModal(false)}>Sign Out</Link>
+              <div>
+                <Link to="/settings" onClick={() => setShowSidenavModal(false)}>Settings</Link>
+              </div>
+
+              <div>
+                <Link to="/" onClick={handleLogout}>Sign Out</Link>
+              </div>
             </div>
-          </div>
+          )}
+
         </div>
 
       </aside>

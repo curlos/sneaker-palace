@@ -14,6 +14,7 @@ const Favorites = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       const favorites = await getAllFavorites()
       setFavoriteShoes(favorites)
@@ -42,8 +43,10 @@ const Favorites = () => {
 
   return (
     loading ? <div className="flex justify-center py-4 h-screen"><CircleLoader size={16} /></div> : (
-      <div className="flex flex-wrap min-h-screen">
-        {favoriteShoes.map((shoe) => shoe && <SmallShoe shoe={shoe} />)}
+      <div className="min-h-screen">
+        <div className="flex flex-wrap justify-start">
+          {favoriteShoes.map((shoe) => shoe && <SmallShoe shoe={shoe} />)}
+        </div>
       </div>
     )
   )

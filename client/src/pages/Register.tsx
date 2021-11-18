@@ -35,7 +35,7 @@ const Register = () => {
 
   return (
     <form className="h-screen bg-login-image bg-cover flex justify-center items-start" onSubmit={handleRegisterUser}>
-      <div className="flex flex-col gap-4 items-center bg-white w-2/5 p-4 rounded-lg my-6">
+      <div className="flex flex-col gap-4 items-center bg-white w-2/5 p-4 rounded-lg my-6 xl:w-4/5 xl:py-10 sm:w-97/100">
         <span className="font-bold text-2xl">BECOME A MEMBER</span>
         <input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} className="border border-gray-300 rounded-lg p-2 px-4 w-full focus:outline-none"></input>
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="border border-gray-300 rounded-lg p-2 px-4 w-full focus:outline-none"></input>
