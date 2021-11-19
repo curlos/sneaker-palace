@@ -16,6 +16,7 @@ const Profile = () => {
 
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const fetchProfileUserFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${userID}`)
       const newProfileUserReviews = await fetchAllReviews(response.data.ratings)

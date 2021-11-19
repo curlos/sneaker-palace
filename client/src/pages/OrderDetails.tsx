@@ -18,6 +18,7 @@ const OrderDetails = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/orders/${id}`)
       const newShoes = await getAllShoes(response.data.products)

@@ -34,6 +34,7 @@ const ReviewForm = () => {
   console.log(reviewID)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`)
       console.log(response.data)

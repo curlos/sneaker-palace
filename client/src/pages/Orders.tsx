@@ -13,6 +13,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/orders/user/${user._id}`)
       console.log(response.data)

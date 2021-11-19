@@ -1,11 +1,15 @@
 import { SwitchHorizontalIcon, UserIcon } from '@heroicons/react/outline'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AccountDetails from '../components/AccountDetails'
 import ShopPreferences from '../components/ShopPreferences'
 
 const Settings = () => {
 
   const [selectedSetting, setSelectedSetting] = useState('Account Details')
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const getSettingPage = () => {
     switch (selectedSetting) {
@@ -17,10 +21,10 @@ const Settings = () => {
   }
 
   return (
-    <div className="px-36 py-10 sm:p-4">
+    <div className="px-36 py-10 lg:p-4">
       <div className="text-2xl font-medium mb-4">Settings</div>
 
-      <div className="flex sm:block">
+      <div className="flex lg:block">
         <div className="flex-2">
           <div className={`mb-2 text-lg cursor-pointer ${selectedSetting === 'Account Details' ? 'underline' : ''}`} onClick={() => setSelectedSetting('Account Details')}>
             <div className="flex items-center">

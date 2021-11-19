@@ -24,6 +24,7 @@ const PaymentSuccess = () => {
   const [paymentInfo, setPaymentInfo] = useState<any>({})
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const clientSecret = new URLSearchParams(window.location.search).get(
       'payment_intent_client_secret'
     );
