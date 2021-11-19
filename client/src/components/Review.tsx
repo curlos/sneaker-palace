@@ -52,7 +52,7 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
 
   const handleDeleteReview = async () => {
 
-    const response = await axios.delete(`${process.env.REACT_APP_DEV_URL}/rating/${review._id}`)
+    await axios.delete(`${process.env.REACT_APP_DEV_URL}/rating/${review._id}`)
 
     setShoeRatings(shoeRatings.filter((shoeRating) => shoeRating._id !== review._id))
   }
