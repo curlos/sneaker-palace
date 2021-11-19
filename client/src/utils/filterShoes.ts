@@ -34,8 +34,6 @@ export const filterByGender = (filters: any, shoesToFilter: Array<Shoe>) => {
   }
 
   return shoesToFilter.filter((shoe) => {
-    console.log(shoe.gender)
-
     return filters.genders[titleCase(shoe.gender)]
   })
 }

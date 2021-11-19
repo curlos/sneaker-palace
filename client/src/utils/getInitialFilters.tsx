@@ -105,7 +105,7 @@ const getInitialFilters = (state: stateType) => {
   }
 
   if (state && state.brand) {
-    filters['brands'][titleCase(state.brand)] = true
+    filters['brands'][state.brand.toUpperCase()] = true
   }
 
   console.log(state)
