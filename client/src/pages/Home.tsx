@@ -11,6 +11,12 @@ const Home = () => {
   return (
     <div>
       <Carousel />
+      <div className={`bg-lebron-south-beach-shoes h-screen bg-cover flex items-center text-white font-bold transition-all ease-in-out duration-1000 transform translate-x-0 slide`}>
+        <div className="ml-10 pb-10 w-1/4 sm:w-3/4">
+          <div className="text-5xl mb-3 sm:text-5xl">Nike LeBron 8 South Beach (2021)</div>
+          <Link to={`/shoe/5f6da0cf-a27a-4bfc-aaec-bc4ce69ca76a`} className="underline">Shop Now</Link>
+        </div>
+      </div>
       {/* <img src="/assets/landing_page/kobes.jpeg" /> */}
 
       <div className="px-24 sm:px-6">

@@ -7,22 +7,29 @@ const jwt = require('jsonwebtoken')
 
 // Register User
 router.post('/register', async (req: Request, res: Response) => {
-  const newUser = new User({
-    email: req.body.email,
-    password: CryptoJS.AES.encrypt(
-      req.body.password,
-      process.env.PASS_SEC
-    ).toString(),
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    lowerCaseEmail: req.body.email
-  })
 
-  try {
-    const savedUser = await newUser.save()
-    res.status(201).json(savedUser)
-  } catch (err) {
-    res.status(500).json(err)
+  const foundUser = await User.findOne({ lowerCaseEmail: req.body.email.toLowerCase() })
+
+  if (foundUser) {
+    res.json({ error: 'Email taken' })
+  } else {
+    const newUser = new User({
+      email: req.body.email,
+      password: CryptoJS.AES.encrypt(
+        req.body.password,
+        process.env.PASS_SEC
+      ).toString(),
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      lowerCaseEmail: req.body.email
+    })
+
+    try {
+      const savedUser = await newUser.save()
+      res.status(201).json(savedUser)
+    } catch (err) {
+      res.status(500).json(err)
+    }
   }
 })
 
@@ -31,7 +38,7 @@ router.post('/register', async (req: Request, res: Response) => {
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ email: req.body.email })
-    
+
     if (!user) {
       res.status(401).json('Wrong credentials')
     }
@@ -56,7 +63,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     const { password, ...others } = user._doc
 
-    res.status(200).json({...others, accessToken})
+    res.status(200).json({ ...others, accessToken })
   } catch (err) {
     res.status(500).json(err)
   }

@@ -9,6 +9,7 @@ import { UserType } from '../types/types'
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState(false)
   const dispatch = useDispatch()
   const history = useHistory()
 
@@ -17,6 +18,7 @@ const Login = () => {
   })
 
   const handleLoginUser = async (e: React.FormEvent) => {
+    setError(false)
     e.preventDefault()
 
     const body = {
@@ -39,6 +41,7 @@ const Login = () => {
       console.log(response.data)
     } catch (err) {
       console.log(err)
+      setError(true)
       dispatch(loginFailure())
     }
   }
@@ -53,10 +56,11 @@ const Login = () => {
     <form className="h-screen bg-login-image bg-cover flex justify-center items-start" onSubmit={handleLoginUser}>
       <div className="flex flex-col gap-4 items-center bg-white w-2/5 p-4 rounded-lg my-6 xl:w-4/5 xl:py-10 sm:w-97/100">
         <span className="font-bold text-2xl">YOUR ACCOUNT FOR EVERYTHING</span>
-        <input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} className="border border-gray-300 rounded-lg p-2 px-4 w-full focus:outline-none"></input>
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="border border-gray-300 rounded-lg p-2 px-4 w-full focus:outline-none"></input>
+        <input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} className={`rounded-lg p-2 px-4 w-full focus:outline-none ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}></input>
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className={`rounded-lg p-2 px-4 w-full focus:outline-none ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}></input>
 
         <button className="bg-black text-white w-full py-2 rounded-lg hover:bg-gray-600" onClick={handleLoginUser}>SIGN IN</button>
+        {error ? <span className="text-red-600">Invalid credentials!</span> : null}
         <span className="text-gray-500">Not a member? <Link to="/register" className="text-black underline">Sign up.</Link></span>
       </div>
     </form>
