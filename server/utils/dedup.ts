@@ -1,9 +1,8 @@
 export { }
 
-const mongoose = require('mongoose')
+const Shoe = require('../models/Shoe')
 
-
-mongoose.connection.db.collection('shoe-shop.shoes').aggregate([
+Shoe.aggregate([
   {
     "$group": {
       "_id": { "shoeID": "$shoeID" },
@@ -14,5 +13,5 @@ mongoose.connection.db.collection('shoe-shop.shoes').aggregate([
   { "$match": { "count": { "$gt": 1 } } }
 ]).forEach((doc: any) => {
   doc.dups.shift();
-  mongoose.connection.db.remove({ "_id": { "$in": doc.dups } });
+  Shoe.remove({ "_id": { "$in": doc.dups } });
 });

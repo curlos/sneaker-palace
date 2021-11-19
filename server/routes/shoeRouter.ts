@@ -92,6 +92,11 @@ router.post('/newShoe', async (req: Request, res: Response) => {
   res.json(result)
 })
 
+router.post('/delete', async (req: Request, res: Response) => {
+  const result = await Shoe.deleteMany({ brand: { $in: ['Louis Vuitton'] } })
+  res.json(result)
+})
+
 // router.post('/newShoe', async (req: Request, res: Response) => {
 //   console.log(getShoesFromBrand)
 //   await getShoesFromBrand(req.body.brand)
