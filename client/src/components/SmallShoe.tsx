@@ -15,7 +15,7 @@ const SmallShoe = ({ shoe }: Props) => {
         <div className="flex items-center">
           <StarRatingComponent
             name={'Rating'}
-            value={0}
+            value={shoe.rating}
             starCount={5}
             editing={false}
             starColor={'#F5B327'}

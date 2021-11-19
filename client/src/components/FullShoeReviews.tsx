@@ -1,0 +1,68 @@
+import React from 'react'
+import { Link } from 'react-router-dom'
+import StarRatingComponent from 'react-star-rating-component'
+import { IRating, Shoe } from '../types/types'
+import Review from './Review'
+import StarRatingProgress from './StarRatingProgress'
+
+interface Props {
+  shoe: Partial<Shoe>,
+  shoeRatings: Array<IRating>,
+  setShoeRatings: React.Dispatch<React.SetStateAction<Array<IRating>>>
+}
+
+const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
+
+  return (
+    <div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
+      <div className="mr-12 flex-2 xl:mb-10">
+        <div className="text-2xl font-bold">Customer reviews</div>
+        <div className="flex gap-2 items-center">
+          <StarRatingComponent
+            name={'Rating'}
+            value={Number(shoe.rating?.toFixed(2))}
+            starCount={5}
+            editing={false}
+            starColor={'#F5B327'}
+          />
+          {shoeRatings.length === 0 ? (
+            <span className="text-lg">No reviews</span>
+          ) : (
+            <span className="text-lg">{shoe.rating?.toFixed(2)} out of 5</span>
+          )}
+        </div>
+
+        <div className="text-gray-700">{shoeRatings.length} global ratings</div>
+
+        <div>
+          <StarRatingProgress rating={5} percentage={shoeRatings.filter((rating) => rating.ratingNum === 5).length / shoeRatings.length} />
+          <StarRatingProgress rating={4} percentage={shoeRatings.filter((rating) => rating.ratingNum === 4).length / shoeRatings.length} />
+          <StarRatingProgress rating={3} percentage={shoeRatings.filter((rating) => rating.ratingNum === 3).length / shoeRatings.length} />
+          <StarRatingProgress rating={2} percentage={shoeRatings.filter((rating) => rating.ratingNum === 2).length / shoeRatings.length} />
+          <StarRatingProgress rating={1} percentage={shoeRatings.filter((rating) => rating.ratingNum === 1).length / shoeRatings.length} />
+        </div>
+
+        <div className="">
+          <div className="text-xl font-bold">Review this product</div>
+          <div className="my-3">Share your thoguhts with other customers</div>
+          <Link to={`/shoe/submit-review/${shoe.shoeID}`} className="px-5 py-2 border border-gray-300">Write a customer review</Link>
+        </div>
+      </div>
+
+      {shoeRatings.length > 0 ? (
+        <div className="flex-8">
+          <div className="text-2xl font-bold mb-4">
+            Top reviews from the United States
+          </div>
+
+
+          <div>
+            {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />)}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+export default FullShoeReviews

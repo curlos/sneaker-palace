@@ -4,15 +4,14 @@ import axios from 'axios';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from 'react-router-dom';
-import StarRatingComponent from 'react-star-rating-component';
-import Review from '../components/Review';
+import { useParams } from 'react-router-dom';
+import FullShoeReviews from '../components/FullShoeReviews';
 import ShoppingCartModal from '../components/ShoppingCartModal';
-import StarRatingProgress from '../components/StarRatingProgress';
 import { updateCart } from '../redux/cartRedux';
 import { RootState } from "../redux/store";
 import { updateUser } from '../redux/userRedux';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
+import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
 import { IProduct, IRating, Shoe, UserType } from "../types/types";
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
@@ -26,26 +25,30 @@ const FullShoePage = () => {
 
   const { shoeID }: { shoeID: string } = useParams()
   const dispatch = useDispatch()
+  const initialSize = (Object.keys(user).length > 0 && user.preselectedShoeSize && String(user.preselectedShoeSize)) || AVERAGE_MAN_FOOT_SIZE
 
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
   const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([])
-  const [selectedSize, setSelectedSize] = useState(String(user.preselectedShoeSize) || AVERAGE_MAN_FOOT_SIZE)
+  const [selectedSize, setSelectedSize] = useState(initialSize)
   const [imageNum, setImageNum] = useState(0)
-  const [loading, setLoading] = useState(false)
+  const [shoeLoading, setShoeLoading] = useState(false)
+  const [reviewLoading, setReviewLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
-
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    setLoading(true)
+    setShoeLoading(true)
+    setReviewLoading(true)
 
     const fetchFromAPI = async () => {
       console.log(shoeID)
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`)
-      const ratings = await fetchAllRatings(response.data.ratings)
       setShoe(response.data)
+      setShoeLoading(false)
+
+      const ratings = await fetchAllRatings(response.data.ratings)
       setShoeRatings(ratings)
-      setLoading(false)
+      setReviewLoading(false)
     }
     fetchFromAPI()
   }, [shoeID])
@@ -102,25 +105,14 @@ const FullShoePage = () => {
     return ratings
   }
 
-  const getAverageRating = (ratings: Array<IRating>) => {
-    const sumOfRatings = ratings.reduce((sum, { ratingNum }) => sum + ratingNum, 0)
-
-    console.log(sumOfRatings)
-
-    return Number((sumOfRatings / ratings.length).toFixed(1))
-  }
-
   console.log(shoe)
-  console.log(shoeRatings)
-  console.log(getAverageRating(shoeRatings))
 
   return (
 
     <div>
       <div className="p-5 px-14 w-full h-full sm:px-0 xl:px-6">
         <div className="w-full h-full">
-          {loading ?
-            <div className="flex justify-center items-center h-screen"><CircleLoader size={16} /></div>
+          {shoeLoading ? <FullShoeSkeleton />
             : (
               <div className="flex xl:block">
                 <div className="flex-3">
@@ -141,7 +133,7 @@ const FullShoePage = () => {
                   <div className="flex flex-wrap box-border justify-between">
                     {SHOE_SIZES.map((shoeSize) => {
                       return (
-                        <div className={`box-border cursor-pointer text-center border py-2  hover:border-gray-600 w-4/12 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
+                        <div className={`box-border cursor-pointer text-center border py-2 mb-2 hover:border-gray-600 w-32/100 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
                           {shoeSize}
                         </div>
                       )
@@ -215,55 +207,8 @@ const FullShoePage = () => {
               </div>
             )}
 
-          {loading ? <div className="flex justify-center"><CircleLoader size={16} /></div> : (
-            <div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
-              <div className="mr-12 flex-2 xl:mb-10">
-                <div className="text-2xl font-bold">Customer reviews</div>
-                <div className="flex gap-2 items-center">
-                  <StarRatingComponent
-                    name={'Rating'}
-                    value={0}
-                    starCount={5}
-                    editing={false}
-                    starColor={'#F5B327'}
-                  />
-                  {shoeRatings.length === 0 ? (
-                    <span className="text-lg">No reviews</span>
-                  ) : (
-                    <span className="text-lg">{getAverageRating(shoeRatings)} out of 5</span>
-                  )}
-                </div>
-
-                <div className="text-gray-700">{shoeRatings.length} global ratings</div>
-
-                <div>
-                  <StarRatingProgress rating={5} percentage={shoeRatings.filter((rating) => rating.ratingNum === 5).length / shoeRatings.length} />
-                  <StarRatingProgress rating={4} percentage={shoeRatings.filter((rating) => rating.ratingNum === 4).length / shoeRatings.length} />
-                  <StarRatingProgress rating={3} percentage={shoeRatings.filter((rating) => rating.ratingNum === 3).length / shoeRatings.length} />
-                  <StarRatingProgress rating={2} percentage={shoeRatings.filter((rating) => rating.ratingNum === 2).length / shoeRatings.length} />
-                  <StarRatingProgress rating={1} percentage={shoeRatings.filter((rating) => rating.ratingNum === 1).length / shoeRatings.length} />
-                </div>
-
-                <div className="">
-                  <div className="text-xl font-bold">Review this product</div>
-                  <div className="my-3">Share your thoguhts with other customers</div>
-                  <Link to={`/shoe/submit-review/${shoe.shoeID}`} className="px-5 py-2 border border-gray-300">Write a customer review</Link>
-                </div>
-              </div>
-
-              {shoeRatings.length > 0 ? (
-                <div className="flex-8">
-                  <div className="text-2xl font-bold mb-4">
-                    Top reviews from the United States
-                  </div>
-
-
-                  <div>
-                    {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />)}
-                  </div>
-                </div>
-              ) : null}
-            </div>
+          {reviewLoading ? <div className="flex justify-center"><CircleLoader size={16} /></div> : (
+            <FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />
           )}
 
         </div>

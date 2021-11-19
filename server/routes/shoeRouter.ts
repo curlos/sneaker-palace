@@ -12,7 +12,6 @@ const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sne
 const router = express.Router()
 
 router.get('/', async (req: Request, res: Response) => {
-  console.log('finding...')
   const allShoes = await Shoe.find({})
     .select('shoeID image.original name gender colorway ratings retailPrice brand')
     .lean().exec((err: any, results: any) => {
@@ -21,7 +20,6 @@ router.get('/', async (req: Request, res: Response) => {
 })
 
 router.get('/:shoeID', async (req: Request, res: Response) => {
-  console.log('searching...')
   const shoe = await Shoe.findOne({ shoeID: req.params.shoeID })
   res.json(shoe)
 })
@@ -43,7 +41,6 @@ router.get('/objectID/:id', async (req: Request, res: Response) => {
 router.get('/query/:queryString', async (req: Request, res: Response) => {
   const shoes = await Shoe
     .find({ "name": { "$regex": req.params.queryString.trim(), "$options": "i" } }).lean()
-  console.log(shoes.length)
   res.json(shoes)
 })
 

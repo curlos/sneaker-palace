@@ -13,47 +13,35 @@ router.get('/:ratingID', async (req: Request, res: Response) => {
   res.json(rating)
 })
 
-const getAverageRating = async (ratingIDs: Array<string>) => {
-  if (ratingIDs.length === 0) {
-    return 0
-  }
-
-  let ratingSum = 0
-
+const getAverageRating = async (ratingIDs: Array<string>, currentAverageRating: number, newRatingNum: number) => {
 
   console.log(ratingIDs)
-
-  for (let ratingID of ratingIDs) {
-    try {
-      const response = await Rating.findById(ratingID, (err: any, results: typeof Rating) => {
-        console.log(results)
-        if (results) {
-          ratingSum += results.ratingNum
-        }
-      }).clone().catch((err: any) => console.log(err))
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  console.log(ratingSum)
+  console.log(currentAverageRating)
+  console.log(ratingIDs.length)
+  console.log(ratingIDs.length + 1)
 
 
-
-  return ratingSum / ratingIDs.length
+  return ((currentAverageRating * ratingIDs.length) + newRatingNum) / (ratingIDs.length + 1)
 }
 
 router.post('/rate', async (req: Request, res: Response) => {
   const rating = new Rating(req.body)
   const shoe = await Shoe.findOne({ shoeID: req.body.shoeID })
   const user = await User.findById(req.body.userID)
+  const newShoeAverageRating = await getAverageRating(shoe.ratings, shoe.rating || 0, req.body.ratingNum)
 
+  console.log(newShoeAverageRating)
+
+  shoe.rating = newShoeAverageRating
   await shoe.updateOne({ $push: { ratings: rating._id } })
   await user.updateOne({ $push: { ratings: rating._id } })
+  await rating.save()
+  await shoe.save()
+
+  console.log(newShoeAverageRating)
+
   const updatedShoe = await Shoe.findById(shoe._id)
   const updatedUser = await User.findById(user._id)
-
-  await rating.save()
 
   res.json({ updatedShoe, updatedUser, rating })
 })
@@ -131,10 +119,6 @@ router.delete('/:id', async (req: Request, res: Response) => {
   const deletedRating = await Rating.findByIdAndDelete(req.params.id)
   res.json(deletedRating)
 })
-
-
-
-
 
 
 module.exports = router;
