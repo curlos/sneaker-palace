@@ -13,17 +13,17 @@ interface Props {
 const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 
   return (
-    <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40 p-24 top-0 left-0 flex justify-center items-center" onClick={() => setShowModal(!showModal)}>
-      <div className="w-full h-10/12 placeholder-gray-400">
+    <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40 p-24 top-0 left-0 flex justify-center items-center sm:py-4 sm:px-2 overflow-auto" onClick={() => setShowModal(!showModal)}>
+      <div className="placeholder-gray-400">
 
-        <div className="w-full flex justify-end rounded-t-2xl bg-gray-300 border-0 border-b border-solid border-gray-400 p-3">
+        <div className="flex justify-end rounded-t-2xl bg-gray-300 border-0 border-b border-solid border-gray-400 p-3">
           <XIcon className="h-6 w-6 cursor-pointer" onClick={() => setShowModal(false)} />
         </div>
 
         <div className="overflow-y bg-white">
           <div className="p-3 flex xl:block">
             <div className="flex-2">
-              <img src={`${process.env.REACT_APP_DEV_URL}${review.photo}`} alt="" className="mr-4" />
+              <img src={`${process.env.REACT_APP_DEV_URL}${review.photo}`} alt="" className="mr-4 xl:mr-0" />
             </div>
 
             <div className="flex-2 ml-4">

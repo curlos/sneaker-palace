@@ -72,7 +72,7 @@ export const Footer = () => {
           <div className="cursor-pointer">Jobs</div>
         </div>
 
-        <div className="text-gray-400">&#169; Shoe Shop Miami LLC. All Rights Reserved</div>
+        <div className="text-gray-400">&#169; Sneaker Palace LLC. All Rights Reserved</div>
 
         <div className="text-2xl">
           <i className="fab fa-twitter-square mr-3 cursor-pointer"></i>
