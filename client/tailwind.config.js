@@ -63,6 +63,8 @@ module.exports = {
         backgroundImage: {
           'login-image': "url('https://i.pinimg.com/originals/a1/b6/80/a1b68042f24f520d7a1e505bde40a24a.jpg')",
           'kobe-hof-shoes': `url('${process.env.REACT_APP_DEV_URL}/images/kobes.jpeg')`,
+          'lebron-south-beach-shoes': `url('${process.env.REACT_APP_DEV_URL}/images/lebrons.jpeg')`,
+          'jordan-trophy-room-shoes': `url('${process.env.REACT_APP_DEV_URL}/images/jordans.jpeg')`,
         },
         colors: {
           brown: {
@@ -106,7 +108,9 @@ module.exports = {
           '800': '800px',
           '900': '900px',
           '1000': '1000px',
-          '97/100': '97%'
+          '97/100': '97%',
+          '12/100': '12%',
+          '14/100': '14%'
         }
       }
     },

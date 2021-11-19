@@ -187,7 +187,7 @@ const addShoeByName = async (name: string) => {
   const options = {
     method: 'GET',
     url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
-    params: { limit: '100', name: 'Nike Kobe 5 Protro Undefeated Hall of Fame' },
+    params: { limit: '100', name: name },
     headers: {
       'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
       'x-rapidapi-key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f'

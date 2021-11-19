@@ -46,7 +46,6 @@ app.use('/checkout', stripeRouter)
 app.use('/orders', orderRouter)
 app.use('/images', imageRouter)
 
-
 app.listen(PORT, () => {
   database.connectToServer((err: any) => {
     if (err) {

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import Carousel from "../components/Carousel";
 
 const Home = () => {
 
@@ -9,12 +10,7 @@ const Home = () => {
 
   return (
     <div>
-      <div className="bg-kobe-hof-shoes h-screen bg-cover flex items-center text-white font-bold">
-        <div className="ml-10 pb-10 w-1/4 sm:w-3/4">
-          <div className="text-5xl mb-3 sm:text-5xl">Nike Kobe 5 Protro Undefeated 'Hall of Fame'</div>
-          <Link to={`/shoe/d8efc352-2ae6-473a-b20a-70b810f388ee`} className="underline">Shop Now</Link>
-        </div>
-      </div>
+      <Carousel />
       {/* <img src="/assets/landing_page/kobes.jpeg" /> */}
 
       <div className="px-24 sm:px-6">
@@ -22,28 +18,28 @@ const Home = () => {
           <div>Popular Brands</div>
           <Link to={`/shoes`} className="underline">See All</Link>
         </div>
-        <div className="flex flex-wrap gap-2 items-center sm:justify-between sm:mt-4">
-          <div className="w-2/12 sm:w-5/12">
+        <div className="flex flex-wrap gap-2 items-center justify-between sm:mt-4">
+          <div className="w-14/100 sm:w-5/12">
             <img src="/assets/brand_logos/nike.svg" className="w-full" alt="" />
           </div>
 
-          <div className="w-2/12 sm:w-5/12">
+          <div className="w-14/100 sm:w-5/12">
             <img src="/assets/brand_logos/jordan.svg" className="w-full" alt="" />
           </div>
 
-          <div className="w-2/12 sm:w-5/12">
+          <div className="w-14/100 sm:w-5/12">
             <img src="/assets/brand_logos/adidas.svg" className="w-full" alt="" />
           </div>
 
-          <div className="w-2/12 sm:w-5/12">
+          <div className="w-14/100 sm:w-5/12">
             <img src="/assets/brand_logos/new balance.svg" className="w-full" alt="" />
           </div>
 
-          <div className="w-2/12 sm:w-5/12">
+          <div className="w-14/100 sm:w-5/12">
             <img src="/assets/brand_logos/louis vuitton.svg" className="w-full" alt="" />
           </div>
 
-          <div className="w-2/12 sm:w-5/12">
+          <div className="w-14/100 sm:w-5/12">
             <img src="/assets/brand_logos/gucci.svg" className="w-full" alt="" />
           </div>
 

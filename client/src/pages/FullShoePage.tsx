@@ -117,7 +117,7 @@ const FullShoePage = () => {
   return (
 
     <div>
-      <div className="p-5 px-28 w-full h-full sm:px-0 xl:px-6">
+      <div className="p-5 px-14 w-full h-full sm:px-0 xl:px-6">
         <div className="w-full h-full">
           {loading ?
             <div className="flex justify-center items-center h-screen"><CircleLoader size={16} /></div>

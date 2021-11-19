@@ -107,7 +107,7 @@ const ProductList = () => {
     setPaginatedShoes(newPaginatedShoes)
   }
 
-  console.log(query.get('query'))
+  console.log(paginatedShoes)
 
   return (
     <div className="text-xl-lg">
