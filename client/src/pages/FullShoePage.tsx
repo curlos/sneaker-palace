@@ -41,7 +41,7 @@ const FullShoePage = () => {
     setReviewLoading(true)
 
     const fetchFromAPI = async () => {
-      console.log(shoeID)
+
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`)
       setShoe(response.data)
       setShoeLoading(false)
@@ -55,7 +55,7 @@ const FullShoePage = () => {
 
   const handleAddToCart = async () => {
     if (currentCart && currentCart.products && shoe && shoe.shoeID) {
-      console.log('adding to cart')
+
       const newProduct: Partial<IProduct> = {
         productID: shoe.shoeID,
         size: Number(selectedSize),
@@ -65,11 +65,11 @@ const FullShoePage = () => {
       const currentProducts = currentCart?.products
 
       const body = { products: [...currentProducts, newProduct] }
-      console.log(body)
+
 
       const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
       const newCart = response.data
-      console.log(newCart)
+
       dispatch(updateCart(newCart))
     }
   }
@@ -84,18 +84,18 @@ const FullShoePage = () => {
       userID: user['_id']
     }
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/shoes/favorite`, body)
-    console.log(response.data)
+
     dispatch(updateUser(response.data.updatedUser))
     setShoe(response.data.updatedShoe)
   }
 
   const fetchAllRatings = async (ratingIDs: Array<string>) => {
     const ratings = []
-    console.log(ratingIDs)
+
     if (ratingIDs) {
       for (let ratingID of ratingIDs) {
         const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${ratingID}`)
-        console.log(response.data)
+
         if (response.data !== null) {
           const authorResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`)
           ratings.push({ ...response.data, postedByUser: authorResponse.data })
@@ -105,7 +105,7 @@ const FullShoePage = () => {
     return ratings
   }
 
-  console.log(shoe)
+
 
   return (
 

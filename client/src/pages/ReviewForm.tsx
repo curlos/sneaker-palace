@@ -30,14 +30,14 @@ const ReviewForm = () => {
   const [file, setFile] = useState<File>()
   const [loading, setLoading] = useState(true)
 
-  console.log(shoeID)
-  console.log(reviewID)
+
+
 
   useEffect(() => {
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`)
-      console.log(response.data)
+
       setShoe(response.data)
 
       if (reviewID) {
@@ -58,7 +58,7 @@ const ReviewForm = () => {
 
       if (file) {
         const results = await postImage(file)
-        console.log(results)
+
         imagePath = results.imagePath
       }
 
@@ -68,14 +68,14 @@ const ReviewForm = () => {
       }
 
       const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/rating/rate`, body)
-      console.log(response.data.errors)
+
 
       if (!response.data.errors) {
         history.push(`/shoe/${shoe.shoeID}`)
       }
 
     } catch (err) {
-      console.log(err)
+
     }
   }
 
@@ -91,7 +91,7 @@ const ReviewForm = () => {
 
       if (file) {
         const results = await postImage(file)
-        console.log(results)
+
         imagePath = results.imagePath
       }
 
@@ -101,20 +101,20 @@ const ReviewForm = () => {
       }
 
       const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/edit/${reviewID}`, body)
-      console.log(response.data)
+
 
       if (!response.data.errors) {
         history.push(`/shoe/${shoe.shoeID}`)
       }
 
     } catch (err) {
-      console.log(err)
+
     }
   }
 
 
-  console.log(reviewInfo)
-  console.log()
+
+
 
   return (
     loading ? <div>Loading...</div> : (

@@ -29,7 +29,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     { new: true }
   )
 
-  console.log()
+
   res.status(200).json(updatedCart)
 })
 

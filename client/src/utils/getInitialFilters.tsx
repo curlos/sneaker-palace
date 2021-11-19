@@ -108,8 +108,8 @@ const getInitialFilters = (state: stateType) => {
     filters['brands'][state.brand.toUpperCase()] = true
   }
 
-  console.log(state)
-  console.log(filters)
+
+
 
   return filters
 }

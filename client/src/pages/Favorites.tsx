@@ -38,8 +38,8 @@ const Favorites = () => {
     return favorites
   }
 
-  console.log(user)
-  console.log(favoriteShoes)
+
+
 
 
   return (

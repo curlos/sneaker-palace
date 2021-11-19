@@ -27,7 +27,7 @@ const Register = () => {
       firstName,
       lastName,
     }
-    console.log(body)
+
     try {
       const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/auth/register`, body)
 
@@ -35,13 +35,13 @@ const Register = () => {
         setError(true)
         setErrorMessage(response.data.error)
 
-        console.log(response.data)
+
       } else {
         history.push('/')
       }
     } catch (err) {
       setError(true)
-      console.log(err)
+
     }
   }
 

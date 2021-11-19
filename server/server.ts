@@ -52,5 +52,5 @@ app.listen(PORT, () => {
       console.error(err)
     }
   })
-  console.log(`Server is listening on port ${PORT}`)
+
 })

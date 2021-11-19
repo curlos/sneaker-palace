@@ -23,7 +23,7 @@ const SmallReview = ({ review, author }: Props) => {
     setLoading(true)
 
     const fetchFromAPI = async () => {
-      console.log(review.shoeID)
+
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${review.shoeID}`)
       setShoe(response.data)
       setLoading(false)

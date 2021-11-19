@@ -30,11 +30,11 @@ const Profile = () => {
 
   const fetchAllReviews = async (reviewIDs: Array<string>) => {
     const ratings = []
-    console.log(reviewIDs)
+
     if (reviewIDs) {
       for (let reviewID of reviewIDs) {
         const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${reviewID}`)
-        console.log(response.data)
+
         if (response.data !== null) {
           const authorResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`)
           ratings.push({ ...response.data, postedByUser: authorResponse.data })
@@ -44,8 +44,8 @@ const Profile = () => {
     return ratings
   }
 
-  console.log(profileUser)
-  console.log(profileUserReviews)
+
+
 
 
   return (

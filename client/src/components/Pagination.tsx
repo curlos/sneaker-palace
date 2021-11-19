@@ -53,9 +53,9 @@ export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, cur
   const setPaginatedData = () => {
     const startIndex = currentPage * dataLimit - dataLimit;
     const endIndex = startIndex + dataLimit;
-    console.log(data.slice(startIndex, endIndex))
-    console.log('updating posts')
-    console.log(data.slice(startIndex, endIndex))
+
+
+
     handleNewPageClick(data.slice(startIndex, endIndex))
   }
 

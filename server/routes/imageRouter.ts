@@ -17,21 +17,21 @@ router.get('/:key', async (req: Request, res: Response) => {
   const key = req.params.key
   const readStream = getFileStream(key)
 
-  console.log(readStream)
+
 
   readStream.pipe(res)
 })
 
 router.post('/', upload.single('image'), async (req: Request, res: Response) => {
   const file = req.file
-  console.log(file)
+
   const response = await uploadFile(file)
 
   if (file) {
     await unlinkFile(file.path)
   }
 
-  console.log(response)
+
   res.send({ imagePath: `/images/${response.Key}` })
 })
 

@@ -7,8 +7,8 @@ const Carousel = () => {
   const data = getCarouselData()
   const [currentShoe, setCurrentShoe] = useState(Object.values(data)[num])
 
-  console.log(data)
-  console.log(currentShoe)
+
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,8 +18,8 @@ const Carousel = () => {
       } else {
         setNum(num + 1)
         setCurrentShoe(Object.values(data)[num + 1])
-        console.log(`${process.env.REACT_APP_DEV_URL}/images/lebrons.jpeg`)
-        console.log(process.env)
+
+
       }
     }, 4000)
     return () => clearInterval(interval)

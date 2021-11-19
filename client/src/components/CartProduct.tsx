@@ -26,7 +26,7 @@ const CartProduct = ({ productInfo }: Props) => {
   useEffect(() => {
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${productInfo.productID}`)
-      console.log(response.data)
+
       setShoe(response.data)
       setLoading(false)
     }
@@ -58,14 +58,14 @@ const CartProduct = ({ productInfo }: Props) => {
         }
       }
 
-      console.log(products)
-      console.log(newProducts)
+
+
 
       const body = { products: newProducts }
-      console.log(body)
+
       const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
       const newCart = response.data
-      console.log(newCart)
+
       dispatch(updateCart(newCart))
     }
   }
@@ -94,28 +94,28 @@ const CartProduct = ({ productInfo }: Props) => {
         }
       }
 
-      console.log(products)
-      console.log(newProducts)
+
+
 
       const body = { products: newProducts }
-      console.log(body)
+
       const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
       const newCart = response.data
-      console.log(newCart)
+
       dispatch(updateCart(newCart))
     }
   }
 
   const handleRemoveProduct = async () => {
-    console.log('removing')
-    console.log(currentCart)
-    console.log(productInfo)
+
+
+
     const newProducts = currentCart?.products?.filter((product) => product._id !== productInfo._id)
     const body = { products: newProducts }
-    console.log(body)
+
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
     const newCart = response.data
-    console.log(newCart)
+
     dispatch(updateCart(newCart))
   }
 

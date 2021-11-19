@@ -22,7 +22,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
   const handleLogout = () => {
     setShowSidenavModal(false)
-    console.log('log out')
+
     dispatch(logout())
     dispatch(resetCart())
     history.push('/')

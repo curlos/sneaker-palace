@@ -7,7 +7,7 @@ interface Props {
 
 const StarRatingProgress = ({ rating, percentage }: Props) => {
 
-  console.log(percentage)
+
 
   return (
     <div>

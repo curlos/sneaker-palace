@@ -34,7 +34,7 @@ const MoreShoes = () => {
     return randomShoes
   }
 
-  console.log(shoes)
+
 
   return (
     loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (

@@ -25,18 +25,18 @@ router.put('/:userID', async (req: Request, res: Response) => {
       },
       { new: true }
     )
-    console.log(updatedUser)
+
     res.status(200).json(updatedUser);
   } catch (err) {
-    console.log(err)
-    res.json({error: err});
+
+    res.json({ error: err });
   }
 })
 
 router.put('/password/:userID', async (req: Request, res: Response) => {
   const user = await User.findOne({ _id: req.params.userID })
 
-  console.log(user)
+
 
   const hashedPassword = CryptoJS.AES.decrypt(
     user.password,
@@ -45,7 +45,7 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
 
   const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8)
 
-  originalPassword !== req.body.currentPassword && res.json({err: 'Wrong credentials'})
+  originalPassword !== req.body.currentPassword && res.json({ err: 'Wrong credentials' })
 
   const newPassword = {
     password: CryptoJS.AES.encrypt(
@@ -62,7 +62,7 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
     },
     { new: true }
   );
-  console.log(updatedUser)
+
   res.status(200).json(updatedUser);
 })
 

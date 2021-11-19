@@ -20,7 +20,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) 
 
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/query/${searchText}`)
-      console.log(response.data)
+
       setShoes(response.data)
       setLoading(false)
     }

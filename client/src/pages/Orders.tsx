@@ -16,7 +16,7 @@ const Orders = () => {
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/orders/user/${user._id}`)
-      console.log(response.data)
+
       setOrders(response.data)
       setLoading(false)
     }
@@ -24,7 +24,7 @@ const Orders = () => {
     fetchFromAPI()
   }, [user._id])
 
-  console.log(orders)
+
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> :

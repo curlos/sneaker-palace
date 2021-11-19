@@ -31,9 +31,9 @@ const SmallOrder = ({ order }: Props) => {
     return newShoes
   }
 
-  console.log(shoes)
 
-  console.log(order)
+
+
 
   return (
     <div className="border border-gray-300 rounded-lg my-4 p-5 text-gray-800">

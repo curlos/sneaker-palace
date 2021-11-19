@@ -23,8 +23,8 @@ router.get('/user/:userID', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   const orderFound = await Order.findOne({ paymentIntentID: req.body.paymentIntentID })
 
-  console.log(orderFound)
-  console.log('psuu')
+
+
 
   if (orderFound) {
     res.json({ error: 'Already ordered', orderID: orderFound._id })

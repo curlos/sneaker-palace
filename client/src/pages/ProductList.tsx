@@ -40,7 +40,7 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true)
   const [showSidebar, setShowSidebar] = useState(Number(window.innerWidth) > 1024 ? true : false)
 
-  console.log(Number(window.innerWidth))
+
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -51,7 +51,7 @@ const ProductList = () => {
         API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}`
       }
 
-      console.log(API_URL)
+
 
       const response = await axios.get(API_URL)
       const newShoes: Array<Shoe> = getFilteredShoes(response.data)
@@ -72,7 +72,7 @@ const ProductList = () => {
     const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
     setSortedShoes(newSortedShoes)
     setCurrentPage(1)
-    console.log(newSortedShoes)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, sortType, query.get('query')])
 
@@ -110,7 +110,7 @@ const ProductList = () => {
     setPaginatedShoes(newPaginatedShoes)
   }
 
-  console.log(paginatedShoes)
+
 
   return (
     <div className="text-xl-lg">

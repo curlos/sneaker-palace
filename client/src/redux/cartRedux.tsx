@@ -29,16 +29,16 @@ const cartSlice = createSlice({
 
 const calcTotal = (products: Array<IProduct>) => {
 
-  console.log(products)
+
 
   let total = 0
 
   for (let product of products) {
-    console.log(product)
+
     total += (product.retailPrice * product.quantity)
   }
 
-  console.log(total)
+
 
   return total
 }

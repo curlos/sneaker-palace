@@ -95,13 +95,13 @@ router.post('/delete', async (req: Request, res: Response) => {
 })
 
 // router.post('/newShoe', async (req: Request, res: Response) => {
-//   console.log(getShoesFromBrand)
+//   
 //   await getShoesFromBrand(req.body.brand)
 //   res.json('All new shoes added to database')
 // })
 
 // router.post('/newShoe/allBrands', async (req: Request, res: Response) => {
-//   console.log(getShoesFromAllBrands)
+//   
 //   await getShoesFromAllBrands()
 //   res.json('All new shoes added to database')
 // })

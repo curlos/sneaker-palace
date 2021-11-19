@@ -12,7 +12,7 @@ import { UserType } from '../types/types'
 
 const PaymentSuccess = () => {
 
-  console.log('fuck you')
+
 
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
@@ -36,9 +36,9 @@ const PaymentSuccess = () => {
         .then((paymentIntent: any) => {
 
           if (paymentIntent && paymentIntent.paymentIntent) {
-            console.log('2')
+
             axios.get(`${process.env.REACT_APP_DEV_URL}/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`).then((result) => {
-              console.log(result)
+
               setPaymentInfo({ paymentMethod: result.data, paymentIntentID: paymentIntent.paymentIntent.id })
             })
           }
@@ -49,7 +49,7 @@ const PaymentSuccess = () => {
   useEffect(() => {
     const { paymentMethod, paymentIntentID } = paymentInfo
 
-    console.log('hello')
+
 
     if (paymentMethod && paymentIntentID && paymentMethod.card && paymentMethod.billing_details) {
       const addToOrders = async () => {
@@ -65,12 +65,12 @@ const PaymentSuccess = () => {
             deliveryDate: new Date(moment().add(2, 'days').format("ddd, MMM D").toUpperCase()).toString()
           }
 
-          console.log(body)
+
 
           try {
             const response: any = await axios.post(`${process.env.REACT_APP_DEV_URL}/orders/`, body)
 
-            console.log(response.data)
+
 
             if (response && response.data.error) {
               setOrderID(response.data.orderID)

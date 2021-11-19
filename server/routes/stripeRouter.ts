@@ -6,7 +6,7 @@ const stripe = require('stripe')(process.env.STRIPE_KEY)
 router.post("/create-payment-intent", async (req: Request, res: Response) => {
   const { items } = req.body;
 
-  console.log(req.body)
+
 
   try {
     // Create a PaymentIntent with the order amount and currency
@@ -24,7 +24,7 @@ router.post("/create-payment-intent", async (req: Request, res: Response) => {
       clientSecret: paymentIntent.client_secret,
     });
   } catch (err) {
-    console.log(err)
+
     res.json({ error: err })
   }
 });

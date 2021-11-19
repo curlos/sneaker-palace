@@ -25,7 +25,7 @@ const Login = () => {
       email,
       password,
     }
-    console.log(body)
+
 
     try {
       dispatch(loginStart())
@@ -34,13 +34,13 @@ const Login = () => {
       if (response.data) {
         dispatch(loginSuccess(response.data))
         const userCart = await fetchUserCart(response.data)
-        console.log(userCart)
+
         dispatch(updateCart(userCart))
         history.push('/')
       }
-      console.log(response.data)
+
     } catch (err) {
-      console.log(err)
+
       setError(true)
       dispatch(loginFailure())
     }

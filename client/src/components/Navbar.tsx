@@ -22,10 +22,10 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  console.log(currentCart)
+
 
   const handleLogout = () => {
-    console.log('log out')
+
     dispatch(logout())
     dispatch(resetCart())
     history.push('/')
@@ -46,7 +46,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
     fetchFromAPI()
   }, [dispatch, user])
 
-  console.log(user)
+
 
   return (
     <div className="sticky top-0 z-10 w-full bg-white flex justify-between items-center p-4 border-b border-gray-300">

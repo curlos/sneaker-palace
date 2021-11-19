@@ -15,10 +15,10 @@ router.get('/:ratingID', async (req: Request, res: Response) => {
 
 const getAverageRating = async (ratingIDs: Array<string>, currentAverageRating: number, newRatingNum: number) => {
 
-  console.log(ratingIDs)
-  console.log(currentAverageRating)
-  console.log(ratingIDs.length)
-  console.log(ratingIDs.length + 1)
+
+
+
+
 
 
   return ((currentAverageRating * ratingIDs.length) + newRatingNum) / (ratingIDs.length + 1)
@@ -30,7 +30,7 @@ router.post('/rate', async (req: Request, res: Response) => {
   const user = await User.findById(req.body.userID)
   const newShoeAverageRating = await getAverageRating(shoe.ratings, shoe.rating || 0, req.body.ratingNum)
 
-  console.log(newShoeAverageRating)
+
 
   shoe.rating = newShoeAverageRating
   await shoe.updateOne({ $push: { ratings: rating._id } })
@@ -38,7 +38,7 @@ router.post('/rate', async (req: Request, res: Response) => {
   await rating.save()
   await shoe.save()
 
-  console.log(newShoeAverageRating)
+
 
   const updatedShoe = await Shoe.findById(shoe._id)
   const updatedUser = await User.findById(user._id)
@@ -115,7 +115,7 @@ router.put('/dislike', async (req: Request, res: Response) => {
 })
 
 router.delete('/:id', async (req: Request, res: Response) => {
-  console.log(req.params)
+
   const deletedRating = await Rating.findByIdAndDelete(req.params.id)
   res.json(deletedRating)
 })

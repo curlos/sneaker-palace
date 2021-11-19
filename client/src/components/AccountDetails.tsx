@@ -26,14 +26,12 @@ const AccountDetails = () => {
   const [showFailureMessage, setShowFailureMessage] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
-  console.log(user)
-
   const handleEdit = async () => {
     let profilePicObj = user?.profilePic
 
     if (file) {
       const results = await postImage(file)
-      console.log(results)
+
       profilePicObj = results.imagePath
     }
 
@@ -44,15 +42,15 @@ const AccountDetails = () => {
       profilePic: profilePicObj
     }
 
-    console.log(body)
+
 
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/${user._id}`, body)
-    console.log(response.data)
+
 
     if (!response.data.error) {
       setShowSuccessMessage(true)
       setTimeout(() => { setShowSuccessMessage(false) }, 3000)
-      console.log(response.data)
+
       dispatch(updateUser(response.data))
     } else {
       setShowFailureMessage(true)
@@ -66,7 +64,7 @@ const AccountDetails = () => {
     setFile(file)
   }
 
-  console.log(file)
+
 
   return (
     <div className="w-1/2 sm:w-full sm:mt-8">

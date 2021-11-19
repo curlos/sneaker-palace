@@ -30,10 +30,10 @@ const ShopPreferences = () => {
       unitOfMeasure,
     }
 
-    console.log(body)
+
 
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/${user._id}`, body)
-    console.log(response.data)
+
 
     if (!response.data.error) {
       dispatch(updateUser(response.data))

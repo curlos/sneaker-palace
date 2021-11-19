@@ -35,7 +35,7 @@ const StripeContainer = ({ children }: Props) => {
           setClientSecret(response.data.clientSecret)
         }
       } catch (err) {
-        console.log(err)
+
       }
       setLoading(false)
     }
@@ -50,8 +50,8 @@ const StripeContainer = ({ children }: Props) => {
     appearance,
   };
 
-  console.log('fcul you')
-  console.log(clientSecret)
+
+
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (

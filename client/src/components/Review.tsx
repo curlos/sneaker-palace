@@ -33,7 +33,7 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
       userID: user._id
     }
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/like`, body)
-    console.log(response)
+
     setReview({ ...review, helpful: response.data.updatedRating.helpful, notHelpful: response.data.updatedRating.notHelpful })
     dispatch(updateUser(response.data.updatedUser))
 
@@ -45,19 +45,19 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
       userID: user._id
     }
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/dislike`, body)
-    console.log(response)
+
     setReview({ ...review, notHelpful: response.data.updatedRating.notHelpful, helpful: response.data.updatedRating.helpful, })
     dispatch(updateUser(response.data.updatedUser))
   }
 
   const handleDeleteReview = async () => {
-    console.log('click')
+
     const response = await axios.delete(`${process.env.REACT_APP_DEV_URL}/rating/${review._id}`)
-    console.log(response.data)
+
     setShoeRatings(shoeRatings.filter((shoeRating) => shoeRating._id !== review._id))
   }
 
-  console.log(review)
+
 
   return (
     <div className="mb-6">

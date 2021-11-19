@@ -56,15 +56,15 @@ const addShoesToDatabase = async (options: Object) => {
         }
       )
 
-      console.log('Saving: ')
+
 
       await newShoe.save((err: Error, result: typeof Shoe) => {
-        console.log(result)
+
         if (err) return console.error(err)
-        console.log(result.name + " saved to sneaker collection")
+
       })
 
-      console.log("All shoes have been added to database!")
+
     })
 
     return response.data.results
@@ -79,9 +79,9 @@ const addOneShoeToDatabase = async (options: Object) => {
     const shoes = response.data.results
     const shoe = shoes[0]
 
-    console.log(shoes)
 
-    console.log(shoe)
+
+
 
     const { id, sku, brand, name, colorway, gender, silhouette, releaseYear, releaseDate, retailPrice, estimatedMarketValue, story, image, links } = shoe
 
@@ -109,17 +109,17 @@ const addOneShoeToDatabase = async (options: Object) => {
       }
     )
 
-    console.log('Saving: ')
+
 
     await newShoe.save((err: Error, result: typeof Shoe) => {
-      console.log(result)
+
       if (err) return console.error(err)
-      console.log(result.name + " saved to sneaker collection")
+
     })
 
     return response.data.results
   } catch (err) {
-    console.log('rip')
+
     console.error(err)
   }
 }
@@ -144,15 +144,15 @@ const getShoesFromAllBrands = async () => {
   const shoes: { [key: string]: [] } = {}
 
   for (let brand of allBrands) {
-    console.log(`Getting sneakers from '${brand}'`)
+
     const brandShoes = await getShoesFromBrand(brand)
     shoes[brand] = brandShoes
 
     await timer(2000)
   }
 
-  console.log(shoes)
-  console.log('All shoes have been retrieved!')
+
+
 }
 
 const addAllShoes = async (pageNum: number) => {
