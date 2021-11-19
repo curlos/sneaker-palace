@@ -26,7 +26,6 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
     dispatch(logout())
     dispatch(resetCart())
     history.push('/')
-    window.location.reload()
   }
 
   return (

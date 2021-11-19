@@ -80,7 +80,7 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
           <div></div>
         )}
       </div>
-      <div className="flex">
+      <div className="flex sm:block">
         <StarRatingComponent
           name={'Rating'}
           value={review.ratingNum}
@@ -88,7 +88,7 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
           editing={false}
           starColor={'#F5B327'}
         />
-        <div className="ml-2 font-bold">{review.summary}</div>
+        <div className="ml-2 font-bold sm:ml-0">{review.summary}</div>
       </div>
 
       <div className="text-sm text-gray-600">Reviewed on {moment(review.createdAt).format('MMMM Do, YYYY')}</div>

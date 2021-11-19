@@ -29,7 +29,6 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
     dispatch(logout())
     dispatch(resetCart())
     history.push('/')
-    window.location.reload()
   }
 
   useEffect(() => {

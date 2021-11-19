@@ -19,6 +19,9 @@ module.exports = {
   
         'sm': {'max': '639px'},
         // => @media (max-width: 639px) { ... }
+
+        'phone-sm': {'max': '420px'},
+        // => @media (max-width: 639px) { ... }
       },
       fontFamily: {
         urbanist: ['Urbanist', 'sans-serif']
