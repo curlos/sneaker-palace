@@ -27,7 +27,7 @@ const Carousel = () => {
   }, [data])
 
   return (
-    <div className={`bg-${currentShoe.imageName} h-screen bg-cover flex items-center text-white font-bold transition-all ease-in-out duration-1000 transform translate-x-0 slide`}>
+    <div className={`${currentShoe.imageName} h-screen bg-cover flex items-center text-white font-bold transition-all ease-in-out duration-1000 transform translate-x-0 slide`}>
       <div className="ml-10 pb-10 w-1/4 sm:w-3/4">
         <div className="text-5xl mb-3 sm:text-5xl">{currentShoe.name}</div>
         <Link to={`/shoe/${currentShoe.shoeID}`} className="underline">Shop Now</Link>

@@ -1,7 +1,7 @@
 
 const colors = require('tailwindcss/colors')
 module.exports = {
-   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+    purge: false,
     darkMode: false, // or 'media' or 'class'
     theme: {
       screens: {
@@ -119,6 +119,15 @@ module.exports = {
           '850': '850px',
           '900': '900px',
           '1000': '1000px',
+          '1100': '1100px',
+          '1200': '1200px',
+          '1300': '1300px',
+          '1400': '1400px',
+          '1500': '1500px',
+          '1600': '1600px',
+          '1700': '1700px',
+          '1800': '1800px',
+          '1850': '1850px',
           '97/100': '97%',
           '12/100': '12%',
           '14/100': '14%',

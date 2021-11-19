@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import SmallShoe from '../components/SmallShoe'
 import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
@@ -44,9 +45,16 @@ const Favorites = () => {
   return (
     loading ? <div className="flex justify-center py-4 h-screen"><CircleLoader size={16} /></div> : (
       <div className="min-h-screen">
-        <div className="flex flex-wrap justify-start">
-          {favoriteShoes.map((shoe) => shoe && <SmallShoe shoe={shoe} />)}
-        </div>
+        {favoriteShoes.length > 0 ? (
+          <div className="flex flex-wrap justify-start">
+            {favoriteShoes.map((shoe) => shoe && <SmallShoe shoe={shoe} />)}
+          </div>
+        ) : (
+          <div className="flex justify-center mt-10">
+            <div>No shoes in your favorites.</div>
+            <button className="py-4 px-10 bg-black text-white"><Link to="/shoes">Add shoes</Link></button>
+          </div>
+        )}
       </div>
     )
   )

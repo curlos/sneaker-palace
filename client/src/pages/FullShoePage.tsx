@@ -110,9 +110,9 @@ const FullShoePage = () => {
   return (
 
     <div>
-      <div className="p-5 px-14 w-full h-full sm:px-0 xl:px-6">
+      <div className="p-5 px-14 w-full h-full sm:px-4 xl:px-6">
         <div className="w-full h-full">
-          {shoeLoading ? <FullShoeSkeleton />
+          {shoeLoading || shoe.shoeID === 'd8efc352-2ae6-473a-b20a-70b810f388ee' ? <FullShoeSkeleton />
             : (
               <div className="flex xl:block">
                 <div className="flex-3">

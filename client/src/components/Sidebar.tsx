@@ -54,7 +54,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
             {Object.keys(filters.colors).map((color) => {
               return (
                 <div className="flex flex-col items-center h-13 w-13">
-                  <div className={`h-7 w-7 rounded-full bg-${color === 'black' || color === 'white' ? color : (color + '-500')} ${color === 'white' ? 'border border-gray-300' : ''} ${color === 'white' ? 'text-black' : 'text-white'}`} onClick={() => handleColorClick(color)}>
+                  <div className={`h-7 w-7 rounded-full ${color === 'black' || color === 'white' ? `${'bg-' + color}` : `${'bg-' + color + '-500'}`} ${color === 'white' ? 'border border-gray-300' : ''} ${color === 'white' ? 'text-black' : 'text-white'}`} onClick={() => handleColorClick(color)}>
                     {filters.colors[color] ? <CheckIcon /> : null}
                   </div>
                   <div className="capitalize">{color}</div>
