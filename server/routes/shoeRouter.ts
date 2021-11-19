@@ -13,7 +13,7 @@ const router = express.Router()
 
 router.get('/', async (req: Request, res: Response) => {
   const allShoes = await Shoe.find({})
-    .select('shoeID image.original name gender colorway ratings retailPrice brand')
+    .select('shoeID image.original name gender colorway ratings retailPrice brand rating')
     .lean().exec((err: any, results: any) => {
       res.json(results)
     })
