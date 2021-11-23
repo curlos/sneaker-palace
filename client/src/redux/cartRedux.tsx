@@ -16,9 +16,15 @@ const cartSlice = createSlice({
   initialState: INITIAL_STATE,
   reducers: {
     updateCart: (state, action) => {
-      state.currentCart = action.payload
-      if (action.payload) {
-        state.total = calcTotal(action.payload.products)
+      let newCart = action.payload
+
+      if (typeof action.payload === 'string') {
+        newCart = JSON.parse(newCart)
+      }
+
+      state.currentCart = newCart
+      if (newCart) {
+        state.total = calcTotal(newCart.products)
       }
     },
     resetCart: (state) => {
@@ -28,9 +34,6 @@ const cartSlice = createSlice({
 })
 
 const calcTotal = (products: Array<IProduct>) => {
-
-
-
   let total = 0
 
   for (let product of products) {

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { updateCart } from '../redux/cartRedux';
 import { RootState } from '../redux/store';
 import CartProductSkeleton from '../skeleton_loaders/CartProductSkeleton';
-import { IProduct, Shoe } from "../types/types";
+import { IProduct, Shoe, UserType } from "../types/types";
 
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
@@ -18,6 +18,7 @@ interface Props {
 const CartProduct = ({ productInfo }: Props) => {
 
   const dispatch = useDispatch()
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart } = useSelector((state: RootState) => state.cart)
 
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
@@ -58,15 +59,19 @@ const CartProduct = ({ productInfo }: Props) => {
         }
       }
 
+      if (Object.keys(user).length === 0) {
 
+        const newCart = { ...currentCart, products: newProducts }
+        dispatch(updateCart(newCart))
+        localStorage.setItem('currentCart', JSON.stringify(newCart))
 
+      } else {
+        const body = { products: newProducts }
+        const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
+        const newCart = response.data
 
-      const body = { products: newProducts }
-
-      const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
-      const newCart = response.data
-
-      dispatch(updateCart(newCart))
+        dispatch(updateCart(newCart))
+      }
     }
   }
 
@@ -94,9 +99,28 @@ const CartProduct = ({ productInfo }: Props) => {
         }
       }
 
+      if (Object.keys(user).length === 0) {
+        const newCart = { ...currentCart, products: newProducts }
+        dispatch(updateCart(newCart))
+        localStorage.setItem('currentCart', JSON.stringify(newCart))
+      } else {
+        const body = { products: newProducts }
+        const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
+        const newCart = response.data
 
+        dispatch(updateCart(newCart))
+      }
+    }
+  }
 
+  const handleRemoveProduct = async () => {
+    const newProducts = currentCart?.products?.filter((product) => product._id !== productInfo._id)
 
+    if (Object.keys(user).length === 0) {
+      const newCart = { ...currentCart, products: newProducts }
+      dispatch(updateCart(newCart))
+      localStorage.setItem('currentCart', JSON.stringify(newCart))
+    } else {
       const body = { products: newProducts }
 
       const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
@@ -104,19 +128,6 @@ const CartProduct = ({ productInfo }: Props) => {
 
       dispatch(updateCart(newCart))
     }
-  }
-
-  const handleRemoveProduct = async () => {
-
-
-
-    const newProducts = currentCart?.products?.filter((product) => product._id !== productInfo._id)
-    const body = { products: newProducts }
-
-    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
-    const newCart = response.data
-
-    dispatch(updateCart(newCart))
   }
 
   return (

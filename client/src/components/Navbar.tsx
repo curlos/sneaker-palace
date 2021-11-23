@@ -22,6 +22,8 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
+  console.log(currentCart)
+
 
 
   const handleLogout = () => {
@@ -38,6 +40,13 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
         const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/cart/find/${user?._id}`)
         const newCart = response.data
         dispatch(updateCart(newCart))
+      } else if (localStorage.getItem('currentCart')) {
+        const newCart = localStorage.getItem('currentCart')
+
+        if (newCart) {
+          dispatch(updateCart(newCart))
+        }
+
       } else {
         dispatch(resetCart())
       }
