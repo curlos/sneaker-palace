@@ -53,7 +53,7 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <CheckIcon className="h-4 w-4 bg-green-500 rounded-full text-white" />
-              <div>Added to bag</div>
+              <div>Added to cart</div>
             </div>
 
             <div>

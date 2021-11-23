@@ -1,17 +1,14 @@
 import axios from 'axios'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import MoreShoes from '../components/MoreShoes'
 import SmallOrderShoe from '../components/SmallOrderShoe'
-import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { IOrder, IProduct, UserType } from '../types/types'
 
 const OrderDetails = () => {
 
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { id }: { id: string } = useParams()
   const [order, setOrder] = useState<IOrder>()
   const [shoes, setShoes] = useState<Array<IProduct>>([])
