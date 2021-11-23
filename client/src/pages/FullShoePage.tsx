@@ -4,7 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import FullShoeReviews from '../components/FullShoeReviews';
 import ShoppingCartModal from '../components/ShoppingCartModal';
 import { updateCart } from '../redux/cartRedux';
@@ -19,10 +19,15 @@ const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', 
 
 const AVERAGE_MAN_FOOT_SIZE = '10.5'
 
-const FullShoePage = () => {
+interface Props {
+  setShowShoppingCartModal: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
+const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart } = useSelector((state: RootState) => state.cart)
+  const history = useHistory()
 
   const { shoeID }: { shoeID: string } = useParams()
   const dispatch = useDispatch()
@@ -57,6 +62,7 @@ const FullShoePage = () => {
   }, [shoeID])
 
   const handleAddToCart = async () => {
+    setShowShoppingCartModal(true)
 
     if (Object.keys(user).length <= 0) {
       console.log('1')
@@ -111,11 +117,12 @@ const FullShoePage = () => {
 
       dispatch(updateCart(newCart))
     }
+
   }
 
   const handleFavorite = async () => {
-    if (!user) {
-      return
+    if (Object.keys(user).length === 0 || !user) {
+      history.push('/login')
     }
 
     const body = {

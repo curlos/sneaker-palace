@@ -1,4 +1,3 @@
-import { url } from 'inspector'
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getCarouselData } from '../utils/getCarouselData'
@@ -7,14 +6,12 @@ const Carousel = () => {
   const [num, setNum] = useState(0)
   const data = getCarouselData()
   const [currentShoe, setCurrentShoe] = useState(Object.values(data)[num])
-  const [loading, setLoading] = useState(false)
 
 
 
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLoading(false)
       if (num + 1 === data.length) {
         setNum(0)
         setCurrentShoe(Object.values(data)[0])

@@ -1,7 +1,11 @@
-import { SearchIcon } from '@heroicons/react/outline'
-import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import SmallProductList from './SmallProductList'
+import { CheckIcon, XIcon } from '@heroicons/react/outline'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { RootState } from '../redux/store'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
+import { IProduct, Shoe } from '../types/types'
 
 interface Props {
   showModal: boolean,
@@ -10,40 +14,86 @@ interface Props {
 
 const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
 
-  const history = useHistory()
-  const [searchText, setSearchText] = useState('')
-  const [finalSearchText, setFinalSearchText] = useState('')
+  const { currentCart } = useSelector((state: RootState) => state.cart)
+  const [productInfo, setProductInfo] = useState<IProduct>()
+  const [shoe, setShoe] = useState<Partial<Shoe>>()
+  const [loading, setLoading] = useState(false)
 
-  let timer = 1000
-  let timeoutVal = 1000
+  useEffect(() => {
+    const fetchFromAPI = async () => {
+      setLoading(true)
+      if (currentCart.products && currentCart?.products?.length >= 1) {
+        const lastProduct = currentCart.products[currentCart.products.length - 1]
+
+        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${lastProduct.productID}`)
+        setShoe(response.data)
+        setProductInfo(lastProduct)
+        console.log('done nig')
+        setLoading(false)
+      }
+      setLoading(false)
+    }
+    fetchFromAPI()
+  }, [currentCart.products])
 
   const handleBubblingDownClick = (e: React.FormEvent) => {
     e.stopPropagation()
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    history.push(`/shoes?query=${searchText}`)
-    setShowModal(false)
-    window.location.reload()
-  }
-
-  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    window.clearTimeout(timer)
-    timer = window.setTimeout(() => {
-      setFinalSearchText(searchText)
-    }, timeoutVal)
-  }
+  console.log('fucl')
+  console.log(shoe)
+  console.log(productInfo)
+  console.log(loading)
+  console.log(currentCart?.products?.length)
 
   return (
     <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40" onClick={() => setShowModal(!showModal)}>
-      <aside className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll sm:no-scrollbar ease-in-out transition-all duration-1000 ${showModal ? 'translate-x-0' : 'translate-x-full'}`} onClick={handleBubblingDownClick}>
-        <form onSubmit={handleSubmit} className=" flex border-0 border-b border-solid border-gray-300 p-4 py-6">
-          <SearchIcon className="h-7 w-7 text-gray-400" onClick={handleSubmit} />
-          <input className="ml-5 placeholder-gray-400 placeholder-opacity-100 outline-none uppercase text-lg font-medium" placeholder="TYPE TO SEARCH" value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchText(e.currentTarget.value)} onKeyUp={handleKeyUp} />
-        </form>
+      <aside className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll sm:no-scrollbar ease-in-out transition-all duration-1000 ${showModal ? 'translate-x-0' : 'translate-x-full'} sm:w-10/12`} onClick={handleBubblingDownClick}>
+        <div className="p-5">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <CheckIcon className="h-4 w-4 bg-green-500 rounded-full text-white" />
+              <div>Added to bag</div>
+            </div>
 
-        <SmallProductList searchText={searchText} finalSearchText={finalSearchText} setShowModal={setShowModal} />
+            <div>
+              <XIcon className="h-5 w-5 cursor-pointer" onClick={() => setShowModal(false)} />
+            </div>
+          </div>
+
+          {loading ? <div className="p-5 flex justify-center"><CircleLoader size={16} /></div> : (
+            shoe && productInfo && (
+              <div className="">
+                <div>
+                  <img src={shoe.image?.original} alt={shoe.name} className="" />
+                </div>
+
+                <div className="">
+                  <div>{shoe.name}</div>
+                  <div className="text-gray-400 capitalize">{shoe.gender}'s Shoe</div>
+                  <div className="text-gray-400">Size {productInfo.size}</div>
+                  <div>${shoe.retailPrice}</div>
+                </div>
+              </div>
+            )
+          )}
+
+          <div className="my-3">
+            <button className="rounded-full border border-gray-400 w-full p-3">
+              <Link to={`/cart`} onClick={() => setShowModal(false)}>
+                View Bag ({currentCart?.products?.length})
+              </Link>
+            </button>
+          </div>
+
+          <div>
+            <button className="bg-black text-white rounded-full w-full p-3">
+              <Link to={`/payment`} onClick={() => setShowModal(false)}>
+                Checkout
+              </Link>
+            </button>
+          </div>
+        </div>
       </aside>
     </div>
   )

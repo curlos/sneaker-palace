@@ -6,6 +6,7 @@ import {
 import { Footer } from "./components/Footer";
 import Navbar from "./components/Navbar";
 import SearchModal from "./components/SearchModal";
+import ShoppingCartModal from "./components/ShoppingCartModal";
 import SidenavModal from "./components/SidenavModal";
 import StripeContainer from "./components/StripeContainer";
 import Cart from "./pages/Cart";
@@ -29,7 +30,9 @@ const App = () => {
   const user = useSelector((state: RootState) => state.user && state.user.currentUser)
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [showSidenavModal, setShowSidenavModal] = useState(false)
+  const [showShoppingCartModal, setShowShoppingCartModal] = useState(false)
 
+  console.log(showShoppingCartModal)
 
   return (
     <Router>
@@ -39,6 +42,8 @@ const App = () => {
         {showSearchModal ? <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} /> : null}
 
         {showSidenavModal ? <SidenavModal showSidenavModal={showSidenavModal} setShowSidenavModal={setShowSidenavModal} /> : null}
+
+        {showShoppingCartModal ? <ShoppingCartModal showModal={showShoppingCartModal} setShowModal={setShowShoppingCartModal} /> : null}
 
         <Navbar setShowSearchModal={setShowSearchModal} setShowSidenavModal={setShowSidenavModal} />
 
@@ -73,11 +78,11 @@ const App = () => {
           </Route>
 
           <Route path="/shoe/:shoeID" exact>
-            <FullShoePage />
+            <FullShoePage setShowShoppingCartModal={setShowShoppingCartModal} />
           </Route>
 
           <Route path="/shoe/submit-review/:shoeID" exact>
-            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+            {user && Object.keys(user).length === 0 ? <Redirect to='/login' /> : (
               <span>
                 <ReviewForm />
               </span>
@@ -85,7 +90,7 @@ const App = () => {
           </Route>
 
           <Route path="/shoe/edit-review/:shoeID/:reviewID" exact>
-            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+            {user && Object.keys(user).length === 0 ? <Redirect to='/login' /> : (
               <span>
                 <ReviewForm />
               </span>
