@@ -23,9 +23,6 @@ router.get('/user/:userID', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   const orderFound = await Order.findOne({ paymentIntentID: req.body.paymentIntentID })
 
-
-
-
   if (orderFound) {
     res.json({ error: 'Already ordered', orderID: orderFound._id })
   }
@@ -46,6 +43,24 @@ router.post('/', async (req: Request, res: Response) => {
   const updatedCart = await Cart.findOne({ userID: req.body.userID })
 
   res.json({ order, updatedUser, updatedCart })
+})
+
+router.post('/no-account', async (req: Request, res: Response) => {
+  console.log(req.body)
+
+  const orderFound = await Order.findOne({ paymentIntentID: req.body.paymentIntentID })
+
+  if (orderFound) {
+    res.json({ error: 'Already ordered', orderID: orderFound._id })
+  }
+
+  const order = new Order({
+    ...req.body
+  })
+
+  await order.save()
+
+  res.json({ order })
 })
 
 

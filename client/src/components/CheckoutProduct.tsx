@@ -14,6 +14,7 @@ const CheckoutProduct = ({ product, type }: Props) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${product.productID}`)
       setShoe(response.data)
@@ -24,7 +25,7 @@ const CheckoutProduct = ({ product, type }: Props) => {
 
   return (
 
-    loading ? <div className="flex py-10"><CircleLoader size={16} /></div> : (
+    loading ? <div className="flex py-10 h-screen"><CircleLoader size={16} /></div> : (
       type === 'small' ? (
         <div className="flex gap-6 mb-7 text-sm">
           <div className="flex-2">

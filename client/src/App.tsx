@@ -114,11 +114,7 @@ const App = () => {
           </Route>
 
           <Route path="/order-details/:id" exact>
-            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
-              <span>
-                <OrderDetails />
-              </span>
-            )}
+            <OrderDetails />
           </Route>
 
           <Route path="/favorites" exact>

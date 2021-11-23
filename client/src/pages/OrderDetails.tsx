@@ -15,15 +15,23 @@ const OrderDetails = () => {
   const { id }: { id: string } = useParams()
   const [order, setOrder] = useState<IOrder>()
   const [shoes, setShoes] = useState<Array<IProduct>>([])
+  const [customer, setCustomer] = useState<UserType>()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/orders/${id}`)
+
       const newShoes = await getAllShoes(response.data.products)
       setShoes(newShoes)
       setOrder(response.data)
+
+      if (response.data.userID) {
+        const userResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`)
+        setCustomer(userResponse.data)
+      }
+
       setLoading(false)
     }
     fetchFromAPI()
@@ -40,6 +48,8 @@ const OrderDetails = () => {
     return newShoes
   }
 
+  console.log(order)
+
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       order ? (
@@ -51,7 +61,7 @@ const OrderDetails = () => {
           <div className="py-4 flex sm:flex-col sm:gap-4">
             <div className="flex-2">
               <div className="font-bold">Shipping Address</div>
-              <div>{user.firstName} {user.lastName}</div>
+              <div>{customer ? `${customer.firstName} ${customer.lastName}` : 'Guest'}</div>
               <div>{order.billingDetails.address.postal_code}</div>
               <div>{order.billingDetails.address.country}</div>
             </div>

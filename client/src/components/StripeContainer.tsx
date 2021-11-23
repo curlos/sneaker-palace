@@ -50,7 +50,7 @@ const StripeContainer = ({ children }: Props) => {
     appearance,
   };
 
-
+  console.log(clientSecret)
 
 
   return (

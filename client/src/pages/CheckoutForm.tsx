@@ -62,6 +62,8 @@ export default function CheckoutForm() {
 
     setIsLoading(true);
 
+    console.log(`${process.env.REACT_APP_CLIENT_URL}/payment-success`)
+
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {

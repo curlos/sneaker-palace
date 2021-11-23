@@ -13,7 +13,7 @@ import { updateUser } from '../redux/userRedux';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
 import { IProduct, IRating, Shoe, UserType } from "../types/types";
-import uniqid from 'uniqid';
+import { ObjectId } from 'bson'
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
@@ -69,7 +69,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
       if (shoe.shoeID && shoe.retailPrice) {
         console.log('2')
         const newProduct: IProduct = {
-          _id: uniqid(),
+          _id: new ObjectId().toString(),
           productID: shoe.shoeID,
           size: Number(selectedSize),
           quantity: 1,
@@ -88,7 +88,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
           console.log('4')
           const newCart = {
             ...currentCart,
-            _id: uniqid(),
+            _id: new ObjectId().toString(),
             createdAt: '',
             updatedAt: '',
             products: [newProduct],
