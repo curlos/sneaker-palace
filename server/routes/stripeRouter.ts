@@ -17,7 +17,7 @@ router.post("/create-payment-intent", async (req: Request, res: Response) => {
         "card",
       ],
       description: `Sneakers`,
-      receipt_email: 'curlosmart@gmail.com'
+      receipt_email: 'sneakerpalacesite@gmail.com'
     });
 
     res.send({
