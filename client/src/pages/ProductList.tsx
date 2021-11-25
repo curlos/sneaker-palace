@@ -25,21 +25,13 @@ const useQuery = () => {
   return React.useMemo(() => new URLSearchParams(search), [search])
 }
 
-const getInitialShoes = () => {
-  const localShoes = localStorage.getItem('shoes')
-  if (localShoes) {
-    return JSON.parse(localShoes)
-  }
-  return []
-}
-
 
 const ProductList = () => {
 
   const query = useQuery()
   const { state } = useLocation<stateType>();
 
-  const [shoes, setShoes] = useState(getInitialShoes())
+  const [shoes, setShoes] = useState([])
   const [sortedShoes, setSortedShoes] = useState<Array<Shoe>>([])
   const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
@@ -49,32 +41,21 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true)
   const [showSidebar, setShowSidebar] = useState(Number(window.innerWidth) > 1024 ? true : false)
 
-
-
   useEffect(() => {
+    setLoading(true)
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       let API_URL = `${process.env.REACT_APP_DEV_URL}/shoes`
-      const localShoes = getInitialShoes()
 
       if (query.get('query')) {
         API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}`
-      } else if (localShoes.length > 0) {
-        const newShoes: Array<Shoe> = getFilteredShoes(localShoes)
-        const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
-        setShoes(newShoes)
-        setSortedShoes(newSortedShoes)
       }
 
-      if (localShoes.length === 0) {
-        const response = await axios.get(API_URL)
-        const newShoes: Array<Shoe> = getFilteredShoes(response.data)
-        const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
-        setShoes(response.data)
-        setSortedShoes(newSortedShoes)
-        localStorage.setItem('shoes', JSON.stringify(newShoes))
-      }
-
+      const response = await axios.get(API_URL)
+      const newShoes: Array<Shoe> = getFilteredShoes(response.data)
+      const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
+      setShoes(response.data)
+      setSortedShoes(newSortedShoes)
       setLoading(false)
     }
 
