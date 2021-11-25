@@ -41,7 +41,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Sneaker Palace is a responsive e-commerce site where users can buy from over 20 of the most popular sneaker brands in the world such as Nike, Jordan, Adidas, New Balance. Users can register for an account, login and browse the collection of over 7000+ shoes to look from with different filters (brand, gender, price, size, sort types) to aid a users in their search. Users can add them to their favorites, to their cart and place an order to buy sneakers. Reviews can also be posted (with pictures and ability to verify if you purchased the sneaker) to let other people know your thoughts on the sneakers you bought.
+Sneaker Palace is a responsive e-commerce site where users can buy from over 20 of the most popular sneaker brands in the world such as Nike, Jordan, Adidas, New Balance. Users can register for an account, login and browse the collection of over 10,000 shoes to look from with different filters (brand, gender, price, size, sort types) to aid a users in their search. Users can add them to their favorites, to their cart and place an order to buy sneakers. Reviews can also be posted (with pictures and ability to verify if you purchased the sneaker) to let other people know your thoughts on the sneakers you bought.
 
 ### Built With
 
