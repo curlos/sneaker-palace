@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import ListShoe from './ListShoe'
 
@@ -7,9 +7,10 @@ interface Props {
   searchText: string,
   finalSearchText: string,
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>
+  handleSubmit: (e: FormEvent<Element>) => Promise<void>
 }
 
-const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) => {
+const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSubmit }: Props) => {
 
   const [shoes, setShoes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -32,7 +33,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal }: Props) 
     loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (
       <div>
 
-        <div className="flex justify-between p-6 border-0 border-b border-solid border-gray-300 text-sm">
+        <div className="flex justify-between p-6 border-0 border-b border-solid border-gray-300 text-sm cursor-pointer" onClick={handleSubmit}>
           <div>{searchText}</div>
           <div className="text-gray-500">{shoes && shoes.length} RESULTS</div>
         </div>

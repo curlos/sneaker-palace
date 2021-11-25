@@ -43,7 +43,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
           <input className="ml-5 placeholder-gray-400 placeholder-opacity-100 outline-none uppercase text-lg font-medium" placeholder="TYPE TO SEARCH" value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchText(e.currentTarget.value)} onKeyUp={handleKeyUp} />
         </form>
 
-        <SmallProductList searchText={searchText} finalSearchText={finalSearchText} setShowModal={setShowSearchModal} />
+        <SmallProductList searchText={searchText} finalSearchText={finalSearchText} setShowModal={setShowSearchModal} handleSubmit={handleSubmit} />
       </aside>
     </div>
   )

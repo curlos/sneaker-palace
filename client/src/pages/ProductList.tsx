@@ -25,12 +25,21 @@ const useQuery = () => {
   return React.useMemo(() => new URLSearchParams(search), [search])
 }
 
+const getInitialShoes = () => {
+  const localShoes = localStorage.getItem('shoes')
+  if (localShoes) {
+    return JSON.parse(localShoes)
+  }
+  return []
+}
+
 
 const ProductList = () => {
+
   const query = useQuery()
   const { state } = useLocation<stateType>();
 
-  const [shoes, setShoes] = useState([])
+  const [shoes, setShoes] = useState(getInitialShoes())
   const [sortedShoes, setSortedShoes] = useState<Array<Shoe>>([])
   const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
@@ -46,18 +55,26 @@ const ProductList = () => {
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
       let API_URL = `${process.env.REACT_APP_DEV_URL}/shoes`
+      const localShoes = getInitialShoes()
 
       if (query.get('query')) {
         API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}`
+      } else if (localShoes.length > 0) {
+        console.log(localShoes)
+        const newShoes: Array<Shoe> = getFilteredShoes(localShoes)
+        const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
+        setShoes(newShoes)
+        setSortedShoes(newSortedShoes)
       }
 
-
-
-      const response = await axios.get(API_URL)
-      const newShoes: Array<Shoe> = getFilteredShoes(response.data)
-      const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
-      setShoes(response.data)
-      setSortedShoes(newSortedShoes)
+      if (localShoes.length > 0) {
+        const response = await axios.get(API_URL)
+        const newShoes: Array<Shoe> = getFilteredShoes(response.data)
+        const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
+        setShoes(response.data)
+        setSortedShoes(newSortedShoes)
+        localStorage.setItem('shoes', JSON.stringify(newShoes))
+      }
 
       setLoading(false)
     }
@@ -121,12 +138,24 @@ const ProductList = () => {
         {showSidebar ? <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES} /> : null}
 
         <div className="flex-10 p-4 lg:p-3">
+
           <div className="flex justify-between">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowSidebar(!showSidebar)}>
-              <span>Filters</span>
-              <MenuIcon className="h-5 w-5" /></div>
-            <SortDropdown sortType={sortType} setSortType={setSortType} />
+            <div>
+              <div>Search results for</div>
+              <div className="text-lg font-bold">
+                {query.get('query') ? `${query.get('query')} (${sortedShoes.length})` : null}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowSidebar(!showSidebar)}>
+                <span>Filters</span>
+                <MenuIcon className="h-5 w-5" />
+              </div>
+              <SortDropdown sortType={sortType} setSortType={setSortType} />
+            </div>
           </div>
+
           {loading ?
             <div className="flex justify-center flex-wrap lg:justify-between py-4">
               <SmallShoeSkeleton />
