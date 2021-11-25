@@ -32,39 +32,46 @@ const addShoesToDatabase = async (options: Object) => {
     shoes.forEach(async (shoe: any) => {
       const { id, sku, brand, name, colorway, gender, silhouette, releaseYear, releaseDate, retailPrice, estimatedMarketValue, story, image, links } = shoe
 
-      const newShoe = new Shoe(
-        {
-          shoeID: id,
-          sku,
-          brand,
-          name,
-          colorway,
-          gender,
-          silhouette,
-          releaseYear,
-          releaseDate,
-          retailPrice,
-          estimatedMarketValue,
-          story,
-          image: {
-            "360": image["360"],
-            original: image.original,
-            small: image.small,
-            thumbnail: image.thumbnail,
-          },
-          links,
-        }
-      )
+      const shoeFound = await Shoe.findOne({ shoeID: shoe.id })
+
+      console.log(shoeFound)
+
+      if (shoeFound) {
+        console.log('Shoe is already in database!')
+        return
+      } else {
+        const newShoe = new Shoe(
+          {
+            shoeID: id,
+            sku,
+            brand,
+            name,
+            colorway,
+            gender,
+            silhouette,
+            releaseYear,
+            releaseDate,
+            retailPrice,
+            estimatedMarketValue,
+            story,
+            image: {
+              "360": image["360"],
+              original: image.original,
+              small: image.small,
+              thumbnail: image.thumbnail,
+            },
+            links,
+          }
+        )
 
 
 
-      await newShoe.save((err: Error, result: typeof Shoe) => {
+        await newShoe.save((err: Error, result: typeof Shoe) => {
 
-        if (err) return console.error(err)
+          if (err) return console.error(err)
 
-      })
-
-
+        })
+      }
     })
 
     return response.data.results
@@ -79,11 +86,16 @@ const addOneShoeToDatabase = async (options: Object) => {
     const shoes = response.data.results
     const shoe = shoes[0]
 
-
-
-
-
     const { id, sku, brand, name, colorway, gender, silhouette, releaseYear, releaseDate, retailPrice, estimatedMarketValue, story, image, links } = shoe
+
+    const shoeFound = await Shoe.findOne({ shoeID: shoe.id })
+
+    console.log(shoeFound)
+
+    if (shoeFound) {
+      console.log('Shoe is already in database!')
+      return
+    }
 
     const newShoe = new Shoe(
       {
@@ -155,11 +167,11 @@ const getShoesFromAllBrands = async () => {
 
 }
 
-const addAllShoes = async (pageNum: number) => {
+const addAllShoes = async (pageNum: number, releaseYear: number) => {
   const options = {
     method: 'GET',
     url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
-    params: { limit: '100', page: pageNum },
+    params: { limit: '100', page: pageNum, releaseYear: releaseYear },
     headers: {
       'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
       'x-rapidapi-key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f'

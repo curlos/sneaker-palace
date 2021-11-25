@@ -141,7 +141,7 @@ const ProductList = () => {
 
           <div className="flex justify-between">
             <div>
-              <div>Search results for</div>
+              {query.get('query') ? <div>Search results for</div> : null}
               <div className="text-lg font-bold">
                 {query.get('query') ? `${query.get('query')} (${sortedShoes.length})` : null}
               </div>
