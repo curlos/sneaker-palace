@@ -28,7 +28,6 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
         const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${lastProduct.productID}`)
         setShoe(response.data)
         setProductInfo(lastProduct)
-        console.log('done nig')
         setLoading(false)
       }
       setLoading(false)
@@ -39,12 +38,6 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
   const handleBubblingDownClick = (e: React.FormEvent) => {
     e.stopPropagation()
   }
-
-  console.log('fucl')
-  console.log(shoe)
-  console.log(productInfo)
-  console.log(loading)
-  console.log(currentCart?.products?.length)
 
   return (
     <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40" onClick={() => setShowModal(!showModal)}>

@@ -45,8 +45,6 @@ const OrderDetails = () => {
     return newShoes
   }
 
-  console.log(order)
-
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       order ? (

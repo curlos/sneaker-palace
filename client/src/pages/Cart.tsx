@@ -17,7 +17,7 @@ const Cart = () => {
     <div className="w-full p-6 flex flex-start min-h-screen lg:p-4 sm:block ">
       <div className="flex-6">
         <div className="font-medium text-xl mb-5">Bag</div>
-        {currentCart?.products?.map((product: IProduct) => <CartProduct productInfo={product} />)}
+        {currentCart?.products?.map((product: IProduct) => <CartProduct productInfo={product} key={product._id} />)}
       </div>
 
       <div className="flex-2 px-7 sm:px-0">

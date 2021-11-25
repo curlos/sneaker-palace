@@ -32,8 +32,6 @@ const App = () => {
   const [showSidenavModal, setShowSidenavModal] = useState(false)
   const [showShoppingCartModal, setShowShoppingCartModal] = useState(false)
 
-  console.log(showShoppingCartModal)
-
   return (
     <Router>
 

@@ -46,8 +46,6 @@ router.post('/', async (req: Request, res: Response) => {
 })
 
 router.post('/no-account', async (req: Request, res: Response) => {
-  console.log(req.body)
-
   const orderFound = await Order.findOne({ paymentIntentID: req.body.paymentIntentID })
 
   if (orderFound) {

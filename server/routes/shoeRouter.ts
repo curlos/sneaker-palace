@@ -94,16 +94,4 @@ router.post('/delete', async (req: Request, res: Response) => {
   res.json(result)
 })
 
-// router.post('/newShoe', async (req: Request, res: Response) => {
-//   
-//   await getShoesFromBrand(req.body.brand)
-//   res.json('All new shoes added to database')
-// })
-
-// router.post('/newShoe/allBrands', async (req: Request, res: Response) => {
-//   
-//   await getShoesFromAllBrands()
-//   res.json('All new shoes added to database')
-// })
-
 module.exports = router;

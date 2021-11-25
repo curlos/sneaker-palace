@@ -34,8 +34,6 @@ const addShoesToDatabase = async (options: Object) => {
 
       const shoeFound = await Shoe.findOne({ shoeID: shoe.id })
 
-      console.log(shoeFound)
-
       if (shoeFound) {
         console.log('Shoe is already in database!')
         return
@@ -89,8 +87,6 @@ const addOneShoeToDatabase = async (options: Object) => {
     const { id, sku, brand, name, colorway, gender, silhouette, releaseYear, releaseDate, retailPrice, estimatedMarketValue, story, image, links } = shoe
 
     const shoeFound = await Shoe.findOne({ shoeID: shoe.id })
-
-    console.log(shoeFound)
 
     if (shoeFound) {
       console.log('Shoe is already in database!')

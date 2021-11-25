@@ -60,14 +60,13 @@ const ProductList = () => {
       if (query.get('query')) {
         API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}`
       } else if (localShoes.length > 0) {
-        console.log(localShoes)
         const newShoes: Array<Shoe> = getFilteredShoes(localShoes)
         const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
         setShoes(newShoes)
         setSortedShoes(newSortedShoes)
       }
 
-      if (localShoes.length > 0) {
+      if (localShoes.length === 0) {
         const response = await axios.get(API_URL)
         const newShoes: Array<Shoe> = getFilteredShoes(response.data)
         const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)

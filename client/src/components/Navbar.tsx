@@ -22,10 +22,6 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  console.log(currentCart)
-
-
-
   const handleLogout = () => {
 
     dispatch(logout())

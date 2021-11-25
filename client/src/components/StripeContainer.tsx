@@ -50,9 +50,6 @@ const StripeContainer = ({ children }: Props) => {
     appearance,
   };
 
-  console.log(clientSecret)
-
-
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       <div className="App">

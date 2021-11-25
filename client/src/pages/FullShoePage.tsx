@@ -41,8 +41,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   const [reviewLoading, setReviewLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
-  console.log(currentCart)
-
   useEffect(() => {
     window.scrollTo(0, 0)
     setShoeLoading(true)
@@ -65,9 +63,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
     setShowShoppingCartModal(true)
 
     if (Object.keys(user).length <= 0) {
-      console.log('1')
       if (shoe.shoeID && shoe.retailPrice) {
-        console.log('2')
         const newProduct: IProduct = {
           _id: new ObjectId().toString(),
           productID: shoe.shoeID,
@@ -77,7 +73,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
         }
 
         if (currentCart.products) {
-          console.log(currentCart)
           const newCart = {
             ...currentCart,
             products: [...currentCart.products, newProduct]
@@ -85,7 +80,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
           dispatch(updateCart(newCart))
           localStorage.setItem('currentCart', JSON.stringify(newCart))
         } else {
-          console.log('4')
           const newCart = {
             ...currentCart,
             _id: new ObjectId().toString(),
