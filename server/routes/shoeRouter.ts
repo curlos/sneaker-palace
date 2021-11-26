@@ -11,10 +11,53 @@ const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sne
 
 const router = express.Router()
 
-router.get('/', async (req: Request, res: Response) => {
+router.post('/page/:pageNum', async (req: Request, res: Response) => {
+  const options = {
+    page: Number(req.params.pageNum),
+    limit: 12,
+    collation: {
+      locale: 'en',
+    },
+    lean: true,
+    select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
+    sort: {}
+  };
+
+  Shoe.paginate({}, options, (err: any, result: any) => {
+    console.log(result)
+    res.json(result)
+  });
+
+  // const allShoes = await Shoe.find({})
+  //   .select('shoeID image.original name gender colorway ratings retailPrice brand rating')
+  //   .lean().exec((err: any, results: any) => {
+  //     res.json(results)
+  //   })
+})
+
+router.get('/sort', async (req: Request, res: Response) => {
   const allShoes = await Shoe.find({})
-    .select('shoeID image.original name gender colorway ratings retailPrice brand rating')
-    .lean().exec((err: any, results: any) => {
+    .select('releaseDate retailPrice')
+    .lean().limit(20).sort({ retailPrice: -1 }).exec((err: any, results: any) => {
+      res.json(results)
+    })
+})
+
+router.post('/filter', async (req: Request, res: Response) => {
+  console.log(req.body)
+
+  const allShoes = await Shoe.find(req.body)
+    .select('gender releaseDate retailPrice brand name')
+    .lean().limit(20).exec((err: any, results: any) => {
+      res.json(results)
+    })
+})
+
+router.get('/filter/color', async (req: Request, res: Response) => {
+  const allShoes = await Shoe
+    .find({ "colorway": { "$regex": req.params.color.trim(), "$options": "i" } })
+    .select('releaseDate retailPrice brand name colorway')
+    .lean().limit(20).exec((err: any, results: any) => {
       res.json(results)
     })
 })
@@ -38,10 +81,25 @@ router.get('/objectID/:id', async (req: Request, res: Response) => {
   res.json(shoe)
 })
 
-router.get('/query/:queryString', async (req: Request, res: Response) => {
-  const shoes = await Shoe
-    .find({ "name": { "$regex": req.params.queryString.trim(), "$options": "i" } }).lean()
-  res.json(shoes)
+router.get('/query/:queryString/page/:pageNum', async (req: Request, res: Response) => {
+  const query = { "name": { "$regex": req.params.queryString.trim(), "$options": "i" } }
+
+  const options = {
+    page: Number(req.params.pageNum),
+    limit: 12,
+    collation: {
+      locale: 'en',
+    },
+    lean: true,
+    select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
+    sort: {}
+  };
+
+  Shoe.paginate(query, options, (err: any, result: any) => {
+    if (err) res.json({ error: err })
+    console.log(result)
+    res.json(result)
+  });
 })
 
 router.put('/favorite', async (req: Request, res: Response) => {

@@ -1,6 +1,7 @@
 export { }
 
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const shoeSchema = new mongoose.Schema(
   {
@@ -34,6 +35,8 @@ const shoeSchema = new mongoose.Schema(
     inStock: { type: Boolean, default: true }
   }
 )
+
+shoeSchema.plugin(mongoosePaginate)
 
 const Shoe = mongoose.model('Shoe', shoeSchema)
 

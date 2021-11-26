@@ -9,7 +9,7 @@ module.exports = {
 
     const connection = mongoose.connection
     connection.once('open', () => {
-
+      console.log('Connected to MongoDB!')
     })
   }
 };

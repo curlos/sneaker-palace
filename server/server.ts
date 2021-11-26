@@ -47,6 +47,8 @@ app.use('/orders', orderRouter)
 app.use('/images', imageRouter)
 
 app.listen(PORT, () => {
+  console.log(`Server starting on port ${PORT}`)
+
   database.connectToServer((err: any) => {
     if (err) {
       console.error(err)

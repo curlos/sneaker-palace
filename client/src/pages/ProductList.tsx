@@ -40,34 +40,43 @@ const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [showSidebar, setShowSidebar] = useState(Number(window.innerWidth) > 1024 ? true : false)
+  const [totalShoeCount, setTotalShoeCount] = useState(0)
 
   useEffect(() => {
     setLoading(true)
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
-      let API_URL = `${process.env.REACT_APP_DEV_URL}/shoes`
+      let API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/page/${currentPage}`
 
       if (query.get('query')) {
-        API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}`
+        API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}/page/${currentPage}`
       }
 
+      const body = {
+        page: currentPage,
+      }
+
+      console.log(body)
+
       const response = await axios.get(API_URL)
-      const newShoes: Array<Shoe> = getFilteredShoes(response.data)
-      const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
+      const newShoes: Array<Shoe> = getFilteredShoes(response.data.docs)
+      // const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
       setShoes(response.data)
-      setSortedShoes(newSortedShoes)
+      setSortedShoes(newShoes)
+      setPaginatedShoes(newShoes)
+      setTotalShoeCount(response.data.totalDocs)
       setLoading(false)
     }
 
     fetchFromAPI()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query.get('query')])
+  }, [query.get('query'), currentPage])
 
   useEffect(() => {
     window.scrollTo(0, 0)
     const newShoes: Array<Shoe> = getFilteredShoes(shoes)
-    const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
-    setSortedShoes(newSortedShoes)
+    // const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
+    setSortedShoes(newShoes)
     setCurrentPage(1)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,6 +116,9 @@ const ProductList = () => {
     setPaginatedShoes(newPaginatedShoes)
   }
 
+  console.log(sortedShoes)
+  console.log(paginatedShoes)
+
 
 
   return (
@@ -123,7 +135,7 @@ const ProductList = () => {
             <div>
               {query.get('query') ? <div>Search results for</div> : null}
               <div className="text-lg font-bold">
-                {query.get('query') ? `${query.get('query')} (${sortedShoes.length})` : null}
+                {query.get('query') ? `${query.get('query')} (${totalShoeCount})` : null}
               </div>
             </div>
 
@@ -161,7 +173,7 @@ const ProductList = () => {
                   })}
                 </div>
 
-                <Pagination data={sortedShoes} pageLimit={Math.ceil(sortedShoes.length / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} />
+                <Pagination data={sortedShoes} pageLimit={Math.ceil(totalShoeCount / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} totalShoeCount={totalShoeCount} />
               </div>
             )}
         </div>

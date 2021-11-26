@@ -10,14 +10,14 @@ interface Props {
   currentPage: number,
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
   filters: any,
-  sortType: string
+  sortType: string,
+  totalShoeCount: number
 }
 
-export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType }: Props) => {
+export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType, totalShoeCount }: Props) => {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    setPaginatedData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, filters, sortType, data])
 
@@ -50,15 +50,6 @@ export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, cur
     setCurrentPage(pageNumber)
   }
 
-  const setPaginatedData = () => {
-    const startIndex = currentPage * dataLimit - dataLimit;
-    const endIndex = startIndex + dataLimit;
-
-
-
-    handleNewPageClick(data.slice(startIndex, endIndex))
-  }
-
   const getPaginationGroup = () => {
     let start = Math.floor((currentPage - 1) / pageLimit) * pageLimit;
 
@@ -68,7 +59,7 @@ export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, cur
 
   return (
     <div className="flex justify-between items-center my-4 text-black sm:justify-between sm:px-3">
-      <div className="pagResults sm:hidden">Showing <strong>{(currentPage * dataLimit - dataLimit) + 1}</strong> to <strong>{(currentPage * dataLimit - dataLimit) + dataLimit - 1 >= data.length ? data.length : (currentPage * dataLimit - dataLimit) + dataLimit}</strong> of <strong>{data.length}</strong> results</div>
+      <div className="pagResults sm:hidden">Showing <strong>{(currentPage * dataLimit - dataLimit) + 1}</strong> to <strong>{(currentPage * dataLimit - dataLimit) + dataLimit - 1 >= totalShoeCount ? totalShoeCount : (currentPage * dataLimit - dataLimit) + dataLimit}</strong> of <strong>{totalShoeCount}</strong> results</div>
 
       <div className="flex w-1/2 justify-end sm:justify-between sm:w-full sm:gap-4">
         <div className="p-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg flex items-center justify-center sm:hidden" onClick={goToFirstPage}><ChevronDoubleLeftIcon className="h-5 w-5" /></div>
