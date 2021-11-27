@@ -46,23 +46,15 @@ const ProductList = () => {
     setLoading(true)
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
-      let API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/page/${currentPage}`
-
-      if (query.get('query')) {
-        API_URL = `${process.env.REACT_APP_DEV_URL}/shoes/query/${query.get('query')}/page/${currentPage}`
-      }
-
       const body = {
-        page: currentPage,
+        filters,
+        sortType,
+        pageNum: currentPage,
+        query: query.get('query') || ''
       }
 
-      console.log(body)
-
-      const response = await axios.get(API_URL)
-      const newShoes: Array<Shoe> = getFilteredShoes(response.data.docs)
-      // const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
-      setShoes(response.data)
-      setSortedShoes(newShoes)
+      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes`, body)
+      const newShoes = response.data.docs
       setPaginatedShoes(newShoes)
       setTotalShoeCount(response.data.totalDocs)
       setLoading(false)
@@ -74,10 +66,27 @@ const ProductList = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    const newShoes: Array<Shoe> = getFilteredShoes(shoes)
+    // const newShoes: Array<Shoe> = getFilteredShoes(shoes)
     // const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
-    setSortedShoes(newShoes)
-    setCurrentPage(1)
+    setLoading(true)
+
+    const fetchFromAPI = async () => {
+      const body = {
+        filters,
+        sortType,
+        pageNum: currentPage,
+        query: query.get('query') || ''
+      }
+
+      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes`, body)
+      const newShoes = response.data.docs
+      setPaginatedShoes(newShoes)
+      setTotalShoeCount(response.data.totalDocs)
+      setCurrentPage(1)
+      setLoading(false)
+    }
+
+    fetchFromAPI()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, sortType, query.get('query')])
@@ -95,21 +104,6 @@ const ProductList = () => {
     const priceShoes = filterByPrice(filters, genderShoes)
 
     return priceShoes
-  }
-
-  const getSortedShoes = (shoesToSort: Array<Shoe>) => {
-    switch (sortType) {
-      case 'Newest':
-        return sortByNewest(shoesToSort)
-      case 'Oldest':
-        return sortByOldest(shoesToSort)
-      case 'Price: High-Low':
-        return sortByHighestPrice(shoesToSort)
-      case 'Price: Low-High':
-        return sortByLowestPrice(shoesToSort)
-      default:
-        return shoesToSort
-    }
   }
 
   const handleNewPageClick = (newPaginatedShoes: Array<Shoe>) => {

@@ -20,9 +20,12 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSub
     setLoading(true)
 
     const fetchFromAPI = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/query/${searchText}`)
+      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes/search`, {
+        searchText,
+        pageNum: 1
+      })
 
-      setShoes(response.data)
+      setShoes(response.data.docs)
       setLoading(false)
     }
     fetchFromAPI()

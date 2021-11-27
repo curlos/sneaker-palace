@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 
 const express = require('express')
 const mongoose = require('mongoose')
-const queryString = require('query-string');
 const Shoe = require('../models/Shoe')
 const User = require('../models/User')
 const { getFullURL } = require('../utils/getFullURL')
@@ -11,55 +10,85 @@ const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sne
 
 const router = express.Router()
 
-router.post('/page/:pageNum', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
+  const getSortType = () => {
+    switch (req.body.sortType) {
+      case "Newest":
+        return { releaseDate: -1 }
+      case "Oldest":
+        return { releaseDate: 1 }
+      case "Price: High-Low":
+        return { retailPrice: -1 }
+      case "Price: Low-High":
+        return { retailPrice: 1 }
+    }
+  }
+
+  const getCompleteQuery = () => {
+    const completeQuery: any = {}
+    const filters = req.body.filters
+    if (req.body.query) {
+      completeQuery.name = { "$regex": req.body.query.trim(), "$options": "i" }
+    }
+
+    const selectedColors = [...Object.keys(filters.colors).filter((color) => filters.colors[color])]
+
+    const selectedBrands = [...Object.keys(filters.brands).filter((brand) => filters.brands[brand])]
+
+    const selectedGenders = [...Object.keys(filters.genders).filter((gender) => filters.genders[gender])]
+
+    const selectedPriceRanges = [...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked)]
+
+    console.log(selectedPriceRanges)
+
+    if (filters.colors && selectedColors.length > 0) {
+      completeQuery.colorway = { $in: selectedBrands }
+    }
+
+
+    if (filters.brands && selectedBrands.length > 0) {
+      completeQuery.brand = { $in: selectedBrands }
+    }
+
+    if (filters.genders && selectedGenders.length > 0) {
+      completeQuery.gender = { $in: selectedGenders }
+    }
+
+    if (filters.priceRanges && selectedPriceRanges.length > 0) {
+      const priceRangeConditions: any = []
+
+      selectedPriceRanges.forEach((priceRange) => {
+        priceRangeConditions.push({
+          retailPrice: {
+            $gte: filters.priceRanges[priceRange].priceRanges.low,
+            $lte: filters.priceRanges[priceRange].priceRanges.high
+          }
+        })
+      })
+
+      completeQuery["$or"] = [...priceRangeConditions]
+    }
+    return completeQuery
+  }
+
   const options = {
-    page: Number(req.params.pageNum),
+    page: Number(req.body.pageNum),
     limit: 12,
     collation: {
       locale: 'en',
     },
     lean: true,
     select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
-    sort: {}
+    sort: getSortType()
   };
 
-  Shoe.paginate({}, options, (err: any, result: any) => {
-    console.log(result)
+  const query = getCompleteQuery()
+  console.log(query)
+  // console.log(query['$or'][0])
+
+  Shoe.paginate(query, options, (err: any, result: any) => {
     res.json(result)
   });
-
-  // const allShoes = await Shoe.find({})
-  //   .select('shoeID image.original name gender colorway ratings retailPrice brand rating')
-  //   .lean().exec((err: any, results: any) => {
-  //     res.json(results)
-  //   })
-})
-
-router.get('/sort', async (req: Request, res: Response) => {
-  const allShoes = await Shoe.find({})
-    .select('releaseDate retailPrice')
-    .lean().limit(20).sort({ retailPrice: -1 }).exec((err: any, results: any) => {
-      res.json(results)
-    })
-})
-
-router.post('/filter', async (req: Request, res: Response) => {
-  console.log(req.body)
-
-  const allShoes = await Shoe.find(req.body)
-    .select('gender releaseDate retailPrice brand name')
-    .lean().limit(20).exec((err: any, results: any) => {
-      res.json(results)
-    })
-})
-
-router.get('/filter/color', async (req: Request, res: Response) => {
-  const allShoes = await Shoe
-    .find({ "colorway": { "$regex": req.params.color.trim(), "$options": "i" } })
-    .select('releaseDate retailPrice brand name colorway')
-    .lean().limit(20).exec((err: any, results: any) => {
-      res.json(results)
-    })
 })
 
 router.get('/:shoeID', async (req: Request, res: Response) => {
@@ -67,25 +96,16 @@ router.get('/:shoeID', async (req: Request, res: Response) => {
   res.json(shoe)
 })
 
-
-
-
-
-
-
-
-
-
 router.get('/objectID/:id', async (req: Request, res: Response) => {
   const shoe = await Shoe.findOne({ _id: req.params.id })
   res.json(shoe)
 })
 
-router.get('/query/:queryString/page/:pageNum', async (req: Request, res: Response) => {
-  const query = { "name": { "$regex": req.params.queryString.trim(), "$options": "i" } }
+router.post('/search', async (req: Request, res: Response) => {
+  const query = { "name": { "$regex": req.body.searchText.trim(), "$options": "i" } }
 
   const options = {
-    page: Number(req.params.pageNum),
+    page: Number(req.body.pageNum),
     limit: 12,
     collation: {
       locale: 'en',
@@ -121,14 +141,6 @@ router.put('/favorite', async (req: Request, res: Response) => {
   }
   res.json(shoe)
 })
-
-
-
-
-
-
-
-
 
 
 
