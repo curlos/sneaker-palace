@@ -7,6 +7,7 @@ interface Props {
     brands: any,
     genders: any,
     priceRanges: any,
+    releaseYears: any,
     shoeSizes: any
   },
   setFilters: any,
@@ -19,6 +20,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
   const [showBrands, setShowBrands] = useState(false)
   const [showGender, setShowGender] = useState(false)
   const [showPriceRanges, setShowPriceRanges] = useState(false)
+  const [showReleaseYear, setShowReleaseYear] = useState(false)
   const [showSizes, setShowSizes] = useState(false)
 
   const handleColorClick = (color: string) => {
@@ -31,6 +33,10 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
 
   const handleGenderClick = (gender: string) => {
     setFilters({ ...filters, genders: { ...filters.genders, [gender]: !filters.genders[gender] } })
+  }
+
+  const handleReleaseYearClick = (releaseYear: string) => {
+    setFilters({ ...filters, releaseYears: { ...filters.releaseYears, [releaseYear]: !filters.releaseYears[releaseYear] } })
   }
 
   const handlePriceClick = (priceRange: string) => {
@@ -118,6 +124,26 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
                 <label className="flex items-center">
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.priceRanges[priceRange].checked} onClick={() => handlePriceClick(priceRange)}></input>
                   <span>{priceRange}</span>
+                </label>
+
+              )
+            })}
+          </div>
+        ) : null}
+      </div>
+
+      <div className="border-0 border-b border-solid border-gray-300 py-3">
+        <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowReleaseYear(!showReleaseYear)}>
+          <span className="font-bold mb-3">Release Year</span> {showGender ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}
+        </div>
+
+        {showReleaseYear ? (
+          <div>
+            {Object.keys(filters.releaseYears).sort((a, b) => Number(b) - Number(a)).map((releaseYear) => {
+              return (
+                <label className="flex items-center">
+                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.releaseYears[releaseYear]} onClick={() => handleReleaseYearClick(releaseYear)}></input>
+                  <span>{releaseYear}</span>
                 </label>
 
               )

@@ -95,6 +95,34 @@ const getInitialFilters = (state: stateType) => {
       }
 
     },
+    releaseYears: {
+      2022: false,
+      2021: false,
+      2020: false,
+      2019: false,
+      2018: false,
+      2017: false,
+      2016: false,
+      2015: false,
+      2014: false,
+      2013: false,
+      2012: false,
+      2011: false,
+      2010: false,
+      2009: false,
+      2008: false,
+      2007: false,
+      2006: false,
+      2005: false,
+      2004: false,
+      2003: false,
+      2002: false,
+      2001: false,
+      2000: false,
+      1996: false,
+      1987: false,
+      1985: false
+    },
     shoeSizes: {
       ...SHOE_SIZES.reduce((a, v) => ({ ...a, [v]: false }), {})
     }

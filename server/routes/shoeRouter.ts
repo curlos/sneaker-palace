@@ -39,10 +39,13 @@ router.post('/', async (req: Request, res: Response) => {
 
     const selectedPriceRanges = [...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked)]
 
-    console.log(selectedPriceRanges)
+    const selectedReleaseYears = [...Object.keys(filters.releaseYears).filter((releaseYear) => filters.releaseYears[releaseYear])]
+
+    console.log(selectedReleaseYears)
 
     if (filters.colors && selectedColors.length > 0) {
-      completeQuery.colorway = { $in: selectedBrands }
+      const regex = selectedColors.join('|')
+      completeQuery.colorway = { "$regex": regex, "$options": "i" }
     }
 
 
@@ -54,16 +57,28 @@ router.post('/', async (req: Request, res: Response) => {
       completeQuery.gender = { $in: selectedGenders }
     }
 
+    if (filters.releaseYears && selectedReleaseYears.length > 0) {
+      completeQuery.releaseYear = { $in: selectedReleaseYears }
+    }
+
     if (filters.priceRanges && selectedPriceRanges.length > 0) {
       const priceRangeConditions: any = []
 
       selectedPriceRanges.forEach((priceRange) => {
-        priceRangeConditions.push({
-          retailPrice: {
-            $gte: filters.priceRanges[priceRange].priceRanges.low,
-            $lte: filters.priceRanges[priceRange].priceRanges.high
-          }
-        })
+        if (!filters.priceRanges[priceRange].priceRanges.high) {
+          priceRangeConditions.push({
+            retailPrice: {
+              $gte: filters.priceRanges[priceRange].priceRanges.low
+            }
+          })
+        } else {
+          priceRangeConditions.push({
+            retailPrice: {
+              $gte: filters.priceRanges[priceRange].priceRanges.low,
+              $lte: filters.priceRanges[priceRange].priceRanges.high
+            }
+          })
+        }
       })
 
       completeQuery["$or"] = [...priceRangeConditions]
