@@ -12,27 +12,15 @@ const MoreShoes = () => {
 
   useEffect(() => {
     const fetchShoes = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes`)
-      const randomShoes = await getRandomShoes(response.data)
+      const randomPageNum = Math.floor(Math.random() * 800)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/page/${randomPageNum}`)
+      const randomShoes = response.data.docs.slice(0, 3)
+      console.log(response.data.docs.slice(0, 3))
       setShoes(randomShoes)
       setLoading(false)
     }
     fetchShoes()
   }, [])
-
-  const getRandomShoes = (allShoes: Array<Shoe>) => {
-    const randomShoes: Array<Shoe> = []
-
-    while (randomShoes.length < 3) {
-      const shoe = allShoes[Math.floor(Math.random() * allShoes.length)]
-
-      if (!randomShoes.includes(shoe)) {
-        randomShoes.push(shoe)
-      }
-    }
-
-    return randomShoes
-  }
 
 
 

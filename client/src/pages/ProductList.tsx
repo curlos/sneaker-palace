@@ -8,9 +8,7 @@ import SmallShoe from '../components/SmallShoe'
 import { SortDropdown } from '../components/SortDropdown'
 import SmallShoeSkeleton from '../skeleton_loaders/SmallShoeSkeleton'
 import { Shoe } from '../types/types'
-import { filterByBrand, filterByColor, filterByGender, filterByPrice } from '../utils/filterShoes'
 import getInitialFilters from '../utils/getInitialFilters'
-import { sortByHighestPrice, sortByLowestPrice, sortByNewest, sortByOldest } from '../utils/sortShoes'
 
 interface stateType {
   brand?: string,
@@ -30,9 +28,6 @@ const ProductList = () => {
 
   const query = useQuery()
   const { state } = useLocation<stateType>();
-
-  const [shoes, setShoes] = useState([])
-  const [sortedShoes, setSortedShoes] = useState<Array<Shoe>>([])
   const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>(getInitialFilters(state))
@@ -96,24 +91,9 @@ const ProductList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state && state['gender'], state && state['brand']])
 
-
-  const getFilteredShoes = (shoesToFilter: Array<Shoe>) => {
-    const colorShoes = filterByColor(filters, shoesToFilter)
-    const brandShoes = filterByBrand(filters, colorShoes)
-    const genderShoes = filterByGender(filters, brandShoes)
-    const priceShoes = filterByPrice(filters, genderShoes)
-
-    return priceShoes
-  }
-
   const handleNewPageClick = (newPaginatedShoes: Array<Shoe>) => {
     setPaginatedShoes(newPaginatedShoes)
   }
-
-  console.log(sortedShoes)
-  console.log(paginatedShoes)
-
-
 
   return (
     <div className="text-xl-lg">
@@ -167,7 +147,7 @@ const ProductList = () => {
                   })}
                 </div>
 
-                <Pagination data={sortedShoes} pageLimit={Math.ceil(totalShoeCount / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} totalShoeCount={totalShoeCount} />
+                <Pagination data={paginatedShoes} pageLimit={Math.ceil(totalShoeCount / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} totalShoeCount={totalShoeCount} />
               </div>
             )}
         </div>

@@ -10,6 +10,24 @@ const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sne
 
 const router = express.Router()
 
+router.get('/page/:pageNum', async (req: Request, res: Response) => {
+  console.log(req.params.pageNum)
+  const options = {
+    page: Number(req.params.pageNum),
+    limit: 12,
+    collation: {
+      locale: 'en',
+    },
+    lean: true,
+    select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
+  };
+
+  Shoe.paginate({}, options, (err: any, result: any) => {
+    console.log(result)
+    res.json(result)
+  });
+})
+
 router.post('/', async (req: Request, res: Response) => {
   const getSortType = () => {
     switch (req.body.sortType) {
@@ -95,7 +113,7 @@ router.post('/', async (req: Request, res: Response) => {
     lean: true,
     select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
     sort: getSortType()
-  };
+  }
 
   const query = getCompleteQuery()
   console.log(query)
