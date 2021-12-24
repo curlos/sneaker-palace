@@ -28,6 +28,7 @@ const ProductList = () => {
 
   const query = useQuery()
   const { state } = useLocation<stateType>();
+
   const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>(getInitialFilters(state))
@@ -109,7 +110,7 @@ const ProductList = () => {
             <div>
               {query.get('query') ? <div>Search results for</div> : null}
               <div className="text-lg font-bold">
-                {query.get('query') ? `${query.get('query')} (${totalShoeCount})` : null}
+                {query.get('query') ? `${query.get('query')} (${totalShoeCount})` : `Sneakers (${totalShoeCount.toLocaleString()})`}
               </div>
             </div>
 

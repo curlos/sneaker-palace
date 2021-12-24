@@ -22,7 +22,7 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
   useEffect(() => {
     const fetchFromAPI = async () => {
       setLoading(true)
-      if (currentCart.products && currentCart?.products?.length >= 1) {
+      if (currentCart && currentCart.products && currentCart?.products?.length >= 1) {
         const lastProduct = currentCart.products[currentCart.products.length - 1]
 
         const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${lastProduct.productID}`)
@@ -33,7 +33,7 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
       setLoading(false)
     }
     fetchFromAPI()
-  }, [currentCart.products])
+  }, [currentCart])
 
   const handleBubblingDownClick = (e: React.FormEvent) => {
     e.stopPropagation()

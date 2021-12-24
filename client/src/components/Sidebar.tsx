@@ -32,6 +32,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
   }
 
   const handleGenderClick = (gender: string) => {
+    console.log(gender)
     setFilters({ ...filters, genders: { ...filters.genders, [gender]: !filters.genders[gender] } })
   }
 
@@ -52,14 +53,14 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
 
       <div className="border-0 border-b border-solid border-gray-300 py-3">
 
-        <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowColors(!showColors)}>
+        <div className="flex justify-between cursor-pointer" onClick={() => setShowColors(!showColors)}>
           <div className="font-bold mb-3">Color</div> {showColors ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}
         </div>
         {showColors ? (
-          <div className="flex flex-wrap justify-center gap-5 p-3">
+          <div className="flex justify-between flex-wrap gap-2 p-3">
             {Object.keys(filters.colors).map((color) => {
               return (
-                <div className="flex flex-col items-center h-13 w-13">
+                <div className="flex flex-col items-center h-13 w-13" style={{ height: '52px', width: '52px' }}>
                   <div className={`h-7 w-7 rounded-full ${color === 'black' || color === 'white' ? `${'bg-' + color}` : `${'bg-' + color + '-500'}`} ${color === 'white' ? 'border border-gray-300' : ''} ${color === 'white' ? 'text-black' : 'text-white'}`} onClick={() => handleColorClick(color)}>
                     {filters.colors[color] ? <CheckIcon /> : null}
                   </div>
@@ -83,7 +84,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
               return (
                 <label className="flex items-center">
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.brands[brand]} onClick={() => handleBrandClick(brand)}></input>
-                  <span>{brand}</span>
+                  <span className="capitalize">{brand}</span>
                 </label>
 
               )
@@ -103,7 +104,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
               return (
                 <label className="flex items-center">
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.genders[gender]} onClick={() => handleGenderClick(gender)}></input>
-                  <span>{gender}</span>
+                  <span className="capitalize">{gender}</span>
                 </label>
 
               )

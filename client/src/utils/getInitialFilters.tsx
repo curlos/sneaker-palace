@@ -129,15 +129,12 @@ const getInitialFilters = (state: stateType) => {
   }
 
   if (state && state.gender) {
-    filters['genders'][titleCase(state.gender)] = true
+    filters['genders'][state.gender] = true
   }
 
   if (state && state.brand) {
     filters['brands'][state.brand.toUpperCase()] = true
   }
-
-
-
 
   return filters
 }
