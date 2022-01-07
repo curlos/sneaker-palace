@@ -1,5 +1,3 @@
-import { titleCase } from "./filterShoes"
-
 interface stateType {
   brand?: string,
   gender?: string

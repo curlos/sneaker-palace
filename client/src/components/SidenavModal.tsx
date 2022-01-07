@@ -54,11 +54,11 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
             </div>
 
             <div>
-              <Link to={{ pathname: "/shoes", state: { brand: 'jordan' } }} onClick={() => setShowSidenavModal(false)}>Jordan</Link>
+              <Link to={{ pathname: "/shoes", state: { brand: 'Jordan' } }} onClick={() => setShowSidenavModal(false)}>Jordan</Link>
             </div>
 
             <div>
-              <Link to={{ pathname: "/shoes", state: { brand: 'nike' } }} onClick={() => setShowSidenavModal(false)}>Nike</Link>
+              <Link to={{ pathname: "/shoes", state: { brand: 'Nike' } }} onClick={() => setShowSidenavModal(false)}>Nike</Link>
             </div>
 
             <div>

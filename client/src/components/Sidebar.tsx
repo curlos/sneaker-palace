@@ -86,7 +86,6 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.brands[brand]} onClick={() => handleBrandClick(brand)}></input>
                   <span className="capitalize">{brand}</span>
                 </label>
-
               )
             })}
           </div>
