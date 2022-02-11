@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 export const Footer = () => {
   return (
     <div className="bg-black text-white text-xs pt-10 lg:text-lg">
-      <div className="flex justify-center py-5 px-10 border-0 border-b border-solid border-gray-400 lg:block">
+      <div className="flex justify-center py-5 px-10 border-0 border-b border-solid border-gray-400 lg:hidden">
 
         <div className="w-1/6 px-4 lg:w-full lg:flex lg:flex-col lg:mb-4">
           <div><Link to={{ pathname: "/shoes", state: { brand: 'NIKE' } }} className="text-sm lg:text-2xl">Nike</Link></div>

@@ -9,6 +9,7 @@ import { SortDropdown } from '../components/SortDropdown'
 import SmallShoeSkeleton from '../skeleton_loaders/SmallShoeSkeleton'
 import { Shoe } from '../types/types'
 import getInitialFilters from '../utils/getInitialFilters'
+import { useWindowSize } from '../utils/useWindowSize'
 
 interface stateType {
   brand?: string,
@@ -28,15 +29,24 @@ const ProductList = () => {
 
   const query = useQuery()
   const { state } = useLocation<stateType>();
+  const windowSize = useWindowSize()
 
   const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>(getInitialFilters(state))
 
+  console.log(windowSize)
+  console.log(windowSize.width > 1024)
+
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
-  const [showSidebar, setShowSidebar] = useState(Number(window.innerWidth) > 1024 ? true : false)
+  const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true)
   const [totalShoeCount, setTotalShoeCount] = useState(0)
+
+  useEffect(() => {
+    console.log(windowSize.width)
+    setShowSidebar(windowSize.width < 1280 ? false : true)
+  }, [windowSize])
 
   useEffect(() => {
     setLoading(true)
