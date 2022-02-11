@@ -67,7 +67,10 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
 
     if (Object.keys(user).length <= 0) {
-      if (shoe.shoeID && shoe.retailPrice) {
+      console.log('1')
+      console.log(shoe)
+      if (shoe.shoeID && shoe.retailPrice !== undefined && shoe.retailPrice >= 0) {
+        console.log('1.5')
         const newProduct: IProduct = {
           _id: new ObjectId().toString(),
           productID: shoe.shoeID,
@@ -76,7 +79,8 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
           retailPrice: shoe.retailPrice
         }
 
-        if (currentCart.products) {
+        if (currentCart.products && currentCart.products.length > 0) {
+          console.log('2')
           const newCart = {
             ...currentCart,
             products: [...currentCart.products, newProduct]
@@ -84,6 +88,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
           dispatch(updateCart(newCart))
           localStorage.setItem('currentCart', JSON.stringify(newCart))
         } else {
+          console.log('3')
           const newCart = {
             ...currentCart,
             _id: new ObjectId().toString(),
@@ -97,8 +102,8 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
       }
     }
 
-    if (currentCart && currentCart.products && shoe && shoe.shoeID) {
-      console.log('User logged in')
+    if (currentCart && currentCart.products && shoe && shoe.shoeID && Object.keys(user).length > 0) {
+      console.log('4')
 
       const newProduct: Partial<IProduct> = {
         productID: shoe.shoeID,
