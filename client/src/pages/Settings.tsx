@@ -41,7 +41,7 @@ const Settings = () => {
           </div>
         </div>
 
-        <div className="flex-4">
+        <div className="flex-4 min-h-screen">
           {getSettingPage()}
         </div>
       </div>

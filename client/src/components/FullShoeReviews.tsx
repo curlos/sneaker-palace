@@ -42,9 +42,9 @@ const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
           <StarRatingProgress rating={1} percentage={shoeRatings.filter((rating) => rating.ratingNum === 1).length / shoeRatings.length} />
         </div>
 
-        <div className="">
+        <div className="mb-4">
           <div className="text-xl font-bold">Review this product</div>
-          <div className="my-3">Share your thoguhts with other customers</div>
+          <div className="my-3">Share your thoughts with other customers</div>
           <Link to={`/shoe/submit-review/${shoe.shoeID}`} className="px-5 py-2 border border-gray-300">Write a customer review</Link>
         </div>
       </div>
@@ -52,7 +52,7 @@ const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
       {shoeRatings.length > 0 ? (
         <div className="flex-8">
           <div className="text-2xl font-bold mb-4">
-            Top reviews from the United States
+            Top reviews
           </div>
 
 

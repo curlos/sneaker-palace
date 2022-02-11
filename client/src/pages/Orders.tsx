@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import SmallOrder from '../components/SmallOrder'
 import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
@@ -27,10 +28,17 @@ const Orders = () => {
 
 
   return (
-    loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> :
-      <div className="px-36 sm:px-4">
+    loading ? <div className="flex justify-center p-10 h-screen"><CircleLoader size={16} /></div> :
+      <div className="flex-grow px-36 sm:px-4 min-h-screen">
         <div className="text-3xl py-5">Your Orders</div>
-        {orders && orders.map((order: IOrder) => order.products.length > 0 && <SmallOrder order={order} />)}
+        {orders && orders.length < 1 ? (
+          <div className="text-base flex items-center gap-2">
+            <div>No orders found</div>
+            <button className="py-4 px-10 sm:px-2 bg-black text-white"><Link to="/shoes">Order shoes</Link></button>
+          </div>
+        ) : (
+          orders.map((order: IOrder) => order.products.length > 0 && <SmallOrder order={order} />)
+        )}
       </div>
   )
 }

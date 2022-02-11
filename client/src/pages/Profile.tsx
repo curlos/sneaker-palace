@@ -85,12 +85,14 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="">
-            <div className="font-medium border border-gray-300 border-b-0 rounded-lg bg-white p-3">Reviews</div>
+          {profileUserReviews.length > 0 && (
             <div className="">
-              {profileUserReviews.map((review) => <SmallReview review={review} author={profileUser} />)}
+              <div className="font-medium border border-gray-300 border-b-0 rounded-lg bg-white p-3">Reviews</div>
+              <div className="">
+                {profileUserReviews.map((review) => <SmallReview review={review} author={profileUser} />)}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     )

@@ -60,7 +60,11 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   }, [shoeID])
 
   const handleAddToCart = async () => {
+    console.log('adding to cart')
     setShowShoppingCartModal(true)
+
+    console.log(currentCart)
+
 
     if (Object.keys(user).length <= 0) {
       if (shoe.shoeID && shoe.retailPrice) {
@@ -94,6 +98,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
     }
 
     if (currentCart && currentCart.products && shoe && shoe.shoeID) {
+      console.log('User logged in')
 
       const newProduct: Partial<IProduct> = {
         productID: shoe.shoeID,
