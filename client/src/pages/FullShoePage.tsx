@@ -14,6 +14,7 @@ import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
 import { IProduct, IRating, Shoe, UserType } from "../types/types";
 import { ObjectId } from 'bson'
+import * as short from "short-uuid"
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
@@ -60,17 +61,10 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   }, [shoeID])
 
   const handleAddToCart = async () => {
-    console.log('adding to cart')
     setShowShoppingCartModal(true)
 
-    console.log(currentCart)
-
-
     if (Object.keys(user).length <= 0) {
-      console.log('1')
-      console.log(shoe)
       if (shoe.shoeID && shoe.retailPrice !== undefined && shoe.retailPrice >= 0) {
-        console.log('1.5')
         const newProduct: IProduct = {
           _id: new ObjectId().toString(),
           productID: shoe.shoeID,
@@ -80,7 +74,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
         }
 
         if (currentCart.products && currentCart.products.length > 0) {
-          console.log('2')
           const newCart = {
             ...currentCart,
             products: [...currentCart.products, newProduct]
@@ -88,7 +81,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
           dispatch(updateCart(newCart))
           localStorage.setItem('currentCart', JSON.stringify(newCart))
         } else {
-          console.log('3')
           const newCart = {
             ...currentCart,
             _id: new ObjectId().toString(),
@@ -103,8 +95,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
     }
 
     if (currentCart && currentCart.products && shoe && shoe.shoeID && Object.keys(user).length > 0) {
-      console.log('4')
-
       const newProduct: Partial<IProduct> = {
         productID: shoe.shoeID,
         size: Number(selectedSize),
@@ -160,11 +150,11 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   return (
 
     <div>
-      <div className="p-5 px-14 w-full h-full sm:px-4 xl:px-6">
+      <div className="p-5 px-14 w-full h-full sm:px-4 2xl:px-6">
         <div className="w-full h-full">
           {shoeLoading ? <FullShoeSkeleton />
             : (
-              <div className="flex xl:block">
+              <div className="flex md:block">
                 <div className="flex-3">
                   {shoe && shoe.image && shoe.image["360"].length > 0 ? (
                     <div className="xl:px-4">
@@ -183,7 +173,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
                   <div className="flex flex-wrap box-border justify-between">
                     {SHOE_SIZES.map((shoeSize) => {
                       return (
-                        <div className={`box-border cursor-pointer text-center border py-2 mb-2 hover:border-gray-600 w-32/100 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
+                        <div key={shoeSize + '-' + short.generate()} className={`box-border cursor-pointer text-center border py-2 mb-2 hover:border-gray-600 w-32/100 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
                           {shoeSize}
                         </div>
                       )

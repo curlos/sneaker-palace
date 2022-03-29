@@ -13,7 +13,7 @@ interface Props {
 const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 
   return (
-    <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40 p-24 top-0 left-0 flex justify-center items-center sm:py-4 sm:px-2 overflow-auto" onClick={() => setShowModal(!showModal)}>
+    <div className="fixed z-20 max-w-100 w-screen h-screen bg-black bg-opacity-40 p-24 top-0 left-0 flex justify-center items-center sm:py-4 sm:px-2 overflow-auto" onClick={() => setShowModal(!showModal)}>
       <div className="placeholder-gray-400">
 
         <div className="flex justify-end rounded-t-2xl bg-gray-300 border-0 border-b border-solid border-gray-400 p-3">

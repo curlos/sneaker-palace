@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IOrder, IProduct, Shoe } from '../types/types'
 import SmallOrderShoe from './SmallOrderShoe'
+import * as short from "short-uuid"
 
 interface Props {
   order: IOrder
@@ -56,7 +57,7 @@ const SmallOrder = ({ order }: Props) => {
         </div>
       </div>
 
-      {shoes?.map((shoe) => <SmallOrderShoe shoe={shoe} />)}
+      {shoes?.map((shoe) => <SmallOrderShoe key={`${shoe._id}-${short.generate()}`} shoe={shoe} />)}
     </div>
   )
 }

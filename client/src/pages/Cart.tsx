@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import { useSelector } from "react-redux";
-import { Link } from 'react-router-dom';
-import CartProduct from '../components/CartProduct';
-import { RootState } from "../redux/store";
-import { IProduct } from "../types/types";
+import React, { useEffect } from 'react'
+import { useSelector } from "react-redux"
+import { Link } from 'react-router-dom'
+import CartProduct from '../components/CartProduct'
+import { RootState } from "../redux/store"
+import { IProduct } from "../types/types"
 
 const Cart = () => {
 
@@ -17,7 +17,7 @@ const Cart = () => {
     <div className="w-full p-6 flex flex-start min-h-screen lg:p-4 sm:block ">
       <div className="flex-6">
         <div className="font-medium text-xl mb-5">Bag</div>
-        {currentCart?.products?.map((product: IProduct) => <CartProduct productInfo={product} key={product._id} />)}
+        {currentCart?.products?.map((product: IProduct) => <CartProduct key={product._id} productInfo={product} />)}
       </div>
 
       <div className="flex-2 px-7 sm:px-0">

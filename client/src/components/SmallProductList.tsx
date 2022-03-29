@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { FormEvent, useEffect, useState } from 'react'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
+import { Shoe } from '../types/types'
 import ListShoe from './ListShoe'
 
 interface Props {
@@ -43,7 +44,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSub
 
         <div className="p-6 pt-0">
           <div className="py-4 border-0 border-b border-solid border-gray-300 text-gray-500 text-sm">Results</div>
-          {shoes && shoes.slice(0, 5).map((shoe) => <ListShoe shoe={shoe} setShowModal={setShowModal} />)}
+          {shoes && shoes.slice(0, 5).map((shoe: Shoe) => <ListShoe key={shoe._id} shoe={shoe} setShowModal={setShowModal} />)}
         </div>
       </div>
     )

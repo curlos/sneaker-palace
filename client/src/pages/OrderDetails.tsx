@@ -98,7 +98,7 @@ const OrderDetails = () => {
           </div>
 
           <div className="p-5 border border-gray-300 rounded-lg">
-            {shoes.map((shoe) => <SmallOrderShoe shoe={shoe} />)}
+            {shoes.map((shoe) => <SmallOrderShoe key={shoe._id} shoe={shoe} />)}
           </div>
 
           <div className="py-10">

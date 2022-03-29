@@ -35,16 +35,12 @@ const ProductList = () => {
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>(getInitialFilters(state))
 
-  console.log(windowSize)
-  console.log(windowSize.width > 1024)
-
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true)
   const [totalShoeCount, setTotalShoeCount] = useState(0)
 
   useEffect(() => {
-    console.log(windowSize.width)
     setShowSidebar(windowSize.width < 1280 ? false : true)
   }, [windowSize])
 

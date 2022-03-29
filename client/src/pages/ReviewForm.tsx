@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import { RootState } from '../redux/store';
+import CircleLoader from '../skeleton_loaders/CircleLoader';
 import { Shoe, UserType } from '../types/types';
 import { postImage } from '../utils/postImage';
 
@@ -117,7 +118,9 @@ const ReviewForm = () => {
 
 
   return (
-    loading ? <div>Loading...</div> : (
+    loading ? (
+      <div className="flex justify-center py-10 h-screen"><CircleLoader size={16} /></div>
+    ) : (
       <div className="">
         <div className="px-48 py-10 sm:px-4 xl:p-12">
           <div className="font-bold text-2xl">WRITE YOUR REVIEW</div>

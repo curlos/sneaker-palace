@@ -69,9 +69,9 @@ export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, cur
         </div>
 
         {pageLimit - currentPage < 5 ? (
-          getPaginationGroup().slice(pageLimit - 5, pageLimit).map((pageNum) => <div className={`p-3 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)
+          getPaginationGroup().slice(pageLimit - 5, pageLimit).map((pageNum) => <div key={pageNum} className={`p-3 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)
         ) : (
-          getPaginationGroup().slice(currentPage - 1, currentPage + 4).map((pageNum) => <div className={`p-3 px-4 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)
+          getPaginationGroup().slice(currentPage - 1, currentPage + 4).map((pageNum) => <div key={pageNum} className={`p-3 px-4 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`} onClick={changePage}>{pageNum}</div>)
         )}
 
         <div className="p-3 border border-r-0 border-gray-300 cursor-pointer flex items-center justify-center sm:border-r sm:w-1/2  sm:rounded-lg" onClick={goToNextPage}>

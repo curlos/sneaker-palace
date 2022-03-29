@@ -6,6 +6,7 @@ import { updateCart } from '../redux/cartRedux';
 import { RootState } from '../redux/store';
 import CartProductSkeleton from '../skeleton_loaders/CartProductSkeleton';
 import { IProduct, Shoe, UserType } from "../types/types";
+import * as short from "short-uuid"
 
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
@@ -149,7 +150,7 @@ const CartProduct = ({ productInfo }: Props) => {
               <span className="sm:block">
                 <label className="mr-2 text-gray-500 sm:mr-1">Size</label>
                 <select name="shoeSizes" className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0" onChange={handleChangeSize}>
-                  {SHOE_SIZES.map((shoeSize) => <option selected={productInfo.size === Number(shoeSize)} value={shoeSize}>{shoeSize}</option>)}
+                  {SHOE_SIZES.map((shoeSize) => <option key={`${shoeSize}-${short.generate()}`} selected={productInfo.size === Number(shoeSize)} value={shoeSize}>{shoeSize}</option>)}
                 </select>
               </span>
 
@@ -157,7 +158,7 @@ const CartProduct = ({ productInfo }: Props) => {
                 <label className="mx-2 text-gray-500 sm:mx-0 sm:mr-1">Quantity</label>
 
                 <select name="quantities" className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0" onChange={handleChangeQuantity}>
-                  {QUANTITIES.map((quantity) => <option selected={productInfo.quantity === Number(quantity)} value={quantity}>{quantity}</option>)}
+                  {QUANTITIES.map((quantity) => <option key={`${quantity}-${short.generate()}`} selected={productInfo.quantity === Number(quantity)} value={quantity}>{quantity}</option>)}
                 </select>
               </span>
             </div>

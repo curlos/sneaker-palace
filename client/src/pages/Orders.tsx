@@ -37,7 +37,7 @@ const Orders = () => {
             <button className="py-4 px-10 sm:px-2 bg-black text-white"><Link to="/shoes">Order shoes</Link></button>
           </div>
         ) : (
-          orders.map((order: IOrder) => order.products.length > 0 && <SmallOrder order={order} />)
+          orders.map((order: IOrder) => order.products.length > 0 && <SmallOrder key={order._id} order={order} />)
         )}
       </div>
   )

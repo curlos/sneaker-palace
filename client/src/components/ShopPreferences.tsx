@@ -6,6 +6,7 @@ import { updateUser } from '../redux/userRedux'
 import { UserType } from '../types/types'
 import FailureMessage from './FailureMessage'
 import SuccessMessage from './SuccessMessage'
+import * as short from "short-uuid"
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
@@ -53,7 +54,7 @@ const ShopPreferences = () => {
         <div className="mb-4">
           <div className="mb-1 font-medium w-full">Shoe Size</div>
           <select name="shoeSizes" className="border-gray-500 rounded-lg text-gray-500 w-full" onChange={(e: ChangeEvent<HTMLSelectElement>) => setPreselectedShoeSize(Number(e.currentTarget.value))}>
-            {SHOE_SIZES.map((shoeSize) => <option selected={Number(shoeSize) === Number(preselectedShoeSize)} value={shoeSize}>{shoeSize}</option>)}
+            {SHOE_SIZES.map((shoeSize) => <option key={`${Number(shoeSize)}-${short.generate()}`} selected={Number(shoeSize) === Number(preselectedShoeSize)} value={shoeSize}>{shoeSize}</option>)}
           </select>
           <div className="text-gray-500 text-sm">Provide your shoe size to have it preselected when you shop.</div>
         </div>

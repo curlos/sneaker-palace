@@ -1,12 +1,12 @@
 import {
   PaymentElement, useElements, useStripe
-} from "@stripe/react-stripe-js";
-import moment from "moment";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import CheckoutProduct from "../components/CheckoutProduct";
-import { RootState } from "../redux/store";
-import CircleLoader from "../skeleton_loaders/CircleLoader";
+} from "@stripe/react-stripe-js"
+import moment from "moment"
+import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import CheckoutProduct from "../components/CheckoutProduct"
+import { RootState } from "../redux/store"
+import CircleLoader from "../skeleton_loaders/CircleLoader"
 
 export default function CheckoutForm() {
   const stripe = useStripe();
@@ -125,7 +125,7 @@ export default function CheckoutForm() {
           <div className="font-bold mb-4">ARRIVES BY {moment().add(2, 'days').format("ddd, MMM D").toUpperCase()}</div>
 
           <div className="">
-            {currentCart.products?.map((product) => <CheckoutProduct product={product} type="small" />)}
+            {currentCart.products?.map((product) => <CheckoutProduct key={product._id} product={product} type="small" />)}
           </div>
         </div>
       </div>

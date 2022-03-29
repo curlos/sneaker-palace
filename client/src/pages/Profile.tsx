@@ -49,7 +49,7 @@ const Profile = () => {
 
 
   return (
-    loading ? <div className="flex justify-center py-4 h-screen w-screen"><CircleLoader size={16} /></div> : (
+    loading ? <div className="flex justify-center py-4 h-screen w-screen max-w-100"><CircleLoader size={16} /></div> : (
       <div className="px-48 py-10 bg-gray-100 sm:px-4">
         <div>
           <div className="flex items-center mb-5 border border-gray-300 p-8 rounded-lg bg-white">
@@ -89,7 +89,7 @@ const Profile = () => {
             <div className="">
               <div className="font-medium border border-gray-300 border-b-0 rounded-lg bg-white p-3">Reviews</div>
               <div className="">
-                {profileUserReviews.map((review) => <SmallReview review={review} author={profileUser} />)}
+                {profileUserReviews.map((review) => <SmallReview key={review._id} review={review} author={profileUser} />)}
               </div>
             </div>
           )}

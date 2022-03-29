@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import CircleLoader from "../skeleton_loaders/CircleLoader"
 import { Shoe } from "../types/types"
 import SmallShoe from "./SmallShoe"
+import * as short from "short-uuid"
 
 
 const MoreShoes = () => {
@@ -15,7 +16,6 @@ const MoreShoes = () => {
       const randomPageNum = Math.floor(Math.random() * 800)
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/page/${randomPageNum}`)
       const randomShoes = response.data.docs.slice(0, 3)
-      console.log(response.data.docs.slice(0, 3))
       setShoes(randomShoes)
       setLoading(false)
     }
@@ -27,7 +27,7 @@ const MoreShoes = () => {
   return (
     loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (
       <div className="flex flex-wrap sm:justify-between">
-        {shoes?.map((shoe) => <SmallShoe shoe={shoe} />)}
+        {shoes?.map((shoe) => <SmallShoe key={`${shoe._id}-${short.generate()}`} shoe={shoe} />)}
       </div>
     )
   )

@@ -4,6 +4,7 @@ import StarRatingComponent from 'react-star-rating-component'
 import { IRating, Shoe } from '../types/types'
 import Review from './Review'
 import StarRatingProgress from './StarRatingProgress'
+import * as short from "short-uuid"
 
 interface Props {
   shoe: Partial<Shoe>,
@@ -57,7 +58,7 @@ const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
 
 
           <div>
-            {shoeRatings.map((shoeRating) => <Review shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />)}
+            {shoeRatings.map((shoeRating) => <Review key={`${shoeRating}-${short.generate()}`} shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />)}
           </div>
         </div>
       ) : null}

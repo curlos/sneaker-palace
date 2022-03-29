@@ -51,7 +51,7 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
   }
 
   return (
-    <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40 p-24 top-0 left-0 flex justify-center items-center" onClick={() => setShowModal(!showModal)}>
+    <div className="fixed z-20 max-w-100 w-screen h-screen bg-black bg-opacity-40 p-24 top-0 left-0 flex justify-center items-center" onClick={() => setShowModal(!showModal)}>
       <form className="w-1/2 h-10/12 bg-white rounded-3xl p-12 placeholder-gray-400">
         <div className="flex justify-between text-lg">
           <div>Edit password</div>

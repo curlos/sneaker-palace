@@ -1,5 +1,5 @@
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid";
-import React, { useState } from 'react';
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid"
+import React, { useState } from 'react'
 
 interface Props {
   filters: {
@@ -32,7 +32,6 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
   }
 
   const handleGenderClick = (gender: string) => {
-    console.log(gender)
     setFilters({ ...filters, genders: { ...filters.genders, [gender]: !filters.genders[gender] } })
   }
 
@@ -49,7 +48,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
   }
 
   return (
-    <aside className="top-0 p-5 w-full flex-2 flex-grow-1 overflow-y-auto bg-white xl:w-screen">
+    <aside className="top-0 p-5 w-full flex-2 flex-grow-1 overflow-y-auto bg-white xl:w-screen max-w-100 ">
 
       <div className="border-0 border-b border-solid border-gray-300 py-3">
 
@@ -60,7 +59,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
           <div className="flex justify-between flex-wrap gap-2 p-3">
             {Object.keys(filters.colors).map((color) => {
               return (
-                <div className="flex flex-col items-center h-13 w-13" style={{ height: '52px', width: '52px' }}>
+                <div key={`${color}`} className="flex flex-col items-center h-13 w-13" style={{ height: '52px', width: '52px' }}>
                   <div className={`h-7 w-7 rounded-full ${color === 'black' || color === 'white' ? `${'bg-' + color}` : `${'bg-' + color + '-500'}`} ${color === 'white' ? 'border border-gray-300' : ''} ${color === 'white' ? 'text-black' : 'text-white'}`} onClick={() => handleColorClick(color)}>
                     {filters.colors[color] ? <CheckIcon /> : null}
                   </div>
@@ -82,7 +81,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
           <div>
             {Object.keys(filters.brands).map((brand) => {
               return (
-                <label className="flex items-center">
+                <label key={`${brand}`} className="flex items-center">
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.brands[brand]} onClick={() => handleBrandClick(brand)}></input>
                   <span className="capitalize">{brand}</span>
                 </label>
@@ -101,7 +100,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
           <div>
             {Object.keys(filters.genders).map((gender) => {
               return (
-                <label className="flex items-center">
+                <label key={`${gender}`} className="flex items-center">
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.genders[gender]} onClick={() => handleGenderClick(gender)}></input>
                   <span className="capitalize">{gender}</span>
                 </label>
@@ -121,7 +120,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
           <div>
             {Object.keys(filters.priceRanges).map((priceRange) => {
               return (
-                <label className="flex items-center">
+                <label key={`${priceRange}`} className="flex items-center">
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.priceRanges[priceRange].checked} onClick={() => handlePriceClick(priceRange)}></input>
                   <span>{priceRange}</span>
                 </label>
@@ -141,7 +140,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
           <div>
             {Object.keys(filters.releaseYears).sort((a, b) => Number(b) - Number(a)).map((releaseYear) => {
               return (
-                <label className="flex items-center">
+                <label key={`${releaseYear}`} className="flex items-center">
                   <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.releaseYears[releaseYear]} onClick={() => handleReleaseYearClick(releaseYear)}></input>
                   <span>{releaseYear}</span>
                 </label>
@@ -161,7 +160,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
           <div className="flex flex-wrap">
             {shoeSizes.map((shoeSize) => {
               return (
-                <div className={`h-10 w-3/12 inline-flex items-center justify-center ${filters.shoeSizes[shoeSize] ? ' border-2 border-black' : 'border border-gray-300'} m-1 rounded-lg cursor-pointer`} onClick={() => handleSizeClick(shoeSize)}>{shoeSize}</div>
+                <div key={shoeSize} className={`h-10 w-3/12 inline-flex items-center justify-center ${filters.shoeSizes[shoeSize] ? ' border-2 border-black' : 'border border-gray-300'} m-1 rounded-lg cursor-pointer`} onClick={() => handleSizeClick(shoeSize)}>{shoeSize}</div>
               )
             })}
           </div>

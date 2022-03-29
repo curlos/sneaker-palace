@@ -39,10 +39,8 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
     e.stopPropagation()
   }
 
-  console.log(currentCart)
-
   return (
-    <div className="fixed z-20 w-screen h-screen bg-black bg-opacity-40" onClick={() => setShowModal(!showModal)}>
+    <div className="fixed z-20 max-w-100 w-screen h-screen bg-black bg-opacity-40" onClick={() => setShowModal(!showModal)}>
       <aside className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll sm:no-scrollbar ease-in-out transition-all duration-1000 ${showModal ? 'translate-x-0' : 'translate-x-full'} sm:w-10/12`} onClick={handleBubblingDownClick}>
         <div className="p-5">
           <div className="flex justify-between items-center">
