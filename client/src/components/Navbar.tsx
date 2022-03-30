@@ -81,7 +81,9 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
         <SearchIcon className="h-5 w-5 cursor-pointer" onClick={() => setShowSearchModal(true)} />
         <Link to="/cart" className="inline-flex relative">
           <ShoppingBagIcon className="h-7 w-7" />
-          <span className="z-10 inline-flex justify-center items-center text-white text-sm bg-red-800 h-5 w-5 border rounded-full absolute ml-4">{currentCart && currentCart.products && currentCart?.products?.length}</span>
+          <span className={`z-10 inline-flex justify-center items-center text-white text-sm bg-red-800 h-6 w-6 border rounded-full absolute ml-4`}>
+            {currentCart && currentCart.products && currentCart?.products?.length}
+          </span>
         </Link>
 
         <MenuIcon className="h-5 w-5 cursor-pointer hidden lg:block" onClick={() => setShowSidenavModal(true)} />
