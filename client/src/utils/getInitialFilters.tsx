@@ -5,6 +5,35 @@ interface stateType {
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
+const BRANDS_LOWERCASE: any = {
+  "adidas": "adidas",
+  "air jordan": "Air Jordan",
+  "alexander mcqueen": "Alexander McQueen",
+  "asics": "Asics",
+  "balenciaga": "Balenciaga",
+  "burberry": "Burberry",
+  "chanel": "Chanel",
+  "common projects": "Common Projects",
+  "converse": "Converse",
+  "crocs": "Crocs",
+  "diadora": "Diadora",
+  "dior": "Dior",
+  "gucci": "Gucci",
+  "jordan": "Jordan",
+  "li-ning": "Li-Ning",
+  "louis vuitton": "Louis Vuitton",
+  "new balance": "New Balance",
+  "nike": "Nike",
+  "off-white": "Off-White",
+  "prada": "Prada",
+  "puma": "Puma",
+  "reebok": "Reebok",
+  "saint laurent": "Saint Laurent",
+  "saucony": "Saucony",
+  "vans": "Vans",
+  "yeezy": "Yeezy"
+}
+
 const getInitialFilters = (state: stateType) => {
 
   let filters: any = {
@@ -131,7 +160,8 @@ const getInitialFilters = (state: stateType) => {
   }
 
   if (state && state.brand) {
-    filters['brands'][state.brand.toUpperCase()] = true
+    const brandName = BRANDS_LOWERCASE[state.brand.toLowerCase()]
+    filters['brands'][brandName] = true
   }
 
   return filters

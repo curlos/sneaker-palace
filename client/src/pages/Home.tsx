@@ -18,7 +18,7 @@ const Home = () => {
         </div>
         <div className="flex flex-wrap gap-2 items-center justify-between md:mt-4">
           <div className="w-14/100 md:w-5/12">
-            <Link to={{ pathname: "/shoes", state: { brand: 'NIKE' } }} >
+            <Link to={{ pathname: "/shoes", state: { brand: 'Nike' } }} >
               <img src="/assets/brand_logos/nike.svg" className="w-full" alt="" />
             </Link>
           </div>

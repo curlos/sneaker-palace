@@ -31,6 +31,8 @@ const ProductList = () => {
   const { state } = useLocation<stateType>();
   const windowSize = useWindowSize()
 
+  console.log(state)
+
   const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>(getInitialFilters(state))
@@ -68,8 +70,6 @@ const ProductList = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    // const newShoes: Array<Shoe> = getFilteredShoes(shoes)
-    // const newSortedShoes: Array<Shoe> = getSortedShoes(newShoes)
     setLoading(true)
 
     const fetchFromAPI = async () => {
@@ -101,6 +101,8 @@ const ProductList = () => {
   const handleNewPageClick = (newPaginatedShoes: Array<Shoe>) => {
     setPaginatedShoes(newPaginatedShoes)
   }
+
+  console.log(filters)
 
   return (
     <div className="text-xl-lg">

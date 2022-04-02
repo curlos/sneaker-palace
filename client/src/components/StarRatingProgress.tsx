@@ -7,8 +7,6 @@ interface Props {
 
 const StarRatingProgress = ({ rating, percentage }: Props) => {
 
-
-
   return (
     <div>
       <div>{rating === 1 ? '1 star' : `${rating} stars`}</div>
