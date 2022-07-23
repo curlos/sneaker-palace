@@ -167,7 +167,7 @@ const addAllShoes = async (pageNum: number, releaseYear: number) => {
   const options = {
     method: 'GET',
     url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
-    params: { limit: '100', page: pageNum, releaseYear: releaseYear },
+    params: { limit: '100', page: pageNum },
     headers: {
       'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
       'x-rapidapi-key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f'
