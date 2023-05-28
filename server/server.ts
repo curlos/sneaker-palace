@@ -29,7 +29,7 @@ const User = require('./models/User');
 app.use("/assets", express.static(path.join(__dirname, "/assets")));
 
 app.use(logger('dev'));
-app.use(cors({ origin: true }));
+app.use(cors({ origin: ['http://localhost:3000/', 'https://sneaker-palace.vercel.app'] }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
