@@ -117,7 +117,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   const handleFavorite = async () => {
     if (Object.keys(user).length === 0 || !user) {
       history.push('/login');
-      // return;
+      return;
     }
 
     const body = {
