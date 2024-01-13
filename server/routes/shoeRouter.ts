@@ -1,17 +1,17 @@
-import { Request, Response } from 'express'
+import { Request, Response } from 'express';
 
-const express = require('express')
-const mongoose = require('mongoose')
-const Shoe = require('../models/Shoe')
-const User = require('../models/User')
-const { getFullURL } = require('../utils/getFullURL')
-const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sneakerV2_API')
+const express = require('express');
+const mongoose = require('mongoose');
+const Shoe = require('../models/Shoe');
+const User = require('../models/User');
+const { getFullURL } = require('../utils/getFullURL');
+const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sneakerV2_API');
 
 
-const router = express.Router()
+const router = express.Router();
 
 router.get('/page/:pageNum', async (req: Request, res: Response) => {
-  console.log(req.params.pageNum)
+  console.log(req.params.pageNum);
   const options = {
     page: Number(req.params.pageNum),
     limit: 12,
@@ -23,64 +23,64 @@ router.get('/page/:pageNum', async (req: Request, res: Response) => {
   };
 
   Shoe.paginate({}, options, (err: any, result: any) => {
-    console.log(result)
-    res.json(result)
+    console.log(result);
+    res.json(result);
   });
-})
+});
 
 router.post('/', async (req: Request, res: Response) => {
   const getSortType = () => {
     switch (req.body.sortType) {
       case "Newest":
-        return { releaseDate: -1 }
+        return { releaseDate: -1 };
       case "Oldest":
-        return { releaseDate: 1 }
+        return { releaseDate: 1 };
       case "Price: High-Low":
-        return { retailPrice: -1 }
+        return { retailPrice: -1 };
       case "Price: Low-High":
-        return { retailPrice: 1 }
+        return { retailPrice: 1 };
     }
-  }
+  };
 
   const getCompleteQuery = () => {
-    const completeQuery: any = {}
-    const filters = req.body.filters
+    const completeQuery: any = {};
+    const filters = req.body.filters;
     if (req.body.query) {
-      completeQuery.name = { "$regex": req.body.query.trim(), "$options": "i" }
+      completeQuery.name = { "$regex": req.body.query.trim(), "$options": "i" };
     }
 
-    const selectedColors = [...Object.keys(filters.colors).filter((color) => filters.colors[color])]
+    const selectedColors = [...Object.keys(filters.colors).filter((color) => filters.colors[color])];
 
-    const selectedBrands = [...Object.keys(filters.brands).filter((brand) => filters.brands[brand])]
+    const selectedBrands = [...Object.keys(filters.brands).filter((brand) => filters.brands[brand])];
 
-    const selectedGenders = [...Object.keys(filters.genders).filter((gender) => filters.genders[gender])]
+    const selectedGenders = [...Object.keys(filters.genders).filter((gender) => filters.genders[gender])];
 
-    const selectedPriceRanges = [...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked)]
+    const selectedPriceRanges = [...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked)];
 
-    const selectedReleaseYears = [...Object.keys(filters.releaseYears).filter((releaseYear) => filters.releaseYears[releaseYear])]
+    const selectedReleaseYears = [...Object.keys(filters.releaseYears).filter((releaseYear) => filters.releaseYears[releaseYear])];
 
-    console.log(selectedReleaseYears)
+    console.log(selectedReleaseYears);
 
     if (filters.colors && selectedColors.length > 0) {
-      const regex = selectedColors.join('|')
-      completeQuery.colorway = { "$regex": regex, "$options": "i" }
+      const regex = selectedColors.join('|');
+      completeQuery.colorway = { "$regex": regex, "$options": "i" };
     }
 
 
     if (filters.brands && selectedBrands.length > 0) {
-      completeQuery.brand = { $in: selectedBrands }
+      completeQuery.brand = { $in: selectedBrands };
     }
 
     if (filters.genders && selectedGenders.length > 0) {
-      completeQuery.gender = { $in: selectedGenders }
+      completeQuery.gender = { $in: selectedGenders };
     }
 
     if (filters.releaseYears && selectedReleaseYears.length > 0) {
-      completeQuery.releaseYear = { $in: selectedReleaseYears }
+      completeQuery.releaseYear = { $in: selectedReleaseYears };
     }
 
     if (filters.priceRanges && selectedPriceRanges.length > 0) {
-      const priceRangeConditions: any = []
+      const priceRangeConditions: any = [];
 
       selectedPriceRanges.forEach((priceRange) => {
         if (!filters.priceRanges[priceRange].priceRanges.high) {
@@ -88,21 +88,21 @@ router.post('/', async (req: Request, res: Response) => {
             retailPrice: {
               $gte: filters.priceRanges[priceRange].priceRanges.low
             }
-          })
+          });
         } else {
           priceRangeConditions.push({
             retailPrice: {
               $gte: filters.priceRanges[priceRange].priceRanges.low,
               $lte: filters.priceRanges[priceRange].priceRanges.high
             }
-          })
+          });
         }
-      })
+      });
 
-      completeQuery["$or"] = [...priceRangeConditions]
+      completeQuery["$or"] = [...priceRangeConditions];
     }
-    return completeQuery
-  }
+    return completeQuery;
+  };
 
   const options = {
     page: Number(req.body.pageNum),
@@ -113,29 +113,29 @@ router.post('/', async (req: Request, res: Response) => {
     lean: true,
     select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
     sort: getSortType()
-  }
+  };
 
-  const query = getCompleteQuery()
-  console.log(query)
+  const query = getCompleteQuery();
+  console.log(query);
   // console.log(query['$or'][0])
 
   Shoe.paginate(query, options, (err: any, result: any) => {
-    res.json(result)
+    res.json(result);
   });
-})
+});
 
 router.get('/:shoeID', async (req: Request, res: Response) => {
-  const shoe = await Shoe.findOne({ shoeID: req.params.shoeID })
-  res.json(shoe)
-})
+  const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });
+  res.json(shoe);
+});
 
 router.get('/objectID/:id', async (req: Request, res: Response) => {
-  const shoe = await Shoe.findOne({ _id: req.params.id })
-  res.json(shoe)
-})
+  const shoe = await Shoe.findOne({ _id: req.params.id });
+  res.json(shoe);
+});
 
 router.post('/search', async (req: Request, res: Response) => {
-  const query = { "name": { "$regex": req.body.searchText.trim(), "$options": "i" } }
+  const query = { "name": { "$regex": req.body.searchText.trim(), "$options": "i" } };
 
   const options = {
     page: Number(req.body.pageNum),
@@ -149,52 +149,57 @@ router.post('/search', async (req: Request, res: Response) => {
   };
 
   Shoe.paginate(query, options, (err: any, result: any) => {
-    if (err) res.json({ error: err })
-    console.log(result)
-    res.json(result)
+    if (err) res.json({ error: err });
+    console.log(result);
+    res.json(result);
   });
-})
+});
 
 router.put('/favorite', async (req: Request, res: Response) => {
-  const shoe = await Shoe.findOne({ shoeID: req.body.shoeID })
-  const user = await User.findOne({ _id: req.body.userID })
+  if (!req.body.shoeID || !req.body.userID) {
+    res.status(400).json({ error: 'Missing shoeID or userID' });
+    return;
+  }
+
+  const shoe = await Shoe.findOne({ shoeID: req.body.shoeID });
+  const user = await User.findOne({ _id: req.body.userID });
 
   if (!shoe.favorites.includes(req.body.userID)) {
-    await shoe.updateOne({ $push: { favorites: user._id } })
-    await user.updateOne({ $push: { favorites: shoe._id } })
-    const updatedShoe = await Shoe.findById(shoe._id)
-    const updatedUser = await User.findById(user._id)
-    res.status(200).json({ updatedShoe, updatedUser })
+    await shoe.updateOne({ $push: { favorites: user._id } });
+    await user.updateOne({ $push: { favorites: shoe._id } });
+    const updatedShoe = await Shoe.findById(shoe._id);
+    const updatedUser = await User.findById(user._id);
+    res.status(200).json({ updatedShoe, updatedUser });
   } else {
-    await shoe.updateOne({ $pull: { favorites: user._id } })
-    await user.updateOne({ $pull: { favorites: shoe._id } })
-    const updatedShoe = await Shoe.findById(shoe._id)
-    const updatedUser = await User.findById(user._id)
-    res.status(200).json({ updatedShoe, updatedUser })
+    await shoe.updateOne({ $pull: { favorites: user._id } });
+    await user.updateOne({ $pull: { favorites: shoe._id } });
+    const updatedShoe = await Shoe.findById(shoe._id);
+    const updatedUser = await User.findById(user._id);
+    res.status(200).json({ updatedShoe, updatedUser });
   }
-  res.json(shoe)
-})
+  res.json(shoe);
+});
 
 
 
 router.post('/newShoes', async (req: Request, res: Response) => {
-  const result = await addAllShoes(Number(req.body.page), Number(req.body.releaseYear))
-  res.json(result)
-})
+  const result = await addAllShoes(Number(req.body.page), Number(req.body.releaseYear));
+  res.json(result);
+});
 
 router.post('/newShoes/brand', async (req: Request, res: Response) => {
-  const result = await addAllShoesByBrand(req.body.brand)
-  res.json(result)
-})
+  const result = await addAllShoesByBrand(req.body.brand);
+  res.json(result);
+});
 
 router.post('/newShoe', async (req: Request, res: Response) => {
-  const result = await addShoeByName(req.body.name)
-  res.json(result)
-})
+  const result = await addShoeByName(req.body.name);
+  res.json(result);
+});
 
 router.post('/delete', async (req: Request, res: Response) => {
-  const result = await Shoe.deleteMany({ brand: { $in: ['Louis Vuitton'] } })
-  res.json(result)
-})
+  const result = await Shoe.deleteMany({ brand: { $in: ['Louis Vuitton'] } });
+  res.json(result);
+});
 
 module.exports = router;

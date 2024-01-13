@@ -13,12 +13,12 @@ import { updateUser } from '../redux/userRedux';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
 import { IProduct, IRating, Shoe, UserType } from "../types/types";
-import { ObjectId } from 'bson'
-import * as short from "short-uuid"
+import { ObjectId } from 'bson';
+import * as short from "short-uuid";
 
-const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
+const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17'];
 
-const AVERAGE_MAN_FOOT_SIZE = '10.5'
+const AVERAGE_MAN_FOOT_SIZE = '10.5';
 
 interface Props {
   setShowShoppingCartModal: React.Dispatch<React.SetStateAction<boolean>>,
@@ -26,42 +26,42 @@ interface Props {
 
 const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const { currentCart } = useSelector((state: RootState) => state.cart)
-  const history = useHistory()
+  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser);
+  const { currentCart } = useSelector((state: RootState) => state.cart);
+  const history = useHistory();
 
-  const { shoeID }: { shoeID: string } = useParams()
-  const dispatch = useDispatch()
-  const initialSize = (Object.keys(user).length > 0 && user.preselectedShoeSize && String(user.preselectedShoeSize)) || AVERAGE_MAN_FOOT_SIZE
+  const { shoeID }: { shoeID: string; } = useParams();
+  const dispatch = useDispatch();
+  const initialSize = (Object.keys(user).length > 0 && user.preselectedShoeSize && String(user.preselectedShoeSize)) || AVERAGE_MAN_FOOT_SIZE;
 
-  const [shoe, setShoe] = useState<Partial<Shoe>>({})
-  const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([])
-  const [selectedSize, setSelectedSize] = useState(initialSize)
-  const [imageNum, setImageNum] = useState(0)
-  const [shoeLoading, setShoeLoading] = useState(false)
-  const [reviewLoading, setReviewLoading] = useState(false)
-  const [showModal, setShowModal] = useState(false)
+  const [shoe, setShoe] = useState<Partial<Shoe>>({});
+  const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([]);
+  const [selectedSize, setSelectedSize] = useState(initialSize);
+  const [imageNum, setImageNum] = useState(0);
+  const [shoeLoading, setShoeLoading] = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0)
-    setShoeLoading(true)
-    setReviewLoading(true)
+    window.scrollTo(0, 0);
+    setShoeLoading(true);
+    setReviewLoading(true);
 
     const fetchFromAPI = async () => {
 
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`)
-      setShoe(response.data)
-      setShoeLoading(false)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`);
+      setShoe(response.data);
+      setShoeLoading(false);
 
-      const ratings = await fetchAllRatings(response.data.ratings)
-      setShoeRatings(ratings)
-      setReviewLoading(false)
-    }
-    fetchFromAPI()
-  }, [shoeID])
+      const ratings = await fetchAllRatings(response.data.ratings);
+      setShoeRatings(ratings);
+      setReviewLoading(false);
+    };
+    fetchFromAPI();
+  }, [shoeID]);
 
   const handleAddToCart = async () => {
-    setShowShoppingCartModal(true)
+    setShowShoppingCartModal(true);
 
     if (Object.keys(user).length <= 0) {
       if (shoe.shoeID && shoe.retailPrice !== undefined && shoe.retailPrice >= 0) {
@@ -71,15 +71,15 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
           size: Number(selectedSize),
           quantity: 1,
           retailPrice: shoe.retailPrice
-        }
+        };
 
         if (currentCart.products && currentCart.products.length > 0) {
           const newCart = {
             ...currentCart,
             products: [...currentCart.products, newProduct]
-          }
-          dispatch(updateCart(newCart))
-          localStorage.setItem('currentCart', JSON.stringify(newCart))
+          };
+          dispatch(updateCart(newCart));
+          localStorage.setItem('currentCart', JSON.stringify(newCart));
         } else {
           const newCart = {
             ...currentCart,
@@ -87,9 +87,9 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
             createdAt: '',
             updatedAt: '',
             products: [newProduct],
-          }
-          dispatch(updateCart(newCart))
-          localStorage.setItem('currentCart', JSON.stringify(newCart))
+          };
+          dispatch(updateCart(newCart));
+          localStorage.setItem('currentCart', JSON.stringify(newCart));
         }
       }
     }
@@ -100,50 +100,51 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
         size: Number(selectedSize),
         quantity: 1,
         retailPrice: shoe.retailPrice
-      }
-      const currentProducts = currentCart?.products
+      };
+      const currentProducts = currentCart?.products;
 
-      const body = { products: [...currentProducts, newProduct] }
+      const body = { products: [...currentProducts, newProduct] };
 
 
-      const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
-      const newCart = response.data
+      const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body);
+      const newCart = response.data;
 
-      dispatch(updateCart(newCart))
+      dispatch(updateCart(newCart));
     }
 
-  }
+  };
 
   const handleFavorite = async () => {
     if (Object.keys(user).length === 0 || !user) {
-      history.push('/login')
+      history.push('/login');
+      // return;
     }
 
     const body = {
       shoeID: shoeID,
       userID: user['_id']
-    }
-    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/shoes/favorite`, body)
+    };
+    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/shoes/favorite`, body);
 
-    dispatch(updateUser(response.data.updatedUser))
-    setShoe(response.data.updatedShoe)
-  }
+    dispatch(updateUser(response.data.updatedUser));
+    setShoe(response.data.updatedShoe);
+  };
 
   const fetchAllRatings = async (ratingIDs: Array<string>) => {
-    const ratings = []
+    const ratings = [];
 
     if (ratingIDs) {
       for (let ratingID of ratingIDs) {
-        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${ratingID}`)
+        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${ratingID}`);
 
         if (response.data !== null) {
-          const authorResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`)
-          ratings.push({ ...response.data, postedByUser: authorResponse.data })
+          const authorResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`);
+          ratings.push({ ...response.data, postedByUser: authorResponse.data });
         }
       }
     }
-    return ratings
-  }
+    return ratings;
+  };
 
 
 
@@ -176,7 +177,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
                         <div key={shoeSize + '-' + short.generate()} className={`box-border cursor-pointer text-center border py-2 mb-2 hover:border-gray-600 w-32/100 ` + (shoeSize === selectedSize ? 'border-black' : 'border-gray-300')} onClick={() => setSelectedSize(shoeSize)}>
                           {shoeSize}
                         </div>
-                      )
+                      );
                     })}
                   </div>
 
@@ -256,7 +257,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
       <ShoppingCartModal showModal={showModal} setShowModal={setShowModal} />
     </div>
-  )
-}
+  );
+};
 
-export default FullShoePage
+export default FullShoePage;
