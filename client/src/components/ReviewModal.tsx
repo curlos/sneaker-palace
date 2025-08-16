@@ -1,7 +1,7 @@
 import { XIcon } from '@heroicons/react/outline'
 import moment from 'moment'
 import React from 'react'
-import StarRatingComponent from 'react-star-rating-component'
+// import StarRatingComponent from 'react-star-rating-component'
 import { IRating } from '../types/types'
 
 interface Props {
@@ -28,13 +28,13 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 
             <div className="flex-2 ml-4">
               <div className="flex">
-                <StarRatingComponent
+                {/* <StarRatingComponent
                   name={'Rating'}
                   value={review.ratingNum}
                   starCount={5}
                   editing={false}
                   starColor={'#F5B327'}
-                />
+                /> */}
 
                 <div className="ml-2 font-bold">{review.summary}</div>
               </div>

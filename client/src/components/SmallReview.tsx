@@ -2,7 +2,7 @@ import axios from 'axios'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import StarRatingComponent from 'react-star-rating-component'
+// import StarRatingComponent from 'react-star-rating-component'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { IRating, Shoe, UserType } from '../types/types'
 
@@ -44,13 +44,13 @@ const SmallReview = ({ review, author }: Props) => {
         </div>
         <div className="p-3">
           <div className="flex items-center gap-2">
-            <StarRatingComponent
+            {/* <StarRatingComponent
               name={'Rating'}
               value={review.ratingNum}
               starCount={review.ratingNum}
               editing={false}
               starColor={'#F5B327'}
-            />
+            /> */}
             <div className="text-sm text-orange-700">Verified Purchase</div>
           </div>
           <div className="font-bold">{review.summary}</div>
@@ -64,13 +64,13 @@ const SmallReview = ({ review, author }: Props) => {
                 <div>
                   <div className="text-sm">{shoe.name}</div>
                   <div className="flex items-center gap-2">
-                    <StarRatingComponent
+                    {/* <StarRatingComponent
                       name={'Rating'}
                       value={4}
                       starCount={5}
                       editing={false}
                       starColor={'#F5B327'}
-                    />
+                    /> */}
                     <div className="text-sm text-gray-700">{shoe?.ratings?.length}</div>
                   </div>
                 </div>
