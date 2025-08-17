@@ -9,7 +9,7 @@ const util = require('util')
 const unlinkFile = util.promisify(fs.unlink)
 
 const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const upload = multer({ storage: multer.memoryStorage() })
 
 const router = express.Router()
 
