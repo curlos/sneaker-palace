@@ -31,8 +31,6 @@ const ProductList = () => {
   const { state } = useLocation<stateType>();
   const windowSize = useWindowSize()
 
-  console.log(state)
-
   const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>(getInitialFilters(state))
@@ -101,8 +99,6 @@ const ProductList = () => {
   const handleNewPageClick = (newPaginatedShoes: Array<Shoe>) => {
     setPaginatedShoes(newPaginatedShoes)
   }
-
-  console.log(filters)
 
   return (
     <div className="text-xl-lg">
