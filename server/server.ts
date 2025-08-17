@@ -3,14 +3,9 @@ import { Request, Response } from 'express'
 const express = require('express');
 const session = require("express-session");
 const passport = require("passport");
-const bcrypt = require("bcryptjs");
-const LocalStrategy = require("passport-local").Strategy;
-const dotenv = require('dotenv').config();
-const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const app = express();
 const cors = require('cors');
-const multer = require("multer");
 const path = require("path");
 require('dotenv').config();
 
@@ -24,7 +19,6 @@ const stripeRouter = require('./routes/stripeRouter');
 const orderRouter = require('./routes/orderRouter');
 const imageRouter = require('./routes/imageRouter');
 const database = require('./database/connection');
-const User = require('./models/User');
 
 app.use("/assets", express.static(path.join(__dirname, "/assets")));
 
