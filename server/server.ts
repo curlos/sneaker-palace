@@ -1,4 +1,4 @@
-export { };
+import { Request, Response } from 'express'
 
 const express = require('express');
 const session = require("express-session");
@@ -45,6 +45,10 @@ app.use('/rating', ratingRouter);
 app.use('/checkout', stripeRouter);
 app.use('/orders', orderRouter);
 app.use('/images', imageRouter);
+
+app.get('/', (req: Request, res: Response) => {
+	res.send('Hello World!');
+});
 
 // Only listen on a port if the script is run locally
 if (!process.env.VERCEL) {
