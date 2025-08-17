@@ -46,15 +46,19 @@ app.use('/checkout', stripeRouter);
 app.use('/orders', orderRouter);
 app.use('/images', imageRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server starting on port ${PORT}`);
+// Only listen on a port if the script is run locally
+if (!process.env.VERCEL) {
+	// Vercel sets process.env.VERCEL = 1 during runtime
+	app.listen(PORT, () => {
+    console.log(`Server starting on port ${PORT}`);
 
-  database.connectToServer((err: any) => {
-    if (err) {
-      console.error(err);
-    }
+    database.connectToServer((err: any) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+
   });
-
-});
+}
 
 export default app
