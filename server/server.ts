@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 
 const express = require('express');
 const session = require("express-session");
@@ -31,6 +31,21 @@ app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    database.connectToServer((err: any) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+    
+    next();
+  } catch (err) {
+    console.error('❌ Failed to connect to DB:', err);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
+
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/shoes', shoeRouter);
@@ -49,13 +64,6 @@ if (!process.env.VERCEL) {
 	// Vercel sets process.env.VERCEL = 1 during runtime
 	app.listen(PORT, () => {
     console.log(`Server starting on port ${PORT}`);
-
-    database.connectDB((err: any) => {
-      if (err) {
-        console.error(err);
-      }
-    });
-
   });
 }
 
