@@ -50,7 +50,7 @@ if (!process.env.VERCEL) {
 	app.listen(PORT, () => {
     console.log(`Server starting on port ${PORT}`);
 
-    database.connectToServer((err: any) => {
+    database.connectDB((err: any) => {
       if (err) {
         console.error(err);
       }
