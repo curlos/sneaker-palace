@@ -19,3 +19,8 @@
     border-top-color: transparent;
   }
 }
+
+/* Fix for React Error Overlay iframe blocking DevTools inspection */
+body > iframe[style*='2147483647'] {
+  display: none !important;
+}
