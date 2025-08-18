@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
 
+require('dotenv').config()
 const router = require('express').Router()
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 router.post("/create-payment-intent", async (req: Request, res: Response) => {
   const { items } = req.body;
-
-
 
   try {
     // Create a PaymentIntent with the order amount and currency
