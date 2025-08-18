@@ -149,16 +149,16 @@ const CartProduct = ({ productInfo }: Props) => {
             <div>
               <span className="sm:block">
                 <label className="mr-2 text-gray-500 sm:mr-1">Size</label>
-                <select name="shoeSizes" className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0" onChange={handleChangeSize}>
-                  {SHOE_SIZES.map((shoeSize) => <option key={`${shoeSize}-${short.generate()}`} selected={productInfo.size === Number(shoeSize)} value={shoeSize}>{shoeSize}</option>)}
+                <select name="shoeSizes" className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0" value={productInfo.size} onChange={handleChangeSize}>
+                  {SHOE_SIZES.map((shoeSize) => <option key={`${shoeSize}-${short.generate()}`} value={shoeSize}>{shoeSize}</option>)}
                 </select>
               </span>
 
               <span className="sm:block">
                 <label className="mx-2 text-gray-500 sm:mx-0 sm:mr-1">Quantity</label>
 
-                <select name="quantities" className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0" onChange={handleChangeQuantity}>
-                  {QUANTITIES.map((quantity) => <option key={`${quantity}-${short.generate()}`} selected={productInfo.quantity === Number(quantity)} value={quantity}>{quantity}</option>)}
+                <select name="quantities" className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0" value={productInfo.quantity} onChange={handleChangeQuantity}>
+                  {QUANTITIES.map((quantity) => <option key={`${quantity}-${short.generate()}`} value={quantity}>{quantity}</option>)}
                 </select>
               </span>
             </div>
