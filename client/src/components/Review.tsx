@@ -5,7 +5,7 @@ import moment from 'moment'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-// import StarRatingComponent from 'react-star-rating-component'
+import StarRatings from 'react-star-ratings'
 import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
 import { IRating, Shoe, UserType } from '../types/types'
@@ -81,13 +81,14 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
         )}
       </div>
       <div className="flex sm:block">
-        {/* <StarRatingComponent
-          name={'Rating'}
-          value={review.ratingNum}
-          starCount={5}
-          editing={false}
-          starColor={'#F5B327'}
-        /> */}
+        <StarRatings
+          rating={review.ratingNum || 0}
+          starRatedColor='#F5B327'
+          numberOfStars={5}
+          name='rating'
+          starDimension='16px'
+          starSpacing='1px'
+        />
         <div className="ml-2 font-bold sm:ml-0">{review.summary}</div>
       </div>
 

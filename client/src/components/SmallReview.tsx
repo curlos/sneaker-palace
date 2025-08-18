@@ -2,7 +2,7 @@ import axios from 'axios'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-// import StarRatingComponent from 'react-star-rating-component'
+import StarRatings from 'react-star-ratings'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { IRating, Shoe, UserType } from '../types/types'
 
@@ -44,13 +44,14 @@ const SmallReview = ({ review, author }: Props) => {
         </div>
         <div className="p-3">
           <div className="flex items-center gap-2">
-            {/* <StarRatingComponent
-              name={'Rating'}
-              value={review.ratingNum}
-              starCount={review.ratingNum}
-              editing={false}
-              starColor={'#F5B327'}
-            /> */}
+            <StarRatings
+              rating={review.ratingNum || 0}
+              starRatedColor='#F5B327'
+              numberOfStars={5}
+              name='rating'
+              starDimension='16px'
+              starSpacing='1px'
+            />
             <div className="text-sm text-orange-700">Verified Purchase</div>
           </div>
           <div className="font-bold">{review.summary}</div>
@@ -64,13 +65,14 @@ const SmallReview = ({ review, author }: Props) => {
                 <div>
                   <div className="text-sm">{shoe.name}</div>
                   <div className="flex items-center gap-2">
-                    {/* <StarRatingComponent
-                      name={'Rating'}
-                      value={4}
-                      starCount={5}
-                      editing={false}
-                      starColor={'#F5B327'}
-                    /> */}
+                    <StarRatings
+                      rating={shoe.rating || 0}
+                      starRatedColor='#F5B327'
+                      numberOfStars={5}
+                      name='rating'
+                      starDimension='14px'
+                      starSpacing='1px'
+                    />
                     <div className="text-sm text-gray-700">{shoe?.ratings?.length}</div>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-// import StarRatingComponent from 'react-star-rating-component'
+import StarRatings from 'react-star-ratings'
 import { IRating, Shoe } from '../types/types'
 import Review from './Review'
 import StarRatingProgress from './StarRatingProgress'
@@ -19,13 +19,14 @@ const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
       <div className="mr-12 flex-2 xl:mb-10">
         <div className="text-2xl font-bold">Customer reviews</div>
         <div className="flex gap-2 items-center">
-          {/* <StarRatingComponent
-            name={'Rating'}
-            value={Number(shoe.rating?.toFixed(2))}
-            starCount={5}
-            editing={false}
-            starColor={'#F5B327'}
-          /> */}
+          <StarRatings
+            rating={Number(shoe.rating?.toFixed(2)) || 0}
+            starRatedColor='#F5B327'
+            numberOfStars={5}
+            name='rating'
+            starDimension='20px'
+            starSpacing='2px'
+          />
           {shoeRatings.length === 0 ? (
             <span className="text-lg">No reviews</span>
           ) : (
