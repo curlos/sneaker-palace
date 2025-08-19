@@ -14,7 +14,7 @@ const Cart = () => {
   const { currentCart, total } = useSelector((state: RootState) => state.cart)
 
   return (
-    <div className="w-full p-6 flex flex-start min-h-screen lg:p-4 sm:block ">
+    <div className="w-full p-6 flex flex-start flex-grow lg:p-4 sm:block ">
       <div className="flex-6">
         <div className="font-medium text-xl mb-5">Bag</div>
         {currentCart?.products?.map((product: IProduct) => <CartProduct key={product._id} productInfo={product} />)}

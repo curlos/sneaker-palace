@@ -122,7 +122,7 @@ const ReviewForm = () => {
     loading ? (
       <div className="flex justify-center py-10 h-screen"><CircleLoader size={16} /></div>
     ) : (
-      <div className="">
+      <div className="flex-grow">
         <div className="px-48 py-10 sm:px-4 xl:p-12">
           <div className="font-bold text-2xl">WRITE YOUR REVIEW</div>
           <div className="flex justify-between items-center border border-gray-300 p-4 rounded-lg my-4">

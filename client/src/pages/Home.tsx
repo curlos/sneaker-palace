@@ -9,7 +9,7 @@ const Home = () => {
   }, [])
 
   return (
-    <div>
+    <div className="flex-grow">
       <Carousel />
       <div className="px-24 md:px-6">
         <div className="flex justify-between text-xl font-semibold mt-4 md:text-lg">
