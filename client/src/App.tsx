@@ -35,7 +35,7 @@ const App = () => {
   return (
     <Router>
 
-      <div className="m-0 box-border font-urbanist">
+      <div className="m-0 box-border font-urbanist min-h-screen flex flex-col">
 
         {showSearchModal ? <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} /> : null}
 
@@ -45,8 +45,8 @@ const App = () => {
 
         <Navbar setShowSearchModal={setShowSearchModal} setShowSidenavModal={setShowSidenavModal} />
 
-
-        <Switch>
+        <div className="flex-grow flex flex-col">
+          <Switch>
           <Route path="/login" exact>
             <Login />
           </Route>
@@ -97,9 +97,7 @@ const App = () => {
 
           <Route path="/profile/:userID" exact>
             {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
-              <span>
-                <Profile />
-              </span>
+              <Profile />
             )}
           </Route>
 
@@ -136,7 +134,8 @@ const App = () => {
             <Home />
           </Route>
 
-        </Switch>
+          </Switch>
+        </div>
 
         <Footer />
       </div>

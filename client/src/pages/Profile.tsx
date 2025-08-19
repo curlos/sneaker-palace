@@ -46,9 +46,9 @@ const Profile = () => {
 
   return (
     loading ? <div className="flex justify-center py-4 h-screen w-screen max-w-100"><CircleLoader size={16} /></div> : (
-      <div className="px-48 py-10 bg-gray-100 sm:px-4">
+      <div className="px-48 py-10 bg-gray-100 sm:px-4 flex-grow">
         <div>
-          <div className="flex items-center mb-5 border border-gray-300 p-8 rounded-lg bg-white">
+          <div className="flex items-center mb-5 border border-gray-300 p-8 rounded-lg bg-white gap-2">
             <div className="">
 
               <img src={profileUser.profilePic ? `${process.env.REACT_APP_DEV_URL}${profileUser.profilePic}` : DEFAULT_AVATAR} alt="" className="h-36 w-36 rounded-full object-cover mb-3" />
