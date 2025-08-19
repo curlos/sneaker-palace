@@ -14,13 +14,6 @@ router.get('/:ratingID', async (req: Request, res: Response) => {
 })
 
 const getAverageRating = async (ratingIDs: Array<string>, currentAverageRating: number, newRatingNum: number) => {
-
-
-
-
-
-
-
   return ((currentAverageRating * ratingIDs.length) + newRatingNum) / (ratingIDs.length + 1)
 }
 
