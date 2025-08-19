@@ -25,8 +25,6 @@ const Orders = () => {
     fetchFromAPI()
   }, [user._id])
 
-
-
   return (
     loading ? <div className="flex justify-center p-10 h-screen"><CircleLoader size={16} /></div> :
       <div className="container mx-auto px-4 max-w-6xl flex-grow">

@@ -37,11 +37,8 @@ const calcTotal = (products: Array<IProduct>) => {
   let total = 0
 
   for (let product of products) {
-
     total += (product.retailPrice * product.quantity)
   }
-
-
 
   return total
 }

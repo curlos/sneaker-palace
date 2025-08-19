@@ -11,9 +11,6 @@ import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { UserType } from '../types/types'
 
 const PaymentSuccess = () => {
-
-
-
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart, total } = useSelector((state: RootState) => state.cart)
@@ -30,15 +27,12 @@ const PaymentSuccess = () => {
     );
 
     if (stripe && clientSecret) {
-
       stripe
         .retrievePaymentIntent(clientSecret)
         .then((paymentIntent: any) => {
 
           if (paymentIntent && paymentIntent.paymentIntent) {
-
             axios.get(`${process.env.REACT_APP_DEV_URL}/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`).then((result) => {
-
               setPaymentInfo({ paymentMethod: result.data, paymentIntentID: paymentIntent.paymentIntent.id })
             })
           }
@@ -106,8 +100,6 @@ const PaymentSuccess = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCart, dispatch, paymentInfo, total, user._id])
 
-
-
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       <div className="container mx-auto px-4 py-7 max-w-6xl flex-grow">
@@ -128,7 +120,6 @@ const PaymentSuccess = () => {
             <Link to={`/order-details/${orderID}`}>
               <button className="bg-white p-4 text-black border border-black rounded-full">
                 View or manage order
-
               </button>
             </Link>
           </div>

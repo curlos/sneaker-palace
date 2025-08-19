@@ -84,8 +84,6 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe, onShoeRatingUpd
     }
   }
 
-
-
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center">

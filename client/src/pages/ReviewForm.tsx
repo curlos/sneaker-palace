@@ -32,9 +32,6 @@ const ReviewForm = () => {
   const [file, setFile] = useState<File>()
   const [loading, setLoading] = useState(true)
 
-
-
-
   useEffect(() => {
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
@@ -114,10 +111,6 @@ const ReviewForm = () => {
     }
   }
 
-
-
-
-
   return (
     loading ? (
       <div className="flex justify-center py-10 h-screen"><CircleLoader size={16} /></div>
@@ -136,10 +129,7 @@ const ReviewForm = () => {
               <div className="font-medium mb-2 flex-2">WOULD YOU RECOMMEND THIS PRODUCT?</div>
             </div>
 
-
-
             <div className="flex my-2">
-
               <div className="flex-2">
                 <div className="text-sm mb-2">Please select</div>
                 <StarRatings
@@ -153,7 +143,6 @@ const ReviewForm = () => {
                 />
               </div>
 
-
               <form className="flex-2">
                 <div className="flex items-center mb-2">
                   <input name="recommended" type="radio" value="Yes" className="mr-2 h-4 w-4" checked={reviewInfo.recommended === true} onChange={() => setReviewInfo({ ...reviewInfo, recommended: true })} />
@@ -166,9 +155,6 @@ const ReviewForm = () => {
                 </div>
               </form>
             </div>
-
-
-
 
             <div className="flex mt-10">
               <div className="font-medium flex-2">SIZE</div>
@@ -203,7 +189,6 @@ const ReviewForm = () => {
                 </div>
               </div>
 
-
               <div className="flex-2">
                 <div className="flex items-center mb-2">
                   <input name="widthInput" type="radio" className="mr-2 h-4 w-4" onChange={() => setReviewInfo({ ...reviewInfo, width: 'Too narrow' })} checked={reviewInfo.width === 'Too narrow'} />
@@ -231,8 +216,6 @@ const ReviewForm = () => {
                 </div>
               </div>
             </div>
-
-
 
             <div className="flex mt-10">
               <div className="font-medium flex-2">COMFORT</div>
@@ -294,13 +277,7 @@ const ReviewForm = () => {
                   <label className="text-sm">Perfect</label>
                 </div>
               </div>
-
-
             </div>
-
-
-
-
 
           </div>
         </div>

@@ -7,9 +7,6 @@ const Carousel = () => {
   const data = getCarouselData()
   const [currentShoe, setCurrentShoe] = useState(Object.values(data)[num])
 
-
-
-
   useEffect(() => {
     const interval = setInterval(() => {
       if (num + 1 === data.length) {

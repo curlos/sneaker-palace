@@ -15,7 +15,6 @@ interface Props {
 
 const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings, onShoeRatingUpdate }: Props) => {
 
-
   return (
     <div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
       <div className="mr-12 flex-2 xl:mb-10">

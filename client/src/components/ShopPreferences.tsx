@@ -31,10 +31,7 @@ const ShopPreferences = () => {
       unitOfMeasure,
     }
 
-
-
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/${user._id}`, body)
-
 
     if (!response.data.error) {
       dispatch(updateUser(response.data))
@@ -93,8 +90,6 @@ const ShopPreferences = () => {
         <div className="flex justify-end">
           <button onClick={handleEdit} className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700">Save</button>
         </div>
-
-
       </form>
     </div>
   )

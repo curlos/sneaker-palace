@@ -62,8 +62,6 @@ const addShoesToDatabase = async (options: Object) => {
           }
         )
 
-
-
         await newShoe.save((err: Error, result: typeof Shoe) => {
 
           if (err) return console.error(err)
@@ -117,8 +115,6 @@ const addOneShoeToDatabase = async (options: Object) => {
       }
     )
 
-
-
     await newShoe.save((err: Error, result: typeof Shoe) => {
 
       if (err) return console.error(err)
@@ -158,8 +154,6 @@ const getShoesFromAllBrands = async () => {
 
     await timer(2000)
   }
-
-
 
 }
 

@@ -62,7 +62,6 @@ router.post('/', async (req: Request, res: Response) => {
       completeQuery.colorway = { "$regex": regex, "$options": "i" };
     }
 
-
     if (filters.brands && selectedBrands.length > 0) {
       completeQuery.brand = { $in: selectedBrands };
     }
@@ -170,8 +169,6 @@ router.put('/favorite', async (req: Request, res: Response) => {
     return res.status(200).json({ updatedShoe, updatedUser });
   }
 });
-
-
 
 router.post('/newShoes', async (req: Request, res: Response) => {
   const result = await addAllShoes(Number(req.body.page), Number(req.body.releaseYear));

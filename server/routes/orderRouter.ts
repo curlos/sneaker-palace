@@ -61,9 +61,4 @@ router.post('/no-account', async (req: Request, res: Response) => {
   return res.json({ order })
 })
 
-
-
-
-
-
 module.exports = router;

@@ -5,7 +5,6 @@ import { Shoe } from "../types/types"
 import SmallShoe from "./SmallShoe"
 import * as short from "short-uuid"
 
-
 const MoreShoes = () => {
 
   const [shoes, setShoes] = useState<Array<Shoe>>()
@@ -21,8 +20,6 @@ const MoreShoes = () => {
     }
     fetchShoes()
   }, [])
-
-
 
   return (
     loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (

@@ -11,8 +11,6 @@ import SuccessMessage from './SuccessMessage'
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
-
-
 const AccountDetails = () => {
 
   const dispatch = useDispatch()
@@ -42,10 +40,7 @@ const AccountDetails = () => {
       profilePic: profilePicObj
     }
 
-
-
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/${user._id}`, body)
-
 
     if (!response.data.error) {
       setShowSuccessMessage(true)
@@ -63,8 +58,6 @@ const AccountDetails = () => {
     const file: File = (target.files as FileList)[0]
     setFile(file)
   }
-
-
 
   return (
     <div className="w-1/2 sm:w-full sm:mt-8">

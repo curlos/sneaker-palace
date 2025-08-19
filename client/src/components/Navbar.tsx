@@ -23,7 +23,6 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
   const history = useHistory()
 
   const handleLogout = () => {
-
     dispatch(logout())
     dispatch(resetCart())
     history.push('/')
@@ -31,7 +30,6 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 
   useEffect(() => {
     const fetchFromAPI = async () => {
-
       if (user && Object.keys(user).length > 0) {
         const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/cart/find/${user?._id}`)
         const newCart = response.data
@@ -50,8 +48,6 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 
     fetchFromAPI()
   }, [dispatch, user])
-
-
 
   return (
     <div className="sticky top-0 z-10 w-full bg-white border-b border-gray-300">

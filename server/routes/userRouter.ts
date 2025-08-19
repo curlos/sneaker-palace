@@ -36,8 +36,6 @@ router.put('/:userID', async (req: Request, res: Response) => {
 router.put('/password/:userID', async (req: Request, res: Response) => {
   const user = await User.findOne({ _id: req.params.userID })
 
-
-
   const hashedPassword = CryptoJS.AES.decrypt(
     user.password,
     process.env.PASS_SEC
@@ -56,7 +54,6 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
     ).toString(),
   }
 
-
   const updatedUser = await User.findByIdAndUpdate(
     req.params.userID,
     {
@@ -67,8 +64,5 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
 
   return res.status(200).json(updatedUser);
 })
-
-
-
 
 module.exports = router;
