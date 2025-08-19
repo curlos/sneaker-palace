@@ -73,7 +73,7 @@ const FOOTER_BRANDS = [
 export const Footer = () => {
   return (
     <div className="bg-black text-white text-xs pt-10 lg:text-lg">
-      <div className="flex justify-center py-5 px-10 border-0 border-b border-solid border-gray-400 lg:hidden">
+      <div className="container mx-auto px-4 max-w-7xl flex justify-center py-5 border-0 border-b border-solid border-gray-400 lg:hidden">
         {FOOTER_BRANDS.map((brandData) => (
           <div key={brandData.brand} className="w-1/6 px-4 lg:w-full lg:flex lg:flex-col lg:mb-4">
             <div>
@@ -95,7 +95,7 @@ export const Footer = () => {
         ))}
       </div>
 
-      <div className="px-10 py-4 flex justify-between items-center lg:flex-col lg:gap-2 lg:text-xs">
+      <div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center lg:flex-col lg:gap-2 lg:text-xs">
         <div className="flex gap-4 text-gray-400">
           <div className="cursor-pointer">Terms</div>
           <div className="cursor-pointer">Privacy</div>

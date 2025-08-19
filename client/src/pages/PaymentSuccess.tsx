@@ -110,7 +110,7 @@ const PaymentSuccess = () => {
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
-      <div className="px-24 py-7 flex-grow sm:px-4">
+      <div className="container mx-auto px-4 py-7 max-w-6xl flex-grow">
         <div className="text-lg">
           {Object.keys(user).length > 0 ? (
             <div className="text-4xl">Hello {user.firstName} {user.lastName},</div>

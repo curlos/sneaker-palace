@@ -123,7 +123,7 @@ const ReviewForm = () => {
       <div className="flex justify-center py-10 h-screen"><CircleLoader size={16} /></div>
     ) : (
       <div className="flex-grow">
-        <div className="px-48 py-10 sm:px-4 xl:p-12">
+        <div className="container mx-auto px-4 py-10 max-w-4xl">
           <div className="font-bold text-2xl">WRITE YOUR REVIEW</div>
           <div className="flex justify-between items-center border border-gray-300 p-4 rounded-lg my-4">
             <div className="font-bold text-lg">{shoe.name}</div>
@@ -309,7 +309,7 @@ const ReviewForm = () => {
           &nbsp;
         </div>
 
-        <div className="px-48 py-10 sm:px-4 xl:p-12">
+        <div className="container mx-auto px-4 py-10 max-w-4xl">
           <div className="font-bold text-xl mb-4">YOUR REVIEW</div>
           <div className="flex mb-4 sm:flex-col">
             <div className="flex-2 w-full sm:mb-5">

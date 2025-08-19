@@ -85,7 +85,7 @@ export default function CheckoutForm() {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit} className="flex gap-4 p-10 sm:block sm:p-2 flex-grow">
+    <form id="payment-form" onSubmit={handleSubmit} className="container mx-auto px-4 py-10 max-w-6xl flex gap-4 sm:block flex-grow">
       <div className="flex-6">
         <PaymentElement id="payment-element" />
         <button disabled={isLoading || !stripe || !elements} id="submit" className="bg-black text-white p-3 rounded-lg mt-4 hover:bg-gray-700">

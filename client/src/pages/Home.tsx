@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <div className="flex-grow">
       <Carousel />
-      <div className="px-24 md:px-6">
+      <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex justify-between text-xl font-semibold mt-4 md:text-lg">
           <div>Popular Brands</div>
           <Link to={`/shoes`} className="underline">See All</Link>

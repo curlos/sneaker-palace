@@ -54,12 +54,13 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 
 
   return (
-    <div className="sticky top-0 z-10 w-full bg-white flex justify-between items-center p-4 border-b border-gray-300">
-      <div className="flex items-center w-6/12">
-        <div><Link to="/"><img src="/assets/icon.png" className="h-10 w-10" alt="" /></Link></div>
-      </div>
+    <div className="sticky top-0 z-10 w-full bg-white border-b border-gray-300">
+      <div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center">
+        <div className="flex items-center w-6/12">
+          <div><Link to="/"><img src="/assets/icon.png" className="h-10 w-10" alt="" /></Link></div>
+        </div>
 
-      <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5">
         <Link to="/shoes" className="lg:hidden">Sneakers</Link>
         <div className="lg:hidden">
           <Link to={{ pathname: "/shoes", state: { gender: 'men' } }} onClick={() => setShowSidenavModal(false)}>Men</Link>
@@ -86,7 +87,8 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
           </span>
         </Link>
 
-        <MenuIcon className="h-5 w-5 cursor-pointer hidden lg:block" onClick={() => setShowSidenavModal(true)} />
+          <MenuIcon className="h-5 w-5 cursor-pointer hidden lg:block" onClick={() => setShowSidenavModal(true)} />
+        </div>
       </div>
     </div>
   )

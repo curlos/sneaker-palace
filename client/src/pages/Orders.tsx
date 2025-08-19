@@ -29,7 +29,7 @@ const Orders = () => {
 
   return (
     loading ? <div className="flex justify-center p-10 h-screen"><CircleLoader size={16} /></div> :
-      <div className="flex-grow px-36 sm:px-4">
+      <div className="container mx-auto px-4 max-w-6xl flex-grow">
         <div className="text-3xl py-5">Your Orders</div>
         {orders && orders.length < 1 ? (
           <div className="text-base flex items-center gap-2">

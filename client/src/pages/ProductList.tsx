@@ -102,8 +102,10 @@ const ProductList = () => {
 
   return (
     <div className="text-xl-lg">
-      <div className="flex justify-center bg-gray-200 text-lg font-bold">FREE SHIPPING ON ALL SHOES</div>
-      <div className="flex xl:block flex-grow">
+      <div className="bg-gray-200">
+        <div className="container mx-auto px-4 py-2 max-w-7xl flex justify-center text-lg font-bold">FREE SHIPPING ON ALL SHOES</div>
+      </div>
+      <div className="container mx-auto max-w-7xl flex xl:block flex-grow">
         {showSidebar ? <div className="flex justify-end p-3 pb-0 cursor-pointer hidden xl:block"><XIcon className="h-5 w-5" onClick={() => setShowSidebar(false)} /> </div> : null}
 
         {showSidebar ? <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES} /> : null}

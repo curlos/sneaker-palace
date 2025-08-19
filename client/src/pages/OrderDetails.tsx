@@ -48,7 +48,7 @@ const OrderDetails = () => {
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       order ? (
-        <div className="p-10 sm:px-3 flex-grow">
+        <div className="container mx-auto px-4 py-10 max-w-6xl flex-grow">
           <div className="text-3xl mb-3">Order Details</div>
           <span className="border-0 border-r border-gray-300 pr-3 sm:border-none">Ordered on {moment(order.orderDate).format('MMMM Do YYYY')}</span>
           <span className="px-3 sm:block sm:px-0">Order# {order._id}</span>

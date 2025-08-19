@@ -14,13 +14,13 @@ const Cart = () => {
   const { currentCart, total } = useSelector((state: RootState) => state.cart)
 
   return (
-    <div className="w-full p-6 flex flex-start flex-grow lg:p-4 sm:block ">
+    <div className="container mx-auto px-4 py-6 max-w-6xl flex flex-start flex-grow sm:block ">
       <div className="flex-6">
         <div className="font-medium text-xl mb-5">Bag</div>
         {currentCart?.products?.map((product: IProduct) => <CartProduct key={product._id} productInfo={product} />)}
       </div>
 
-      <div className="flex-2 px-7 sm:px-0">
+      <div className="flex-2 pl-7 sm:pl-0">
         <div className="font-medium text-xl mb-5">Summary</div>
         <div className="flex justify-between items-center mb-2">
           <div>Subtotal</div>

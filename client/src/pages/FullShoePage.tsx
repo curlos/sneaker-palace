@@ -155,7 +155,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   return (
 
     <div className="flex-grow">
-      <div className="p-5 px-14 w-full h-full sm:px-4 2xl:px-6">
+      <div className="container mx-auto px-4 py-5 max-w-7xl w-full h-full">
         <div className="w-full h-full">
           {shoeLoading ? <FullShoeSkeleton />
             : (

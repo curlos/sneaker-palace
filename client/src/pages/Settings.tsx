@@ -21,7 +21,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="px-36 py-10 lg:p-4 flex-grow">
+    <div className="container mx-auto px-4 py-10 max-w-6xl flex-grow">
       <div className="text-2xl font-medium mb-4">Settings</div>
 
       <div className="flex sm:block">
