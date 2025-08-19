@@ -1,10 +1,8 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
-import { updateCart } from '../redux/cartRedux'
-import { loginFailure, loginStart, loginSuccess } from '../redux/userRedux'
-import { UserType } from '../types/types'
+import { loginFailure } from '../redux/userRedux'
+import { performLogin } from '../utils/authUtils'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -21,42 +19,15 @@ const Login = () => {
     setError(false)
     e.preventDefault()
 
-    const body = {
-      email,
-      password,
-    }
-
-
     try {
-      dispatch(loginStart())
-      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/auth/login`, body)
-
-      if (response.data) {
-        dispatch(loginSuccess(response.data))
-        const userCart = await fetchUserCart(response.data)
-
-        dispatch(updateCart(userCart))
-        history.push('/')
-      }
-
+      await performLogin(email, password, dispatch)
+      history.push('/')
     } catch (err) {
-
       setError(true)
       dispatch(loginFailure())
     }
   }
 
-  const fetchUserCart = async (loggedInUser: UserType) => {
-    const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/cart/find/${loggedInUser._id}`)
-
-    // If user doesn't have a cart, create one
-    if (!response.data) {
-      const createCartResponse = await axios.post(`${process.env.REACT_APP_DEV_URL}/cart/${loggedInUser._id}`)
-      return createCartResponse.data
-    }
-
-    return response.data
-  }
 
   return (
     <form className="h-screen bg-login-image bg-cover flex justify-center items-start" onSubmit={handleLoginUser}>
