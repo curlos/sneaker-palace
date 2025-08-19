@@ -82,7 +82,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
             {Object.keys(filters.brands).map((brand) => {
               return (
                 <label key={`${brand}`} className="flex items-center">
-                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.brands[brand]} onClick={() => handleBrandClick(brand)}></input>
+                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.brands[brand]} onChange={() => handleBrandClick(brand)}></input>
                   <span className="capitalize">{brand}</span>
                 </label>
               )
@@ -101,7 +101,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
             {Object.keys(filters.genders).map((gender) => {
               return (
                 <label key={`${gender}`} className="flex items-center">
-                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.genders[gender]} onClick={() => handleGenderClick(gender)}></input>
+                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.genders[gender]} onChange={() => handleGenderClick(gender)}></input>
                   <span className="capitalize">{gender}</span>
                 </label>
 
@@ -121,7 +121,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
             {Object.keys(filters.priceRanges).map((priceRange) => {
               return (
                 <label key={`${priceRange}`} className="flex items-center">
-                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.priceRanges[priceRange].checked} onClick={() => handlePriceClick(priceRange)}></input>
+                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.priceRanges[priceRange].checked} onChange={() => handlePriceClick(priceRange)}></input>
                   <span>{priceRange}</span>
                 </label>
 
@@ -141,7 +141,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
             {Object.keys(filters.releaseYears).sort((a, b) => Number(b) - Number(a)).map((releaseYear) => {
               return (
                 <label key={`${releaseYear}`} className="flex items-center">
-                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.releaseYears[releaseYear]} onClick={() => handleReleaseYearClick(releaseYear)}></input>
+                  <input type="checkbox" className="mr-2 cursor-pointer" checked={filters.releaseYears[releaseYear]} onChange={() => handleReleaseYearClick(releaseYear)}></input>
                   <span>{releaseYear}</span>
                 </label>
 

@@ -44,10 +44,6 @@ const Profile = () => {
     return ratings
   }
 
-
-
-
-
   return (
     loading ? <div className="flex justify-center py-4 h-screen w-screen max-w-100"><CircleLoader size={16} /></div> : (
       <div className="px-48 py-10 bg-gray-100 sm:px-4">
@@ -64,22 +60,22 @@ const Profile = () => {
             <div className="font-medium">Insights</div>
             <div className="flex gap-6 sm:block">
               <div>
-                <div className="font-bold text-2xl">0</div>
+                <div className="font-bold text-2xl">{profileUser?.helpful?.length || 0}</div>
                 <div>Helpful votes</div>
               </div>
 
               <div>
-                <div className="font-bold text-2xl">0</div>
+                <div className="font-bold text-2xl">{profileUser?.notHelpful?.length || 0}</div>
                 <div>Unhelpful votes</div>
               </div>
 
               <div>
-                <div className="font-bold text-2xl">0</div>
+                <div className="font-bold text-2xl">{profileUserReviews.length}</div>
                 <div>Reviews</div>
               </div>
 
               <div>
-                <div className="font-bold text-2xl">0</div>
+                <div className="font-bold text-2xl">{profileUser?.favorites?.length || 0}</div>
                 <div>Favorites</div>
               </div>
             </div>
