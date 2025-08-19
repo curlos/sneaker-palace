@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { updateCart } from '../redux/cartRedux';
@@ -22,6 +22,7 @@ const CartProduct = ({ productInfo }: Props) => {
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart } = useSelector((state: RootState) => state.cart)
+  const isMountedRef = useRef(true)
 
   const [shoe, setShoe] = useState<Partial<Shoe>>({})
   const [loading, setLoading] = useState(true)
@@ -30,11 +31,19 @@ const CartProduct = ({ productInfo }: Props) => {
     const fetchFromAPI = async () => {
       const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${productInfo.productID}`)
 
-      setShoe(response.data)
-      setLoading(false)
+      // Only update state if component is still mounted
+      if (isMountedRef.current) {
+        setShoe(response.data)
+        setLoading(false)
+      }
     }
 
     fetchFromAPI()
+    
+    // Cleanup function to mark component as unmounted
+    return () => {
+      isMountedRef.current = false
+    }
   }, [productInfo])
 
   const handleChangeSize = async (e: ChangeEvent<HTMLSelectElement>) => {
