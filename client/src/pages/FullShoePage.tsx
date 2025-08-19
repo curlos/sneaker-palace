@@ -148,7 +148,9 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
     return ratings;
   };
 
-
+  const updateShoeRating = (newRating: number) => {
+    setShoe(prevShoe => ({ ...prevShoe, rating: newRating }))
+  }
 
   return (
 
@@ -251,7 +253,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
             )}
 
           {reviewLoading ? <div className="flex justify-center"><CircleLoader size={16} /></div> : (
-            <FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />
+            <FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} onShoeRatingUpdate={updateShoeRating} />
           )}
 
         </div>

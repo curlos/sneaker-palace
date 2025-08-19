@@ -15,12 +15,13 @@ interface Props {
   shoeRating: IRating,
   shoeRatings: Array<IRating>,
   setShoeRatings: React.Dispatch<React.SetStateAction<Array<IRating>>>,
-  shoe: Partial<Shoe>
+  shoe: Partial<Shoe>,
+  onShoeRatingUpdate?: (newRating: number) => void
 }
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
-const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
+const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe, onShoeRatingUpdate }: Props) => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const dispatch = useDispatch()
@@ -62,10 +63,14 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
   }
 
   const handleDeleteReview = async () => {
-
-    await axios.delete(`${process.env.REACT_APP_DEV_URL}/rating/${review._id}`)
-
+    const response = await axios.delete(`${process.env.REACT_APP_DEV_URL}/rating/${review._id}`)
+    
     setShoeRatings(shoeRatings.filter((shoeRating) => shoeRating._id !== review._id))
+    
+    // Update the shoe rating in the parent component
+    if (onShoeRatingUpdate && response.data.updatedShoe) {
+      onShoeRatingUpdate(response.data.updatedShoe.rating)
+    }
   }
 
 

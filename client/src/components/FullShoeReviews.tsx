@@ -9,10 +9,11 @@ import * as short from "short-uuid"
 interface Props {
   shoe: Partial<Shoe>,
   shoeRatings: Array<IRating>,
-  setShoeRatings: React.Dispatch<React.SetStateAction<Array<IRating>>>
+  setShoeRatings: React.Dispatch<React.SetStateAction<Array<IRating>>>,
+  onShoeRatingUpdate?: (newRating: number) => void
 }
 
-const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
+const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings, onShoeRatingUpdate }: Props) => {
 
 
   return (
@@ -60,7 +61,7 @@ const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
 
 
           <div>
-            {shoeRatings.map((shoeRating) => <Review key={`${shoeRating}-${short.generate()}`} shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} />)}
+            {shoeRatings.map((shoeRating) => <Review key={`${shoeRating}-${short.generate()}`} shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} onShoeRatingUpdate={onShoeRatingUpdate} />)}
           </div>
         </div>
       ) : null}

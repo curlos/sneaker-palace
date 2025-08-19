@@ -12,39 +12,83 @@ router.get('/:ratingID', async (req: Request, res: Response) => {
   return res.json(rating)
 })
 
-const getAverageRating = async (ratingIDs: Array<string>, currentAverageRating: number, newRatingNum: number) => {
-  return ((currentAverageRating * ratingIDs.length) + newRatingNum) / (ratingIDs.length + 1)
+// Helper functions for efficient rating calculations
+const addRatingToAverage = (currentAvg: number, currentCount: number, newRating: number) => {
+  if (currentCount === 0) return newRating
+  return (currentAvg * currentCount + newRating) / (currentCount + 1)
+}
+
+const updateRatingInAverage = (currentAvg: number, currentCount: number, oldRating: number, newRating: number) => {
+  if (currentCount === 0) return newRating
+  return currentAvg + (newRating - oldRating) / currentCount
+}
+
+const removeRatingFromAverage = (currentAvg: number, currentCount: number, removedRating: number) => {
+  if (currentCount <= 1) return 0
+  return (currentAvg * currentCount - removedRating) / (currentCount - 1)
 }
 
 router.post('/rate', async (req: Request, res: Response) => {
-  const rating = new Rating(req.body)
-  const shoe = await Shoe.findOne({ shoeID: req.body.shoeID })
-  const user = await User.findById(req.body.userID)
-  const newShoeAverageRating = await getAverageRating(shoe.ratings, shoe.rating || 0, req.body.ratingNum)
+  try {
+    const rating = new Rating(req.body)
+    const shoe = await Shoe.findOne({ shoeID: req.body.shoeID })
+    const user = await User.findById(req.body.userID)
+    
+    if (!shoe || !user) {
+      return res.status(404).json({ error: 'Shoe or user not found' })
+    }
 
-  shoe.rating = newShoeAverageRating
-  await shoe.updateOne({ $push: { ratings: rating._id } })
-  await user.updateOne({ $push: { ratings: rating._id } })
-  await rating.save()
-  await shoe.save()
+    const currentRatingCount = shoe.ratings.length
+    const newShoeAverageRating = addRatingToAverage(shoe.rating || 0, currentRatingCount, req.body.ratingNum)
 
-  const updatedShoe = await Shoe.findById(shoe._id)
-  const updatedUser = await User.findById(user._id)
+    shoe.rating = newShoeAverageRating
+    await shoe.updateOne({ $push: { ratings: rating._id } })
+    await user.updateOne({ $push: { ratings: rating._id } })
+    await rating.save()
+    await shoe.save()
 
-  return res.json({ updatedShoe, updatedUser, rating })
+    const updatedShoe = await Shoe.findById(shoe._id)
+    const updatedUser = await User.findById(user._id)
+
+    return res.json({ updatedShoe, updatedUser, rating })
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to create rating' })
+  }
 })
 
 router.put('/edit/:id', async (req: Request, res: Response) => {
+  try {
+    const oldRating = await Rating.findById(req.params.id)
+    if (!oldRating) {
+      return res.status(404).json({ error: 'Rating not found' })
+    }
 
-  const updatedRating = await Rating.findByIdAndUpdate(
-    req.params.id,
-    {
-      $set: req.body,
-    },
-    { new: true }
-  );
+    const updatedRating = await Rating.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    )
 
-  return res.json(updatedRating)
+    // Update shoe rating if ratingNum changed
+    if (req.body.ratingNum && req.body.ratingNum !== oldRating.ratingNum) {
+      const shoe = await Shoe.findOne({ shoeID: oldRating.shoeID })
+      if (shoe) {
+        const currentRatingCount = shoe.ratings.length
+        const newShoeAverageRating = updateRatingInAverage(
+          shoe.rating || 0, 
+          currentRatingCount, 
+          oldRating.ratingNum, 
+          req.body.ratingNum
+        )
+        shoe.rating = newShoeAverageRating
+        await shoe.save()
+      }
+    }
+
+    return res.json(updatedRating)
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to update rating' })
+  }
 })
 
 router.put('/like', async (req: Request, res: Response) => {
@@ -101,9 +145,71 @@ router.put('/dislike', async (req: Request, res: Response) => {
 })
 
 router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const ratingToDelete = await Rating.findById(req.params.id)
+    if (!ratingToDelete) {
+      return res.status(404).json({ error: 'Rating not found' })
+    }
 
-  const deletedRating = await Rating.findByIdAndDelete(req.params.id)
-  return res.json(deletedRating)
+    const shoe = await Shoe.findOne({ shoeID: ratingToDelete.shoeID })
+    const user = await User.findById(ratingToDelete.userID)
+
+    // Delete the rating
+    const deletedRating = await Rating.findByIdAndDelete(req.params.id)
+
+    // Update shoe rating and remove rating reference
+    if (shoe) {
+      const currentRatingCount = shoe.ratings.length
+      const newShoeAverageRating = removeRatingFromAverage(
+        shoe.rating || 0, 
+        currentRatingCount, 
+        ratingToDelete.ratingNum
+      )
+      shoe.rating = newShoeAverageRating
+      await shoe.updateOne({ $pull: { ratings: req.params.id } })
+      await shoe.save()
+    }
+
+    // Remove rating reference from user
+    if (user) {
+      await user.updateOne({ $pull: { ratings: req.params.id } })
+    }
+
+    // Get the updated shoe with fresh data for the response
+    const updatedShoe = await Shoe.findById(shoe?._id)
+    return res.json({ deletedRating, updatedShoe })
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to delete rating' })
+  }
+})
+
+// Reset all shoe ratings to 0 and delete all ratings
+router.put('/reset-all-ratings', async (req: Request, res: Response) => {
+  try {
+    // Delete all ratings from the database
+    const deletedRatings = await Rating.deleteMany({})
+    
+    // Reset all shoe ratings to 0 and clear ratings arrays
+    const updatedShoes = await Shoe.updateMany(
+      {}, 
+      { $set: { rating: 0, ratings: [] } }
+    )
+    
+    // Clear all user ratings arrays
+    const updatedUsers = await User.updateMany(
+      {},
+      { $set: { ratings: [] } }
+    )
+    
+    return res.json({
+      message: 'All ratings deleted and shoe ratings reset to 0', 
+      deletedRatingsCount: deletedRatings.deletedCount,
+      modifiedShoesCount: updatedShoes.modifiedCount,
+      modifiedUsersCount: updatedUsers.modifiedCount
+    })
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to reset ratings and shoes' })
+  }
 })
 
 
