@@ -6,7 +6,7 @@ const router = require('express').Router()
 
 router.get('/:userID', async (req: Request, res: Response) => {
   const user = await User.findById(req.params.userID)
-  res.json(user)
+  return res.json(user)
 })
 
 router.put('/:userID', async (req: Request, res: Response) => {
@@ -26,10 +26,10 @@ router.put('/:userID', async (req: Request, res: Response) => {
       { new: true }
     )
 
-    res.status(200).json(updatedUser);
+    return res.status(200).json(updatedUser);
   } catch (err) {
 
-    res.json({ error: err });
+    return res.json({ error: err });
   }
 })
 
@@ -65,7 +65,7 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
     { new: true }
   );
 
-  res.status(200).json(updatedUser);
+  return res.status(200).json(updatedUser);
 })
 
 

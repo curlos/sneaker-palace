@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.get('/:ratingID', async (req: Request, res: Response) => {
   const rating = await Rating.findById(req.params.ratingID)
-  res.json(rating)
+  return res.json(rating)
 })
 
 const getAverageRating = async (ratingIDs: Array<string>, currentAverageRating: number, newRatingNum: number) => {
@@ -43,7 +43,7 @@ router.post('/rate', async (req: Request, res: Response) => {
   const updatedShoe = await Shoe.findById(shoe._id)
   const updatedUser = await User.findById(user._id)
 
-  res.json({ updatedShoe, updatedUser, rating })
+  return res.json({ updatedShoe, updatedUser, rating })
 })
 
 router.put('/edit/:id', async (req: Request, res: Response) => {
@@ -56,7 +56,7 @@ router.put('/edit/:id', async (req: Request, res: Response) => {
     { new: true }
   );
 
-  res.json(updatedRating)
+  return res.json(updatedRating)
 })
 
 router.put('/like', async (req: Request, res: Response) => {
@@ -73,16 +73,16 @@ router.put('/like', async (req: Request, res: Response) => {
 
       const updatedRating = await Rating.findById(rating._id)
       const updatedUser = await User.findById(user._id)
-      res.status(200).json({ updatedRating, updatedUser })
+      return res.status(200).json({ updatedRating, updatedUser })
     } else {
       await rating.updateOne({ $pull: { helpful: user._id } })
       await user.updateOne({ $pull: { helpful: rating._id } })
       const updatedRating = await Rating.findById(rating._id)
       const updatedUser = await User.findById(user._id)
-      res.status(200).json({ updatedRating, updatedUser })
+      return res.status(200).json({ updatedRating, updatedUser })
     }
   } catch (err) {
-    res.json(err)
+    return res.json(err)
   }
 })
 
@@ -99,23 +99,23 @@ router.put('/dislike', async (req: Request, res: Response) => {
       await user.updateOne({ $pull: { helpful: rating._id } })
       const updatedRating = await Rating.findById(rating._id)
       const updatedUser = await User.findById(user._id)
-      res.status(200).json({ updatedRating, updatedUser })
+      return res.status(200).json({ updatedRating, updatedUser })
     } else {
       await rating.updateOne({ $pull: { notHelpful: user._id } })
       await user.updateOne({ $pull: { notHelpful: rating._id } })
       const updatedRating = await Rating.findById(rating._id)
       const updatedUser = await User.findById(user._id)
-      res.status(200).json({ updatedRating, updatedUser })
+      return res.status(200).json({ updatedRating, updatedUser })
     }
   } catch (err) {
-    res.json(err)
+    return res.json(err)
   }
 })
 
 router.delete('/:id', async (req: Request, res: Response) => {
 
   const deletedRating = await Rating.findByIdAndDelete(req.params.id)
-  res.json(deletedRating)
+  return res.json(deletedRating)
 })
 
 

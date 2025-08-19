@@ -32,7 +32,7 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
   }
 
 
-  res.send({ imagePath: `/images/${response.Key}` })
+  return res.send({ imagePath: `/images/${response.Key}` })
 })
 
 module.exports = router;

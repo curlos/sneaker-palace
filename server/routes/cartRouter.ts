@@ -15,7 +15,7 @@ router.post('/:userID', async (req: Request, res: Response) => {
   })
 
   const savedCart = await newCart.save()
-  res.json(savedCart)
+  return res.json(savedCart)
 })
 
 // Update cart
@@ -30,7 +30,7 @@ router.put('/:id', async (req: Request, res: Response) => {
   )
 
 
-  res.status(200).json(updatedCart)
+  return res.status(200).json(updatedCart)
 })
 
 // Update specific product in cart 
@@ -43,7 +43,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     },
     { new: true }
   )
-  res.status(200).json(updatedCart)
+  return res.status(200).json(updatedCart)
 })
 
 
@@ -51,16 +51,16 @@ router.put('/:id', async (req: Request, res: Response) => {
 
 router.get('/find/:userID', async (req: Request, res: Response) => {
   const cart = await Cart.findOne({ userID: req.params.userID })
-  res.status(200).json(cart)
+  return res.status(200).json(cart)
 })
 
 // Delete 
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     await Cart.findByIdAndDelete(req.params.id)
-    res.status(200).json('Cart has been deleted...')
+    return res.status(200).json('Cart has been deleted...')
   } catch (err) {
-    res.status(500).json(err)
+    return res.status(500).json(err)
   }
 })
 

@@ -19,12 +19,12 @@ router.post("/create-payment-intent", async (req: Request, res: Response) => {
       receipt_email: 'sneakerpalacesite@gmail.com'
     });
 
-    res.send({
+    return res.send({
       clientSecret: paymentIntent.client_secret,
     });
   } catch (err) {
 
-    res.json({ error: err })
+    return res.json({ error: err })
   }
 });
 
@@ -33,7 +33,7 @@ router.get('/payment-method/:paymentMethodID', async (req: Request, res: Respons
     req.params.paymentMethodID
   );
 
-  res.json(paymentMethod)
+  return res.json(paymentMethod)
 })
 
 module.exports = router;
