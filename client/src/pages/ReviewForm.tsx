@@ -313,8 +313,8 @@ const ReviewForm = () => {
           <div className="font-bold text-xl mb-4">YOUR REVIEW</div>
           <div className="flex mb-4 sm:flex-col">
             <div className="flex-2 w-full sm:mb-5">
-              <div className="text-gray-500 w-10/12sm:w-full">Summary *</div>
-              <input placeholder="Summary *" className="border border-black p-3 w-10/12 sm:w-full" value={reviewInfo.summary} onChange={(e) => setReviewInfo({ ...reviewInfo, summary: e.target.value })} />
+              <div className="text-gray-500 w-10/12sm:w-full">Summary</div>
+              <input placeholder="Summary" className="border border-black p-3 w-10/12 sm:w-full" value={reviewInfo.summary} onChange={(e) => setReviewInfo({ ...reviewInfo, summary: e.target.value })} />
               <div className="text-sm text-gray-500 w-10/12 sm:w-full">What's your opinion in one sentence? Example: Best purchase ever.</div>
             </div>
 
@@ -329,7 +329,7 @@ const ReviewForm = () => {
           </div>
 
           <div className="w-1/2 sm:w-full">
-            <div className="text-gray-500 w-10/12 sm:w-full">Your Review *</div>
+            <div className="text-gray-500 w-10/12 sm:w-full">Your Review</div>
             <textarea className="resize-none border w-10/12 h-40 sm:w-full" onChange={(e) => setReviewInfo({ ...reviewInfo, text: e.target.value })} value={reviewInfo.text}></textarea>
             <div className="text-sm text-gray-500 w-10/12 sm:w-full">Tell other people more about the product. What about the quality? Or the comfort?</div>
           </div>

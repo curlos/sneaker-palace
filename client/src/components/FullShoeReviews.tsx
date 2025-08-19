@@ -14,10 +14,6 @@ interface Props {
 
 const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
 
-  // Calculate average rating from actual ratings array
-  const averageRating = shoeRatings.length > 0 
-    ? shoeRatings.reduce((sum, rating) => sum + (rating.ratingNum || 0), 0) / shoeRatings.length
-    : 0
 
   return (
     <div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
@@ -25,7 +21,7 @@ const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
         <div className="text-2xl font-bold">Customer reviews</div>
         <div className="flex gap-2 items-center">
           <StarRatings
-            rating={Number(averageRating.toFixed(2))}
+            rating={Number((shoe.rating || 0).toFixed(2))}
             starRatedColor='#F5B327'
             numberOfStars={5}
             name='rating'
@@ -35,7 +31,7 @@ const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings }: Props) => {
           {shoeRatings.length === 0 ? (
             <span className="text-lg">No reviews</span>
           ) : (
-            <span className="text-lg">{averageRating.toFixed(2)} out of 5</span>
+            <span className="text-lg">{(shoe.rating || 0).toFixed(2)} out of 5</span>
           )}
         </div>
 

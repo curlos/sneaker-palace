@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 
 const express = require('express')
-const mongoose = require('mongoose')
 const Rating = require('../models/Rating')
 const Shoe = require('../models/Shoe')
 const User = require('../models/User')
@@ -23,15 +22,11 @@ router.post('/rate', async (req: Request, res: Response) => {
   const user = await User.findById(req.body.userID)
   const newShoeAverageRating = await getAverageRating(shoe.ratings, shoe.rating || 0, req.body.ratingNum)
 
-
-
   shoe.rating = newShoeAverageRating
   await shoe.updateOne({ $push: { ratings: rating._id } })
   await user.updateOne({ $push: { ratings: rating._id } })
   await rating.save()
   await shoe.save()
-
-
 
   const updatedShoe = await Shoe.findById(shoe._id)
   const updatedUser = await User.findById(user._id)
