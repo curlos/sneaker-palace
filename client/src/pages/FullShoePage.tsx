@@ -153,7 +153,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   }
 
   return (
-
     <div className="flex-grow">
       <div className="container mx-auto px-4 py-5 max-w-7xl w-full h-full">
         <div className="w-full h-full">
@@ -214,7 +213,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
                   </div>
 
                   <div>
-                    <span className="font-bold">Release date:</span> {moment(shoe.releaseDate).format('MMMM Do, YYYY')}
+                    <span className="font-bold">Release date:</span> {shoe.releaseDate && moment(shoe.releaseDate).isValid() ? moment(shoe.releaseDate).format('MMMM Do, YYYY') : 'TBA'}
                   </div>
 
                   <div>
