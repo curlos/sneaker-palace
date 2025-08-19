@@ -41,6 +41,7 @@ const Favorites = () => {
   return (
     loading ? <div className="flex justify-center py-4 h-screen"><CircleLoader size={16} /></div> : (
       <div className="container mx-auto px-4 max-w-7xl flex-grow">
+        <div className="text-3xl py-5">Your Favorites</div>
         {favoriteShoes && favoriteShoes.length > 0 ? (
           <div className="flex flex-wrap justify-start">
             {favoriteShoes.map((shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
