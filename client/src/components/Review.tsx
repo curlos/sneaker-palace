@@ -24,7 +24,7 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const dispatch = useDispatch()
-  const [review, setReview] = useState(shoeRating)
+  const review = shoeRating
   const [showModal, setShowModal] = useState(false)
 
   const handleLike = async () => {
@@ -34,9 +34,14 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
     }
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/like`, body)
 
-    setReview({ ...review, helpful: response.data.updatedRating.helpful, notHelpful: response.data.updatedRating.notHelpful })
+    const updatedRating = { ...review, helpful: response.data.updatedRating.helpful, notHelpful: response.data.updatedRating.notHelpful }
+    
+    // Update only the parent's ratings array
+    setShoeRatings(shoeRatings.map(rating => 
+      rating._id === review._id ? updatedRating : rating
+    ))
+    
     dispatch(updateUser(response.data.updatedUser))
-
   }
 
   const handleDislike = async () => {
@@ -46,7 +51,13 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe }: Props) => {
     }
     const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/dislike`, body)
 
-    setReview({ ...review, notHelpful: response.data.updatedRating.notHelpful, helpful: response.data.updatedRating.helpful, })
+    const updatedRating = { ...review, notHelpful: response.data.updatedRating.notHelpful, helpful: response.data.updatedRating.helpful }
+    
+    // Update only the parent's ratings array
+    setShoeRatings(shoeRatings.map(rating => 
+      rating._id === review._id ? updatedRating : rating
+    ))
+    
     dispatch(updateUser(response.data.updatedUser))
   }
 
