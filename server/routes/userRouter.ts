@@ -45,7 +45,9 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
 
   const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8)
 
-  originalPassword !== req.body.currentPassword && res.json({ err: 'Wrong credentials' })
+  if (originalPassword !== req.body.currentPassword) {
+    return res.json({ err: 'Wrong credentials' })
+  }
 
   const newPassword = {
     password: CryptoJS.AES.encrypt(

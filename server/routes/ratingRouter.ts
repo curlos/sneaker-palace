@@ -84,7 +84,6 @@ router.put('/like', async (req: Request, res: Response) => {
   } catch (err) {
     res.json(err)
   }
-  res.json(rating)
 })
 
 router.put('/dislike', async (req: Request, res: Response) => {
@@ -111,7 +110,6 @@ router.put('/dislike', async (req: Request, res: Response) => {
   } catch (err) {
     res.json(err)
   }
-  res.json(rating)
 })
 
 router.delete('/:id', async (req: Request, res: Response) => {

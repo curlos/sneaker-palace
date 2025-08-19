@@ -11,7 +11,7 @@ router.post('/register', async (req: Request, res: Response) => {
   const foundUser = await User.findOne({ lowerCaseEmail: req.body.email.toLowerCase() })
 
   if (foundUser) {
-    res.json({ error: 'Email taken' })
+    return res.json({ error: 'Email taken' })
   } else {
     const newUser = new User({
       email: req.body.email,
@@ -40,7 +40,7 @@ router.post('/login', async (req: Request, res: Response) => {
     const user = await User.findOne({ email: req.body.email })
 
     if (!user) {
-      res.status(401).json('Wrong credentials')
+      return res.status(401).json('Wrong credentials')
     }
 
     const hashedPassword = CryptoJS.AES.decrypt(
@@ -50,7 +50,9 @@ router.post('/login', async (req: Request, res: Response) => {
 
     const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8)
 
-    originalPassword !== req.body.password && res.status(401).json('Wrong credentials')
+    if (originalPassword !== req.body.password) {
+      return res.status(401).json('Wrong credentials')
+    }
 
     const accessToken = jwt.sign(
       {

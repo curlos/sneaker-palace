@@ -9,7 +9,7 @@ const verifyToken = (req: Request, res: Response, next: any) => {
   if (authHeader) {
     const token = authHeader.split(' ')[1]
     jwt.verify(token, process.env.JWT_SEC, (err: any, user: UserType) => {
-      if (err) res.status(403).json('Token is not valid!')
+      if (err) return res.status(403).json('Token is not valid!')
 
       req.user = user
       next()
@@ -24,7 +24,7 @@ const verifyTokenAndAuthorization = (req: Request, res: Response, next: any) => 
     if (req.user.id === req.params.id || req.user.isAdmin) {
       next()
     } else {
-      res.status(403).json('You are not allowed to do that')
+      return res.status(403).json('You are not allowed to do that')
     }
   })
 }
@@ -34,7 +34,7 @@ const verifyTokenAndAdmin = (req: Request, res: Response, next: any) => {
     if (req.user.isAdmin) {
       next()
     } else {
-      res.status(403).json('You are not allowed to do that!')
+      return res.status(403).json('You are not allowed to do that!')
     }
   })
 }

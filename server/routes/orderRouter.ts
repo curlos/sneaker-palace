@@ -24,7 +24,7 @@ router.post('/', async (req: Request, res: Response) => {
   const orderFound = await Order.findOne({ paymentIntentID: req.body.paymentIntentID })
 
   if (orderFound) {
-    res.json({ error: 'Already ordered', orderID: orderFound._id })
+    return res.json({ error: 'Already ordered', orderID: orderFound._id })
   }
 
   const user = await User.findById(req.body.userID)
@@ -49,7 +49,7 @@ router.post('/no-account', async (req: Request, res: Response) => {
   const orderFound = await Order.findOne({ paymentIntentID: req.body.paymentIntentID })
 
   if (orderFound) {
-    res.json({ error: 'Already ordered', orderID: orderFound._id })
+    return res.json({ error: 'Already ordered', orderID: orderFound._id })
   }
 
   const order = new Order({

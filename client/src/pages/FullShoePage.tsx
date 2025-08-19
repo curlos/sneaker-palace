@@ -92,6 +92,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
           localStorage.setItem('currentCart', JSON.stringify(newCart));
         }
       }
+      return; // Exit early for guest users
     }
 
     if (currentCart && currentCart.products && shoe && shoe.shoeID && Object.keys(user).length > 0) {

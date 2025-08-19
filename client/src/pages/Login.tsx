@@ -49,6 +49,12 @@ const Login = () => {
   const fetchUserCart = async (loggedInUser: UserType) => {
     const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/cart/find/${loggedInUser._id}`)
 
+    // If user doesn't have a cart, create one
+    if (!response.data) {
+      const createCartResponse = await axios.post(`${process.env.REACT_APP_DEV_URL}/cart/${loggedInUser._id}`)
+      return createCartResponse.data
+    }
+
     return response.data
   }
 
