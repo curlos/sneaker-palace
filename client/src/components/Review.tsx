@@ -4,7 +4,7 @@ import axios from 'axios'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
 import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
@@ -25,10 +25,16 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe, onShoeRatingUpd
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const dispatch = useDispatch()
+  const history = useHistory()
   const review = shoeRating
   const [showModal, setShowModal] = useState(false)
 
   const handleLike = async () => {
+    if (Object.keys(user).length === 0 || !user) {
+      history.push('/login');
+      return;
+    }
+
     const body = {
       ratingID: review._id,
       userID: user._id
@@ -46,6 +52,11 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe, onShoeRatingUpd
   }
 
   const handleDislike = async () => {
+    if (Object.keys(user).length === 0 || !user) {
+      history.push('/login');
+      return;
+    }
+
     const body = {
       ratingID: review._id,
       userID: user._id
