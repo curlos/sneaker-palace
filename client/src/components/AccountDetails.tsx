@@ -98,7 +98,7 @@ const AccountDetails = () => {
 
         <div className="mb-4">
           <div className="mb-1">Password</div>
-          <input type="password" placeholder="Password" className="rounded-lg w-full" value={'*********'} onClick={() => setShowModal(true)} />
+          <input type="password" placeholder="Password" className="rounded-lg w-full cursor-pointer" value={'*********'} onClick={() => setShowModal(true)} readOnly />
         </div>
       </form>
 
