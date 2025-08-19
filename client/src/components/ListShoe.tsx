@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import ShoeImage from './ShoeImage'
 import { Shoe } from '../types/types'
 
 interface Props {
@@ -13,7 +14,7 @@ const ListShoe = ({ shoe, setShowModal }: Props) => {
   return (
     <Link to={`/shoe/${shoe.shoeID}`} className="flex justify-between items-center py-4 border-0 border-b border-solid border-gray-300" onClick={() => setShowModal(false)}>
       <div className="flex items-center">
-        <img src={shoe.image.original} alt={shoe.name} className="h-16" />
+        <ShoeImage src={shoe.image.original} alt={shoe.name} className="h-16" />
 
         <div className="ml-5">{shoe.name}</div>
       </div>

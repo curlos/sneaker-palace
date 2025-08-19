@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
+import ShoeImage from './ShoeImage'
 import { IProduct, Shoe } from '../types/types'
 
 interface Props {
@@ -58,7 +59,7 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
             shoe && productInfo && (
               <div className="">
                 <div>
-                  <img src={shoe.image?.original} alt={shoe.name} className="" />
+                  <ShoeImage src={shoe.image?.original || ''} alt={shoe.name || ''} />
                 </div>
 
                 <div className="">

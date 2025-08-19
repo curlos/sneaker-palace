@@ -32,13 +32,9 @@ const SmallOrder = ({ order }: Props) => {
     return newShoes
   }
 
-
-
-
-
   return (
     <div className="border border-gray-300 rounded-lg my-4 p-5 text-gray-800">
-      <div className="flex justify-between mb-4 text-sm sm:flex-col sm:gap-3">
+      <div className="flex justify-between mb-4 text-sm sm:flex-col sm:gap-3 gap-2">
         <div className="flex gap-10">
           <div>
             <div className="font-bold">ORDER PLACED</div>

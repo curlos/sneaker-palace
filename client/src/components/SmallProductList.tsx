@@ -17,7 +17,6 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSub
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-
     setLoading(true)
 
     const fetchFromAPI = async () => {

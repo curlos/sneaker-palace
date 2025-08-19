@@ -18,4 +18,14 @@
   .border-top-transparent {
     border-top-color: transparent;
   }
+
+  .cart-shoe-image {
+    max-width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .cart-shoe-image {
+      max-width: 250px;
+    }
+  }
 }

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { updateCart } from '../redux/cartRedux';
 import { RootState } from '../redux/store';
 import CartProductSkeleton from '../skeleton_loaders/CartProductSkeleton';
+import ShoeImage from './ShoeImage';
 import { IProduct, Shoe, UserType } from "../types/types";
 import * as short from "short-uuid"
 
@@ -134,7 +135,7 @@ const CartProduct = ({ productInfo }: Props) => {
   return (
     loading ? <CartProductSkeleton /> : (
       <div className="flex py-5 mb-5 border-0 border-b border-solid border-gray-300">
-        <Link to={`/shoe/${shoe.shoeID}`} className="sm:w-1/4"><img src={shoe?.image?.thumbnail} alt={shoe?.name} className="" /></Link>
+        <Link to={`/shoe/${shoe.shoeID}`} className="sm:w-1/4"><ShoeImage src={shoe?.image?.thumbnail || ''} alt={shoe?.name || ''} className="cart-shoe-image" /></Link>
 
         <div className="ml-5 w-full sm:ml-2">
           <div>

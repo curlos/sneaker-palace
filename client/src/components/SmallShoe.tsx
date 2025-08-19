@@ -2,20 +2,19 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Link } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
 import { Props } from '../types/types'
-import { useState } from 'react';
+import ShoeImage from './ShoeImage';
 
 const SmallShoe = ({ shoe }: Props) => {
-  const [originalImageLoaded, setOriginalImageLoaded] = useState(true)
 
   return (
     <Link to={`/shoe/${shoe.shoeID}`} className="w-4/12 sm:w-6/12">
       <div className="flex flex-col bg-white cursor-pointer mr-5 mb-5 px-3 sm:mr-0">
         <div className="w-full relative overflow-hidden" style={{ paddingBottom: '100%' }}>
-          <img 
-            src={originalImageLoaded ? shoe.image.original : "/assets/icon.png"} 
-            alt={shoe.name} 
-            className={originalImageLoaded ? "absolute inset-0 h-full w-full object-cover" : "absolute inset-0 h-2/3 w-2/3 object-contain m-auto"} 
-            onError={() => setOriginalImageLoaded(false)} 
+          <ShoeImage 
+            src={shoe.image.original}
+            alt={shoe.name}
+            className="absolute inset-0 h-full w-full object-cover"
+            missingOriginalImageClassName="absolute inset-0 h-2/3 w-2/3 object-contain m-auto"
           />
         </div>
         <div className="font-medium">{shoe.name}</div>

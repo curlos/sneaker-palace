@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
+import ShoeImage from './ShoeImage'
 import { IProduct, Shoe } from '../types/types'
 
 interface Props {
@@ -29,7 +30,7 @@ const CheckoutProduct = ({ product, type }: Props) => {
       type === 'small' ? (
         <div className="flex gap-6 mb-7 text-sm">
           <div className="flex-2">
-            <img src={shoe?.image?.original} alt={shoe?.name} className="" />
+            <ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} />
           </div>
 
           <div className="text-gray-600 flex-4">
@@ -44,7 +45,7 @@ const CheckoutProduct = ({ product, type }: Props) => {
         <div className="flex justify-between mb-7 text-base">
           <div className="flex gap-5">
             <div>
-              <img src={shoe?.image?.original} alt={shoe?.name} className="h-40 w-40" />
+              <ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} className="h-40 w-40" />
             </div>
 
             <div className="text-gray-600">

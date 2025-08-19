@@ -5,6 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import { RootState } from '../redux/store';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
+import ShoeImage from '../components/ShoeImage';
 import { Shoe, UserType } from '../types/types';
 import { postImage } from '../utils/postImage';
 
@@ -126,7 +127,7 @@ const ReviewForm = () => {
           <div className="font-bold text-2xl">WRITE YOUR REVIEW</div>
           <div className="flex justify-between items-center border border-gray-300 p-4 rounded-lg my-4">
             <div className="font-bold text-lg">{shoe.name}</div>
-            <img src={shoe.image?.original} alt={shoe.name} className="h-150 w-150" />
+            <ShoeImage src={shoe.image?.original || ''} alt={shoe.name || ''} className="h-150 w-150" />
           </div>
 
           <div className="">

@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Shoe } from '../types/types'
 import { titleCase } from '../utils/filterShoes'
+import ShoeImage from './ShoeImage'
 
 interface Props {
   shoe: Partial<Shoe>
@@ -10,9 +11,9 @@ interface Props {
 const SmallOrder = ({ shoe }: Props) => {
 
   return (
-    <div className="flex sm:mb-4 sm:gap-3">
+    <div className="flex sm:mb-4 sm:gap-3 gap-2">
       <div className="flex-2">
-        <img src={shoe?.image?.original} className="" alt="" />
+        <ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} />
       </div>
 
       <div className="flex-8 sm:flex-4">

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from 'react-router-dom';
 import FullShoeReviews from '../components/FullShoeReviews';
+import ShoeImage from '../components/ShoeImage';
 import ShoppingCartModal from '../components/ShoppingCartModal';
 import { updateCart } from '../redux/cartRedux';
 import { RootState } from "../redux/store";
@@ -164,7 +165,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
                       <input type="range" id="volume" name="volume" value={imageNum} onChange={(e) => setImageNum(Number(e.target.value))} min="0" max={shoe.image["360"].length - 1} className="w-full"></input>
                     </div>
                   ) : (
-                    <img src={shoe?.image?.original} alt={shoe.name} />
+                    <ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} />
                   )}
                 </div>
 

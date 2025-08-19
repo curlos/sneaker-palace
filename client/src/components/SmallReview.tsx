@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
+import ShoeImage from './ShoeImage'
 import { IRating, Shoe, UserType } from '../types/types'
 
 interface Props {
@@ -60,7 +61,7 @@ const SmallReview = ({ review, author }: Props) => {
             <Link to={`/shoe/${shoe.shoeID}`}>
               <div className="flex items-center gap-2">
                 <div>
-                  <img src={shoe?.image?.original} alt={shoe.name} className="h-24 w-24 sm:h-16 sm:w-16" />
+                  <ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} className="h-24 w-24 sm:h-16 sm:w-16" />
                 </div>
                 <div>
                   <div className="text-sm">{shoe.name}</div>
