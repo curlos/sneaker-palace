@@ -5,6 +5,11 @@ import {
   REGISTER, REHYDRATE
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
+import { baseAPI } from '../api/api'
+// Import API slices to ensure they're registered
+import '../api/shoesApi'
+import '../api/ratingsApi'
+import '../api/cartApi'
 import cartReducer from './cartRedux'
 import userReducer from './userRedux'
 
@@ -14,7 +19,11 @@ const persistConfig = {
   storage,
 }
 
-const rootReducer = combineReducers({ user: userReducer, cart: cartReducer })
+const rootReducer = combineReducers({ 
+  user: userReducer, 
+  cart: cartReducer,
+  [baseAPI.reducerPath]: baseAPI.reducer
+})
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
@@ -25,7 +34,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(baseAPI.middleware),
 })
 
 export type RootState = ReturnType<typeof rootReducer>

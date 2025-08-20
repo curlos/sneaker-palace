@@ -1,19 +1,20 @@
 import { HeartIcon as HeartOutline } from '@heroicons/react/outline';
 import { HeartIcon as HeartSolid } from '@heroicons/react/solid';
-import axios from 'axios';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from 'react-router-dom';
+import { useGetRatingsWithAuthorsQuery } from '../api/ratingsApi';
+import { useGetShoeQuery, useToggleFavoriteShoeMutation } from '../api/shoesApi';
+import { useUpdateUserCartMutation } from '../api/cartApi';
 import FullShoeReviews from '../components/FullShoeReviews';
 import ShoeImage from '../components/ShoeImage';
 import ShoppingCartModal from '../components/ShoppingCartModal';
 import { updateCart } from '../redux/cartRedux';
 import { RootState } from "../redux/store";
-import { updateUser } from '../redux/userRedux';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
-import { IProduct, IRating, Shoe, UserType } from "../types/types";
+import { IProduct, UserType } from "../types/types";
 import { ObjectId } from 'bson';
 import * as short from "short-uuid";
 
@@ -35,37 +36,30 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   const dispatch = useDispatch();
   const initialSize = (Object.keys(user).length > 0 && user.preselectedShoeSize && String(user.preselectedShoeSize)) || AVERAGE_MAN_FOOT_SIZE;
 
-  const [shoe, setShoe] = useState<Partial<Shoe>>({});
-  const [shoeRatings, setShoeRatings] = useState<Array<IRating>>([]);
+  // RTK Query hooks
+  const { data: shoe, isLoading: shoeLoading } = useGetShoeQuery(shoeID);
+  const { data: shoeRatings, isLoading: reviewLoading } = useGetRatingsWithAuthorsQuery(
+    shoe?.ratings || [], 
+    { skip: !shoe?.ratings?.length }
+  );
+  const [toggleFavorite] = useToggleFavoriteShoeMutation();
+  const [updateUserCart] = useUpdateUserCartMutation();
+
+  // Local state
   const [selectedSize, setSelectedSize] = useState(initialSize);
   const [imageNum, setImageNum] = useState(0);
-  const [shoeLoading, setShoeLoading] = useState(false);
-  const [reviewLoading, setReviewLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  // Scroll to top when shoe changes
   useEffect(() => {
     window.scrollTo(0, 0);
-    setShoeLoading(true);
-    setReviewLoading(true);
-
-    const fetchFromAPI = async () => {
-
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`);
-      setShoe(response.data);
-      setShoeLoading(false);
-
-      const ratings = await fetchAllRatings(response.data.ratings);
-      setShoeRatings(ratings);
-      setReviewLoading(false);
-    };
-    fetchFromAPI();
   }, [shoeID]);
 
   const handleAddToCart = async () => {
     setShowShoppingCartModal(true);
 
     if (Object.keys(user).length <= 0) {
-      if (shoe.shoeID && shoe.retailPrice !== undefined && shoe.retailPrice >= 0) {
+      if (shoe?.shoeID && shoe.retailPrice !== undefined && shoe.retailPrice >= 0) {
         const newProduct: IProduct = {
           _id: new ObjectId().toString(),
           productID: shoe.shoeID,
@@ -105,13 +99,16 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
       };
       const currentProducts = currentCart?.products;
 
-      const body = { products: [...currentProducts, newProduct] };
+      const products = [...currentProducts, newProduct];
 
-
-      const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body);
-      const newCart = response.data;
-
-      dispatch(updateCart(newCart));
+      try {
+        await updateUserCart({ 
+          cartId: currentCart._id!, 
+          products 
+        }).unwrap();
+      } catch (error) {
+        console.error('Failed to update cart:', error);
+      }
     }
 
   };
@@ -122,35 +119,17 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
       return;
     }
 
-    const body = {
-      shoeID: shoeID,
-      userID: user['_id']
-    };
-    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/shoes/favorite`, body);
-
-    dispatch(updateUser(response.data.updatedUser));
-    setShoe(response.data.updatedShoe);
-  };
-
-  const fetchAllRatings = async (ratingIDs: Array<string>) => {
-    const ratings = [];
-
-    if (ratingIDs) {
-      for (let ratingID of ratingIDs) {
-        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${ratingID}`);
-
-        if (response.data !== null) {
-          const authorResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`);
-          ratings.push({ ...response.data, postedByUser: authorResponse.data });
-        }
-      }
+    try {
+      await toggleFavorite({ 
+        shoeID: shoeID, 
+        userID: user._id! 
+      }).unwrap();
+      // Optimistic update is handled in the API slice
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
     }
-    return ratings;
   };
 
-  const updateShoeRating = (newRating: number) => {
-    setShoe(prevShoe => ({ ...prevShoe, rating: newRating }))
-  }
 
   return (
     <div className="flex-grow">
@@ -171,8 +150,8 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
                 </div>
 
                 <div className="flex-2 p-10 xl:p-4">
-                  <div className="text-2xl">{shoe.name}</div>
-                  <div className="text-xl text-red-800">${shoe.retailPrice}</div>
+                  <div className="text-2xl">{shoe?.name}</div>
+                  <div className="text-xl text-red-800">${shoe?.retailPrice}</div>
                   <div className="my-5">{`SELECT US ${shoe?.gender?.toUpperCase()}S`}</div>
                   <div className="flex flex-wrap box-border justify-between">
                     {SHOE_SIZES.map((shoeSize) => {
@@ -213,38 +192,37 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
                   </div>
 
                   <div>
-                    <span className="font-bold">Release date:</span> {shoe.releaseDate && moment(shoe.releaseDate).isValid() ? moment(shoe.releaseDate).format('MMMM Do, YYYY') : 'TBA'}
+                    <span className="font-bold">Release date:</span> {shoe?.releaseDate && moment(shoe.releaseDate).isValid() ? moment(shoe.releaseDate).format('MMMM Do, YYYY') : 'TBA'}
                   </div>
 
                   <div>
-                    <span className="font-bold">SKU:</span> {shoe.sku}
+                    <span className="font-bold">SKU:</span> {shoe?.sku}
                   </div>
 
                   <div className="flex w-full my-5">
-                    {shoe.links?.flightClub ? (
+                    {shoe?.links?.flightClub ? (
                       <a href={shoe.links.flightClub} target="_blank" rel="noreferrer">
                         <img src="/assets/flight_club.png" alt={'Flight Club'} className="w-32" />
                       </a>
                     ) : null}
 
-                    {shoe.links?.goat ? (
+                    {shoe?.links?.goat ? (
                       <a href={shoe.links.goat} target="_blank" rel="noreferrer">
                         <img src="/assets/goat.png" alt={'Goat'} className="w-32" />
                       </a>
                     ) : null}
 
-                    {shoe.links?.stadiumGoods ? (
+                    {shoe?.links?.stadiumGoods ? (
                       <a href={shoe.links.stadiumGoods} target="_blank" rel="noreferrer">
                         <img src="/assets/stadium_goods.svg" alt={'Stadium Goods'} className="w-32" />
                       </a>
                     ) : null}
 
-                    {shoe.links?.stockX ? (
+                    {shoe?.links?.stockX ? (
                       <a href={shoe.links.stockX} target="_blank" rel="noreferrer">
                         <img src="/assets/stockx.jpeg" alt={'Stock X'} className="w-32" />
                       </a>
                     ) : null}
-
 
                   </div>
                 </div>
@@ -252,7 +230,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
             )}
 
           {reviewLoading ? <div className="flex justify-center"><CircleLoader size={16} /></div> : (
-            <FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} onShoeRatingUpdate={updateShoeRating} />
+            <FullShoeReviews shoe={shoe || {}} shoeRatings={shoeRatings as any || []} setShoeRatings={() => {}} />
           )}
 
         </div>
