@@ -1,11 +1,11 @@
-import axios from 'axios'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
+import { useGetShoeQuery } from '../api/shoesApi'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import ShoeImage from './ShoeImage'
-import { IRating, Shoe, UserType } from '../types/types'
+import { IRating, UserType } from '../types/types'
 
 interface Props {
   review: IRating,
@@ -16,22 +16,7 @@ const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-
 
 const SmallReview = ({ review, author }: Props) => {
 
-  const [shoe, setShoe] = useState<Partial<Shoe>>({})
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-    setLoading(true)
-
-    const fetchFromAPI = async () => {
-
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${review.shoeID}`)
-      setShoe(response.data)
-      setLoading(false)
-    }
-    fetchFromAPI()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { data: shoe, isLoading: loading } = useGetShoeQuery(review.shoeID)
 
   return (
     loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (

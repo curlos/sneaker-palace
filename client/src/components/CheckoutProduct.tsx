@@ -1,8 +1,7 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import { useGetShoeQuery } from '../api/shoesApi'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import ShoeImage from './ShoeImage'
-import { IProduct, Shoe } from '../types/types'
+import { IProduct } from '../types/types'
 
 interface Props {
   product: IProduct,
@@ -11,18 +10,7 @@ interface Props {
 
 const CheckoutProduct = ({ product, type }: Props) => {
 
-  const [shoe, setShoe] = useState<Partial<Shoe>>()
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-    const fetchFromAPI = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${product.productID}`)
-      setShoe(response.data)
-      setLoading(false)
-    }
-    fetchFromAPI()
-  }, [product])
+  const { data: shoe, isLoading: loading } = useGetShoeQuery(product.productID)
 
   return (
 

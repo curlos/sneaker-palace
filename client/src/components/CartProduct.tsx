@@ -1,12 +1,13 @@
-import axios from 'axios';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useGetShoeQuery } from '../api/shoesApi';
+import { useUpdateUserCartMutation } from '../api/cartApi';
 import { updateCart } from '../redux/cartRedux';
 import { RootState } from '../redux/store';
 import CartProductSkeleton from '../skeleton_loaders/CartProductSkeleton';
 import ShoeImage from './ShoeImage';
-import { IProduct, Shoe, UserType } from "../types/types";
+import { IProduct, UserType } from "../types/types";
 import * as short from "short-uuid"
 
 
@@ -22,29 +23,10 @@ const CartProduct = ({ productInfo }: Props) => {
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const { currentCart } = useSelector((state: RootState) => state.cart)
-  const isMountedRef = useRef(true)
 
-  const [shoe, setShoe] = useState<Partial<Shoe>>({})
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchFromAPI = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${productInfo.productID}`)
-
-      // Only update state if component is still mounted
-      if (isMountedRef.current) {
-        setShoe(response.data)
-        setLoading(false)
-      }
-    }
-
-    fetchFromAPI()
-    
-    // Cleanup function to mark component as unmounted
-    return () => {
-      isMountedRef.current = false
-    }
-  }, [productInfo])
+  // RTK Query hooks
+  const { data: shoe, isLoading: loading } = useGetShoeQuery(productInfo.productID)
+  const [updateUserCart] = useUpdateUserCartMutation()
 
   const handleChangeSize = async (e: ChangeEvent<HTMLSelectElement>) => {
 
@@ -77,11 +59,14 @@ const CartProduct = ({ productInfo }: Props) => {
         localStorage.setItem('currentCart', JSON.stringify(newCart))
 
       } else {
-        const body = { products: newProducts }
-        const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
-        const newCart = response.data
-
-        dispatch(updateCart(newCart))
+        try {
+          await updateUserCart({ 
+            cartId: currentCart._id!, 
+            products: newProducts 
+          }).unwrap()
+        } catch (error) {
+          console.error('Failed to update cart size:', error)
+        }
       }
     }
   }
@@ -115,11 +100,14 @@ const CartProduct = ({ productInfo }: Props) => {
         dispatch(updateCart(newCart))
         localStorage.setItem('currentCart', JSON.stringify(newCart))
       } else {
-        const body = { products: newProducts }
-        const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
-        const newCart = response.data
-
-        dispatch(updateCart(newCart))
+        try {
+          await updateUserCart({ 
+            cartId: currentCart._id!, 
+            products: newProducts 
+          }).unwrap()
+        } catch (error) {
+          console.error('Failed to update cart:', error)
+        }
       }
     }
   }
@@ -132,12 +120,14 @@ const CartProduct = ({ productInfo }: Props) => {
       dispatch(updateCart(newCart))
       localStorage.setItem('currentCart', JSON.stringify(newCart))
     } else {
-      const body = { products: newProducts }
-
-      const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/cart/${currentCart?._id}`, body)
-      const newCart = response.data
-
-      dispatch(updateCart(newCart))
+      try {
+        await updateUserCart({ 
+          cartId: currentCart._id!, 
+          products: newProducts || [] 
+        }).unwrap()
+      } catch (error) {
+        console.error('Failed to remove from cart:', error)
+      }
     }
   }
 

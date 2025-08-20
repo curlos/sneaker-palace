@@ -1,8 +1,8 @@
-import axios from 'axios'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { IOrder, IProduct, Shoe } from '../types/types'
+import { useGetShoeQuery } from '../api/shoesApi'
+import CircleLoader from '../skeleton_loaders/CircleLoader'
+import { IOrder } from '../types/types'
 import SmallOrderShoe from './SmallOrderShoe'
 import * as short from "short-uuid"
 
@@ -10,27 +10,17 @@ interface Props {
   order: IOrder
 }
 
+// Component to fetch and display a single shoe
+const OrderShoe = ({ productID }: { productID: string }) => {
+  const { data: shoe, isLoading } = useGetShoeQuery(productID)
+  
+  if (isLoading) return <CircleLoader size={10} />
+  if (!shoe) return null
+  
+  return <SmallOrderShoe key={shoe._id} shoe={shoe} />
+}
+
 const SmallOrder = ({ order }: Props) => {
-
-  const [shoes, setShoes] = useState<Array<Shoe>>()
-
-  useEffect(() => {
-    const fetchFromAPI = async () => {
-      const newShoes = await getAllShoes(order.products)
-      setShoes(newShoes)
-    }
-    fetchFromAPI()
-  }, [order.products])
-
-  const getAllShoes = async (products: Array<IProduct>) => {
-    const newShoes = []
-    for (let product of products) {
-      const { productID } = product
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${productID}`)
-      newShoes.push(response.data)
-    }
-    return newShoes
-  }
 
   return (
     <div className="border border-gray-300 rounded-lg my-4 p-5 text-gray-800">
@@ -53,7 +43,11 @@ const SmallOrder = ({ order }: Props) => {
         </div>
       </div>
 
-      {shoes?.map((shoe) => <SmallOrderShoe key={`${shoe._id}-${short.generate()}`} shoe={shoe} />)}
+      <div className="space-y-1">
+        {order.products?.map((product) => 
+          <OrderShoe key={`${product.productID}-${short.generate()}`} productID={product.productID} />
+        )}
+      </div>
     </div>
   )
 }

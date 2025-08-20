@@ -4,7 +4,6 @@ import { Shoe } from '../types/types'
 
 interface Props {
   data: Array<Shoe>,
-  handleNewPageClick: (paginatedShoes: Array<Shoe>) => void,
   pageLimit: number,
   dataLimit: number,
   currentPage: number,
@@ -14,7 +13,7 @@ interface Props {
   totalShoeCount: number
 }
 
-export const Pagination = ({ data, handleNewPageClick, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType, totalShoeCount }: Props) => {
+export const Pagination = ({ data, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType, totalShoeCount }: Props) => {
 
   useEffect(() => {
     window.scrollTo(0, 0)

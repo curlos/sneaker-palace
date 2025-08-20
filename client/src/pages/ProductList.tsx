@@ -1,7 +1,7 @@
 import { MenuIcon, XIcon } from '@heroicons/react/solid'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useGetPaginatedShoesMutation } from '../api/shoesApi'
 import { Pagination } from '../components/Pagination'
 import Sidebar from '../components/Sidebar'
 import SmallShoe from '../components/SmallShoe'
@@ -31,63 +31,40 @@ const ProductList = () => {
   const { state } = useLocation<stateType>();
   const windowSize = useWindowSize()
 
-  const [paginatedShoes, setPaginatedShoes] = useState<Array<Shoe>>([])
   const [sortType, setSortType] = useState('Newest')
   const [filters, setFilters] = useState<any>(getInitialFilters(state))
-
   const [currentPage, setCurrentPage] = useState(1)
-  const [loading, setLoading] = useState(true)
   const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true)
-  const [totalShoeCount, setTotalShoeCount] = useState(0)
+  
+  // RTK Query
+  const [getPaginatedShoes, { data: shoesData, isLoading: loading }] = useGetPaginatedShoesMutation()
+  const paginatedShoes = shoesData?.docs || []
+  const totalShoeCount = shoesData?.totalDocs || 0
 
   useEffect(() => {
     setShowSidebar(windowSize.width < 1280 ? false : true)
   }, [windowSize])
 
   useEffect(() => {
-    setLoading(true)
     window.scrollTo(0, 0)
-    const fetchFromAPI = async () => {
-      const body = {
-        filters,
-        sortType,
-        pageNum: currentPage,
-        query: query.get('query') || ''
-      }
-
-      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes`, body)
-      const newShoes = response.data.docs
-      setPaginatedShoes(newShoes)
-      setTotalShoeCount(response.data.totalDocs)
-      setLoading(false)
-    }
-
-    fetchFromAPI()
+    getPaginatedShoes({
+      filters,
+      sortType,
+      pageNum: currentPage,
+      query: query.get('query') || ''
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.get('query'), currentPage])
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    setLoading(true)
-
-    const fetchFromAPI = async () => {
-      const body = {
-        filters,
-        sortType,
-        pageNum: currentPage,
-        query: query.get('query') || ''
-      }
-
-      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes`, body)
-      const newShoes = response.data.docs
-      setPaginatedShoes(newShoes)
-      setTotalShoeCount(response.data.totalDocs)
-      setCurrentPage(1)
-      setLoading(false)
-    }
-
-    fetchFromAPI()
-
+    setCurrentPage(1)
+    getPaginatedShoes({
+      filters,
+      sortType,
+      pageNum: 1,
+      query: query.get('query') || ''
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, sortType, query.get('query')])
 
@@ -96,9 +73,6 @@ const ProductList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state && state['gender'], state && state['brand']])
 
-  const handleNewPageClick = (newPaginatedShoes: Array<Shoe>) => {
-    setPaginatedShoes(newPaginatedShoes)
-  }
 
   return (
     <div className="text-xl-lg">
@@ -154,7 +128,7 @@ const ProductList = () => {
                   })}
                 </div>
 
-                <Pagination data={paginatedShoes} pageLimit={Math.ceil(totalShoeCount / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} handleNewPageClick={handleNewPageClick} filters={filters} sortType={sortType} totalShoeCount={totalShoeCount} />
+                <Pagination data={paginatedShoes} pageLimit={Math.ceil(totalShoeCount / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} filters={filters} sortType={sortType} totalShoeCount={totalShoeCount} />
               </div>
             )}
         </div>

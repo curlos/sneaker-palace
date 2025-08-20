@@ -9,6 +9,32 @@ export const shoesApi = baseAPI.injectEndpoints({
       providesTags: (_, __, shoeId) => [{ type: 'Shoe', id: shoeId }],
     }),
 
+    // Get shoe by ObjectID (used in Favorites)
+    getShoeByObjectId: builder.query({
+      query: (objectId: string) => `/shoes/objectID/${objectId}`,
+      providesTags: (result) => result ? [{ type: 'Shoe', id: result.shoeID }] : [],
+    }),
+
+    // Get paginated shoes (used in ProductList)
+    getPaginatedShoes: builder.mutation({
+      query: ({ filters, sortType, pageNum, query }: { 
+        filters: any; 
+        sortType: string; 
+        pageNum: number; 
+        query: string;
+      }) => ({
+        url: '/shoes',
+        method: 'POST',
+        body: { filters, sortType, pageNum, query },
+      }),
+    }),
+
+    // Get shoes from a specific page (used in MoreShoes)
+    getShoesFromPage: builder.query({
+      query: (pageNum: number) => `/shoes/page/${pageNum}`,
+      providesTags: ['Shoe'],
+    }),
+
     // Search shoes
     searchShoes: builder.mutation({
       query: ({ searchText, pageNum }: { searchText: string; pageNum: number }) => ({
@@ -63,6 +89,9 @@ export const shoesApi = baseAPI.injectEndpoints({
 
 export const {
   useGetShoeQuery,
+  useGetShoeByObjectIdQuery,
+  useGetPaginatedShoesMutation,
+  useGetShoesFromPageQuery,
   useSearchShoesMutation,
   useToggleFavoriteShoeMutation,
 } = shoesApi
