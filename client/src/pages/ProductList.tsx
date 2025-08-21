@@ -1,7 +1,7 @@
 import { MenuIcon, XIcon } from '@heroicons/react/solid'
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useGetPaginatedShoesMutation } from '../api/shoesApi'
+import { useGetPaginatedShoesQuery } from '../api/shoesApi'
 import { Pagination } from '../components/Pagination'
 import Sidebar from '../components/Sidebar'
 import SmallShoe from '../components/SmallShoe'
@@ -37,7 +37,12 @@ const ProductList = () => {
   const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true)
   
   // RTK Query
-  const [getPaginatedShoes, { data: shoesData, isLoading: loading }] = useGetPaginatedShoesMutation()
+  const { data: shoesData, isLoading: loading } = useGetPaginatedShoesQuery({
+    filters,
+    sortType,
+    pageNum: currentPage,
+    query: query.get('query') || ''
+  })
   const paginatedShoes = shoesData?.docs || []
   const totalShoeCount = shoesData?.totalDocs || 0
 
@@ -47,24 +52,12 @@ const ProductList = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    getPaginatedShoes({
-      filters,
-      sortType,
-      pageNum: currentPage,
-      query: query.get('query') || ''
-    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.get('query'), currentPage])
 
   useEffect(() => {
     window.scrollTo(0, 0)
     setCurrentPage(1)
-    getPaginatedShoes({
-      filters,
-      sortType,
-      pageNum: 1,
-      query: query.get('query') || ''
-    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, sortType, query.get('query')])
 

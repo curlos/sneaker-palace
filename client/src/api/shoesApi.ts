@@ -16,7 +16,7 @@ export const shoesApi = baseAPI.injectEndpoints({
     }),
 
     // Get paginated shoes (used in ProductList)
-    getPaginatedShoes: builder.mutation({
+    getPaginatedShoes: builder.query({
       query: ({ filters, sortType, pageNum, query }: { 
         filters: any; 
         sortType: string; 
@@ -27,6 +27,7 @@ export const shoesApi = baseAPI.injectEndpoints({
         method: 'POST',
         body: { filters, sortType, pageNum, query },
       }),
+      providesTags: ['Shoe'],
     }),
 
     // Get shoes from a specific page (used in MoreShoes)
@@ -90,7 +91,7 @@ export const shoesApi = baseAPI.injectEndpoints({
 export const {
   useGetShoeQuery,
   useGetShoeByObjectIdQuery,
-  useGetPaginatedShoesMutation,
+  useGetPaginatedShoesQuery,
   useGetShoesFromPageQuery,
   useSearchShoesMutation,
   useToggleFavoriteShoeMutation,
