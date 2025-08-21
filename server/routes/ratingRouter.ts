@@ -12,6 +12,26 @@ router.get('/:ratingID', async (req: Request, res: Response) => {
   return res.json(rating)
 })
 
+// Get all ratings for a specific shoe with author data
+router.get('/shoe/:shoeID', async (req: Request, res: Response) => {
+  try {
+    const ratings = await Rating.find({ shoeID: req.params.shoeID })
+    const ratingsWithAuthors = []
+
+    for (const rating of ratings) {
+      const user = await User.findById(rating.userID)
+      ratingsWithAuthors.push({
+        ...rating.toObject(),
+        postedByUser: user
+      })
+    }
+
+    return res.json(ratingsWithAuthors)
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch ratings for shoe' })
+  }
+})
+
 // Helper functions for efficient rating calculations
 const addRatingToAverage = (currentAvg: number, currentCount: number, newRating: number) => {
   if (currentCount === 0) return newRating

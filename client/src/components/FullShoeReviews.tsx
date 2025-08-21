@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
 import { IRating, Shoe } from '../types/types'
@@ -8,12 +7,10 @@ import * as short from "short-uuid"
 
 interface Props {
   shoe: Partial<Shoe>,
-  shoeRatings: Array<IRating>,
-  setShoeRatings: React.Dispatch<React.SetStateAction<Array<IRating>>>,
-  onShoeRatingUpdate?: (newRating: number) => void
+  shoeRatings: Array<IRating>
 }
 
-const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings, onShoeRatingUpdate }: Props) => {
+const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
 
   return (
     <div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
@@ -58,9 +55,8 @@ const FullShoeReviews = ({ shoe, shoeRatings, setShoeRatings, onShoeRatingUpdate
             Top reviews
           </div>
 
-
           <div>
-            {shoeRatings.map((shoeRating) => <Review key={`${shoeRating}-${short.generate()}`} shoeRating={shoeRating} shoe={shoe} shoeRatings={shoeRatings} setShoeRatings={setShoeRatings} onShoeRatingUpdate={onShoeRatingUpdate} />)}
+            {shoeRatings.map((shoeRating) => <Review key={`${shoeRating}-${short.generate()}`} shoeRating={shoeRating} shoe={shoe} />)}
           </div>
         </div>
       ) : null}

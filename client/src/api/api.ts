@@ -22,6 +22,7 @@ export const baseAPI = createApi({
   tagTypes: [
     'Shoe',
     'Rating', 
+    'RatingsByShoe',
     'User',
     'Cart'
   ],

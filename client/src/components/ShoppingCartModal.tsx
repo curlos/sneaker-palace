@@ -1,12 +1,12 @@
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { useGetShoeQuery } from '../api/shoesApi'
 import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import ShoeImage from './ShoeImage'
-import { IProduct, Shoe } from '../types/types'
+import { IProduct } from '../types/types'
 
 interface Props {
   showModal: boolean,
@@ -17,24 +17,21 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
 
   const { currentCart } = useSelector((state: RootState) => state.cart)
   const [productInfo, setProductInfo] = useState<IProduct>()
-  const [shoe, setShoe] = useState<Partial<Shoe>>()
-  const [loading, setLoading] = useState(false)
 
+  // Get the last product added to cart
+  const lastProduct = currentCart?.products?.[currentCart.products.length - 1]
+  
+  // Use RTK Query to fetch shoe data
+  const { data: shoe, isLoading: loading } = useGetShoeQuery(lastProduct?.productID || '', {
+    skip: !lastProduct?.productID
+  })
+
+  // Update product info when cart changes
   useEffect(() => {
-    const fetchFromAPI = async () => {
-      setLoading(true)
-      if (currentCart && currentCart.products && currentCart?.products?.length >= 1) {
-        const lastProduct = currentCart.products[currentCart.products.length - 1]
-
-        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${lastProduct.productID}`)
-        setShoe(response.data)
-        setProductInfo(lastProduct)
-        setLoading(false)
-      }
-      setLoading(false)
+    if (lastProduct) {
+      setProductInfo(lastProduct)
     }
-    fetchFromAPI()
-  }, [currentCart])
+  }, [lastProduct])
 
   const handleBubblingDownClick = (e: React.FormEvent) => {
     e.stopPropagation()

@@ -20,7 +20,7 @@ export const ratingsApi = baseAPI.injectEndpoints({
     getRatingsWithAuthors: builder.query({
       queryFn: async (ratingIDs: string[], _api, _extraOptions, fetchWithBQ) => {
         try {
-          const ratings = []
+          const ratings: any[] = []
           
           if (ratingIDs && ratingIDs.length > 0) {
             for (const ratingID of ratingIDs) {
@@ -60,6 +60,116 @@ export const ratingsApi = baseAPI.injectEndpoints({
         'Rating'
       ],
     }),
+
+    // Get ratings for a specific shoe (new decoupled approach)
+    getRatingsByShoe: builder.query({
+      query: (shoeID: string) => `/rating/shoe/${shoeID}`,
+      providesTags: (result, error, shoeID) => [
+        { type: 'RatingsByShoe' as const, id: shoeID },
+        ...(result || []).map((rating: any) => ({ type: 'Rating' as const, id: rating._id })),
+      ],
+    }),
+
+    // Like a rating
+    likeRating: builder.mutation({
+      query: ({ ratingID, userID }: { ratingID: string, userID: string }) => ({
+        url: '/rating/like',
+        method: 'PUT',
+        body: { ratingID, userID },
+      }),
+      invalidatesTags: (result, _error, { ratingID }) => [
+        { type: 'Rating', id: ratingID },
+        { type: 'User', id: result?.updatedUser?._id }
+      ],
+    }),
+
+    // Dislike a rating
+    dislikeRating: builder.mutation({
+      query: ({ ratingID, userID }: { ratingID: string, userID: string }) => ({
+        url: '/rating/dislike',
+        method: 'PUT',
+        body: { ratingID, userID },
+      }),
+      invalidatesTags: (result, _error, { ratingID }) => [
+        { type: 'Rating', id: ratingID },
+        { type: 'User', id: result?.updatedUser?._id }
+      ],
+    }),
+
+    // Delete a rating
+    deleteRating: builder.mutation({
+      query: (ratingId: string) => ({
+        url: `/rating/${ratingId}`,
+        method: 'DELETE',
+      }),
+      // Optimistic deletion - remove rating immediately
+      onQueryStarted: async (ratingId, { dispatch, queryFulfilled, getState }) => {
+        const patchResults: any[] = []
+        
+        // Find all getRatingsByShoe queries and optimistically remove the rating
+        const state = getState() as any
+        const api = state.api
+        
+        // Look through all cached queries to find ones that contain this rating
+        Object.entries(api.queries).forEach(([queryKey, query]: [string, any]) => {
+          if (queryKey.startsWith('getRatingsByShoe') && query?.data) {
+            const shoeID = queryKey.split('(')[1]?.split(')')[0]?.replace(/"/g, '')
+            if (shoeID && query.data.some((rating: any) => rating._id === ratingId)) {
+              const patchResult = dispatch(
+                ratingsApi.util.updateQueryData('getRatingsByShoe', shoeID, (draft) => {
+                  const index = draft.findIndex((rating: any) => rating._id === ratingId)
+                  if (index !== -1) {
+                    draft.splice(index, 1)
+                  }
+                })
+              )
+              patchResults.push(patchResult)
+            }
+          }
+        })
+
+        try {
+          await queryFulfilled
+        } catch (error) {
+          // Rollback optimistic updates on failure
+          patchResults.forEach(patchResult => patchResult.undo())
+          console.error('Failed to delete rating:', error)
+        }
+      },
+      invalidatesTags: (result, _error, ratingId) => [
+        { type: 'Rating', id: ratingId },
+        { type: 'RatingsByShoe', id: result?.deletedRating?.shoeID },
+        { type: 'Shoe', id: result?.updatedShoe?.shoeID },
+        { type: 'User', id: result?.deletedRating?.userID },
+      ],
+    }),
+
+    // Create a new rating
+    createRating: builder.mutation({
+      query: (ratingData: any) => ({
+        url: '/rating/rate',
+        method: 'POST',
+        body: ratingData,
+      }),
+      invalidatesTags: (result, _error, ratingData) => [
+        { type: 'RatingsByShoe', id: ratingData.shoeID },
+        { type: 'Shoe', id: result?.updatedShoe?.shoeID },
+        { type: 'User', id: result?.updatedUser?._id }
+      ],
+    }),
+
+    // Update an existing rating
+    updateRating: builder.mutation({
+      query: ({ ratingId, ratingData }: { ratingId: string, ratingData: any }) => ({
+        url: `/rating/edit/${ratingId}`,
+        method: 'PUT',
+        body: ratingData,
+      }),
+      invalidatesTags: (result, _error, { ratingId, ratingData }) => [
+        { type: 'Rating', id: ratingId },
+        { type: 'RatingsByShoe', id: ratingData?.shoeID },
+      ],
+    }),
   }),
 })
 
@@ -67,4 +177,10 @@ export const {
   useGetRatingQuery,
   useGetUserQuery, 
   useGetRatingsWithAuthorsQuery,
+  useGetRatingsByShoeQuery,
+  useLikeRatingMutation,
+  useDislikeRatingMutation,
+  useDeleteRatingMutation,
+  useCreateRatingMutation,
+  useUpdateRatingMutation,
 } = ratingsApi

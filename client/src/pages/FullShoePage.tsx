@@ -4,7 +4,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from 'react-router-dom';
-import { useGetRatingsWithAuthorsQuery } from '../api/ratingsApi';
+import { useGetRatingsByShoeQuery } from '../api/ratingsApi';
 import { useGetShoeQuery, useToggleFavoriteShoeMutation } from '../api/shoesApi';
 import { useUpdateUserCartMutation } from '../api/cartApi';
 import FullShoeReviews from '../components/FullShoeReviews';
@@ -38,10 +38,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
   // RTK Query hooks
   const { data: shoe, isLoading: shoeLoading } = useGetShoeQuery(shoeID);
-  const { data: shoeRatings, isLoading: reviewLoading } = useGetRatingsWithAuthorsQuery(
-    shoe?.ratings || [], 
-    { skip: !shoe?.ratings?.length }
-  );
+  const { data: shoeRatings, isLoading: reviewLoading } = useGetRatingsByShoeQuery(shoeID);
   const [toggleFavorite] = useToggleFavoriteShoeMutation();
   const [updateUserCart] = useUpdateUserCartMutation();
 
@@ -230,7 +227,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
             )}
 
           {reviewLoading ? <div className="flex justify-center"><CircleLoader size={16} /></div> : (
-            <FullShoeReviews shoe={shoe || {}} shoeRatings={shoeRatings as any || []} setShoeRatings={() => {}} />
+            <FullShoeReviews shoe={shoe || {}} shoeRatings={shoeRatings as any || []} />
           )}
 
         </div>

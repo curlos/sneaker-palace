@@ -1,11 +1,11 @@
 import { PencilAltIcon, ThumbDownIcon as ThumbDownOutline, ThumbUpIcon as ThumbUpOutline, TrashIcon } from '@heroicons/react/outline'
 import { ThumbDownIcon as ThumbDownSolid, ThumbUpIcon as ThumbUpSolid } from '@heroicons/react/solid'
-import axios from 'axios'
 import moment from 'moment'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
+import { useLikeRatingMutation, useDislikeRatingMutation, useDeleteRatingMutation } from '../api/ratingsApi'
 import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
 import { IRating, Shoe, UserType } from '../types/types'
@@ -13,15 +13,13 @@ import ReviewModal from './ReviewModal'
 
 interface Props {
   shoeRating: IRating,
-  shoeRatings: Array<IRating>,
-  setShoeRatings: React.Dispatch<React.SetStateAction<Array<IRating>>>,
   shoe: Partial<Shoe>,
   onShoeRatingUpdate?: (newRating: number) => void
 }
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
-const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe, onShoeRatingUpdate }: Props) => {
+const Review = ({ shoeRating, shoe }: Props) => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const dispatch = useDispatch()
@@ -29,26 +27,29 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe, onShoeRatingUpd
   const review = shoeRating
   const [showModal, setShowModal] = useState(false)
 
+  // RTK Query mutations
+  const [likeRating] = useLikeRatingMutation()
+  const [dislikeRating] = useDislikeRatingMutation()
+  const [deleteRating] = useDeleteRatingMutation()
+
   const handleLike = async () => {
     if (Object.keys(user).length === 0 || !user) {
       history.push('/login');
       return;
     }
 
-    const body = {
-      ratingID: review._id,
-      userID: user._id
+    try {
+      const response = await likeRating({
+        ratingID: review._id,
+        userID: user._id!
+      }).unwrap()
+      
+      // RTK Query will automatically refetch ratings data via cache invalidation
+      // Just update the user data in Redux
+      dispatch(updateUser(response.updatedUser))
+    } catch (error) {
+      console.error('Failed to like rating:', error)
     }
-    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/like`, body)
-
-    const updatedRating = { ...review, helpful: response.data.updatedRating.helpful, notHelpful: response.data.updatedRating.notHelpful }
-    
-    // Update only the parent's ratings array
-    setShoeRatings(shoeRatings.map(rating => 
-      rating._id === review._id ? updatedRating : rating
-    ))
-    
-    dispatch(updateUser(response.data.updatedUser))
   }
 
   const handleDislike = async () => {
@@ -57,30 +58,25 @@ const Review = ({ shoeRating, shoeRatings, setShoeRatings, shoe, onShoeRatingUpd
       return;
     }
 
-    const body = {
-      ratingID: review._id,
-      userID: user._id
+    try {
+      const response = await dislikeRating({
+        ratingID: review._id,
+        userID: user._id!
+      }).unwrap()
+      
+      // RTK Query will automatically refetch ratings data via cache invalidation
+      // Just update the user data in Redux
+      dispatch(updateUser(response.updatedUser))
+    } catch (error) {
+      console.error('Failed to dislike rating:', error)
     }
-    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/dislike`, body)
-
-    const updatedRating = { ...review, notHelpful: response.data.updatedRating.notHelpful, helpful: response.data.updatedRating.helpful }
-    
-    // Update only the parent's ratings array
-    setShoeRatings(shoeRatings.map(rating => 
-      rating._id === review._id ? updatedRating : rating
-    ))
-    
-    dispatch(updateUser(response.data.updatedUser))
   }
 
   const handleDeleteReview = async () => {
-    const response = await axios.delete(`${process.env.REACT_APP_DEV_URL}/rating/${review._id}`)
-    
-    setShoeRatings(shoeRatings.filter((shoeRating) => shoeRating._id !== review._id))
-    
-    // Update the shoe rating in the parent component
-    if (onShoeRatingUpdate && response.data.updatedShoe) {
-      onShoeRatingUpdate(response.data.updatedShoe.rating)
+    try {
+      await deleteRating(review._id).unwrap()
+    } catch (error) {
+      console.error('Failed to delete review:', error)
     }
   }
 

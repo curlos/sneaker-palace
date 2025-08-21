@@ -1,12 +1,13 @@
-import axios from 'axios';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
+import { useGetShoeQuery } from '../api/shoesApi';
+import { useGetRatingQuery, useCreateRatingMutation, useUpdateRatingMutation } from '../api/ratingsApi';
 import { RootState } from '../redux/store';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import ShoeImage from '../components/ShoeImage';
-import { Shoe, UserType } from '../types/types';
+import { UserType } from '../types/types';
 import { postImage } from '../utils/postImage';
 
 const ReviewForm = () => {
@@ -14,11 +15,16 @@ const ReviewForm = () => {
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
 
   const { shoeID, reviewID }: { shoeID: string, reviewID: string } = useParams()
-  const [shoe, setShoe] = useState<Partial<Shoe>>({})
+  
+  // RTK Query hooks
+  const { data: shoe, isLoading: shoeLoading } = useGetShoeQuery(shoeID)
+  const { data: existingRating, isLoading: ratingLoading } = useGetRatingQuery(reviewID, { skip: !reviewID })
+  const [createRating] = useCreateRatingMutation()
+  const [updateRating] = useUpdateRatingMutation()
 
   const [reviewInfo, setReviewInfo] = useState<any>({
     userID: user._id,
-    shoeID: '',
+    shoeID: shoeID,
     ratingNum: 0,
     summary: '',
     text: '',
@@ -30,26 +36,17 @@ const ReviewForm = () => {
     recommended: null,
   })
   const [file, setFile] = useState<File>()
-  const [loading, setLoading] = useState(true)
+  
+  // Update reviewInfo when existing rating is loaded
+  useEffect(() => {
+    if (existingRating && reviewID) {
+      setReviewInfo((prev: any) => ({ ...prev, ...existingRating }))
+    }
+  }, [existingRating, reviewID])
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    const fetchFromAPI = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${shoeID}`)
-
-      setShoe(response.data)
-
-      if (reviewID) {
-        const reviewResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/rating/${reviewID}`)
-        setReviewInfo({ ...reviewInfo, ...reviewResponse.data })
-      } else {
-        setReviewInfo({ ...reviewInfo, shoeID: response.data.shoeID })
-      }
-      setLoading(false)
-    }
-    fetchFromAPI()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shoeID])
+  }, [])
 
   const handleSubmitReview = async () => {
     try {
@@ -57,7 +54,6 @@ const ReviewForm = () => {
 
       if (file) {
         const results = await postImage(file)
-
         imagePath = results.imagePath
       }
 
@@ -66,15 +62,11 @@ const ReviewForm = () => {
         photo: imagePath
       }
 
-      const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/rating/rate`, body)
-
-
-      if (!response.data.errors) {
-        history.push(`/shoe/${shoe.shoeID}`)
-      }
-
-    } catch (err) {
-
+      await createRating(body).unwrap()
+      // If unwrap() succeeds, the mutation was successful
+      history.push(`/shoe/${shoe?.shoeID}`)
+    } catch (error) {
+      console.error('Failed to submit review:', error)
     }
   }
 
@@ -90,7 +82,6 @@ const ReviewForm = () => {
 
       if (file) {
         const results = await postImage(file)
-
         imagePath = results.imagePath
       }
 
@@ -99,17 +90,18 @@ const ReviewForm = () => {
         photo: imagePath
       }
 
-      const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/rating/edit/${reviewID}`, body)
-
-
-      if (!response.data.errors) {
-        history.push(`/shoe/${shoe.shoeID}`)
-      }
-
-    } catch (err) {
-
+      await updateRating({
+        ratingId: reviewID,
+        ratingData: body
+      }).unwrap()
+      // If unwrap() succeeds, the mutation was successful
+      history.push(`/shoe/${shoe?.shoeID}`)
+    } catch (error) {
+      console.error('Failed to edit review:', error)
     }
   }
+
+  const loading = shoeLoading || (reviewID && ratingLoading)
 
   return (
     loading ? (
@@ -119,8 +111,8 @@ const ReviewForm = () => {
         <div className="container mx-auto px-4 py-10 max-w-4xl">
           <div className="font-bold text-2xl">WRITE YOUR REVIEW</div>
           <div className="flex justify-between items-center border border-gray-300 p-4 rounded-lg my-4">
-            <div className="font-bold text-lg">{shoe.name}</div>
-            <ShoeImage src={shoe.image?.original || ''} alt={shoe.name || ''} className="h-150 w-150" />
+            <div className="font-bold text-lg">{shoe?.name}</div>
+            <ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} className="h-150 w-150" />
           </div>
 
           <div className="">
