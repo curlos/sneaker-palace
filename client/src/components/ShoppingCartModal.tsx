@@ -1,9 +1,8 @@
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useGetShoeQuery } from '../api/shoesApi'
-import { RootState } from '../redux/store'
+import { useCart } from '../api/cartApi'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import ShoeImage from './ShoeImage'
 import { IProduct } from '../types/types'
@@ -14,12 +13,14 @@ interface Props {
 }
 
 const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
-
-  const { currentCart } = useSelector((state: RootState) => state.cart)
+  // Use unified cart hook
+  const { data: cartData } = useCart()
+  const cartProducts = cartData?.products || []
+  
   const [productInfo, setProductInfo] = useState<IProduct>()
 
   // Get the last product added to cart
-  const lastProduct = currentCart?.products?.[currentCart.products.length - 1]
+  const lastProduct = cartProducts[cartProducts.length - 1]
   
   // Use RTK Query to fetch shoe data
   const { data: shoe, isLoading: loading } = useGetShoeQuery(lastProduct?.productID || '', {
@@ -72,7 +73,7 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
           <div className="my-3">
             <Link to={`/cart`} onClick={() => setShowModal(false)}>
               <button className="rounded-full border border-gray-400 w-full p-3">
-                View Bag ({currentCart?.products?.length})
+                View Bag ({cartProducts.length})
               </button>
             </Link>
           </div>

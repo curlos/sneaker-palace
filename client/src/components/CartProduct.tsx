@@ -1,9 +1,8 @@
 import { ChangeEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useGetShoeQuery } from '../api/shoesApi';
-import { useUpdateUserCartMutation } from '../api/cartApi';
-import { updateCart } from '../redux/cartRedux';
+import { useCart, useUpdateUserCartMutation, useUpdateGuestCartMutation } from '../api/cartApi';
 import { RootState } from '../redux/store';
 import CartProductSkeleton from '../skeleton_loaders/CartProductSkeleton';
 import ShoeImage from './ShoeImage';
@@ -20,113 +19,112 @@ interface Props {
 
 const CartProduct = ({ productInfo }: Props) => {
 
-  const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const { currentCart } = useSelector((state: RootState) => state.cart)
-
+  
   // RTK Query hooks
   const { data: shoe, isLoading: loading } = useGetShoeQuery(productInfo.productID)
+  const { data: cartData } = useCart()
   const [updateUserCart] = useUpdateUserCartMutation()
+  const [updateGuestCart] = useUpdateGuestCartMutation()
 
   const handleChangeSize = async (e: ChangeEvent<HTMLSelectElement>) => {
-
-    if (currentCart && currentCart.products) {
-      const currentCartClone = { ...currentCart }
-      const products = currentCartClone?.products
-      const newProducts: Array<IProduct> = []
-
-      if (products) {
-        for (let product of products) {
-          let finalSize = product.size
-          if (product._id === productInfo._id) {
-            finalSize = Number(e.currentTarget.value)
-          }
-
-          newProducts.push({
-            productID: product.productID,
-            size: finalSize,
-            quantity: product.quantity,
-            retailPrice: product.retailPrice,
-            _id: product._id
-          })
-        }
+    const newSize = Number(e.currentTarget.value)
+    
+    if (!cartData?.products) return
+    
+    // Update products array with new size
+    const updatedProducts = cartData.products.map((product: IProduct) => 
+      product._id === productInfo._id 
+        ? { ...product, size: newSize }
+        : product
+    )
+    
+    if (user?._id && cartData._id) {
+      // Logged in user - use updateUserCart with full products array
+      try {
+        await updateUserCart({
+          cartId: cartData._id,
+          products: updatedProducts
+        }).unwrap()
+      } catch (error) {
+        console.error('Failed to update cart size:', error)
       }
-
-      if (Object.keys(user).length === 0) {
-
-        const newCart = { ...currentCart, products: newProducts }
-        dispatch(updateCart(newCart))
-        localStorage.setItem('currentCart', JSON.stringify(newCart))
-
-      } else {
-        try {
-          await updateUserCart({ 
-            cartId: currentCart._id!, 
-            products: newProducts 
-          }).unwrap()
-        } catch (error) {
-          console.error('Failed to update cart size:', error)
-        }
+    } else {
+      // Guest user - use updateGuestCart
+      try {
+        await updateGuestCart({
+          ...cartData,
+          products: updatedProducts,
+          updatedAt: new Date().toISOString()
+        }).unwrap()
+      } catch (error) {
+        console.error('Failed to update guest cart size:', error)
       }
     }
   }
 
   const handleChangeQuantity = async (e: ChangeEvent<HTMLSelectElement>) => {
-
-    if (currentCart && currentCart.products) {
-      const currentCartClone = { ...currentCart }
-      const products = currentCartClone?.products
-      const newProducts: Array<IProduct> = []
-
-      if (products) {
-        for (let product of products) {
-          let finalQuantity = product.quantity
-          if (product._id === productInfo._id) {
-            finalQuantity = Number(e.currentTarget.value)
-          }
-
-          newProducts.push({
-            productID: product.productID,
-            size: product.size,
-            quantity: finalQuantity,
-            retailPrice: product.retailPrice,
-            _id: product._id
-          })
-        }
+    const newQuantity = Number(e.currentTarget.value)
+    
+    if (!cartData?.products) return
+    
+    // Update products array with new quantity
+    const updatedProducts = cartData.products.map((product: IProduct) => 
+      product._id === productInfo._id 
+        ? { ...product, quantity: newQuantity }
+        : product
+    )
+    
+    if (user?._id && cartData._id) {
+      // Logged in user - use updateUserCart with full products array
+      try {
+        await updateUserCart({
+          cartId: cartData._id,
+          products: updatedProducts
+        }).unwrap()
+      } catch (error) {
+        console.error('Failed to update cart quantity:', error)
       }
-
-      if (Object.keys(user).length === 0) {
-        const newCart = { ...currentCart, products: newProducts }
-        dispatch(updateCart(newCart))
-        localStorage.setItem('currentCart', JSON.stringify(newCart))
-      } else {
-        try {
-          await updateUserCart({ 
-            cartId: currentCart._id!, 
-            products: newProducts 
-          }).unwrap()
-        } catch (error) {
-          console.error('Failed to update cart:', error)
-        }
+    } else {
+      // Guest user - use updateGuestCart
+      try {
+        await updateGuestCart({
+          ...cartData,
+          products: updatedProducts,
+          updatedAt: new Date().toISOString()
+        }).unwrap()
+      } catch (error) {
+        console.error('Failed to update guest cart quantity:', error)
       }
     }
   }
 
   const handleRemoveProduct = async () => {
-    const newProducts = currentCart?.products?.filter((product) => product._id !== productInfo._id)
-
-    if (Object.keys(user).length === 0) {
-      const newCart = { ...currentCart, products: newProducts }
-      dispatch(updateCart(newCart))
-      localStorage.setItem('currentCart', JSON.stringify(newCart))
-    } else {
+    if (!cartData?.products) return
+    
+    // Filter out the product to remove
+    const updatedProducts = cartData.products.filter((product: IProduct) => product._id !== productInfo._id)
+    
+    if (user?._id && cartData._id) {
+      // Logged in user - use updateUserCart with filtered products array
       try {
-        await updateUserCart({ 
-          cartId: currentCart._id!, 
-          products: newProducts || [] 
+        await updateUserCart({
+          cartId: cartData._id,
+          products: updatedProducts
         }).unwrap()
       } catch (error) {
         console.error('Failed to remove from cart:', error)
+      }
+    } else {
+      // Guest user - use updateGuestCart
+      try {
+        await updateGuestCart({
+          ...cartData,
+          products: updatedProducts,
+          updatedAt: new Date().toISOString()
+        }).unwrap()
+      } catch (error) {
+        console.error('Failed to remove from guest cart:', error)
       }
     }
   }

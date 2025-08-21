@@ -1,10 +1,10 @@
 import { useStripe } from '@stripe/react-stripe-js'
 import axios from 'axios'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { resetCart, updateCart } from '../redux/cartRedux'
+import { useCart, useUpdateGuestCartMutation, useUpdateUserCartMutation } from '../api/cartApi'
 import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
@@ -13,7 +13,16 @@ import { UserType } from '../types/types'
 const PaymentSuccess = () => {
   const dispatch = useDispatch()
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const { currentCart, total } = useSelector((state: RootState) => state.cart)
+  
+  // Use unified cart hook
+  const { data: cartData } = useCart()
+  const currentCart = cartData
+  const total = cartData?.total || 0
+  
+  // Cart mutations for clearing cart after payment
+  const [updateGuestCart] = useUpdateGuestCartMutation()
+  const [updateUserCart] = useUpdateUserCartMutation()
+  
   const [loading, setLoading] = useState(true)
   const [orderID, setOrderID] = useState<any>({})
 
@@ -65,11 +74,22 @@ const PaymentSuccess = () => {
               if (response && response.data.error) {
                 setOrderID(response.data.orderID)
               } else {
-                const { order, updatedUser, updatedCart } = response.data
+                const { order, updatedUser } = response.data
 
                 setOrderID(order._id)
                 dispatch(updateUser(updatedUser))
-                dispatch(updateCart(updatedCart))
+                
+                // Clear the user's cart after successful payment
+                if (currentCart?._id) {
+                  try {
+                    await updateUserCart({
+                      cartId: currentCart._id,
+                      products: []
+                    }).unwrap()
+                  } catch (error) {
+                    console.error('Failed to clear user cart after payment:', error)
+                  }
+                }
               }
             } catch (err) {
               console.log(err)
@@ -84,8 +104,8 @@ const PaymentSuccess = () => {
                 const { order } = response.data
 
                 setOrderID(order._id)
-                dispatch(resetCart())
-                localStorage.removeItem('currentCart')
+                // Clear guest cart on successful order using RTK Query
+                await updateGuestCart({ products: [], total: 0 })
               }
             } catch (err) {
               console.log(err)

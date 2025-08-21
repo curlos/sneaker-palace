@@ -2,15 +2,14 @@ import { HeartIcon as HeartOutline } from '@heroicons/react/outline';
 import { HeartIcon as HeartSolid } from '@heroicons/react/solid';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory, useParams } from 'react-router-dom';
 import { useGetRatingsByShoeQuery } from '../api/ratingsApi';
 import { useGetShoeQuery, useToggleFavoriteShoeMutation } from '../api/shoesApi';
-import { useUpdateUserCartMutation } from '../api/cartApi';
+import { useCart, useUpdateUserCartMutation, useUpdateGuestCartMutation } from '../api/cartApi';
 import FullShoeReviews from '../components/FullShoeReviews';
 import ShoeImage from '../components/ShoeImage';
 import ShoppingCartModal from '../components/ShoppingCartModal';
-import { updateCart } from '../redux/cartRedux';
 import { RootState } from "../redux/store";
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
@@ -29,11 +28,12 @@ interface Props {
 const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser);
-  const { currentCart } = useSelector((state: RootState) => state.cart);
   const history = useHistory();
+  
+  // Get cart data using unified hook
+  const { data: cartData } = useCart();
 
   const { shoeID }: { shoeID: string; } = useParams();
-  const dispatch = useDispatch();
   const initialSize = (Object.keys(user).length > 0 && user.preselectedShoeSize && String(user.preselectedShoeSize)) || AVERAGE_MAN_FOOT_SIZE;
 
   // RTK Query hooks
@@ -41,6 +41,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   const { data: shoeRatings, isLoading: reviewLoading } = useGetRatingsByShoeQuery(shoeID);
   const [toggleFavorite] = useToggleFavoriteShoeMutation();
   const [updateUserCart] = useUpdateUserCartMutation();
+  const [updateGuestCart] = useUpdateGuestCartMutation();
 
   // Local state
   const [selectedSize, setSelectedSize] = useState(initialSize);
@@ -55,59 +56,66 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   const handleAddToCart = async () => {
     setShowShoppingCartModal(true);
 
-    if (Object.keys(user).length <= 0) {
-      if (shoe?.shoeID && shoe.retailPrice !== undefined && shoe.retailPrice >= 0) {
-        const newProduct: IProduct = {
-          _id: new ObjectId().toString(),
-          productID: shoe.shoeID,
-          size: Number(selectedSize),
-          quantity: 1,
-          retailPrice: shoe.retailPrice
-        };
+    if (!shoe?.shoeID || shoe.retailPrice === undefined || shoe.retailPrice < 0) {
+      console.error('Invalid shoe data');
+      return;
+    }
 
-        if (currentCart.products && currentCart.products.length > 0) {
-          const newCart = {
-            ...currentCart,
-            products: [...currentCart.products, newProduct]
-          };
-          dispatch(updateCart(newCart));
-          localStorage.setItem('currentCart', JSON.stringify(newCart));
-        } else {
-          const newCart = {
-            ...currentCart,
-            _id: new ObjectId().toString(),
-            createdAt: '',
-            updatedAt: '',
-            products: [newProduct],
-          };
-          dispatch(updateCart(newCart));
-          localStorage.setItem('currentCart', JSON.stringify(newCart));
+    const newProduct: IProduct = {
+      _id: new ObjectId().toString(),
+      productID: shoe.shoeID,
+      size: Number(selectedSize),
+      quantity: 1,
+      retailPrice: shoe.retailPrice
+    };
+
+    if (user?._id) {
+      // Logged in user - use user cart API (create cart if needed)
+      if (cartData?._id) {
+        // Cart exists - update it
+        const updatedProducts = [...(cartData.products || []), newProduct];
+        try {
+          await updateUserCart({
+            cartId: cartData._id,
+            products: updatedProducts
+          }).unwrap();
+        } catch (error) {
+          console.error('Failed to add to cart:', error);
+        }
+      } else {
+        // Cart doesn't exist - create it first by calling the API
+        try {
+          const response = await fetch(`/api/cart/${user._id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          const newCart = await response.json();
+          
+          // Now update the cart with the product
+          await updateUserCart({
+            cartId: newCart._id,
+            products: [newProduct]
+          }).unwrap();
+        } catch (error) {
+          console.error('Failed to create cart and add product:', error);
         }
       }
-      return; // Exit early for guest users
-    }
-
-    if (currentCart && currentCart.products && shoe && shoe.shoeID && Object.keys(user).length > 0) {
-      const newProduct: Partial<IProduct> = {
-        productID: shoe.shoeID,
-        size: Number(selectedSize),
-        quantity: 1,
-        retailPrice: shoe.retailPrice
+    } else {
+      // Guest user - use unified guest cart mutation
+      const currentProducts = cartData?.products || [];
+      const updatedCart = {
+        _id: cartData?._id || new ObjectId().toString(),
+        products: [...currentProducts, newProduct],
+        createdAt: cartData?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
-      const currentProducts = currentCart?.products;
-
-      const products = [...currentProducts, newProduct];
-
+      
       try {
-        await updateUserCart({ 
-          cartId: currentCart._id!, 
-          products 
-        }).unwrap();
+        await updateGuestCart(updatedCart).unwrap();
       } catch (error) {
-        console.error('Failed to update cart:', error);
+        console.error('Failed to add to guest cart:', error);
       }
     }
-
   };
 
   const handleFavorite = async () => {

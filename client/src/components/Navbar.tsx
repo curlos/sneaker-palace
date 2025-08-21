@@ -1,10 +1,8 @@
 import { ShoppingBagIcon } from "@heroicons/react/outline";
 import { MenuIcon, SearchIcon } from "@heroicons/react/solid";
-import axios from "axios";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from 'react-router-dom';
-import { resetCart, updateCart } from "../redux/cartRedux";
+import { useCart, useUpdateGuestCartMutation, invalidateAllCarts } from "../api/cartApi";
 import { RootState } from "../redux/store";
 import { logout } from '../redux/userRedux';
 import { UserType } from "../types/types";
@@ -18,36 +16,26 @@ interface Props {
 const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 
   const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const { currentCart } = useSelector((state: RootState) => state.cart)
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const handleLogout = () => {
+  // Unified cart hook - handles both logged-in and guest users automatically
+  const { data: cartData } = useCart()
+  const cartItemCount = cartData?.products?.length || 0
+  
+  // Guest cart mutation for clearing cart
+  const [updateGuestCart] = useUpdateGuestCartMutation()
+
+  const handleLogout = async () => {
     dispatch(logout())
-    dispatch(resetCart())
+    
+    // Invalidate cart cache so RTK Query switches to guest cart
+    invalidateAllCarts(dispatch)
+    
+    // Clear guest cart on logout using RTK Query
+    await updateGuestCart({ products: [], total: 0 })
     history.push('/')
   }
-
-  useEffect(() => {
-    const fetchFromAPI = async () => {
-      if (user && Object.keys(user).length > 0) {
-        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/cart/find/${user?._id}`)
-        const newCart = response.data
-        dispatch(updateCart(newCart))
-      } else if (localStorage.getItem('currentCart')) {
-        const newCart = localStorage.getItem('currentCart')
-
-        if (newCart) {
-          dispatch(updateCart(newCart))
-        }
-
-      } else {
-        dispatch(resetCart())
-      }
-    }
-
-    fetchFromAPI()
-  }, [dispatch, user])
 
   return (
     <div className="sticky top-0 z-10 w-full bg-white border-b border-gray-300">
@@ -79,7 +67,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
         <Link to="/cart" className="inline-flex relative">
           <ShoppingBagIcon className="h-7 w-7" />
           <span className={`z-10 inline-flex justify-center items-center text-white text-sm bg-red-800 h-6 w-6 border rounded-full absolute ml-4`}>
-            {currentCart && currentCart.products && currentCart?.products?.length}
+            {cartItemCount}
           </span>
         </Link>
 

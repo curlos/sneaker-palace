@@ -7,7 +7,6 @@ const Cart = require('../models/Cart')
 const router = require('express').Router()
 
 // Create cart
-
 router.post('/:userID', async (req: Request, res: Response) => {
   const newCart = new Cart({
     userID: req.params.userID,
@@ -19,7 +18,6 @@ router.post('/:userID', async (req: Request, res: Response) => {
 })
 
 // Update cart
-
 router.put('/:id', async (req: Request, res: Response) => {
   const updatedCart = await Cart.findByIdAndUpdate(
     req.params.id,
@@ -34,7 +32,6 @@ router.put('/:id', async (req: Request, res: Response) => {
 })
 
 // Update specific product in cart 
-
 router.put('/:id', async (req: Request, res: Response) => {
   const updatedCart = await Cart.findByIdAndUpdate(
     req.params.id,
@@ -48,7 +45,6 @@ router.put('/:id', async (req: Request, res: Response) => {
 
 
 // Get user's cart
-
 router.get('/find/:userID', async (req: Request, res: Response) => {
   const cart = await Cart.findOne({ userID: req.params.userID })
   return res.status(200).json(cart)

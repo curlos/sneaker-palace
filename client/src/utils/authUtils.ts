@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Dispatch } from '@reduxjs/toolkit'
 import { updateCart } from '../redux/cartRedux'
 import { loginStart, loginSuccess } from '../redux/userRedux'
+import { invalidateAllCarts } from '../api/cartApi'
 import { UserType } from '../types/types'
 
 export const fetchUserCart = async (loggedInUser: UserType) => {
@@ -31,6 +32,11 @@ export const performLogin = async (
   }
   
   dispatch(loginSuccess(response.data))
+  
+  // Invalidate cart cache so RTK Query fetches fresh cart data
+  invalidateAllCarts(dispatch)
+  
+  // Legacy cart support (can be removed once fully migrated to RTK Query)
   const userCart = await fetchUserCart(response.data)
   dispatch(updateCart(userCart))
   

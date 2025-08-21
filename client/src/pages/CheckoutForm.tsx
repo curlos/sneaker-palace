@@ -3,16 +3,18 @@ import {
 } from "@stripe/react-stripe-js"
 import moment from "moment"
 import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
 import CheckoutProduct from "../components/CheckoutProduct"
-import { RootState } from "../redux/store"
+import { useCart } from "../api/cartApi"
 import CircleLoader from "../skeleton_loaders/CircleLoader"
 
 export default function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  const { currentCart, total } = useSelector((state: RootState) => state.cart)
+  // Use unified cart hook
+  const { data: cartData } = useCart()
+  const currentCart = cartData
+  const total = cartData?.total || 0
 
   const [message, setMessage] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -125,7 +127,7 @@ export default function CheckoutForm() {
           <div className="font-bold mb-4">ARRIVES BY {moment().add(2, 'days').format("ddd, MMM D").toUpperCase()}</div>
 
           <div className="">
-            {currentCart.products?.map((product) => <CheckoutProduct key={product._id} product={product} type="small" />)}
+            {currentCart?.products?.map((product: any) => <CheckoutProduct key={product._id} product={product} type="small" />)}
           </div>
         </div>
       </div>

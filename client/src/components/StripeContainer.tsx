@@ -2,9 +2,8 @@ import { Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 import axios from "axios"
 import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
 import { Redirect } from "react-router"
-import { RootState } from "../redux/store"
+import { useCart } from "../api/cartApi"
 import CircleLoader from "../skeleton_loaders/CircleLoader"
 
 // Initialize Stripe with publishable key (safe for frontend)
@@ -16,8 +15,12 @@ interface Props {
 }
 
 const StripeContainer = ({ children }: Props) => {
-
-  const { currentCart, total } = useSelector((state: RootState) => state.cart)
+  
+  // Use unified cart hook
+  const { data: cartData } = useCart()
+  const currentCart = cartData
+  const total = cartData?.total || 0
+  
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(true)
 
@@ -29,7 +32,7 @@ const StripeContainer = ({ children }: Props) => {
         // Send cart data to backend to create authorized payment intent
         // Backend verifies the total and creates payment intent with Stripe secret key
         const response: any = await axios.post(`${process.env.REACT_APP_DEV_URL}/checkout/create-payment-intent`, {
-          items: currentCart.products,
+          items: currentCart?.products,
           total: total
         })
         if (response.data.error) {
@@ -46,7 +49,7 @@ const StripeContainer = ({ children }: Props) => {
       setLoading(false)
     }
     postToAPI()
-  }, [currentCart.products, total]);
+  }, [currentCart?.products, total]);
 
   // Stripe Elements configuration
   const appearance: any = {
