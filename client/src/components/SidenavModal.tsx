@@ -1,7 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
-import { resetCart } from '../redux/cartRedux'
 import { RootState } from '../redux/store'
 import { logout } from '../redux/userRedux'
 import { UserType } from '../types/types'

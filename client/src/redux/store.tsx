@@ -10,7 +10,6 @@ import { baseAPI } from '../api/api'
 import '../api/shoesApi'
 import '../api/ratingsApi'
 import '../api/cartApi'
-import cartReducer from './cartRedux'
 import userReducer from './userRedux'
 
 const persistConfig = {
@@ -20,8 +19,7 @@ const persistConfig = {
 }
 
 const rootReducer = combineReducers({ 
-  user: userReducer, 
-  cart: cartReducer,
+  user: userReducer,
   [baseAPI.reducerPath]: baseAPI.reducer
 })
 
