@@ -1,26 +1,14 @@
 import axios from 'axios'
 import { Dispatch } from '@reduxjs/toolkit'
-import { updateCart } from '../redux/cartRedux'
 import { loginStart, loginSuccess } from '../redux/userRedux'
 import { invalidateAllCarts } from '../api/cartApi'
 import { UserType } from '../types/types'
 
-export const fetchUserCart = async (loggedInUser: UserType) => {
-  const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/cart/find/${loggedInUser._id}`)
-
-  // If user doesn't have a cart, create one
-  if (!response.data) {
-    const createCartResponse = await axios.post(`${process.env.REACT_APP_DEV_URL}/cart/${loggedInUser._id}`)
-    return createCartResponse.data
-  }
-
-  return response.data
-}
-
 export const performLogin = async (
   email: string, 
   password: string, 
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  updateGuestCart: (cartData: { products: any[], total: number }) => Promise<any>
 ): Promise<UserType> => {
   dispatch(loginStart())
   
@@ -35,10 +23,9 @@ export const performLogin = async (
   
   // Invalidate cart cache so RTK Query fetches fresh cart data
   invalidateAllCarts(dispatch)
-  
-  // Legacy cart support (can be removed once fully migrated to RTK Query)
-  const userCart = await fetchUserCart(response.data)
-  dispatch(updateCart(userCart))
+
+  // Clear guest cart on login using RTK Query
+  await updateGuestCart({ products: [], total: 0 })
   
   return response.data
 }

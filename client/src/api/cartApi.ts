@@ -48,17 +48,48 @@ export const cartApi = baseAPI.injectEndpoints({
     }),
 
     getUserCart: builder.query({
-      query: (userId: string) => `/cart/find/${userId}`,
-      providesTags: ['Cart'],
-      transformResponse: (response: any) => {
-        if (response && response.products) {
-          return {
-            ...response,
-            total: calculateCartTotal(response.products)
+      queryFn: async (userId: string) => {
+        try {
+          // Try to fetch existing cart
+          const response = await fetch(`${process.env.REACT_APP_DEV_URL}/cart/find/${userId}`)
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
           }
+          
+          let cartData = await response.json()
+          
+          // If user doesn't have a cart, create one
+          if (!cartData) {
+            const createResponse = await fetch(`${process.env.REACT_APP_DEV_URL}/cart/${userId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+            
+            if (!createResponse.ok) {
+              throw new Error(`Failed to create cart! status: ${createResponse.status}`)
+            }
+            
+            cartData = await createResponse.json()
+          }
+          
+          // Add computed total to the response
+          if (cartData && cartData.products) {
+            cartData = {
+              ...cartData,
+              total: calculateCartTotal(cartData.products)
+            }
+          }
+          
+          return { data: cartData }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+          return { error: { status: 'FETCH_ERROR', error: errorMessage } }
         }
-        return response
       },
+      providesTags: ['Cart'],
     }),
 
     // Update entire cart (the only backend endpoint that actually exists)

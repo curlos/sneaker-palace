@@ -24,7 +24,8 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
     setShowSidenavModal(false)
 
     dispatch(logout())
-    dispatch(resetCart())
+    // TODO: Add some logic to replace "resetCart()" with the RTK Query equivalent.
+    // dispatch(resetCart())
     history.push('/')
   }
 

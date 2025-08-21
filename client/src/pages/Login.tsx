@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import { loginFailure } from '../redux/userRedux'
 import { performLogin } from '../utils/authUtils'
+import { useUpdateGuestCartMutation } from '../api/cartApi'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -10,6 +11,7 @@ const Login = () => {
   const [error, setError] = useState(false)
   const dispatch = useDispatch()
   const history = useHistory()
+  const [updateGuestCart] = useUpdateGuestCartMutation()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -20,7 +22,7 @@ const Login = () => {
     e.preventDefault()
 
     try {
-      await performLogin(email, password, dispatch)
+      await performLogin(email, password, dispatch, updateGuestCart)
       history.push('/')
     } catch (err) {
       setError(true)

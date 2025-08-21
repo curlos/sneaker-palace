@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import { performLogin } from '../utils/authUtils'
+import { useUpdateGuestCartMutation } from '../api/cartApi'
 
 const Register = () => {
 
@@ -14,6 +15,7 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState('All fields must be filled out!')
   const history = useHistory()
   const dispatch = useDispatch()
+  const [updateGuestCart] = useUpdateGuestCartMutation()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -39,7 +41,7 @@ const Register = () => {
         setErrorMessage(response.data.error)
       } else {
         // Auto-login the user after successful registration
-        await performLogin(email, password, dispatch)
+        await performLogin(email, password, dispatch, updateGuestCart)
         history.push('/')
       }
     } catch (err) {

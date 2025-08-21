@@ -22,18 +22,12 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
   // Unified cart hook - handles both logged-in and guest users automatically
   const { data: cartData } = useCart()
   const cartItemCount = cartData?.products?.length || 0
-  
-  // Guest cart mutation for clearing cart
-  const [updateGuestCart] = useUpdateGuestCartMutation()
 
   const handleLogout = async () => {
     dispatch(logout())
     
     // Invalidate cart cache so RTK Query switches to guest cart
     invalidateAllCarts(dispatch)
-    
-    // Clear guest cart on logout using RTK Query
-    await updateGuestCart({ products: [], total: 0 })
     history.push('/')
   }
 
