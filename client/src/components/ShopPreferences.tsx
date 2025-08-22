@@ -50,8 +50,8 @@ const ShopPreferences = () => {
       <form>
         <div className="mb-4">
           <div className="mb-1 font-medium w-full">Shoe Size</div>
-          <select name="shoeSizes" className="border-gray-500 rounded-lg text-gray-500 w-full" onChange={(e: ChangeEvent<HTMLSelectElement>) => setPreselectedShoeSize(Number(e.currentTarget.value))}>
-            {SHOE_SIZES.map((shoeSize) => <option key={`${Number(shoeSize)}-${short.generate()}`} selected={Number(shoeSize) === Number(preselectedShoeSize)} value={shoeSize}>{shoeSize}</option>)}
+          <select name="shoeSizes" className="border-gray-500 rounded-lg text-black w-full" value={preselectedShoeSize} onChange={(e: ChangeEvent<HTMLSelectElement>) => setPreselectedShoeSize(Number(e.currentTarget.value))}>
+            {SHOE_SIZES.map((shoeSize) => <option key={`${Number(shoeSize)}-${short.generate()}`} value={shoeSize}>{shoeSize}</option>)}
           </select>
           <div className="text-gray-500 text-sm">Provide your shoe size to have it preselected when you shop.</div>
         </div>
@@ -60,12 +60,12 @@ const ShopPreferences = () => {
           <div className="font-medium mb-3">Preferred Shop Settings</div>
 
           <div className="flex items-center mb-2">
-            <input name="gender" type="radio" value="Yes" className="mr-2 h-5 w-5" checked={preferredGender === 'women'} onClick={() => setPreferredGender('women')} />
+            <input name="gender" type="radio" value="Yes" className="mr-2 h-5 w-5" checked={preferredGender === 'women'} onChange={() => setPreferredGender('women')} />
             <label>Women's</label>
           </div>
 
           <div className="flex items-center mb-2">
-            <input name="gender" type="radio" value="Yes" className="mr-2 h-5 w-5" checked={preferredGender === 'men'} onClick={() => setPreferredGender('men')} />
+            <input name="gender" type="radio" value="Yes" className="mr-2 h-5 w-5" checked={preferredGender === 'men'} onChange={() => setPreferredGender('men')} />
             <label>Men's</label>
           </div>
         </div>
@@ -74,12 +74,12 @@ const ShopPreferences = () => {
           <div className="font-medium mb-3">Unit of Measure</div>
 
           <div className="flex items-center mb-2">
-            <input name="unitOfMeasure" type="radio" value="Yes" className="mr-2 h-5 w-5" checked={unitOfMeasure === 'metric'} onClick={() => setUnitOfMeasure('metric')} />
+            <input name="unitOfMeasure" type="radio" value="Yes" className="mr-2 h-5 w-5" checked={unitOfMeasure === 'metric'} onChange={() => setUnitOfMeasure('metric')} />
             <label>Metric</label>
           </div>
 
           <div className="flex items-center mb-2">
-            <input name="unitOfMeasure" type="radio" value="Yes" className="mr-2 h-5 w-5" checked={unitOfMeasure === 'imperial'} onClick={() => setUnitOfMeasure('imperial')} />
+            <input name="unitOfMeasure" type="radio" value="Yes" className="mr-2 h-5 w-5" checked={unitOfMeasure === 'imperial'} onChange={() => setUnitOfMeasure('imperial')} />
             <label>Imperial</label>
           </div>
         </div>
@@ -88,7 +88,7 @@ const ShopPreferences = () => {
         {showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'} /> : null}
 
         <div className="flex justify-end">
-          <button onClick={handleEdit} className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700">Save</button>
+          <button onClick={handleEdit} className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 px-5 py-3">Save</button>
         </div>
       </form>
     </div>
