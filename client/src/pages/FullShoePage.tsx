@@ -39,7 +39,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   // RTK Query hooks
   const { data: shoe, isLoading: shoeLoading } = useGetShoeQuery(shoeID);
   const { data: shoeRatings, isLoading: reviewLoading } = useGetRatingsByShoeQuery(shoeID);
-  const [toggleFavorite] = useToggleFavoriteShoeMutation();
+  const [toggleFavorite, { isLoading: isFavoriteLoading }] = useToggleFavoriteShoeMutation();
   const [updateUserCart] = useUpdateUserCartMutation();
   const [updateGuestCart] = useUpdateGuestCartMutation();
 
@@ -124,17 +124,19 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
       return;
     }
 
+    if (isFavoriteLoading) return; // Prevent multiple clicks
+
     try {
       await toggleFavorite({ 
         shoeID: shoeID, 
-        userID: user._id! 
+        userID: user._id!,
+        shoe_id: shoe?._id
       }).unwrap();
       // Optimistic update is handled in the API slice
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
     }
   };
-
 
   return (
     <div className="flex-grow">
@@ -173,7 +175,11 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
                       Add to Bag
                     </button>
 
-                    <button className="flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3  my-5 hover:border-gray-600 w-1/2 xl:w-full xl:mb-0" onClick={handleFavorite}>
+                    <button 
+                      className={`flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3 my-5 w-1/2 xl:w-full xl:mb-0 ${isFavoriteLoading ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-600'}`} 
+                      onClick={handleFavorite}
+                      disabled={isFavoriteLoading}
+                    >
                       {user && shoe?._id && user?.favorites?.includes(shoe?._id) ? <span className="inline-flex items-center"> <HeartSolid className="mr-2 h-5 w-5" /></span> : <span className="inline-flex items-center"> <HeartOutline className="mr-2 h-5 w-5" /></span>}
                       {shoe?.favorites?.length}
                     </button>

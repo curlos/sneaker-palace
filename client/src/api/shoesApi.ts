@@ -47,13 +47,17 @@ export const shoesApi = baseAPI.injectEndpoints({
 
     // Favorite/unfavorite a shoe
     toggleFavoriteShoe: builder.mutation({
-      query: ({ shoeID, userID }: { shoeID: string; userID: string }) => ({
+      query: ({ shoeID, userID, shoe_id }: { shoeID: string; userID: string; shoe_id?: string }) => ({
         url: '/shoes/favorite',
         method: 'PUT',
         body: { shoeID, userID },
       }),
       // Optimistic update
-      onQueryStarted: async ({ shoeID, userID }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async ({ shoeID, userID, shoe_id }, { dispatch, queryFulfilled, getState }) => {
+        // Get current user from Redux state
+        const currentUser = (getState() as any).user?.currentUser
+        const originalUser = { ...currentUser }
+        
         // Optimistic update to shoe cache
         const patchResult = dispatch(
           shoesApi.util.updateQueryData('getShoe', shoeID, (draft) => {
@@ -70,19 +74,31 @@ export const shoesApi = baseAPI.injectEndpoints({
           })
         )
 
+        // Optimistic update to user favorites
+        if (currentUser && currentUser.favorites && shoe_id) {
+          const isFavorited = currentUser.favorites.includes(shoe_id)
+          const optimisticUser = {
+            ...currentUser,
+            favorites: isFavorited 
+              ? currentUser.favorites.filter((id: string) => id !== shoe_id)
+              : [...currentUser.favorites, shoe_id]
+          }
+          dispatch(updateUser(optimisticUser))
+        }
+
         try {
           const { data } = await queryFulfilled
           // Update user state with server response
           dispatch(updateUser(data.updatedUser))
         } catch (error) {
-          // Rollback optimistic update on failure
+          // Rollback optimistic updates on failure
           patchResult.undo()
+          dispatch(updateUser(originalUser))
           console.error('Failed to toggle favorite:', error)
         }
       },
       invalidatesTags: (_, __, { shoeID }) => [
-        { type: 'Shoe', id: shoeID },
-        'User'
+        { type: 'Shoe', id: shoeID }
       ],
     }),
   }),
