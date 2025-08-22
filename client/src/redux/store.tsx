@@ -10,6 +10,7 @@ import { baseAPI } from '../api/api'
 import '../api/shoesApi'
 import '../api/ratingsApi'
 import '../api/cartApi'
+import '../api/userApi'
 import userReducer from './userRedux'
 
 const persistConfig = {
