@@ -38,6 +38,18 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
     e.preventDefault()
 
     // Basic validation
+    if (!currentPassword || !newPassword) {
+      setShowFailureMessage(true)
+      timeoutRef.current = setTimeout(() => setShowFailureMessage(false), 1500);
+      return
+    }
+
+    if (newPassword.length < 8) {
+      setShowFailureMessage(true)
+      timeoutRef.current = setTimeout(() => setShowFailureMessage(false), 1500);
+      return
+    }
+
     if (newPassword !== confirmNewPassword) {
       setShowFailureMessage(true)
       timeoutRef.current = setTimeout(() => setShowFailureMessage(false), 1500);
@@ -96,7 +108,7 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
           <button 
             onClick={handleEditPassword} 
             disabled={isLoading}
-            className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700 disabled:opacity-50"
+            className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 px-5 py-3 disabled:opacity-50"
           >
             {isLoading ? 'Saving...' : 'Save'}
           </button>

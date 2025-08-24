@@ -35,6 +35,15 @@ router.put('/:userID', async (req: Request, res: Response) => {
 
 router.put('/password/:userID', async (req: Request, res: Response) => {
   try {
+    // Basic validation
+    if (!req.body.currentPassword || !req.body.newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required' })
+    }
+
+    if (req.body.newPassword.length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters long' })
+    }
+
     const user = await User.findOne({ _id: req.params.userID })
 
     if (!user) {
