@@ -54,7 +54,7 @@ const App = () => {
           </Route>
 
           <Route path="/register" exact>
-            {!user ? <Redirect to='/' /> : (
+            {user ? <Redirect to='/' /> : (
               <span>
                 <Register />
               </span>

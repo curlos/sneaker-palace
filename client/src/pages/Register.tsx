@@ -44,8 +44,14 @@ const Register = () => {
         await performLogin(email, password, dispatch, updateGuestCart)
         history.push('/')
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(true)
+      // Extract error message from axios error response if available
+      if (err.response?.data?.error) {
+        setErrorMessage(err.response.data.error)
+      } else {
+        setErrorMessage('Registration failed. Please try again.')
+      }
     }
   }
 
