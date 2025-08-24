@@ -100,6 +100,32 @@ export const cartApi = baseAPI.injectEndpoints({
         method: 'PUT',
         body: { products },
       }),
+      
+      async onQueryStarted({ products }, { dispatch, queryFulfilled, getState }) {
+        // Get current user ID for cache key
+        const state = getState() as RootState
+        const userId = state.user.currentUser?._id
+        
+        if (!userId) return
+
+        // Optimistically update the cart cache
+        const patchResult = dispatch(
+          cartApi.util.updateQueryData('getUserCart', userId, (draft) => {
+            if (draft) {
+              draft.products = products
+              draft.total = calculateCartTotal(products)
+            }
+          })
+        )
+
+        try {
+          await queryFulfilled
+        } catch {
+          // Revert the optimistic update on error
+          patchResult.undo()
+        }
+      },
+      
       invalidatesTags: ['Cart'],
       transformResponse: (response: any) => {
         // Add computed total to the response

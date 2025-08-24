@@ -6,8 +6,9 @@ import { useCart, useUpdateUserCartMutation, useUpdateGuestCartMutation } from '
 import { RootState } from '../redux/store';
 import CartProductSkeleton from '../skeleton_loaders/CartProductSkeleton';
 import ShoeImage from './ShoeImage';
-import { IProduct, UserType } from "../types/types";
+import { IProduct } from "../types/types";
 import * as short from "short-uuid"
+import { useGetLoggedInUserQuery } from '../api/userApi';
 
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
@@ -18,8 +19,8 @@ interface Props {
 }
 
 const CartProduct = ({ productInfo }: Props) => {
-
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
   
   // RTK Query hooks
   const { data: shoe, isLoading: loading } = useGetShoeQuery(productInfo.productID)
