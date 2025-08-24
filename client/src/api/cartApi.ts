@@ -1,6 +1,7 @@
 import { baseAPI } from './api'
 import { IProduct, ICart } from '../types/types'
 import { useSelector } from 'react-redux'
+import { RootState } from '../redux/store';
 
 // Utility function to calculate cart total
 export const calculateCartTotal = (products: IProduct[] = []): number => {
@@ -138,8 +139,7 @@ export const {
 
 // Custom hook for unified cart management
 export const useCart = () => {
-  const user = useSelector((state: any) => state.user?.currentUser)
-  const userId = user?._id
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
   
   // Use appropriate query based on authentication status
   const userCartQuery = useGetUserCartQuery(userId, { skip: !userId })

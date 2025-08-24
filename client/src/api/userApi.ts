@@ -15,11 +15,10 @@ export const userApi = baseAPI.injectEndpoints({
       providesTags: ['User'],
     }),
 
-    
-    updateUserPreferences: builder.mutation({
-      async queryFn({ preferences }: { preferences: any }, api, _extraOptions, baseQuery) {
-        const state = api.getState() as RootState
-        const userId = state.user.currentUser?._id
+    updateUserInfo: builder.mutation({
+      async queryFn({ body }: { body: any }, api, _extraOptions, baseQuery) {
+        const s = api.getState() as RootState
+        const userId = s.user.currentUser?._id
 
         if (!userId) {
           return { error: { status: 'CUSTOM_ERROR', error: 'Not logged in' } }
@@ -28,7 +27,7 @@ export const userApi = baseAPI.injectEndpoints({
         return await baseQuery({
           url: `/users/${userId}`,
           method: 'PUT',
-          body: preferences,
+          body,
         })
       },
 
@@ -57,5 +56,5 @@ export const userApi = baseAPI.injectEndpoints({
 
 export const {
   useGetLoggedInUserQuery,
-  useUpdateUserPreferencesMutation,
+  useUpdateUserInfoMutation
 } = userApi

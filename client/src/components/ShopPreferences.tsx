@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import FailureMessage from './FailureMessage'
 import SuccessMessage from './SuccessMessage'
 import * as short from "short-uuid"
-import { useGetLoggedInUserQuery, useUpdateUserPreferencesMutation } from '../api/userApi'
+import { useGetLoggedInUserQuery, useUpdateUserInfoMutation } from '../api/userApi'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
@@ -16,7 +16,7 @@ const ShopPreferences = () => {
   const [preferredGender, setPreferredGender] = useState(user?.preferredGender || 'men')
   const [unitOfMeasure, setUnitOfMeasure] = useState(user?.unitOfMeasure || 'imperial')
   
-  const [updateUserPreferences, { isLoading }] = useUpdateUserPreferencesMutation()
+  const [updateUserInfo, { isLoading }] = useUpdateUserInfoMutation()
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [showFailureMessage, setShowFailureMessage] = useState(false)
 
@@ -35,15 +35,15 @@ const ShopPreferences = () => {
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const preferences = {
+    const body = {
       preselectedShoeSize,
       preferredGender,
       unitOfMeasure,
     }
 
     try {
-      await updateUserPreferences({
-        preferences 
+      await updateUserInfo({
+        body 
       }).unwrap()
       
       // Show success message and auto-dismiss after 3 seconds

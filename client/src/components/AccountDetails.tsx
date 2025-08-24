@@ -1,20 +1,17 @@
-import axios from 'axios'
-import React, { ChangeEvent, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { ChangeEvent, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { RootState } from '../redux/store'
-import { updateUser } from '../redux/userRedux'
-import { UserType } from '../types/types'
 import { postImage } from '../utils/postImage'
 import FailureMessage from './FailureMessage'
 import NewPasswordModal from './NewPasswordModal'
 import SuccessMessage from './SuccessMessage'
+import { useGetLoggedInUserQuery, useUpdateUserInfoMutation } from '../api/userApi';
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
 const AccountDetails = () => {
-
-  const dispatch = useDispatch()
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
   const [firstName, setFirstName] = useState(user?.firstName)
   const [lastName, setLastName] = useState(user?.lastName)
   const [email, setEmail] = useState(user?.email)
@@ -23,6 +20,11 @@ const AccountDetails = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [showFailureMessage, setShowFailureMessage] = useState(false)
   const [showModal, setShowModal] = useState(false)
+
+  const [updateUserInfo, { isLoading }] = useUpdateUserInfoMutation()
+
+  // Keep track of timeouts
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleEdit = async () => {
     let profilePicObj = user?.profilePic
@@ -40,16 +42,20 @@ const AccountDetails = () => {
       profilePic: profilePicObj
     }
 
-    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/${user._id}`, body)
-
-    if (!response.data.error) {
+    try {
+      await updateUserInfo({
+        body 
+      }).unwrap()
+      
+      // Show success message and auto-dismiss after 3 seconds
       setShowSuccessMessage(true)
-      setTimeout(() => { setShowSuccessMessage(false) }, 3000)
-
-      dispatch(updateUser(response.data))
-    } else {
+      timeoutRef.current = setTimeout(() => setShowSuccessMessage(false), 3000);
+    } catch (error) {
+      console.error('Failed to update user preferences:', error)
+      
+      // Show error message and auto-dismiss after 3 seconds
       setShowFailureMessage(true)
-      setTimeout(() => { setShowFailureMessage(false) }, 3000)
+      timeoutRef.current = setTimeout(() => setShowFailureMessage(false), 3000);
     }
   }
 
@@ -99,7 +105,13 @@ const AccountDetails = () => {
       {showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'} /> : null}
 
       <div className="flex justify-end">
-        <button onClick={handleEdit} className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700">Save</button>
+        <button 
+            onClick={handleEdit} 
+            disabled={isLoading}
+            className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 px-5 py-3 disabled:opacity-50"
+          >
+          {isLoading ? 'Saving...' : 'Save'}
+        </button>
       </div>
 
       {showModal ? <NewPasswordModal showModal={showModal} setShowModal={setShowModal} /> : null}
