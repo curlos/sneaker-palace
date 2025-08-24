@@ -2,11 +2,12 @@ import { ShoppingBagIcon } from "@heroicons/react/outline";
 import { MenuIcon, SearchIcon } from "@heroicons/react/solid";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from 'react-router-dom';
-import { useCart, useUpdateGuestCartMutation, invalidateAllCarts } from "../api/cartApi";
+import { useCart } from "../api/cartApi";
 import { RootState } from "../redux/store";
 import { logout } from '../redux/userRedux';
 import { UserType } from "../types/types";
 import { UserDropdown } from "./UserDropdown";
+import { baseAPI } from "../api/api";
 
 interface Props {
   setShowSearchModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -25,9 +26,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 
   const handleLogout = async () => {
     dispatch(logout())
-    
-    // Invalidate cart cache so RTK Query switches to guest cart
-    invalidateAllCarts(dispatch)
+    dispatch(baseAPI.util.resetApiState());
     history.push('/')
   }
 

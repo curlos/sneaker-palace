@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { RootState } from '../redux/store'
 import { logout } from '../redux/userRedux'
 import { UserType } from '../types/types'
+import { baseAPI } from '../api/api';
 
 interface Props {
   showSidenavModal: boolean,
@@ -23,8 +24,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
     setShowSidenavModal(false)
 
     dispatch(logout())
-    // TODO: Add some logic to replace "resetCart()" with the RTK Query equivalent.
-    // dispatch(resetCart())
+    dispatch(baseAPI.util.resetApiState());
     history.push('/')
   }
 

@@ -8,14 +8,6 @@ export const ratingsApi = baseAPI.injectEndpoints({
       query: (ratingId: string) => `/rating/${ratingId}`,
       providesTags: (result, error, ratingId) => [{ type: 'Rating', id: ratingId }],
     }),
-
-    // TODO: There should be a separate usersApi.ts file handling this.
-    // Get user data
-    getUser: builder.query({
-      query: (userId: string) => `/users/${userId}`,
-      providesTags: (result, error, userId) => [{ type: 'User', id: userId }],
-    }),
-
     // Get multiple ratings with their authors (custom endpoint for the complex fetch)
     getRatingsWithAuthors: builder.query({
       queryFn: async (ratingIDs: string[], _api, _extraOptions, fetchWithBQ) => {
@@ -175,7 +167,6 @@ export const ratingsApi = baseAPI.injectEndpoints({
 
 export const {
   useGetRatingQuery,
-  useGetUserQuery, 
   useGetRatingsWithAuthorsQuery,
   useGetRatingsByShoeQuery,
   useLikeRatingMutation,

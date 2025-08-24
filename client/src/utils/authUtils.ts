@@ -3,6 +3,7 @@ import { Dispatch } from '@reduxjs/toolkit'
 import { loginStart, loginSuccess } from '../redux/userRedux'
 import { invalidateAllCarts } from '../api/cartApi'
 import { UserType } from '../types/types'
+import { baseAPI } from '../api/api';
 
 export const performLogin = async (
   email: string, 
@@ -20,9 +21,6 @@ export const performLogin = async (
   }
   
   dispatch(loginSuccess(response.data))
-  
-  // Invalidate cart cache so RTK Query fetches fresh cart data
-  invalidateAllCarts(dispatch)
 
   // Clear guest cart on login using RTK Query
   await updateGuestCart({ products: [], total: 0 })

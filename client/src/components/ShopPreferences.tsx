@@ -1,27 +1,33 @@
-import React, { ChangeEvent, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../redux/store'
-import { updateUser } from '../redux/userRedux'
-import { UserType } from '../types/types'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import FailureMessage from './FailureMessage'
 import SuccessMessage from './SuccessMessage'
 import * as short from "short-uuid"
-import { useUpdateUserPreferencesMutation } from '../api/userApi'
+import { useGetLoggedInUserQuery, useUpdateUserPreferencesMutation } from '../api/userApi'
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
 const ShopPreferences = () => {
+  const { data: user } = useGetLoggedInUserQuery();
 
-  const dispatch = useDispatch()
-
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const [preselectedShoeSize, setPreselectedShoeSize] = useState(user.preselectedShoeSize || 8)
-  const [preferredGender, setPreferredGender] = useState(user.preferredGender || 'men')
-  const [unitOfMeasure, setUnitOfMeasure] = useState(user.unitOfMeasure || 'imperial')
+  const [preselectedShoeSize, setPreselectedShoeSize] = useState(user?.preselectedShoeSize || 10.5)
+  const [preferredGender, setPreferredGender] = useState(user?.preferredGender || 'men')
+  const [unitOfMeasure, setUnitOfMeasure] = useState(user?.unitOfMeasure || 'imperial')
   
   const [updateUserPreferences, { isLoading }] = useUpdateUserPreferencesMutation()
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [showFailureMessage, setShowFailureMessage] = useState(false)
+
+  // Keep track of timeouts
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,23 +39,19 @@ const ShopPreferences = () => {
     }
 
     try {
-      const result = await updateUserPreferences({ 
-        userId: user._id!, 
+      await updateUserPreferences({
         preferences 
       }).unwrap()
       
-      // Update Redux state with the response
-      dispatch(updateUser(result))
-      
       // Show success message and auto-dismiss after 3 seconds
       setShowSuccessMessage(true)
-      setTimeout(() => setShowSuccessMessage(false), 3000)
+      timeoutRef.current = setTimeout(() => setShowSuccessMessage(false), 3000);
     } catch (error) {
       console.error('Failed to update user preferences:', error)
       
       // Show error message and auto-dismiss after 3 seconds
       setShowFailureMessage(true)
-      setTimeout(() => setShowFailureMessage(false), 3000)
+      timeoutRef.current = setTimeout(() => setShowFailureMessage(false), 3000);
     }
   }
 

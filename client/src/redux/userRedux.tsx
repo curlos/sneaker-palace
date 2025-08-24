@@ -1,6 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const INITIAL_STATE = {
+interface UserState {
+  currentUser: any
+  isFetching: boolean
+  error: boolean
+}
+
+const INITIAL_STATE: UserState = {
   currentUser: {},
   isFetching: false,
   error: false,

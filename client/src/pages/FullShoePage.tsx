@@ -2,15 +2,14 @@ import { HeartIcon as HeartOutline } from '@heroicons/react/outline';
 import { HeartIcon as HeartSolid } from '@heroicons/react/solid';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { useSelector } from "react-redux";
 import { useHistory, useParams } from 'react-router-dom';
 import { useGetRatingsByShoeQuery } from '../api/ratingsApi';
 import { useGetShoeQuery, useToggleFavoriteShoeMutation } from '../api/shoesApi';
 import { useCart, useUpdateUserCartMutation, useUpdateGuestCartMutation } from '../api/cartApi';
+import { useGetLoggedInUserQuery } from '../api/userApi';
 import FullShoeReviews from '../components/FullShoeReviews';
 import ShoeImage from '../components/ShoeImage';
 import ShoppingCartModal from '../components/ShoppingCartModal';
-import { RootState } from "../redux/store";
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
 import { IProduct, UserType } from "../types/types";
@@ -27,14 +26,17 @@ interface Props {
 
 const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser);
   const history = useHistory();
+  
+  // Get full user data from RTK Query for the logged-in user
+  const { data: user, isLoading: userLoading } = useGetLoggedInUserQuery();
   
   // Get cart data using unified hook
   const { data: cartData } = useCart();
 
   const { shoeID }: { shoeID: string; } = useParams();
-  const initialSize = (Object.keys(user).length > 0 && user.preselectedShoeSize && String(user.preselectedShoeSize)) || AVERAGE_MAN_FOOT_SIZE;
+  
+  const initialSize = user?.preselectedShoeSize ? String(user.preselectedShoeSize) : AVERAGE_MAN_FOOT_SIZE;
 
   // RTK Query hooks
   const { data: shoe, isLoading: shoeLoading } = useGetShoeQuery(shoeID);
@@ -52,6 +54,10 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [shoeID]);
+
+  useEffect(() => {
+    setSelectedSize(initialSize)
+  }, [user])
 
   const handleAddToCart = async () => {
     setShowShoppingCartModal(true);
@@ -119,7 +125,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
   };
 
   const handleFavorite = async () => {
-    if (Object.keys(user).length === 0 || !user) {
+    if (!user?._id) {
       history.push('/login');
       return;
     }
@@ -142,7 +148,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
     <div className="flex-grow">
       <div className="container mx-auto px-4 py-5 max-w-7xl w-full h-full">
         <div className="w-full h-full">
-          {shoeLoading ? <FullShoeSkeleton />
+          {(shoeLoading || userLoading) ? <FullShoeSkeleton />
             : (
               <div className="flex md:block">
                 <div className="flex-3">
