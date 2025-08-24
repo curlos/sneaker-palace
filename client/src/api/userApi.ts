@@ -51,10 +51,48 @@ export const userApi = baseAPI.injectEndpoints({
 
       invalidatesTags: ['User'],
     }),
+
+    updateUserPassword: builder.mutation({
+      async queryFn({ body }: { body: any }, api, _extraOptions, baseQuery) {
+        const s = api.getState() as RootState
+        const userId = s.user.currentUser?._id
+
+        if (!userId) {
+          return { error: { status: 'CUSTOM_ERROR', error: 'Not logged in' } }
+        }
+
+        return await baseQuery({
+          url: `/users/password/${userId}`,
+          method: 'PUT',
+          body,
+        })
+      },
+
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data: updatedUser } = await queryFulfilled
+
+          // Assert the type of updatedUser before using it
+          const user = updatedUser as UserType
+
+          // Update the getLoggedInUser cache directly
+          dispatch(
+            userApi.util.updateQueryData('getLoggedInUser', user._id, (draft: any) => {
+              Object.assign(draft, user as object)
+            })
+          )
+        } catch {
+          // Handle error if needed
+        }
+      },
+
+      invalidatesTags: ['User'],
+    }),
   }),
 })
 
 export const {
   useGetLoggedInUserQuery,
-  useUpdateUserInfoMutation
+  useUpdateUserInfoMutation,
+  useUpdateUserPasswordMutation
 } = userApi

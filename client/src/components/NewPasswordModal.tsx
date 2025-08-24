@@ -1,10 +1,6 @@
 import { XIcon } from '@heroicons/react/outline'
-import axios from 'axios'
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../redux/store'
-import { updateUser } from '../redux/userRedux'
-import { UserType } from '../types/types'
+import React, { useState, useRef, useEffect } from 'react'
+import { useUpdateUserPasswordMutation } from '../api/userApi'
 import FailureMessage from './FailureMessage'
 import SuccessMessage from './SuccessMessage'
 
@@ -14,36 +10,67 @@ interface Props {
 }
 
 const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
-
-  const dispatch = useDispatch()
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmNewPassword, setConfirmNewPassword] = useState('')
 
+  const [updateUserPassword, { isLoading }] = useUpdateUserPasswordMutation()
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [showFailureMessage, setShowFailureMessage] = useState(false)
+
+  // Keep track of timeouts
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleBubblingDownClick = (e: React.FormEvent) => {
     e.stopPropagation()
   }
 
-  const handleEditPassword = async () => {
+  const handleEditPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    // Basic validation
+    if (newPassword !== confirmNewPassword) {
+      setShowFailureMessage(true)
+      timeoutRef.current = setTimeout(() => setShowFailureMessage(false), 1500);
+      return
+    }
 
     const body = {
       currentPassword,
       newPassword
     }
 
-    const response = await axios.put(`${process.env.REACT_APP_DEV_URL}/users/password/${user._id}`, body)
-
-    if (!response.data.error) {
+    try {
+      await updateUserPassword({
+        body
+      }).unwrap()
+      
+      // Show success message and auto-dismiss after 3 seconds
       setShowSuccessMessage(true)
-      setTimeout(() => { setShowSuccessMessage(false) }, 3000)
-      dispatch(updateUser(response.data))
-    } else {
+      timeoutRef.current = setTimeout(() => {
+        setShowSuccessMessage(false)
+        setShowModal(false)
+      }, 1500);
+      
+      // Clear form fields
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmNewPassword('')
+    } catch (error) {
+      console.error('Failed to update password:', error)
+      
+      // Show error message and auto-dismiss after 3 seconds
       setShowFailureMessage(true)
-      setTimeout(() => { setShowFailureMessage(false) }, 3000)
+      timeoutRef.current = setTimeout(() => setShowFailureMessage(false), 1500);
     }
   }
 
@@ -54,19 +81,25 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
           <div className="font-bold">Edit Password</div>
           <XIcon className="h-5 w-5 text-gray-600 hover:text-gray-800 cursor-pointer" onClick={() => setShowModal(false)} />
         </div>
-        <div>Current Password*</div>
-        <input type="text" className="w-full rounded-lg mb-4 placeholder-gray-400" placeholder="Current Password*" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} onClick={handleBubblingDownClick}></input>
-        <div>New Password*</div>
-        <input type="text" className="w-full rounded-lg mb-4 placeholder-gray-400" placeholder="New Password*" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} onClick={handleBubblingDownClick}></input>
+        <div>Current Password</div>
+        <input type="password" className="w-full rounded-lg mb-4 placeholder-gray-400" placeholder="Current Password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} onClick={handleBubblingDownClick}></input>
+        <div>New Password</div>
+        <input type="password" className="w-full rounded-lg mb-4 placeholder-gray-400" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} onClick={handleBubblingDownClick}></input>
 
-        <div>Confirm New Password*</div>
-        <input type="text" className="w-full rounded-lg mb-4 placeholder-gray-400" placeholder="Confirm New Password*" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} onClick={handleBubblingDownClick}></input>
+        <div>Confirm New Password</div>
+        <input type="password" className="w-full rounded-lg mb-4 placeholder-gray-400" placeholder="Confirm New Password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} onClick={handleBubblingDownClick}></input>
 
-        {showSuccessMessage ? <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'} /> : null}
-        {showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'} /> : null}
+        {showSuccessMessage && <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Password updated!'} />}
+        {showFailureMessage && <FailureMessage setShowMessage={setShowFailureMessage} message={'Password not updated, error occurred!'} />}
 
         <div className="flex justify-end">
-          <button onClick={handleEditPassword} className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700">Save</button>
+          <button 
+            onClick={handleEditPassword} 
+            disabled={isLoading}
+            className="rounded-full bg-gray-300 text-gray-500 px-5 py-3 hover:text-gray-700 disabled:opacity-50"
+          >
+            {isLoading ? 'Saving...' : 'Save'}
+          </button>
         </div>
       </form>
     </div>
