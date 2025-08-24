@@ -12,9 +12,11 @@ import ShoeImage from '../components/ShoeImage';
 import ShoppingCartModal from '../components/ShoppingCartModal';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
-import { IProduct, UserType } from "../types/types";
+import { IProduct } from "../types/types";
 import { ObjectId } from 'bson';
 import * as short from "short-uuid";
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17'];
 
@@ -28,8 +30,8 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
   const history = useHistory();
   
-  // Get full user data from RTK Query for the logged-in user
-  const { data: user, isLoading: userLoading } = useGetLoggedInUserQuery();
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user, isLoading: userLoading } = useGetLoggedInUserQuery(userId);
   
   // Get cart data using unified hook
   const { data: cartData } = useCart();

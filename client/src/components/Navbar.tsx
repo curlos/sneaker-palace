@@ -5,9 +5,9 @@ import { Link, useHistory } from 'react-router-dom';
 import { useCart } from "../api/cartApi";
 import { RootState } from "../redux/store";
 import { logout } from '../redux/userRedux';
-import { UserType } from "../types/types";
 import { UserDropdown } from "./UserDropdown";
 import { baseAPI } from "../api/api";
+import { useGetLoggedInUserQuery } from "../api/userApi";
 
 interface Props {
   setShowSearchModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -16,7 +16,8 @@ interface Props {
 
 const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
   const dispatch = useDispatch()
   const history = useHistory()
 
@@ -46,7 +47,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
         <div className="lg:hidden">
           <Link to={{ pathname: "/shoes", state: { gender: 'women' } }} >Women</Link>
         </div>
-        {user && Object.keys(user).length > 0 ? (
+        {user ? (
           <span>
             <UserDropdown user={user} handleLogout={handleLogout} />
           </span>)

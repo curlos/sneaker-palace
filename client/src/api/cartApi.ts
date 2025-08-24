@@ -136,12 +136,6 @@ export const {
   useUpdateGuestCartMutation,
 } = cartApi
 
-// Cart invalidation utilities for login/logout
-export const invalidateAllCarts = (dispatch: any) => {
-  // Invalidate all cart-related queries
-  dispatch(cartApi.util.invalidateTags(['Cart']))
-}
-
 // Custom hook for unified cart management
 export const useCart = () => {
   const user = useSelector((state: any) => state.user?.currentUser)

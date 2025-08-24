@@ -23,11 +23,13 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import ReviewForm from "./pages/ReviewForm";
 import Settings from "./pages/Settings";
+import { useGetLoggedInUserQuery } from "./api/userApi";
 import { RootState } from "./redux/store";
 
 const App = () => {
 
-  const user = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [showSidenavModal, setShowSidenavModal] = useState(false)
   const [showShoppingCartModal, setShowShoppingCartModal] = useState(false)
@@ -52,7 +54,7 @@ const App = () => {
           </Route>
 
           <Route path="/register" exact>
-            {user && Object.keys(user).length > 0 ? <Redirect to='/' /> : (
+            {!user ? <Redirect to='/' /> : (
               <span>
                 <Register />
               </span>
@@ -80,7 +82,7 @@ const App = () => {
           </Route>
 
           <Route path="/shoe/submit-review/:shoeID" exact>
-            {user && Object.keys(user).length === 0 ? <Redirect to='/login' /> : (
+            {!user ? <Redirect to='/login' /> : (
               <span>
                 <ReviewForm />
               </span>
@@ -88,7 +90,7 @@ const App = () => {
           </Route>
 
           <Route path="/shoe/edit-review/:shoeID/:reviewID" exact>
-            {user && Object.keys(user).length === 0 ? <Redirect to='/login' /> : (
+            {!user ? <Redirect to='/login' /> : (
               <span>
                 <ReviewForm />
               </span>
@@ -96,13 +98,13 @@ const App = () => {
           </Route>
 
           <Route path="/profile/:userID" exact>
-            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+            {!user ? <Redirect to='/' /> : (
               <Profile />
             )}
           </Route>
 
           <Route path="/orders" exact>
-            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+            {!user ? <Redirect to='/' /> : (
               <span>
                 <Orders />
               </span>
@@ -114,7 +116,7 @@ const App = () => {
           </Route>
 
           <Route path="/favorites" exact>
-            {user && Object.keys(user).length === 0 ? <Redirect to='/' /> : (
+            {!user ? <Redirect to='/' /> : (
               <span>
                 <Favorites />
               </span>
