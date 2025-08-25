@@ -94,15 +94,19 @@ export const ratingsApi = baseAPI.injectEndpoints({
           ratingsApi.util.updateQueryData('getRatingsByShoe', shoeID, (draft) => {
             const rating = draft.find((r: any) => r._id === ratingID);
             if (rating) {
-              const isAlreadyLiked = rating.helpful?.includes(userID);
+              // Ensure arrays exist
+              rating.helpful = rating.helpful || [];
+              rating.notHelpful = rating.notHelpful || [];
+              
+              const isAlreadyLiked = rating.helpful.includes(userID);
               if (isAlreadyLiked) {
                 // Remove user from helpful array if already liked (toggle off)
-                rating.helpful = rating.helpful?.filter((id: string) => id !== userID) || [];
+                rating.helpful = rating.helpful.filter((id: string) => id !== userID);
               } else {
                 // Add user to helpful array if not already there
-                rating.helpful = [...(rating.helpful || []), userID];
+                rating.helpful = [...rating.helpful, userID];
                 // Remove user from notHelpful array if present
-                rating.notHelpful = rating.notHelpful?.filter((id: string) => id !== userID) || [];
+                rating.notHelpful = rating.notHelpful.filter((id: string) => id !== userID);
               }
             }
           })
@@ -116,10 +120,11 @@ export const ratingsApi = baseAPI.injectEndpoints({
           ratingPatchResult.undo();
         }
       },
-      invalidatesTags: (_, _error, { ratingID, userID, shoeID }) => [
-        { type: 'Rating', id: ratingID },
+      invalidatesTags: (_, _error, { userID }) => [
         { type: 'User', id: userID },
-        { type: 'RatingsByShoe', id: shoeID },
+        // TODO: Commented out these two since every time I like/dislike a rating, it was causing a race condition where the number would not actually update until the API call was done. For example, if the like button had "3" and I clicked it again, it should bring it down to "2". However, it'd stay at 3 until the API call was done. So commenting out this will let the patch reflect immediately instead. If something does go wrong, then the change will be undone.
+        // { type: 'Rating', id: ratingID },
+        // { type: 'RatingsByShoe', id: shoeID },
       ],
     }),
 
@@ -154,15 +159,19 @@ export const ratingsApi = baseAPI.injectEndpoints({
           ratingsApi.util.updateQueryData('getRatingsByShoe', shoeID, (draft) => {
             const rating = draft.find((r: any) => r._id === ratingID);
             if (rating) {
-              const isAlreadyDisliked = rating.notHelpful?.includes(userID);
+              // Ensure arrays exist
+              rating.helpful = rating.helpful || [];
+              rating.notHelpful = rating.notHelpful || [];
+              
+              const isAlreadyDisliked = rating.notHelpful.includes(userID);
               if (isAlreadyDisliked) {
                 // Remove user from notHelpful array if already disliked (toggle off)
-                rating.notHelpful = rating.notHelpful?.filter((id: string) => id !== userID) || [];
+                rating.notHelpful = rating.notHelpful.filter((id: string) => id !== userID);
               } else {
                 // Add user to notHelpful array if not already there
-                rating.notHelpful = [...(rating.notHelpful || []), userID];
+                rating.notHelpful = [...rating.notHelpful, userID];
                 // Remove user from helpful array if present
-                rating.helpful = rating.helpful?.filter((id: string) => id !== userID) || [];
+                rating.helpful = rating.helpful.filter((id: string) => id !== userID);
               }
             }
           })
@@ -176,10 +185,11 @@ export const ratingsApi = baseAPI.injectEndpoints({
           ratingPatchResult.undo();
         }
       },
-      invalidatesTags: (_, _error, { ratingID, userID, shoeID }) => [
-        { type: 'Rating', id: ratingID },
+      invalidatesTags: (_, _error, { userID }) => [
         { type: 'User', id: userID },
-        { type: 'RatingsByShoe', id: shoeID },
+        // TODO: Commented out these two since every time I like/dislike a rating, it was causing a race condition where the number would not actually update until the API call was done. For example, if the like button had "3" and I clicked it again, it should bring it down to "2". However, it'd stay at 3 until the API call was done. So commenting out this will let the patch reflect immediately instead. If something does go wrong, then the change will be undone.
+        // { type: 'RatingsByShoe', id: shoeID },
+        // { type: 'Rating', id: ratingID },
       ],
     }),
 
