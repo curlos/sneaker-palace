@@ -1,9 +1,14 @@
 import { Link } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
+import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import { IRating, Shoe } from '../types/types'
 import Review from './Review'
 import StarRatingProgress from './StarRatingProgress'
 import * as short from "short-uuid"
+import { useLikeRatingMutation, useDislikeRatingMutation } from '../api/ratingsApi'
+import { useGetLoggedInUserQuery } from '../api/userApi'
+import { RootState } from '../redux/store'
 
 interface Props {
   shoe: Partial<Shoe>,
@@ -11,6 +16,47 @@ interface Props {
 }
 
 const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
+  const history = useHistory()
+  
+  // RTK Query mutations
+  const [likeRating, { isLoading: isLikeLoading }] = useLikeRatingMutation()
+  const [dislikeRating, { isLoading: isDislikeLoading }] = useDislikeRatingMutation()
+
+  const handleLike = async (ratingID: string) => {
+    if (!user) {
+      history.push('/login');
+      return;
+    }
+
+    try {
+      await likeRating({
+        ratingID: ratingID,
+        userID: user._id!,
+        shoeID: shoe.shoeID!
+      }).unwrap()
+    } catch (error) {
+      console.error('Failed to like rating:', error)
+    }
+  }
+
+  const handleDislike = async (ratingID: string) => {
+    if (!user) {
+      history.push('/login');
+      return;
+    }
+
+    try {
+      await dislikeRating({
+        ratingID: ratingID,
+        userID: user._id!,
+        shoeID: shoe.shoeID!
+      }).unwrap()
+    } catch (error) {
+      console.error('Failed to dislike rating:', error)
+    }
+  }
 
   return (
     <div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
@@ -56,7 +102,14 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
           </div>
 
           <div>
-            {shoeRatings.map((shoeRating) => <Review key={`${shoeRating}-${short.generate()}`} shoeRating={shoeRating} shoe={shoe} />)}
+            {shoeRatings.map((shoeRating) => <Review 
+              key={`${shoeRating}-${short.generate()}`} 
+              shoeRating={shoeRating} 
+              shoe={shoe}
+              onLike={handleLike}
+              onDislike={handleDislike}
+              isLoading={isLikeLoading || isDislikeLoading}
+            />)}
           </div>
         </div>
       ) : null}

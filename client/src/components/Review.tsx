@@ -3,9 +3,9 @@ import { ThumbDownIcon as ThumbDownSolid, ThumbUpIcon as ThumbUpSolid } from '@h
 import moment from 'moment'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
-import { useLikeRatingMutation, useDislikeRatingMutation, useDeleteRatingMutation } from '../api/ratingsApi'
+import { useDeleteRatingMutation } from '../api/ratingsApi'
 import { useGetLoggedInUserQuery } from '../api/userApi'
 import { RootState } from '../redux/store'
 import { IRating, Shoe } from '../types/types'
@@ -14,55 +14,28 @@ import ReviewModal from './ReviewModal'
 interface Props {
   shoeRating: IRating,
   shoe: Partial<Shoe>,
-  onShoeRatingUpdate?: (newRating: number) => void
+  onLike: (ratingID: string) => void,
+  onDislike: (ratingID: string) => void,
+  isLoading: boolean
 }
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
-const Review = ({ shoeRating, shoe }: Props) => {
+const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
   const userId = useSelector((s: RootState) => s.user.currentUser?._id);
   const { data: user } = useGetLoggedInUserQuery(userId);
-  const history = useHistory()
   const review = shoeRating
   const [showModal, setShowModal] = useState(false)
 
   // RTK Query mutations
-  const [likeRating] = useLikeRatingMutation()
-  const [dislikeRating] = useDislikeRatingMutation()
   const [deleteRating] = useDeleteRatingMutation()
 
-  const handleLike = async () => {
-    if (!user) {
-      history.push('/login');
-      return;
-    }
-
-    try {
-      await likeRating({
-        ratingID: review._id,
-        userID: user._id!,
-        shoeID: shoe.shoeID!
-      }).unwrap()
-    } catch (error) {
-      console.error('Failed to like rating:', error)
-    }
+  const handleLike = () => {
+    onLike(review._id)
   }
 
-  const handleDislike = async () => {
-    if (!user) {
-      history.push('/login');
-      return;
-    }
-
-    try {
-      await dislikeRating({
-        ratingID: review._id,
-        userID: user._id!,
-        shoeID: shoe.shoeID!
-      }).unwrap()
-    } catch (error) {
-      console.error('Failed to dislike rating:', error)
-    }
+  const handleDislike = () => {
+    onDislike(review._id)
   }
 
   const handleDeleteReview = async () => {
@@ -114,14 +87,22 @@ const Review = ({ shoeRating, shoe }: Props) => {
 
       <div className="text-sm flex gap-2">
         <div>Helpful? </div>
-        <div className="flex">
-          {user?.helpful?.includes(review._id) ? <ThumbUpSolid className="h-5 w-5 cursor-pointer" onClick={handleLike} /> : <ThumbUpOutline className="h-5 w-5 cursor-pointer" onClick={handleLike} />}
+        <button 
+          className={`flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-75'}`}
+          onClick={handleLike}
+          disabled={isLoading}
+        >
+          {user?.helpful?.includes(review._id) ? <ThumbUpSolid className="h-5 w-5" /> : <ThumbUpOutline className="h-5 w-5" />}
           <span className="ml-1">{review.helpful.length}</span>
-        </div>
-        <div className="flex">
-          {user?.notHelpful?.includes(review._id) ? <ThumbDownSolid className="h-5 w-5 cursor-pointer" onClick={handleDislike} /> : <ThumbDownOutline className="h-5 w-5 cursor-pointer" onClick={handleDislike} />}
+        </button>
+        <button 
+          className={`flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-75'}`}
+          onClick={handleDislike}
+          disabled={isLoading}
+        >
+          {user?.notHelpful?.includes(review._id) ? <ThumbDownSolid className="h-5 w-5" /> : <ThumbDownOutline className="h-5 w-5" />}
           <span className="ml-1">{review.notHelpful.length}</span>
-        </div>
+        </button>
       </div>
 
       {showModal ? <ReviewModal showModal={showModal} setShowModal={setShowModal} review={review} /> : null}
