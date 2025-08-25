@@ -1,9 +1,6 @@
 import { Request, Response } from 'express'
 
 const express = require('express')
-const mongoose = require('mongoose')
-const Rating = require('../models/Rating')
-const Shoe = require('../models/Shoe')
 const User = require('../models/User')
 const Cart = require('../models/Cart')
 const Order = require('../models/Order')
