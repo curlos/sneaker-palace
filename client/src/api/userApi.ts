@@ -12,7 +12,8 @@ export const userApi = baseAPI.injectEndpoints({
         }
         return await baseQuery(`/users/${userId}`)
       },
-      providesTags: ['User'],
+      providesTags: (_result, _error, userId) => 
+        userId ? [{ type: 'User', id: userId }] : ['User'],
     }),
 
     updateUserInfo: builder.mutation({

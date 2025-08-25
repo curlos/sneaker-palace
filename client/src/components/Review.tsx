@@ -2,13 +2,13 @@ import { PencilAltIcon, ThumbDownIcon as ThumbDownOutline, ThumbUpIcon as ThumbU
 import { ThumbDownIcon as ThumbDownSolid, ThumbUpIcon as ThumbUpSolid } from '@heroicons/react/solid'
 import moment from 'moment'
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
 import { useLikeRatingMutation, useDislikeRatingMutation, useDeleteRatingMutation } from '../api/ratingsApi'
+import { useGetLoggedInUserQuery } from '../api/userApi'
 import { RootState } from '../redux/store'
-import { updateUser } from '../redux/userRedux'
-import { IRating, Shoe, UserType } from '../types/types'
+import { IRating, Shoe } from '../types/types'
 import ReviewModal from './ReviewModal'
 
 interface Props {
@@ -20,9 +20,8 @@ interface Props {
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
 const Review = ({ shoeRating, shoe }: Props) => {
-
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
-  const dispatch = useDispatch()
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
   const history = useHistory()
   const review = shoeRating
   const [showModal, setShowModal] = useState(false)
@@ -33,40 +32,34 @@ const Review = ({ shoeRating, shoe }: Props) => {
   const [deleteRating] = useDeleteRatingMutation()
 
   const handleLike = async () => {
-    if (Object.keys(user).length === 0 || !user) {
+    if (!user) {
       history.push('/login');
       return;
     }
 
     try {
-      const response = await likeRating({
+      await likeRating({
         ratingID: review._id,
-        userID: user._id!
+        userID: user._id!,
+        shoeID: shoe.shoeID!
       }).unwrap()
-      
-      // RTK Query will automatically refetch ratings data via cache invalidation
-      // Just update the user data in Redux
-      dispatch(updateUser(response.updatedUser))
     } catch (error) {
       console.error('Failed to like rating:', error)
     }
   }
 
   const handleDislike = async () => {
-    if (Object.keys(user).length === 0 || !user) {
+    if (!user) {
       history.push('/login');
       return;
     }
 
     try {
-      const response = await dislikeRating({
+      await dislikeRating({
         ratingID: review._id,
-        userID: user._id!
+        userID: user._id!,
+        shoeID: shoe.shoeID!
       }).unwrap()
-      
-      // RTK Query will automatically refetch ratings data via cache invalidation
-      // Just update the user data in Redux
-      dispatch(updateUser(response.updatedUser))
     } catch (error) {
       console.error('Failed to dislike rating:', error)
     }
@@ -89,7 +82,7 @@ const Review = ({ shoeRating, shoe }: Props) => {
           <div className="text-sm">{review.postedByUser.firstName} {review.postedByUser.lastName}</div>
         </div>
 
-        {review.postedByUser._id === user._id ? (
+        {review.postedByUser._id === user?._id ? (
           <div className="flex gap-2">
             <Link to={`/shoe/edit-review/${shoe.shoeID}/${review._id}`}>
               <PencilAltIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" />
@@ -122,11 +115,11 @@ const Review = ({ shoeRating, shoe }: Props) => {
       <div className="text-sm flex gap-2">
         <div>Helpful? </div>
         <div className="flex">
-          {user.helpful?.includes(review._id) ? <ThumbUpSolid className="h-5 w-5 cursor-pointer" onClick={handleLike} /> : <ThumbUpOutline className="h-5 w-5 cursor-pointer" onClick={handleLike} />}
+          {user?.helpful?.includes(review._id) ? <ThumbUpSolid className="h-5 w-5 cursor-pointer" onClick={handleLike} /> : <ThumbUpOutline className="h-5 w-5 cursor-pointer" onClick={handleLike} />}
           <span className="ml-1">{review.helpful.length}</span>
         </div>
         <div className="flex">
-          {user.notHelpful?.includes(review._id) ? <ThumbDownSolid className="h-5 w-5 cursor-pointer" onClick={handleDislike} /> : <ThumbDownOutline className="h-5 w-5 cursor-pointer" onClick={handleDislike} />}
+          {user?.notHelpful?.includes(review._id) ? <ThumbDownSolid className="h-5 w-5 cursor-pointer" onClick={handleDislike} /> : <ThumbDownOutline className="h-5 w-5 cursor-pointer" onClick={handleDislike} />}
           <span className="ml-1">{review.notHelpful.length}</span>
         </div>
       </div>

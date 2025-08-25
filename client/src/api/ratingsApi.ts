@@ -64,27 +64,29 @@ export const ratingsApi = baseAPI.injectEndpoints({
 
     // Like a rating
     likeRating: builder.mutation({
-      query: ({ ratingID, userID }: { ratingID: string, userID: string }) => ({
+      query: ({ ratingID, userID }: { ratingID: string, userID: string, shoeID: string }) => ({
         url: '/rating/like',
         method: 'PUT',
         body: { ratingID, userID },
       }),
-      invalidatesTags: (result, _error, { ratingID }) => [
+      invalidatesTags: (_, _error, { ratingID, userID, shoeID }) => [
         { type: 'Rating', id: ratingID },
-        { type: 'User', id: result?.updatedUser?._id }
+        { type: 'User', id: userID },
+        { type: 'RatingsByShoe', id: shoeID },
       ],
     }),
 
     // Dislike a rating
     dislikeRating: builder.mutation({
-      query: ({ ratingID, userID }: { ratingID: string, userID: string }) => ({
+      query: ({ ratingID, userID }: { ratingID: string, userID: string, shoeID: string }) => ({
         url: '/rating/dislike',
         method: 'PUT',
         body: { ratingID, userID },
       }),
-      invalidatesTags: (result, _error, { ratingID }) => [
+      invalidatesTags: (_, _error, { ratingID, userID, shoeID }) => [
         { type: 'Rating', id: ratingID },
-        { type: 'User', id: result?.updatedUser?._id }
+        { type: 'User', id: userID },
+        { type: 'RatingsByShoe', id: shoeID },
       ],
     }),
 
