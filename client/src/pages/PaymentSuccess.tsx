@@ -8,11 +8,12 @@ import { useCart, useUpdateGuestCartMutation, useUpdateUserCartMutation } from '
 import { RootState } from '../redux/store'
 import { updateUser } from '../redux/userRedux'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
-import { UserType } from '../types/types'
+import { useGetLoggedInUserQuery } from '../api/userApi'
 
 const PaymentSuccess = () => {
   const dispatch = useDispatch()
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
   
   // Use unified cart hook
   const { data: cartData } = useCart()
@@ -65,7 +66,7 @@ const PaymentSuccess = () => {
             deliveryDate: new Date(moment().add(2, 'days').format("ddd, MMM D").toUpperCase()).toString()
           }
 
-          if (Object.keys(user).length >= 1) {
+          if (user?._id) {
             body.userID = user._id
 
             try {
@@ -118,13 +119,13 @@ const PaymentSuccess = () => {
       addToOrders()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentCart, dispatch, paymentInfo, total, user._id])
+  }, [currentCart, dispatch, paymentInfo, total, user?._id])
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       <div className="container mx-auto px-4 py-7 max-w-6xl flex-grow">
         <div className="text-lg">
-          {Object.keys(user).length > 0 ? (
+          {user ? (
             <div className="text-4xl">Hello {user.firstName} {user.lastName},</div>
           ) : (
             <div className="text-4xl">Hello user,</div>
