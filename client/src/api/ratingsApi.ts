@@ -1,5 +1,6 @@
 import { baseAPI } from './api'
 import { IRating } from '../types/types'
+import { userApi } from './userApi'
 
 export const ratingsApi = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -69,6 +70,52 @@ export const ratingsApi = baseAPI.injectEndpoints({
         method: 'PUT',
         body: { ratingID, userID },
       }),
+      async onQueryStarted({ ratingID, userID, shoeID }, { dispatch, queryFulfilled }) {
+        // Optimistic update for user
+        const userPatchResult = dispatch(
+          userApi.util.updateQueryData('getLoggedInUser', userID, (draft) => {
+            if (draft) {
+              const isAlreadyLiked = draft.helpful?.includes(ratingID);
+              if (isAlreadyLiked) {
+                // Remove from helpful array if already liked (toggle off)
+                draft.helpful = draft.helpful?.filter((id: string) => id !== ratingID) || [];
+              } else {
+                // Add to helpful array if not already there
+                draft.helpful = [...(draft.helpful || []), ratingID];
+                // Remove from notHelpful array if present
+                draft.notHelpful = draft.notHelpful?.filter((id: string) => id !== ratingID) || [];
+              }
+            }
+          })
+        );
+
+        // Optimistic update for rating in getRatingsByShoe
+        const ratingPatchResult = dispatch(
+          ratingsApi.util.updateQueryData('getRatingsByShoe', shoeID, (draft) => {
+            const rating = draft.find((r: any) => r._id === ratingID);
+            if (rating) {
+              const isAlreadyLiked = rating.helpful?.includes(userID);
+              if (isAlreadyLiked) {
+                // Remove user from helpful array if already liked (toggle off)
+                rating.helpful = rating.helpful?.filter((id: string) => id !== userID) || [];
+              } else {
+                // Add user to helpful array if not already there
+                rating.helpful = [...(rating.helpful || []), userID];
+                // Remove user from notHelpful array if present
+                rating.notHelpful = rating.notHelpful?.filter((id: string) => id !== userID) || [];
+              }
+            }
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Revert on failure
+          userPatchResult.undo();
+          ratingPatchResult.undo();
+        }
+      },
       invalidatesTags: (_, _error, { ratingID, userID, shoeID }) => [
         { type: 'Rating', id: ratingID },
         { type: 'User', id: userID },
@@ -83,6 +130,52 @@ export const ratingsApi = baseAPI.injectEndpoints({
         method: 'PUT',
         body: { ratingID, userID },
       }),
+      async onQueryStarted({ ratingID, userID, shoeID }, { dispatch, queryFulfilled }) {
+        // Optimistic update for user
+        const userPatchResult = dispatch(
+          userApi.util.updateQueryData('getLoggedInUser', userID, (draft) => {
+            if (draft) {
+              const isAlreadyDisliked = draft.notHelpful?.includes(ratingID);
+              if (isAlreadyDisliked) {
+                // Remove from notHelpful array if already disliked (toggle off)
+                draft.notHelpful = draft.notHelpful?.filter((id: string) => id !== ratingID) || [];
+              } else {
+                // Add to notHelpful array if not already there
+                draft.notHelpful = [...(draft.notHelpful || []), ratingID];
+                // Remove from helpful array if present
+                draft.helpful = draft.helpful?.filter((id: string) => id !== ratingID) || [];
+              }
+            }
+          })
+        );
+
+        // Optimistic update for rating in getRatingsByShoe
+        const ratingPatchResult = dispatch(
+          ratingsApi.util.updateQueryData('getRatingsByShoe', shoeID, (draft) => {
+            const rating = draft.find((r: any) => r._id === ratingID);
+            if (rating) {
+              const isAlreadyDisliked = rating.notHelpful?.includes(userID);
+              if (isAlreadyDisliked) {
+                // Remove user from notHelpful array if already disliked (toggle off)
+                rating.notHelpful = rating.notHelpful?.filter((id: string) => id !== userID) || [];
+              } else {
+                // Add user to notHelpful array if not already there
+                rating.notHelpful = [...(rating.notHelpful || []), userID];
+                // Remove user from helpful array if present
+                rating.helpful = rating.helpful?.filter((id: string) => id !== userID) || [];
+              }
+            }
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Revert on failure
+          userPatchResult.undo();
+          ratingPatchResult.undo();
+        }
+      },
       invalidatesTags: (_, _error, { ratingID, userID, shoeID }) => [
         { type: 'Rating', id: ratingID },
         { type: 'User', id: userID },
