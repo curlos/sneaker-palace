@@ -2,16 +2,15 @@ import { useStripe } from '@stripe/react-stripe-js'
 import axios from 'axios'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useCart, useUpdateGuestCartMutation, useUpdateUserCartMutation } from '../api/cartApi'
+import { useCreateUserOrderMutation, useCreateGuestOrderMutation } from '../api/ordersApi'
 import { RootState } from '../redux/store'
-import { updateUser } from '../redux/userRedux'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { useGetLoggedInUserQuery } from '../api/userApi'
 
 const PaymentSuccess = () => {
-  const dispatch = useDispatch()
   const userId = useSelector((s: RootState) => s.user.currentUser?._id);
   const { data: user } = useGetLoggedInUserQuery(userId);
   
@@ -23,6 +22,10 @@ const PaymentSuccess = () => {
   // Cart mutations for clearing cart after payment
   const [updateGuestCart] = useUpdateGuestCartMutation()
   const [updateUserCart] = useUpdateUserCartMutation()
+  
+  // Order mutations
+  const [createUserOrder] = useCreateUserOrderMutation()
+  const [createGuestOrder] = useCreateGuestOrderMutation()
   
   const [loading, setLoading] = useState(true)
   const [orderID, setOrderID] = useState<any>({})
@@ -70,15 +73,14 @@ const PaymentSuccess = () => {
             body.userID = user._id
 
             try {
-              const response: any = await axios.post(`${process.env.REACT_APP_DEV_URL}/orders/`, body)
+              const response: any = await createUserOrder(body).unwrap()
 
-              if (response && response.data.error) {
-                setOrderID(response.data.orderID)
+              if (response && response.error) {
+                setOrderID(response.orderID)
               } else {
-                const { order, updatedUser } = response.data
+                const { order } = response
 
                 setOrderID(order._id)
-                dispatch(updateUser(updatedUser))
                 
                 // Clear the user's cart after successful payment
                 if (currentCart?._id) {
@@ -97,12 +99,12 @@ const PaymentSuccess = () => {
             }
           } else {
             try {
-              const response: any = await axios.post(`${process.env.REACT_APP_DEV_URL}/orders/no-account`, body)
+              const response: any = await createGuestOrder(body).unwrap()
 
-              if (response && response.data.error) {
-                setOrderID(response.data.orderID)
+              if (response && response.error) {
+                setOrderID(response.orderID)
               } else {
-                const { order } = response.data
+                const { order } = response
 
                 setOrderID(order._id)
                 // Clear guest cart on successful order using RTK Query
@@ -119,7 +121,7 @@ const PaymentSuccess = () => {
       addToOrders()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentCart, dispatch, paymentInfo, total, user?._id])
+  }, [currentCart, paymentInfo, total, user?._id])
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (

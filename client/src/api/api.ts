@@ -24,7 +24,8 @@ export const baseAPI = createApi({
     'Rating', 
     'RatingsByShoe',
     'User',
-    'Cart'
+    'Cart',
+    'Order'
   ],
   endpoints: () => ({}),
 })

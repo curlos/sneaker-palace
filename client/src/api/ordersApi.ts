@@ -10,9 +10,33 @@ export const ordersApi = baseAPI.injectEndpoints({
           ? [...result.map((order: any) => ({ type: 'Order', id: order._id })), { type: 'Order', id: `USER_${userId}` }]
           : [{ type: 'Order', id: `USER_${userId}` }],
     }),
+
+    // Create order for logged-in user
+    createUserOrder: builder.mutation({
+      query: (orderData) => ({
+        url: '/orders/',
+        method: 'POST',
+        body: orderData,
+      }),
+      invalidatesTags: (result, error, orderData) => [
+        { type: 'User', id: orderData.userID },
+        { type: 'Order', id: `USER_${orderData.userID}` }
+      ],
+    }),
+
+    // Create order for guest user (no account)
+    createGuestOrder: builder.mutation({
+      query: (orderData) => ({
+        url: '/orders/no-account',
+        method: 'POST',
+        body: orderData,
+      }),
+    }),
   }),
 })
 
 export const {
   useGetUserOrdersQuery,
+  useCreateUserOrderMutation,
+  useCreateGuestOrderMutation,
 } = ordersApi

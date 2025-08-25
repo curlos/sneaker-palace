@@ -2,7 +2,6 @@ import axios from 'axios'
 import { Dispatch } from '@reduxjs/toolkit'
 import { loginStart, loginSuccess } from '../redux/userRedux'
 import { UserType } from '../types/types'
-import { baseAPI } from '../api/api';
 
 export const performLogin = async (
   email: string, 
