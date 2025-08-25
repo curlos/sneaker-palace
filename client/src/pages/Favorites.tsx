@@ -1,5 +1,4 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import SmallShoe from '../components/SmallShoe'
@@ -7,36 +6,20 @@ import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { Shoe } from '../types/types'
 import { useGetLoggedInUserQuery } from '../api/userApi'
+import { useGetShoesByObjectIdsQuery } from '../api/shoesApi'
 
 const Favorites = () => {
   const userId = useSelector((s: RootState) => s.user.currentUser?._id);
   const { data: user } = useGetLoggedInUserQuery(userId);
-
-  const [favoriteShoes, setFavoriteShoes] = useState<Array<Shoe>>([])
-  const [loading, setLoading] = useState(true)
+  
+  const { data: favoriteShoes, isLoading: loading } = useGetShoesByObjectIdsQuery(
+    user?.favorites || [],
+    { skip: !user?.favorites || user.favorites.length === 0 }
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    const fetchFromAPI = async () => {
-      const favorites = await getAllFavorites()
-      setFavoriteShoes(favorites)
-      setLoading(false)
-    }
-    fetchFromAPI()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const getAllFavorites = async () => {
-    if (!user?.favorites || user.favorites.length === 0) {
-      return []
-    }
-
-    const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes/objectIDs`, {
-      ids: user.favorites
-    })
-    
-    return response.data
-  }
 
   return (
     loading ? <div className="flex justify-center py-4 h-screen"><CircleLoader size={16} /></div> : (
@@ -44,7 +27,7 @@ const Favorites = () => {
         <div className="text-3xl py-5">Your Favorites</div>
         {favoriteShoes && favoriteShoes.length > 0 ? (
           <div className="flex flex-wrap justify-start">
-            {favoriteShoes.map((shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
+            {favoriteShoes?.map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
           </div>
         ) : (
           <div className="p-4 flex justify-center items-center gap-4 mt-10">

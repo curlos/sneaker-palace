@@ -9,10 +9,15 @@ export const shoesApi = baseAPI.injectEndpoints({
       providesTags: (_, __, shoeId) => [{ type: 'Shoe', id: shoeId }],
     }),
 
-    // Get shoe by ObjectID (used in Favorites)
-    getShoeByObjectId: builder.query({
-      query: (objectId: string) => `/shoes/objectID/${objectId}`,
-      providesTags: (result) => result ? [{ type: 'Shoe', id: result.shoeID }] : [],
+    // Get multiple shoes by ObjectIDs (batch fetch for favorites)
+    getShoesByObjectIds: builder.query({
+      query: (ids: string[]) => ({
+        url: '/shoes/objectIDs',
+        method: 'POST',
+        body: { ids },
+      }),
+      providesTags: (result) => 
+        result ? result.map((shoe: any) => ({ type: 'Shoe', id: shoe.shoeID })) : [],
     }),
 
     // Get paginated shoes (used in ProductList)
@@ -108,7 +113,7 @@ export const shoesApi = baseAPI.injectEndpoints({
 
 export const {
   useGetShoeQuery,
-  useGetShoeByObjectIdQuery,
+  useGetShoesByObjectIdsQuery,
   useGetPaginatedShoesQuery,
   useGetShoesFromPageQuery,
   useSearchShoesMutation,
