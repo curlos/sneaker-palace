@@ -58,7 +58,7 @@ const PaymentSuccess = () => {
 
     if (paymentMethod && paymentIntentID && paymentMethod.card && paymentMethod.billing_details) {
       const addToOrders = async () => {
-        if (currentCart && currentCart.products) {
+        if (currentCart && currentCart.products && currentCart.products.length > 0) {
           const body: any = {
             products: [...currentCart.products],
             amount: total,
@@ -72,8 +72,10 @@ const PaymentSuccess = () => {
           if (user?._id) {
             body.userID = user._id
 
-            try {
-              const response: any = await createUserOrder(body).unwrap()
+            // Only create order if there are products in cart
+            if (currentCart.products.length > 0) {
+              try {
+                const response: any = await createUserOrder(body).unwrap()
 
               if (response && response.error) {
                 setOrderID(response.orderID)
@@ -94,12 +96,15 @@ const PaymentSuccess = () => {
                   }
                 }
               }
-            } catch (err) {
-              console.log(err)
+              } catch (err) {
+                console.log(err)
+              }
             }
           } else {
-            try {
-              const response: any = await createGuestOrder(body).unwrap()
+            // Only create order if there are products in cart
+            if (currentCart.products.length > 0) {
+              try {
+                const response: any = await createGuestOrder(body).unwrap()
 
               if (response && response.error) {
                 setOrderID(response.orderID)
@@ -110,8 +115,9 @@ const PaymentSuccess = () => {
                 // Clear guest cart on successful order using RTK Query
                 await updateGuestCart({ products: [], total: 0 })
               }
-            } catch (err) {
-              console.log(err)
+              } catch (err) {
+                console.log(err)
+              }
             }
           }
 

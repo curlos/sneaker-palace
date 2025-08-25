@@ -1,9 +1,9 @@
 import { Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
-import axios from "axios"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { Redirect } from "react-router"
 import { useCart } from "../api/cartApi"
+import { useCreatePaymentIntentQuery } from "../api/checkoutApi"
 import CircleLoader from "../skeleton_loaders/CircleLoader"
 
 // Initialize Stripe with publishable key (safe for frontend)
@@ -21,35 +21,18 @@ const StripeContainer = ({ children }: Props) => {
   const currentCart = cartData
   const total = cartData?.total || 0
   
-  const [clientSecret, setClientSecret] = useState("");
-  const [loading, setLoading] = useState(true)
+  // Use RTK Query to create payment intent - automatically cached and deduplicated
+  const { 
+    data: paymentIntentData, 
+    isLoading, 
+    error 
+  } = useCreatePaymentIntentQuery(
+    { items: currentCart?.products, total },
+    { skip: !currentCart?.products?.length } // Only call when cart has products
+  )
+  
+  const clientSecret = paymentIntentData?.clientSecret || ""
 
-  useEffect(() => {
-    // Create PaymentIntent as soon as the page loads
-    // This is the security handshake - backend creates payment intent with secret key
-    const postToAPI = async () => {
-      try {
-        // Send cart data to backend to create authorized payment intent
-        // Backend verifies the total and creates payment intent with Stripe secret key
-        const response: any = await axios.post(`${process.env.REACT_APP_DEV_URL}/checkout/create-payment-intent`, {
-          items: currentCart?.products,
-          total: total
-        })
-        if (response.data.error) {
-          setLoading(false)
-          return
-        } else {
-          // Receive client secret - this authorizes frontend to show Stripe form
-          // Client secret is like a "ticket" for this specific payment amount only
-          setClientSecret(response.data.clientSecret)
-        }
-      } catch (err) {
-        console.error('Failed to create payment intent:', err)
-      }
-      setLoading(false)
-    }
-    postToAPI()
-  }, [currentCart?.products, total]);
 
   // Stripe Elements configuration
   const appearance: any = {
@@ -61,9 +44,9 @@ const StripeContainer = ({ children }: Props) => {
   };
 
   return (
-    loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
+    isLoading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
       <div className="App">
-        {clientSecret ? (
+        {clientSecret && !error ? (
           // Only render Stripe Elements if we have a valid client secret
           // This ensures payment form only appears for authorized payments
           <Elements options={options} stripe={stripePromise}>
