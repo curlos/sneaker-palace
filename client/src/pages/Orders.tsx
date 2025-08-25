@@ -5,25 +5,28 @@ import { Link } from 'react-router-dom'
 import SmallOrder from '../components/SmallOrder'
 import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
-import { IOrder, UserType } from '../types/types'
+import { IOrder } from '../types/types'
+import { useGetLoggedInUserQuery } from '../api/userApi'
 
 const Orders = () => {
-
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     window.scrollTo(0, 0)
     const fetchFromAPI = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/orders/user/${user._id}`)
+      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/orders/user/${user?._id}`)
 
       setOrders(response.data)
       setLoading(false)
     }
 
-    fetchFromAPI()
-  }, [user._id])
+    if (user?._id) {
+      fetchFromAPI()
+    }
+  }, [user?._id])
 
   return (
     loading ? <div className="flex justify-center p-10 h-screen"><CircleLoader size={16} /></div> :
