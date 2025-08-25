@@ -1,5 +1,5 @@
-import { updateUser } from '../redux/userRedux'
 import { baseAPI } from './api'
+import { userApi } from './userApi'
 
 export const shoesApi = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -53,11 +53,7 @@ export const shoesApi = baseAPI.injectEndpoints({
         body: { shoeID, userID },
       }),
       // Optimistic update
-      onQueryStarted: async ({ shoeID, userID, shoe_id }, { dispatch, queryFulfilled, getState }) => {
-        // Get current user from Redux state
-        const currentUser = (getState() as any).user?.currentUser
-        const originalUser = { ...currentUser }
-        
+      onQueryStarted: async ({ shoeID, userID, shoe_id }, { dispatch, queryFulfilled }) => {
         // Optimistic update to shoe cache
         const patchResult = dispatch(
           shoesApi.util.updateQueryData('getShoe', shoeID, (draft) => {
@@ -74,31 +70,37 @@ export const shoesApi = baseAPI.injectEndpoints({
           })
         )
 
-        // Optimistic update to user favorites
-        if (currentUser && currentUser.favorites && shoe_id) {
-          const isFavorited = currentUser.favorites.includes(shoe_id)
-          const optimisticUser = {
-            ...currentUser,
-            favorites: isFavorited 
-              ? currentUser.favorites.filter((id: string) => id !== shoe_id)
-              : [...currentUser.favorites, shoe_id]
-          }
-          dispatch(updateUser(optimisticUser))
+        // Optimistic update to user favorites cache
+        let userPatchResult: any = null
+        if (shoe_id && userID) {
+          userPatchResult = dispatch(
+            userApi.util.updateQueryData('getLoggedInUser', userID, (draft) => {
+              if (draft && draft.favorites) {
+                const isFavorited = draft.favorites.includes(shoe_id)
+                if (isFavorited) {
+                  draft.favorites = draft.favorites.filter((id: string) => id !== shoe_id)
+                } else {
+                  draft.favorites.push(shoe_id)
+                }
+              }
+            })
+          )
         }
 
         try {
-          const { data } = await queryFulfilled
-          // Update user state with server response
-          dispatch(updateUser(data.updatedUser))
+          await queryFulfilled
         } catch (error) {
           // Rollback optimistic updates on failure
           patchResult.undo()
-          dispatch(updateUser(originalUser))
+          if (userPatchResult) {
+            userPatchResult.undo()
+          }
           console.error('Failed to toggle favorite:', error)
         }
       },
-      invalidatesTags: (_, __, { shoeID }) => [
-        { type: 'Shoe', id: shoeID }
+      invalidatesTags: (_, __, { shoeID, userID }) => [
+        { type: 'Shoe', id: shoeID },
+        { type: 'User', id: userID }
       ],
     }),
   }),
