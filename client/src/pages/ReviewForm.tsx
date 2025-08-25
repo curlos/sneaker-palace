@@ -4,15 +4,16 @@ import { useHistory, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import { useGetShoeQuery } from '../api/shoesApi';
 import { useGetRatingQuery, useCreateRatingMutation, useUpdateRatingMutation } from '../api/ratingsApi';
+import { useGetLoggedInUserQuery } from '../api/userApi';
 import { RootState } from '../redux/store';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import ShoeImage from '../components/ShoeImage';
-import { UserType } from '../types/types';
 import { postImage } from '../utils/postImage';
 
 const ReviewForm = () => {
   const history = useHistory()
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
 
   const { shoeID, reviewID }: { shoeID: string, reviewID: string } = useParams()
   
@@ -23,7 +24,7 @@ const ReviewForm = () => {
   const [updateRating] = useUpdateRatingMutation()
 
   const [reviewInfo, setReviewInfo] = useState<any>({
-    userID: user._id,
+    userID: user?._id,
     shoeID: shoeID,
     ratingNum: 0,
     summary: '',
