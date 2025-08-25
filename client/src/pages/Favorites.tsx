@@ -27,16 +27,15 @@ const Favorites = () => {
   }, [])
 
   const getAllFavorites = async () => {
-    const favorites: Array<Shoe> = []
-
-    if (user?.favorites) {
-      for (let id of user.favorites) {
-        const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/objectID/${id}`)
-        favorites.push(response.data)
-      }
+    if (!user?.favorites || user.favorites.length === 0) {
+      return []
     }
 
-    return favorites
+    const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes/objectIDs`, {
+      ids: user.favorites
+    })
+    
+    return response.data
   }
 
   return (

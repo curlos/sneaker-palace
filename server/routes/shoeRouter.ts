@@ -127,6 +127,17 @@ router.get('/objectID/:id', async (req: Request, res: Response) => {
   return res.json(shoe);
 });
 
+router.post('/objectIDs', async (req: Request, res: Response) => {
+  const { ids } = req.body;
+  
+  if (!ids || !Array.isArray(ids)) {
+    return res.status(400).json({ error: 'Invalid or missing ids array' });
+  }
+
+  const shoes = await Shoe.find({ _id: { $in: ids } });
+  return res.json(shoes);
+});
+
 router.post('/search', async (req: Request, res: Response) => {
   const query = { "name": { "$regex": req.body.searchText.trim(), "$options": "i" } };
 
