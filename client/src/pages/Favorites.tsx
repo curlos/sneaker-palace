@@ -5,11 +5,12 @@ import { Link } from 'react-router-dom'
 import SmallShoe from '../components/SmallShoe'
 import { RootState } from '../redux/store'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
-import { Shoe, UserType } from '../types/types'
+import { Shoe } from '../types/types'
+import { useGetLoggedInUserQuery } from '../api/userApi'
 
 const Favorites = () => {
-
-  const user: Partial<UserType> = useSelector((state: RootState) => state.user && state.user.currentUser)
+  const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const { data: user } = useGetLoggedInUserQuery(userId);
 
   const [favoriteShoes, setFavoriteShoes] = useState<Array<Shoe>>([])
   const [loading, setLoading] = useState(true)
@@ -28,7 +29,7 @@ const Favorites = () => {
   const getAllFavorites = async () => {
     const favorites: Array<Shoe> = []
 
-    if (user.favorites) {
+    if (user?.favorites) {
       for (let id of user.favorites) {
         const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/objectID/${id}`)
         favorites.push(response.data)
