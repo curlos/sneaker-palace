@@ -1,28 +1,31 @@
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 interface Props {
-  data: Array<any>,
   pageLimit: number,
   dataLimit: number,
   currentPage: number,
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
-  filters: any,
-  sortType: string,
   totalItemCount: number,
   scrollTarget?: React.RefObject<HTMLElement>
 }
 
-export const Pagination = ({ data, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType, totalItemCount, scrollTarget }: Props) => {
+export const Pagination = ({ pageLimit, dataLimit, currentPage, setCurrentPage, totalItemCount, scrollTarget }: Props) => {
+  const isFirstRender = useRef(true)
 
   useEffect(() => {
     if (scrollTarget?.current) {
-      scrollTarget.current.scrollIntoView({ behavior: 'smooth' })
+      if (!isFirstRender.current) {
+        scrollTarget.current.scrollIntoView({ behavior: 'smooth' })
+      }
     } else {
       window.scrollTo(0, 0)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, filters, sortType, data])
+    
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+    }
+  }, [currentPage, scrollTarget])
 
   const goToNextPage = () => {
     if (currentPage === pageLimit) {

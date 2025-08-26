@@ -125,14 +125,11 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
           </div>
 
           {shoeRatings.length > REVIEWS_PER_PAGE && (
-            <Pagination 
-              data={paginatedReviews} 
+            <Pagination
               pageLimit={totalPages} 
               dataLimit={REVIEWS_PER_PAGE} 
               currentPage={currentPage} 
-              setCurrentPage={setCurrentPage} 
-              filters={{}} 
-              sortType="" 
+              setCurrentPage={setCurrentPage}
               totalItemCount={shoeRatings.length}
               scrollTarget={reviewsRef}
             />
