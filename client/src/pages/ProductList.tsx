@@ -121,7 +121,7 @@ const ProductList = () => {
                   })}
                 </div>
 
-                <Pagination data={paginatedShoes} pageLimit={Math.ceil(totalShoeCount / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} filters={filters} sortType={sortType} totalShoeCount={totalShoeCount} />
+                <Pagination data={paginatedShoes} pageLimit={Math.ceil(totalShoeCount / 12)} dataLimit={12} currentPage={currentPage} setCurrentPage={setCurrentPage} filters={filters} sortType={sortType} totalItemCount={totalShoeCount} />
               </div>
             )}
         </div>

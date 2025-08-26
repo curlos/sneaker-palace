@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom'
 import StarRatings from 'react-star-ratings'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { useState, useRef } from 'react'
 import { IRating, Shoe } from '../types/types'
 import Review from './Review'
 import StarRatingProgress from './StarRatingProgress'
+import { Pagination } from './Pagination'
 import * as short from "short-uuid"
 import { useLikeRatingMutation, useDislikeRatingMutation } from '../api/ratingsApi'
 import { useGetLoggedInUserQuery } from '../api/userApi'
@@ -15,14 +17,24 @@ interface Props {
   shoeRatings: Array<IRating>
 }
 
+const REVIEWS_PER_PAGE = 5
+
 const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
   const userId = useSelector((s: RootState) => s.user.currentUser?._id);
   const { data: user } = useGetLoggedInUserQuery(userId);
   const history = useHistory()
+  const [currentPage, setCurrentPage] = useState(1)
+  const reviewsRef = useRef<HTMLDivElement>(null)
   
   // RTK Query mutations
   const [likeRating, { isLoading: isLikeLoading }] = useLikeRatingMutation()
   const [dislikeRating, { isLoading: isDislikeLoading }] = useDislikeRatingMutation()
+
+  // Pagination logic
+  const totalPages = Math.ceil(shoeRatings.length / REVIEWS_PER_PAGE)
+  const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE
+  const endIndex = startIndex + REVIEWS_PER_PAGE
+  const paginatedReviews = shoeRatings.slice(startIndex, endIndex)
 
   const handleLike = async (ratingID: string) => {
     if (!user) {
@@ -97,12 +109,12 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
 
       {shoeRatings.length > 0 ? (
         <div className="flex-8">
-          <div className="text-2xl font-bold mb-4">
+          <div ref={reviewsRef} className="text-2xl font-bold mb-4">
             Top reviews
           </div>
 
           <div>
-            {shoeRatings.map((shoeRating) => <Review 
+            {paginatedReviews.map((shoeRating) => <Review 
               key={`${shoeRating}-${short.generate()}`} 
               shoeRating={shoeRating} 
               shoe={shoe}
@@ -111,6 +123,20 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
               isLoading={isLikeLoading || isDislikeLoading}
             />)}
           </div>
+
+          {shoeRatings.length > REVIEWS_PER_PAGE && (
+            <Pagination 
+              data={paginatedReviews} 
+              pageLimit={totalPages} 
+              dataLimit={REVIEWS_PER_PAGE} 
+              currentPage={currentPage} 
+              setCurrentPage={setCurrentPage} 
+              filters={{}} 
+              sortType="" 
+              totalItemCount={shoeRatings.length}
+              scrollTarget={reviewsRef}
+            />
+          )}
         </div>
       ) : null}
     </div>

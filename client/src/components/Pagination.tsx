@@ -1,22 +1,26 @@
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid'
 import React, { useEffect } from 'react'
-import { Shoe } from '../types/types'
 
 interface Props {
-  data: Array<Shoe>,
+  data: Array<any>,
   pageLimit: number,
   dataLimit: number,
   currentPage: number,
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
   filters: any,
   sortType: string,
-  totalShoeCount: number
+  totalItemCount: number,
+  scrollTarget?: React.RefObject<HTMLElement>
 }
 
-export const Pagination = ({ data, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType, totalShoeCount }: Props) => {
+export const Pagination = ({ data, pageLimit, dataLimit, currentPage, setCurrentPage, filters, sortType, totalItemCount, scrollTarget }: Props) => {
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    if (scrollTarget?.current) {
+      scrollTarget.current.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      window.scrollTo(0, 0)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, filters, sortType, data])
 
@@ -57,7 +61,7 @@ export const Pagination = ({ data, pageLimit, dataLimit, currentPage, setCurrent
 
   return (
     <div className="flex justify-between items-center my-4 text-black sm:justify-between sm:px-3">
-      <div className="pagResults sm:hidden">Showing <strong>{((currentPage * dataLimit - dataLimit) + 1).toLocaleString()}</strong> to <strong>{((currentPage * dataLimit - dataLimit) + dataLimit - 1 >= totalShoeCount ? totalShoeCount : (currentPage * dataLimit - dataLimit) + dataLimit).toLocaleString()}</strong> of <strong>{totalShoeCount.toLocaleString()}</strong> results</div>
+      <div className="pagResults sm:hidden">Showing <strong>{((currentPage * dataLimit - dataLimit) + 1).toLocaleString()}</strong> to <strong>{((currentPage * dataLimit - dataLimit) + dataLimit - 1 >= totalItemCount ? totalItemCount : (currentPage * dataLimit - dataLimit) + dataLimit).toLocaleString()}</strong> of <strong>{totalItemCount.toLocaleString()}</strong> results</div>
 
       <div className="flex w-1/2 justify-end sm:justify-between sm:w-full sm:gap-4">
         <div className="p-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg flex items-center justify-center sm:hidden" onClick={goToFirstPage}><ChevronDoubleLeftIcon className="h-5 w-5" /></div>
