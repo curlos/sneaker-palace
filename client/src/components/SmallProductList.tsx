@@ -1,8 +1,8 @@
-import axios from 'axios'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent } from 'react'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { Shoe } from '../types/types'
 import ListShoe from './ListShoe'
+import { useSearchShoesQuery } from '../api/shoesApi'
 
 interface Props {
   searchText: string,
@@ -13,59 +13,23 @@ interface Props {
 
 const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSubmit }: Props) => {
 
-  const [shoes, setShoes] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [hasInitialLoad, setHasInitialLoad] = useState(false)
-  const [initialShoes, setInitialShoes] = useState([])
+  // Use the search query for initial load (empty search)
+  const { data: initialData, isLoading: initialLoading } = useSearchShoesQuery({
+    searchText: "",
+    pageNum: 1
+  })
+  
+  // Use the search query for actual searches (only when finalSearchText exists)
+  const { data: searchData, isLoading: searchLoading } = useSearchShoesQuery({
+    searchText: finalSearchText,
+    pageNum: 1
+  }, {
+    skip: !finalSearchText.trim() // Skip query when no search text
+  })
 
-  // Initial load when component mounts
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      setLoading(true)
-      try {
-        const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes/search`, {
-          searchText: "",
-          pageNum: 1
-        })
-        setShoes(response.data.docs)
-        setInitialShoes(response.data.docs)
-        setHasInitialLoad(true)
-      } catch (error) {
-        console.error('Error fetching initial data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    
-    fetchInitialData()
-  }, [])
-
-  // Handle debounced search
-  useEffect(() => {
-    if (!hasInitialLoad) return // Don't run until initial load is complete
-    
-    if (!finalSearchText.trim()) {
-      setShoes(initialShoes) // Restore initial results when search is cleared
-      return
-    }
-
-    setLoading(true)
-
-    const fetchFromAPI = async () => {
-      try {
-        const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/shoes/search`, {
-          searchText: finalSearchText,
-          pageNum: 1
-        })
-        setShoes(response.data.docs)
-      } catch (error) {
-        console.error('Error fetching search results:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchFromAPI()
-  }, [finalSearchText, hasInitialLoad, initialShoes])
+  // Determine what data to show and loading state
+  const shoes = finalSearchText.trim() ? searchData?.docs || [] : initialData?.docs || []
+  const loading = finalSearchText.trim() ? searchLoading : initialLoading
 
   return (
     loading ? <div className="flex justify-center py-4"><CircleLoader size={16} /></div> : (

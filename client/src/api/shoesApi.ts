@@ -53,12 +53,13 @@ export const shoesApi = baseAPI.injectEndpoints({
     }),
 
     // Search shoes
-    searchShoes: builder.mutation({
+    searchShoes: builder.query({
       query: ({ searchText, pageNum }: { searchText: string; pageNum: number }) => ({
         url: '/shoes/search',
         method: 'POST',
         body: { searchText, pageNum },
       }),
+      providesTags: ['Shoe'],
     }),
 
     // Favorite/unfavorite a shoe
@@ -128,6 +129,6 @@ export const {
   useGetShoesBulkQuery,
   useGetPaginatedShoesQuery,
   useGetShoesFromPageQuery,
-  useSearchShoesMutation,
+  useSearchShoesQuery,
   useToggleFavoriteShoeMutation,
 } = shoesApi
