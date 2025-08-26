@@ -18,7 +18,7 @@ const SmallShoe = ({ shoe }: Props) => {
           />
         </div>
         <div className="font-medium">{shoe.name}</div>
-        <div className="text-gray-500"><span className="capitalize">{shoe.gender}'s</span> Shoe</div>
+        <div className="text-gray-500"><span className="capitalize">{shoe.gender}'s</span> Shoes</div>
         <div className="text-gray-500"><span className="capitalize">{shoe.colorway}</span></div>
         <div className="flex items-center">
           <StarRatings
