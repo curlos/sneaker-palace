@@ -89,11 +89,17 @@ export const userApi = baseAPI.injectEndpoints({
 
       invalidatesTags: ['User'],
     }),
+
+    getUserProfile: builder.query<UserType, string>({
+      query: (userId: string) => `/users/${userId}`,
+      providesTags: (result, error, userId) => [{ type: 'User', id: userId }],
+    }),
   }),
 })
 
 export const {
   useGetLoggedInUserQuery,
   useUpdateUserInfoMutation,
-  useUpdateUserPasswordMutation
+  useUpdateUserPasswordMutation,
+  useGetUserProfileQuery
 } = userApi

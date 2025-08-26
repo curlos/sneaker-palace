@@ -44,7 +44,7 @@ export interface UserType {
   lastName: string,
   isAdmin: boolean,
   profilePic: string,
-  reviews: Array<string>,
+  ratings: Array<string>,
   favorites: Array<string>,
   helpful: Array<string>,
   notHelpful: Array<string>,
