@@ -160,7 +160,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
           <div className="flex flex-wrap">
             {shoeSizes.map((shoeSize) => {
               return (
-                <div key={shoeSize} className={`h-10 w-3/12 inline-flex items-center justify-center ${filters.shoeSizes[shoeSize] ? ' border-2 border-black' : 'border border-gray-300'} m-1 rounded-lg cursor-pointer`} onClick={() => handleSizeClick(shoeSize)}>{shoeSize}</div>
+                <div key={shoeSize} className={`min-h-10 px-2 py-2 inline-flex items-center justify-center ${filters.shoeSizes[shoeSize] ? ' border-2 border-black' : 'border border-gray-300'} m-1 rounded-lg cursor-pointer text-xs text-center flex-shrink-0`} onClick={() => handleSizeClick(shoeSize)}>{shoeSize}</div>
               )
             })}
           </div>

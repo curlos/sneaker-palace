@@ -5,14 +5,14 @@ import * as short from "short-uuid"
 import { useGetLoggedInUserQuery, useUpdateUserInfoMutation } from '../api/userApi'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { SHOE_SIZES, AVERAGE_SHOE_SIZE } from '../utils/shoeConstants';
 
-const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 
 const ShopPreferences = () => {
   const userId = useSelector((s: RootState) => s.user.currentUser?._id);
   const { data: user } = useGetLoggedInUserQuery(userId);
 
-  const [preselectedShoeSize, setPreselectedShoeSize] = useState(user?.preselectedShoeSize || 10.5)
+  const [preselectedShoeSize, setPreselectedShoeSize] = useState(user?.preselectedShoeSize || AVERAGE_SHOE_SIZE)
   const [preferredGender, setPreferredGender] = useState(user?.preferredGender || 'men')
   const [unitOfMeasure, setUnitOfMeasure] = useState(user?.unitOfMeasure || 'imperial')
   
@@ -65,8 +65,8 @@ const ShopPreferences = () => {
       <form>
         <div className="mb-4">
           <div className="mb-1 font-medium w-full">Shoe Size</div>
-          <select name="shoeSizes" className="border-gray-500 rounded-lg text-black w-full" value={preselectedShoeSize} onChange={(e: ChangeEvent<HTMLSelectElement>) => setPreselectedShoeSize(Number(e.currentTarget.value))}>
-            {SHOE_SIZES.map((shoeSize) => <option key={`${Number(shoeSize)}-${short.generate()}`} value={shoeSize}>{shoeSize}</option>)}
+          <select name="shoeSizes" className="border-gray-500 rounded-lg text-black w-full" value={preselectedShoeSize} onChange={(e: ChangeEvent<HTMLSelectElement>) => setPreselectedShoeSize(e.currentTarget.value)}>
+            {SHOE_SIZES.map((shoeSize) => <option key={`${shoeSize}-${short.generate()}`} value={shoeSize}>{shoeSize}</option>)}
           </select>
           <div className="text-gray-500 text-sm">Provide your shoe size to have it preselected when you shop.</div>
         </div>

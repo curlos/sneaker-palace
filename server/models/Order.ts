@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema(
       {
         productID: { type: String },
         quantity: { type: Number, default: 1 },
-        size: { type: Number },
+        size: { type: String },
         retailPrice: { type: Number }
       },
     ],

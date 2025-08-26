@@ -114,7 +114,6 @@ const OrderDetails = () => {
           </div>
 
           <div className="py-10">
-            <div className="text-2xl">More shoes</div>
             <MoreShoes />
           </div>
 

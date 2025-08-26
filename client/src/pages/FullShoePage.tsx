@@ -18,10 +18,8 @@ import * as short from "short-uuid";
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import MoreShoes from '../components/MoreShoes';
+import { SHOE_SIZES, AVERAGE_SHOE_SIZE } from '../utils/shoeConstants';
 
-const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17'];
-
-const AVERAGE_MAN_FOOT_SIZE = '10.5';
 
 interface Props {
   setShowShoppingCartModal: React.Dispatch<React.SetStateAction<boolean>>,
@@ -39,7 +37,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
   const { shoeID }: { shoeID: string; } = useParams();
   
-  const initialSize = user?.preselectedShoeSize ? String(user.preselectedShoeSize) : AVERAGE_MAN_FOOT_SIZE;
+  const initialSize = user?.preselectedShoeSize || AVERAGE_SHOE_SIZE;
 
   // RTK Query hooks
   const { data: shoe, isLoading: shoeLoading } = useGetShoeQuery(shoeID);
@@ -73,7 +71,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
     const newProduct: IProduct = {
       _id: new ObjectId().toString(),
       productID: shoe.shoeID,
-      size: Number(selectedSize),
+      size: selectedSize,
       quantity: 1,
       retailPrice: shoe.retailPrice
     };

@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     isAdmin: { type: Boolean, default: false },
     profilePic: { type: String },
-    preselectedShoeSize: { type: Number },
+    preselectedShoeSize: { type: String },
     preferredGender: { type: String },
     unitOfMeasure: { type: String },
     ratings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Rating' }],

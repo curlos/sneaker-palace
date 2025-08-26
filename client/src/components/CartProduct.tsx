@@ -9,9 +9,9 @@ import ShoeImage from './ShoeImage';
 import { IProduct } from "../types/types";
 import * as short from "short-uuid"
 import { useGetLoggedInUserQuery } from '../api/userApi';
+import { SHOE_SIZES } from '../utils/shoeConstants';
 
 
-const SHOE_SIZES = ['4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5', '15', '16', '17']
 const QUANTITIES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 interface Props {
@@ -29,7 +29,7 @@ const CartProduct = ({ productInfo }: Props) => {
   const [updateGuestCart] = useUpdateGuestCartMutation()
 
   const handleChangeSize = async (e: ChangeEvent<HTMLSelectElement>) => {
-    const newSize = Number(e.currentTarget.value)
+    const newSize = e.currentTarget.value
     
     if (!cartData?.products) return
     
