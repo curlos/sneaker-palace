@@ -1,27 +1,41 @@
 import moment from 'moment'
 import { Link } from 'react-router-dom'
-import { useGetShoeQuery } from '../api/shoesApi'
+import { useGetShoesBulkQuery } from '../api/shoesApi'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
-import { IOrder } from '../types/types'
+import { IOrder, IProduct, Shoe } from '../types/types'
 import SmallOrderShoe from './SmallOrderShoe'
-import * as short from "short-uuid"
 
 interface Props {
   order: IOrder
 }
 
-// Component to fetch and display a single shoe
-const OrderShoe = ({ product }: { product: any }) => {
-  const { data: shoe, isLoading } = useGetShoeQuery(product.productID)
-  
-  if (isLoading) return <CircleLoader size={10} />
-  if (!shoe) return null
-
-  
-  return <SmallOrderShoe key={shoe._id} item={{ shoe, product }} />
-}
-
 const SmallOrder = ({ order }: Props) => {
+  const products = order?.products || []
+  const productIds: string[] = products.map((product: IProduct) => product.productID)
+  const uniqueProductIds = Array.from(new Set(productIds))
+  const { data: shoesData, isLoading: shoesLoading } = useGetShoesBulkQuery(
+    { ids: uniqueProductIds, key: 'shoeID' },
+    { skip: uniqueProductIds.length === 0 }
+  )
+
+  // Create lookup map for O(1) access instead of O(N) find operations
+  const shoeLookup = new Map<string, Shoe>()
+  shoesData?.forEach((shoe: Shoe) => {
+    shoeLookup.set(shoe.shoeID, shoe)
+  })
+
+  // Map each product to an object containing both shoe data and order data
+  const orderedItems = products.map((product: IProduct) => {
+    const shoe = shoeLookup.get(product.productID)
+    if (!shoe) {
+      console.warn(`Shoe not found for productID: ${product.productID}`)
+      return null
+    }
+    return {
+      shoe,
+      product
+    }
+  }).filter((item: any): item is { shoe: Shoe; product: IProduct } => item !== null)
 
   return (
     <div className="border border-gray-300 rounded-lg my-4 p-5 text-gray-800">
@@ -44,11 +58,20 @@ const SmallOrder = ({ order }: Props) => {
         </div>
       </div>
 
-      <div className="space-y-1">
-        {order.products?.map((product) => 
-          <OrderShoe key={`${product.productID}-${short.generate()}`} product={product} />
-        )}
-      </div>
+      {shoesLoading ? (
+        <div className="flex justify-center py-4">
+          <CircleLoader size={10} />
+        </div>
+      ) : (
+        <div className="space-y-1">
+          {orderedItems?.map((item: { shoe: Shoe; product: IProduct }, index: number) => (
+            <SmallOrderShoe 
+              key={`${item.shoe._id}-${index}`} 
+              item={item}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
