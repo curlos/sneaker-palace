@@ -1,14 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Shoe } from '../types/types'
+import { Shoe, IProduct } from '../types/types'
 import { titleCase } from '../utils/filterShoes'
 import ShoeImage from './ShoeImage'
 
 interface Props {
-  shoe: Partial<Shoe>
+  item: {
+    shoe: Shoe
+    product: IProduct
+  }
 }
 
-const SmallOrder = ({ shoe }: Props) => {
+const SmallOrder = ({ item }: Props) => {
+  const { shoe, product } = item
 
   return (
     <div className="flex sm:mb-4 sm:gap-3 gap-2">
@@ -18,11 +22,13 @@ const SmallOrder = ({ shoe }: Props) => {
 
       <div className="flex-8 sm:flex-4">
         <Link to={`/shoe/${shoe.shoeID}`} className="text-blue-400 hover:underline">{shoe.name}</Link>
-        <div className="text-xs">
-          <div className="text-red-800">${shoe.retailPrice}.00</div>
-          <div className="sm:hidden">{shoe.colorway}</div>
-          <div>{shoe.gender && titleCase(shoe.gender)}</div>
-          <div>{shoe.sku}</div>
+        <div className="text-sm">
+          <div className="text-red-800">${shoe.retailPrice && Number(product.quantity * shoe.retailPrice).toFixed(2)}</div>
+          {product.size && <div><span className="font-bold">Size:</span> {product.size}</div>}
+          {shoe.colorway && <div><span className="font-bold">Colorway:</span> {shoe.colorway}</div>}
+          {product.quantity && <div><span className="font-bold">Quantity:</span> {product.quantity}</div>}
+          {shoe.gender && <div className="sm:hidden"><span className="font-bold">Gender:</span> {titleCase(shoe.gender)}</div>}
+          {shoe.sku && <div><span className="font-bold">SKU:</span> {shoe.sku}</div>}
         </div>
       </div>
 

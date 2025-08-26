@@ -11,13 +11,14 @@ interface Props {
 }
 
 // Component to fetch and display a single shoe
-const OrderShoe = ({ productID }: { productID: string }) => {
-  const { data: shoe, isLoading } = useGetShoeQuery(productID)
+const OrderShoe = ({ product }: { product: any }) => {
+  const { data: shoe, isLoading } = useGetShoeQuery(product.productID)
   
   if (isLoading) return <CircleLoader size={10} />
   if (!shoe) return null
+
   
-  return <SmallOrderShoe key={shoe._id} shoe={shoe} />
+  return <SmallOrderShoe key={shoe._id} item={{ shoe, product }} />
 }
 
 const SmallOrder = ({ order }: Props) => {
@@ -45,7 +46,7 @@ const SmallOrder = ({ order }: Props) => {
 
       <div className="space-y-1">
         {order.products?.map((product) => 
-          <OrderShoe key={`${product.productID}-${short.generate()}`} productID={product.productID} />
+          <OrderShoe key={`${product.productID}-${short.generate()}`} product={product} />
         )}
       </div>
     </div>

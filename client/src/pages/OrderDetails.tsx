@@ -19,7 +19,8 @@ const OrderDetails = () => {
     skip: !order?.userID
   })
   
-  const productIds: string[] = order?.products?.map((product: IProduct) => product.productID) || []
+  const products = order?.products || []
+  const productIds: string[] = products.map((product: IProduct) => product.productID)
   const uniqueProductIds = Array.from(new Set(productIds))
   const { data: shoesData, isLoading: shoesLoading } = useGetShoesBulkQuery(
     { ids: uniqueProductIds, key: 'shoeID' },
@@ -32,14 +33,18 @@ const OrderDetails = () => {
     shoeLookup.set(shoe.shoeID, shoe)
   })
 
-  // Map each productId to its corresponding shoe (handles duplicates)
-  const orderedShoes = productIds.map((productId: string) => {
-    const shoe = shoeLookup.get(productId)
+  // Map each product to an object containing both shoe data and order data
+  const orderedItems = products.map((product: IProduct) => {
+    const shoe = shoeLookup.get(product.productID)
     if (!shoe) {
-      console.warn(`Shoe not found for productID: ${productId}`)
+      console.warn(`Shoe not found for productID: ${product.productID}`)
+      return null
     }
-    return shoe
-  }).filter((shoe): shoe is Shoe => shoe !== undefined)
+    return {
+      shoe,
+      product
+    }
+  }).filter((item: any): item is { shoe: Shoe; product: IProduct } => item !== null)
 
   const loading = orderLoading || shoesLoading
 
@@ -100,7 +105,12 @@ const OrderDetails = () => {
           </div>
 
           <div className="p-5 border border-gray-300 rounded-lg">
-            {orderedShoes?.map((shoe: Shoe, index: number) => <SmallOrderShoe key={`${shoe._id}-${index}`} shoe={shoe} />)}
+            {orderedItems?.map((item: { shoe: Shoe; product: IProduct }, index: number) => (
+              <SmallOrderShoe 
+                key={`${item.shoe._id}-${index}`} 
+                item={item}
+              />
+            ))}
           </div>
 
           <div className="py-10">

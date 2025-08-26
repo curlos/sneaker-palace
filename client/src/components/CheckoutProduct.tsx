@@ -25,8 +25,8 @@ const CheckoutProduct = ({ product, type }: Props) => {
             <div className="text-black">{shoe?.name}</div>
             <div>Size: {product.size}</div>
             <div>Colorway: {shoe?.colorway}</div>
-            <div>Qty: {product.quantity} @ {shoe && shoe.retailPrice && Number(product.quantity * shoe?.retailPrice).toFixed(2)}</div>
-            <div>{shoe && shoe.retailPrice && Number(product.quantity * shoe?.retailPrice).toFixed(2)}</div>
+            <div>Quantity: {product.quantity}</div>
+            <div>${shoe && shoe.retailPrice && Number(product.quantity * shoe?.retailPrice).toFixed(2)}</div>
           </div>
         </div>
       ) : (
