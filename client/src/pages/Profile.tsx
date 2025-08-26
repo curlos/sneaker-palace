@@ -1,18 +1,28 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import SmallReview from '../components/SmallReview'
+import SmallShoe from '../components/SmallShoe'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { useGetUserProfileQuery } from '../api/userApi'
 import { useGetRatingsByUserQuery } from '../api/ratingsApi'
+import { useGetShoesByObjectIdsQuery } from '../api/shoesApi'
+import { Shoe } from '../types/types'
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
 const Profile = () => {
+  const [activeTab, setActiveTab] = useState<'reviews' | 'favorites'>('reviews')
 
   const { userID }: { userID: string } = useParams()
   
   const { data: profileUser, isLoading: userLoading } = useGetUserProfileQuery(userID)
-  const { data: profileUserReviews = [], isLoading: reviewsLoading } = useGetRatingsByUserQuery(userID)
+  const { data: profileUserReviews = [], isLoading: reviewsLoading } = useGetRatingsByUserQuery(userID, {
+    skip: activeTab !== 'reviews'
+  })
+  const { data: favoriteShoes = [], isLoading: favoritesLoading } = useGetShoesByObjectIdsQuery(
+    profileUser?.favorites || [],
+    { skip: activeTab !== 'favorites' || !profileUser?.favorites || profileUser.favorites.length === 0 }
+  )
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -61,21 +71,56 @@ const Profile = () => {
           </>
         )}
 
-        {reviewsLoading ? (
+        <div className="flex border-b border-gray-300 mb-4">
+          <button
+            onClick={() => setActiveTab('reviews')}
+            className={`px-4 py-2 font-medium border-b-2 ${
+              activeTab === 'reviews' 
+                ? 'border-black text-black' 
+                : 'border-transparent text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Reviews
+          </button>
+          <button
+            onClick={() => setActiveTab('favorites')}
+            className={`px-4 py-2 font-medium border-b-2 ${
+              activeTab === 'favorites' 
+                ? 'border-black text-black' 
+                : 'border-transparent text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Favorites
+          </button>
+        </div>
+
+        {activeTab === 'reviews' && (reviewsLoading ? (
           <div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
-            <div className="font-medium mb-4">Reviews</div>
             <div className="flex justify-center py-4">
               <CircleLoader size={12} />
             </div>
           </div>
         ) : profileUserReviews.length > 0 ? (
           <div className="">
-            <div className="font-medium border border-gray-300 border-b-0 rounded-lg bg-white p-3">Reviews</div>
-            <div className="">
-              {profileUserReviews.map((review: any) => <SmallReview key={review._id} review={review} author={profileUser as any} />)}
+            {profileUserReviews.map((review: any) => <SmallReview key={review._id} review={review} author={profileUser as any} />)}
+          </div>
+        ) : null)}
+
+        {activeTab === 'favorites' && (favoritesLoading ? (
+          <div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
+            <div className="flex justify-center py-4">
+              <CircleLoader size={12} />
             </div>
           </div>
-        ) : null}
+        ) : favoriteShoes.length > 0 ? (
+          <div className="flex flex-wrap justify-start bg-white border border-gray-300 rounded-lg p-3">
+            {favoriteShoes.map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
+          </div>
+        ) : (
+          <div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
+            <div className="text-center text-gray-600">No shoes in favorites.</div>
+          </div>
+        ))}
       </div>
     </div>
   )
