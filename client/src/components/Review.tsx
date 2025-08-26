@@ -52,7 +52,9 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
         <div className="flex gap-2 items-center">
           <img src={review.postedByUser.profilePic ? `${process.env.REACT_APP_DEV_URL}${review.postedByUser.profilePic}` : DEFAULT_AVATAR} alt={review.postedByUser.firstName} className="h-9 w-9 rounded-full object-cover" />
 
-          <div className="text-sm">{review.postedByUser.firstName} {review.postedByUser.lastName}</div>
+          <Link to={`/profile/${review.postedByUser._id}`} className="text-sm cursor-pointer hover:underline">
+            {review.postedByUser.firstName} {review.postedByUser.lastName}
+          </Link>
         </div>
 
         {review.postedByUser._id === user?._id ? (
