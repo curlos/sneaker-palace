@@ -98,18 +98,9 @@ const ProductList = () => {
 
           {loading ?
             <div className="flex justify-center flex-wrap lg:justify-between py-4">
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
-              <SmallShoeSkeleton />
+              {Array.from({ length: 12 }, (_, index) => (
+                <SmallShoeSkeleton key={index} />
+              ))}
             </div> : (
               <div>
 
