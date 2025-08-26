@@ -253,12 +253,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
             <FullShoeReviews shoe={shoe || {}} shoeRatings={shoeRatings as any || []} />
           )}
 
-          <div>
-            <div className="text-2xl mt-7">
-              You Might Also Like
-            </div>
-            <MoreShoes currentShoeId={shoeID} />
-          </div>
+          <MoreShoes currentShoeId={shoeID} />
         </div>
       </div>
 

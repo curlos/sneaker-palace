@@ -3,6 +3,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix for mobile horizontal scrolling */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+body {
+  position: relative;
+}
+
+#root {
+  overflow-x: hidden;
+}
+
 @layer utilities {
   @variants responsive {
     /* Chrome, Safari and Opera */
