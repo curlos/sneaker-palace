@@ -11,7 +11,6 @@ import SidenavModal from "./components/SidenavModal";
 import StripeContainer from "./components/StripeContainer";
 import Cart from "./pages/Cart";
 import CheckoutForm from "./pages/CheckoutForm";
-import Favorites from "./pages/Favorites";
 import FullShoePage from './pages/FullShoePage';
 import Home from './pages/Home';
 import Login from "./pages/Login";
@@ -115,13 +114,6 @@ const App = () => {
             <OrderDetails />
           </Route>
 
-          <Route path="/favorites" exact>
-            {!user ? <Redirect to='/' /> : (
-              <span>
-                <Favorites />
-              </span>
-            )}
-          </Route>
 
           <Route path="/settings" exact>
             {!user ? <Redirect to='/' /> : (

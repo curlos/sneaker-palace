@@ -100,9 +100,9 @@ const Profile = () => {
               <CircleLoader size={12} />
             </div>
           </div>
-        ) : profileUserReviews.length > 0 ? (
+        ) : profileUserReviews.length > 0 && profileUser ? (
           <div className="">
-            {profileUserReviews.map((review: any) => <SmallReview key={review._id} review={review} author={profileUser as any} />)}
+            {profileUserReviews.map((review: any) => <SmallReview key={review._id} review={review} author={profileUser} />)}
           </div>
         ) : null)}
 

@@ -87,9 +87,6 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
                 <Link to="/orders" onClick={() => setShowSidenavModal(false)}>Orders</Link>
               </div>
 
-              <div>
-                <Link to="/favorites" onClick={() => setShowSidenavModal(false)}>Favorites</Link>
-              </div>
 
               <div>
                 <Link to="/settings" onClick={() => setShowSidenavModal(false)}>Settings</Link>
