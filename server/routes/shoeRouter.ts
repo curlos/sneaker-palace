@@ -138,6 +138,22 @@ router.post('/objectIDs', async (req: Request, res: Response) => {
   return res.json(shoes);
 });
 
+router.post('/bulk', async (req: Request, res: Response) => {
+  const { ids, key = '_id' } = req.body;
+  
+  if (!ids || !Array.isArray(ids)) {
+    return res.status(400).json({ error: 'Invalid or missing ids array' });
+  }
+
+  const validKeys = ['_id', 'shoeID'];
+  if (!validKeys.includes(key)) {
+    return res.status(400).json({ error: 'Invalid key. Must be one of: ' + validKeys.join(', ') });
+  }
+
+  const shoes = await Shoe.find({ [key]: { $in: ids } });
+  return res.json(shoes);
+});
+
 router.post('/search', async (req: Request, res: Response) => {
   const query = { "name": { "$regex": req.body.searchText.trim(), "$options": "i" } };
 

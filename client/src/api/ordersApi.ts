@@ -11,6 +11,12 @@ export const ordersApi = baseAPI.injectEndpoints({
           : [{ type: 'Order', id: `USER_${userId}` }],
     }),
 
+    // Get a single order by ID
+    getOrderById: builder.query({
+      query: (orderId: string) => `/orders/${orderId}`,
+      providesTags: (_, __, orderId) => [{ type: 'Order', id: orderId }],
+    }),
+
     // Create order for logged-in user
     createUserOrder: builder.mutation({
       query: (orderData) => ({
@@ -37,6 +43,7 @@ export const ordersApi = baseAPI.injectEndpoints({
 
 export const {
   useGetUserOrdersQuery,
+  useGetOrderByIdQuery,
   useCreateUserOrderMutation,
   useCreateGuestOrderMutation,
 } = ordersApi

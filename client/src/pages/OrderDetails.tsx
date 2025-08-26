@@ -1,49 +1,51 @@
-import axios from 'axios'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { useGetOrderByIdQuery } from '../api/ordersApi'
+import { useGetUserProfileQuery } from '../api/userApi'
+import { useGetShoesBulkQuery } from '../api/shoesApi'
 import MoreShoes from '../components/MoreShoes'
 import SmallOrderShoe from '../components/SmallOrderShoe'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
-import { IOrder, IProduct, UserType } from '../types/types'
+import { IProduct, Shoe } from '../types/types'
 
 const OrderDetails = () => {
 
   const { id }: { id: string } = useParams()
-  const [order, setOrder] = useState<IOrder>()
-  const [shoes, setShoes] = useState<Array<IProduct>>([])
-  const [customer, setCustomer] = useState<UserType>()
-  const [loading, setLoading] = useState(true)
+  
+  const { data: order, isLoading: orderLoading } = useGetOrderByIdQuery(id as string)
+  
+  const { data: customer } = useGetUserProfileQuery(order?.userID as string, {
+    skip: !order?.userID
+  })
+  
+  const productIds: string[] = order?.products?.map((product: IProduct) => product.productID) || []
+  const uniqueProductIds = Array.from(new Set(productIds))
+  const { data: shoesData, isLoading: shoesLoading } = useGetShoesBulkQuery(
+    { ids: uniqueProductIds, key: 'shoeID' },
+    { skip: uniqueProductIds.length === 0 }
+  )
+
+  // Create lookup map for O(1) access instead of O(N) find operations
+  const shoeLookup = new Map<string, Shoe>()
+  shoesData?.forEach((shoe: Shoe) => {
+    shoeLookup.set(shoe.shoeID, shoe)
+  })
+
+  // Map each productId to its corresponding shoe (handles duplicates)
+  const orderedShoes = productIds.map((productId: string) => {
+    const shoe = shoeLookup.get(productId)
+    if (!shoe) {
+      console.warn(`Shoe not found for productID: ${productId}`)
+    }
+    return shoe
+  }).filter((shoe): shoe is Shoe => shoe !== undefined)
+
+  const loading = orderLoading || shoesLoading
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    const fetchFromAPI = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/orders/${id}`)
-
-      const newShoes = await getAllShoes(response.data.products)
-      setShoes(newShoes)
-      setOrder(response.data)
-
-      if (response.data.userID) {
-        const userResponse = await axios.get(`${process.env.REACT_APP_DEV_URL}/users/${response.data.userID}`)
-        setCustomer(userResponse.data)
-      }
-
-      setLoading(false)
-    }
-    fetchFromAPI()
-  }, [id])
-
-
-  const getAllShoes = async (products: Array<IProduct>) => {
-    const newShoes = []
-    for (let product of products) {
-      const { productID } = product
-      const response = await axios.get(`${process.env.REACT_APP_DEV_URL}/shoes/${productID}`)
-      newShoes.push(response.data)
-    }
-    return newShoes
-  }
+  }, [])
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (
@@ -98,7 +100,7 @@ const OrderDetails = () => {
           </div>
 
           <div className="p-5 border border-gray-300 rounded-lg">
-            {shoes.map((shoe) => <SmallOrderShoe key={shoe._id} shoe={shoe} />)}
+            {orderedShoes?.map((shoe: Shoe, index: number) => <SmallOrderShoe key={`${shoe._id}-${index}`} shoe={shoe} />)}
           </div>
 
           <div className="py-10">

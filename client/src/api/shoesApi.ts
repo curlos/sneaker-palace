@@ -20,6 +20,17 @@ export const shoesApi = baseAPI.injectEndpoints({
         result ? result.map((shoe: any) => ({ type: 'Shoe', id: shoe.shoeID })) : [],
     }),
 
+    // Get multiple shoes in bulk by any key (flexible batch fetch)
+    getShoesBulk: builder.query({
+      query: ({ ids, key = '_id' }: { ids: string[]; key?: string }) => ({
+        url: '/shoes/bulk',
+        method: 'POST',
+        body: { ids, key },
+      }),
+      providesTags: (result) => 
+        result ? result.map((shoe: any) => ({ type: 'Shoe', id: shoe.shoeID })) : [],
+    }),
+
     // Get paginated shoes (used in ProductList)
     getPaginatedShoes: builder.query({
       query: ({ filters, sortType, pageNum, query }: { 
@@ -114,6 +125,7 @@ export const shoesApi = baseAPI.injectEndpoints({
 export const {
   useGetShoeQuery,
   useGetShoesByObjectIdsQuery,
+  useGetShoesBulkQuery,
   useGetPaginatedShoesQuery,
   useGetShoesFromPageQuery,
   useSearchShoesMutation,

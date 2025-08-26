@@ -23,6 +23,7 @@ export const baseAPI = createApi({
     'Shoe',
     'Rating', 
     'RatingsByShoe',
+    'RatingsByUser',
     'User',
     'Cart',
     'Order',
