@@ -12,10 +12,21 @@ router.get('/:ratingID', async (req: Request, res: Response) => {
   return res.json(rating)
 })
 
-// Get all ratings for a specific shoe with author data
-router.get('/shoe/:shoeID', async (req: Request, res: Response) => {
+// Get all ratings by type (shoe or user) with author data
+router.get('/by/:type/:id', async (req: Request, res: Response) => {
   try {
-    const ratings = await Rating.find({ shoeID: req.params.shoeID })
+    const { type, id } = req.params
+    
+    let query = {}
+    if (type === 'shoe') {
+      query = { shoeID: id }
+    } else if (type === 'user') {
+      query = { userID: id }
+    } else {
+      return res.status(400).json({ error: 'Invalid type. Must be "shoe" or "user"' })
+    }
+
+    const ratings = await Rating.find(query)
     const ratingsWithAuthors = []
 
     for (const rating of ratings) {
@@ -28,7 +39,7 @@ router.get('/shoe/:shoeID', async (req: Request, res: Response) => {
 
     return res.json(ratingsWithAuthors)
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to fetch ratings for shoe' })
+    return res.status(500).json({ error: `Failed to fetch ratings for ${req.params.type}` })
   }
 })
 

@@ -1,5 +1,4 @@
 import { baseAPI } from './api'
-import { IRating } from '../types/types'
 import { userApi } from './userApi'
 
 export const ratingsApi = baseAPI.injectEndpoints({
@@ -9,56 +8,21 @@ export const ratingsApi = baseAPI.injectEndpoints({
       query: (ratingId: string) => `/rating/${ratingId}`,
       providesTags: (result, error, ratingId) => [{ type: 'Rating', id: ratingId }],
     }),
-    // Get multiple ratings with their authors (custom endpoint for the complex fetch)
-    getRatingsWithAuthors: builder.query({
-      queryFn: async (ratingIDs: string[], _api, _extraOptions, fetchWithBQ) => {
-        try {
-          const ratings: any[] = []
-          
-          if (ratingIDs && ratingIDs.length > 0) {
-            for (const ratingID of ratingIDs) {
-              // Fetch the rating
-              const ratingResponse = await fetchWithBQ(`/rating/${ratingID}`)
-              
-              if (ratingResponse.error) {
-                console.error('Error fetching rating:', ratingResponse.error)
-                continue
-              }
-              
-              if (ratingResponse.data !== null && ratingResponse.data) {
-                const ratingData = ratingResponse.data as IRating
-                // Fetch the author
-                const authorResponse = await fetchWithBQ(`/users/${ratingData.userID}`)
-                
-                if (authorResponse.error) {
-                  console.error('Error fetching author:', authorResponse.error)
-                  continue
-                }
-                
-                ratings.push({
-                  ...ratingData,
-                  postedByUser: authorResponse.data
-                })
-              }
-            }
-          }
-          
-          return { data: ratings }
-        } catch (error) {
-          return { error: { status: 'FETCH_ERROR', error: String(error) } }
-        }
-      },
-      providesTags: (result, error, ratingIDs) => [
-        ...ratingIDs.map(id => ({ type: 'Rating' as const, id })),
-        'Rating'
+
+    // Get ratings for a specific shoe (using new flexible endpoint)
+    getRatingsByShoe: builder.query({
+      query: (shoeID: string) => `/rating/by/shoe/${shoeID}`,
+      providesTags: (result, error, shoeID) => [
+        { type: 'RatingsByShoe' as const, id: shoeID },
+        ...(result || []).map((rating: any) => ({ type: 'Rating' as const, id: rating._id })),
       ],
     }),
 
-    // Get ratings for a specific shoe (new decoupled approach)
-    getRatingsByShoe: builder.query({
-      query: (shoeID: string) => `/rating/shoe/${shoeID}`,
-      providesTags: (result, error, shoeID) => [
-        { type: 'RatingsByShoe' as const, id: shoeID },
+    // Get ratings by a specific user with author data
+    getRatingsByUser: builder.query({
+      query: (userID: string) => `/rating/by/user/${userID}`,
+      providesTags: (result, error, userID) => [
+        { type: 'RatingsByUser' as const, id: userID },
         ...(result || []).map((rating: any) => ({ type: 'Rating' as const, id: rating._id })),
       ],
     }),
@@ -272,8 +236,8 @@ export const ratingsApi = baseAPI.injectEndpoints({
 
 export const {
   useGetRatingQuery,
-  useGetRatingsWithAuthorsQuery,
   useGetRatingsByShoeQuery,
+  useGetRatingsByUserQuery,
   useLikeRatingMutation,
   useDislikeRatingMutation,
   useDeleteRatingMutation,
