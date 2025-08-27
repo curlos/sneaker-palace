@@ -1,6 +1,9 @@
 import { XIcon } from '@heroicons/react/outline'
 import React, { useState, useRef, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useUpdateUserPasswordMutation } from '../api/userApi'
+import { updatePasswordRequirement } from '../redux/userRedux'
+import { RootState } from '../redux/store'
 import FailureMessage from './FailureMessage'
 import SuccessMessage from './SuccessMessage'
 
@@ -14,6 +17,8 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
   const [newPassword, setNewPassword] = useState('')
   const [confirmNewPassword, setConfirmNewPassword] = useState('')
 
+  const dispatch = useDispatch()
+  const requiresPasswordUpdate = useSelector((s: RootState) => s.user.currentUser?.requiresPasswordUpdate)
   const [updateUserPassword, { isLoading }] = useUpdateUserPasswordMutation()
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [showFailureMessage, setShowFailureMessage] = useState(false)
@@ -65,6 +70,11 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
       await updateUserPassword({
         body
       }).unwrap()
+      
+      // Update Redux state to remove password requirement if it was previously required
+      if (requiresPasswordUpdate) {
+        dispatch(updatePasswordRequirement(false))
+      }
       
       // Show success message and auto-dismiss after 3 seconds
       setShowSuccessMessage(true)

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from 'react-redux';
 import {
   BrowserRouter as Router, Redirect, Route, Switch
@@ -6,6 +6,7 @@ import {
 import { Footer } from "./components/Footer";
 import Navbar from "./components/Navbar";
 import SearchModal from "./components/SearchModal";
+import SecurityMigrationModal from "./components/SecurityMigrationModal";
 import ShoppingCartModal from "./components/ShoppingCartModal";
 import SidenavModal from "./components/SidenavModal";
 import StripeContainer from "./components/StripeContainer";
@@ -28,21 +29,30 @@ import { RootState } from "./redux/store";
 const App = () => {
 
   const userId = useSelector((s: RootState) => s.user.currentUser?._id);
+  const requiresPasswordUpdate = useSelector((s: RootState) => s.user.currentUser?.requiresPasswordUpdate);
   const { data: user } = useGetLoggedInUserQuery(userId);
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [showSidenavModal, setShowSidenavModal] = useState(false)
   const [showShoppingCartModal, setShowShoppingCartModal] = useState(false)
+  const [showSecurityMigrationModal, setShowSecurityMigrationModal] = useState(false)
+  
+  useEffect(() => {
+    if (requiresPasswordUpdate && !sessionStorage.getItem('securityMigrationModalShown')) {
+      setShowSecurityMigrationModal(true)
+      sessionStorage.setItem('securityMigrationModalShown', 'true')
+    }
+  }, [requiresPasswordUpdate])
 
   return (
     <Router>
-
-      <div className="m-0 box-border font-urbanist min-h-screen flex flex-col">
-
+    <div className="m-0 box-border font-urbanist min-h-screen flex flex-col">
         {showSearchModal ? <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} /> : null}
 
         {showSidenavModal ? <SidenavModal showSidenavModal={showSidenavModal} setShowSidenavModal={setShowSidenavModal} /> : null}
 
         {showShoppingCartModal ? <ShoppingCartModal showModal={showShoppingCartModal} setShowModal={setShowShoppingCartModal} /> : null}
+
+        {showSecurityMigrationModal ? <SecurityMigrationModal showModal={showSecurityMigrationModal} setShowModal={setShowSecurityMigrationModal} /> : null}
 
         <Navbar setShowSearchModal={setShowSearchModal} setShowSidenavModal={setShowSidenavModal} />
 
