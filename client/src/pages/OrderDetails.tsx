@@ -1,6 +1,7 @@
 import moment from 'moment'
 import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { useGetOrderByIdQuery } from '../api/ordersApi'
 import { useGetUserProfileQuery } from '../api/userApi'
 import { useGetShoesBulkQuery } from '../api/shoesApi'
@@ -8,12 +9,15 @@ import MoreShoes from '../components/MoreShoes'
 import SmallOrderShoe from '../components/SmallOrderShoe'
 import CircleLoader from '../skeleton_loaders/CircleLoader'
 import { IProduct, Shoe } from '../types/types'
+import { RootState } from '../redux/store'
 
 const OrderDetails = () => {
 
   const { id }: { id: string } = useParams()
+  const history = useHistory()
+  const currentUser = useSelector((state: RootState) => state.user.currentUser)
   
-  const { data: order, isLoading: orderLoading } = useGetOrderByIdQuery(id as string)
+  const { data: order, isLoading: orderLoading, error } = useGetOrderByIdQuery(id as string)
   
   const { data: customer } = useGetUserProfileQuery(order?.userID as string, {
     skip: !order?.userID
@@ -51,6 +55,22 @@ const OrderDetails = () => {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  // Handle any errors (not found, unauthorized, etc.)
+  useEffect(() => {
+    if (error) {
+      // Check if user is logged in
+      const isLoggedIn = currentUser && currentUser._id
+      
+      if (isLoggedIn) {
+        // Redirect to user's orders page
+        history.push(`/orders`)
+      } else {
+        // Redirect to home page
+        history.push('/')
+      }
+    }
+  }, [error, currentUser, history])
 
   return (
     loading ? <div className="flex justify-center h-screen p-10"><CircleLoader size={16} /></div> : (

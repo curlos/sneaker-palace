@@ -10,12 +10,12 @@ export const baseAPI = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_DEV_URL,
-    prepareHeaders: (headers) => {
-      // Add any auth headers here if needed
-      // const token = (getState() as RootState).user?.currentUser?.token
-      // if (token) {
-      //   headers.set('authorization', `Bearer ${token}`)
-      // }
+    prepareHeaders: (headers, { getState }) => {
+      // Add auth headers for authenticated requests
+      const token = (getState() as any).user?.currentUser?.accessToken
+      if (token) {
+        headers.set('token', `Bearer ${token}`)
+      }
       return headers
     },
   }),

@@ -1,15 +1,52 @@
 import { Request, Response } from 'express'
 
+// Extend Express Request interface
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: any
+    order?: any
+  }
+}
+
 const express = require('express')
 const User = require('../models/User')
 const Cart = require('../models/Cart')
 const Order = require('../models/Order')
+const { verifyToken } = require('./verifyToken')
 
 const router = express.Router()
 
-router.get('/:orderID', async (req: Request, res: Response) => {
-  const order = await Order.findById(req.params.orderID)
-  return res.json(order)
+const verifyOrderAccess = async (req: Request, res: Response, next: any) => {
+  try {
+    const order = await Order.findById(req.params.orderID)
+    
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' })
+    }
+    
+    // If no userID field exists, it's a guest order - allow access
+    if (!order.userID) {
+      req.order = order
+      return next()
+    }
+    
+    // If userID exists, verify token first
+    verifyToken(req, res, () => {
+      // Check if user owns the order or is admin
+      if (order.userID !== req.user!.id && !req.user!.isAdmin) {
+        return res.status(403).json({ error: 'Access denied' })
+      }
+      
+      req.order = order
+      next()
+    })
+  } catch (error) {
+    return res.status(500).json({ error: 'Server error' })
+  }
+}
+
+router.get('/:orderID', verifyOrderAccess, async (req: Request, res: Response) => {
+  return res.json(req.order)
 })
 
 router.get('/user/:userID', async (req: Request, res: Response) => {
