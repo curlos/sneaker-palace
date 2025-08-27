@@ -10,6 +10,7 @@ declare module 'express-serve-static-core' {
 const User = require('../models/User')
 const CryptoJS = require('crypto-js')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const router = require('express').Router()
 
 const optionalAuth = (req: Request, _res: Response, next: any) => {
@@ -48,18 +49,14 @@ router.get('/:userID', optionalAuth, async (req: Request, res: Response) => {
 
 // TODO: Add auth.
 router.put('/:userID', async (req: Request, res: Response) => {
-  if (req.body.password) {
-    req.body.password = CryptoJS.AES.encrypt(
-      req.body.password,
-      process.env.PASS_SEC
-    ).toString();
-  }
+  // Remove password from body - passwords should only be changed via dedicated password endpoint.
+  const { password, ...updateData } = req.body;
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userID,
       {
-        $set: req.body,
+        $set: updateData,
       },
       { new: true }
     )
@@ -89,22 +86,33 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    const hashedPassword = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.PASS_SEC
-    )
+    let isValidCurrentPassword = false
 
-    const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8)
+    // Check if current password uses bcrypt (new format)
+    if (/^\$2[abxy]\$/.test(user.password)) {
+      isValidCurrentPassword = await bcrypt.compare(req.body.currentPassword, user.password)
+    } else {
+      // Legacy AES encrypted password
+      try {
+        const hashedPassword = CryptoJS.AES.decrypt(
+          user.password,
+          process.env.PASS_SEC
+        )
+        const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8)
+        isValidCurrentPassword = originalPassword === req.body.currentPassword
+      } catch (err) {
+        isValidCurrentPassword = false
+      }
+    }
 
-    if (originalPassword !== req.body.currentPassword) {
+    if (!isValidCurrentPassword) {
       return res.status(400).json({ error: 'Current password is incorrect' })
     }
 
+    // Always use bcrypt for new passwords
+    const newPasswordHash = await bcrypt.hash(req.body.newPassword, 12)
     const newPassword = {
-      password: CryptoJS.AES.encrypt(
-        req.body.newPassword,
-        process.env.PASS_SEC
-      ).toString(),
+      password: newPasswordHash,
     }
 
     const updatedUser = await User.findByIdAndUpdate(
