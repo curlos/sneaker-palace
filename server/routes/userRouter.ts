@@ -1,12 +1,49 @@
 import { Request, Response } from 'express'
+import { UserType } from '../types/types'
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: any
+  }
+}
 
 const User = require('../models/User')
 const CryptoJS = require('crypto-js')
+const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 
-router.get('/:userID', async (req: Request, res: Response) => {
+const optionalAuth = (req: Request, _res: Response, next: any) => {
+  const authHeader: any = req.headers.token
+  
+  if (authHeader) {
+    const token = authHeader.split(' ')[1]
+    jwt.verify(token, process.env.JWT_SEC, (err: any, user: UserType) => {
+      if (!err) {
+        req.user = user
+      }
+      next()
+    })
+  } else {
+    next()
+  }
+}
+
+router.get('/:userID', optionalAuth, async (req: Request, res: Response) => {
   const user = await User.findById(req.params.userID)
-  return res.json(user)
+  
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' })
+  }
+  
+  const isOwnProfile = req.user && req.user.id === req.params.userID
+  
+  if (isOwnProfile) {
+    const { password, ...userWithoutPassword } = user._doc
+    return res.json(userWithoutPassword)
+  } else {
+    const { password, email, lowerCaseEmail, isAdmin, orders, ...publicProfile } = user._doc
+    return res.json(publicProfile)
+  }
 })
 
 router.put('/:userID', async (req: Request, res: Response) => {

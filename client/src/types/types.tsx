@@ -48,7 +48,6 @@ export interface UserType {
   favorites: Array<string>,
   helpful: Array<string>,
   notHelpful: Array<string>,
-  shoppingCartItems: Array<string>,
   itemsBought: Array<string>,
   lowerCaseEmail: string,
   createdAt: string,

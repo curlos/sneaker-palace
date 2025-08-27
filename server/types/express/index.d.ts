@@ -10,7 +10,6 @@ interface UserType {
   shoeFavorites: Array<string>,
   reviewUpvotes: Array<string>,
   reviewDownvotes: Array<string>,
-  shoppingCartItems: Array<string>,
   itemsBought: Array<string>,
   lowerCaseEmail: string,
   createdAt: Date,

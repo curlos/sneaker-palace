@@ -10,6 +10,16 @@ import { Shoe } from '../types/types'
 
 const DEFAULT_AVATAR = 'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png'
 
+const formatJoinDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  }
+  return `Joined ${date.toLocaleDateString('en-US', options)}`
+}
+
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<'reviews' | 'favorites'>('reviews')
 
@@ -41,7 +51,11 @@ const Profile = () => {
               <div className="">
                 <img src={profileUser?.profilePic ? `${process.env.REACT_APP_DEV_URL}${profileUser.profilePic}` : DEFAULT_AVATAR} alt="" className="h-36 w-36 rounded-full object-cover mb-3" />
               </div>
-              <div className="text-2xl font-medium ml-2">{profileUser?.firstName} {profileUser?.lastName}</div>
+              <div className="ml-2">
+                <div className="text-2xl font-medium">{profileUser?.firstName} {profileUser?.lastName}</div>
+                <div className="text-gray-500">{profileUser?.createdAt ? formatJoinDate(profileUser.createdAt) : ''}</div>
+              </div>
+              
             </div>
 
             <div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
