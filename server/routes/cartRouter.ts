@@ -1,11 +1,10 @@
 import { Request, Response } from 'express'
 
-const User = require('../models/User')
-const Shoe = require('../models/Shoe')
 const Cart = require('../models/Cart')
 
 const router = require('express').Router()
 
+// TODO: Add auth.
 // Create cart
 router.post('/:userID', async (req: Request, res: Response) => {
   const newCart = new Cart({
@@ -17,6 +16,7 @@ router.post('/:userID', async (req: Request, res: Response) => {
   return res.json(savedCart)
 })
 
+// TODO: Add auth.
 // Update cart
 router.put('/:id', async (req: Request, res: Response) => {
   const updatedCart = await Cart.findByIdAndUpdate(
@@ -31,6 +31,7 @@ router.put('/:id', async (req: Request, res: Response) => {
   return res.status(200).json(updatedCart)
 })
 
+// TODO: Add auth.
 // Update specific product in cart 
 router.put('/:id', async (req: Request, res: Response) => {
   const updatedCart = await Cart.findByIdAndUpdate(
@@ -43,13 +44,14 @@ router.put('/:id', async (req: Request, res: Response) => {
   return res.status(200).json(updatedCart)
 })
 
-
+// TODO: Add auth.
 // Get user's cart
 router.get('/find/:userID', async (req: Request, res: Response) => {
   const cart = await Cart.findOne({ userID: req.params.userID })
   return res.status(200).json(cart)
 })
 
+// TODO: Add auth.
 // Delete 
 router.delete('/:id', async (req: Request, res: Response) => {
   try {

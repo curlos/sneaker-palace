@@ -54,6 +54,7 @@ router.get('/user/:userID', async (req: Request, res: Response) => {
   return res.json(orders)
 })
 
+// TODO: Add auth.
 router.post('/', async (req: Request, res: Response) => {
   const orderFound = await Order.findOne({ paymentIntentID: req.body.paymentIntentID })
 
@@ -61,6 +62,7 @@ router.post('/', async (req: Request, res: Response) => {
     return res.json({ error: 'Already ordered', orderID: orderFound._id })
   }
 
+  // TODO: Make sure the passed in userID is the same as the logged in user.
   const user = await User.findById(req.body.userID)
   const cart = await Cart.findOne({ userID: req.body.userID })
   cart.products = []

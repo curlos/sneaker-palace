@@ -59,6 +59,7 @@ const removeRatingFromAverage = (currentAvg: number, currentCount: number, remov
   return (currentAvg * currentCount - removedRating) / (currentCount - 1)
 }
 
+// TODO: Add auth.
 router.post('/rate', async (req: Request, res: Response) => {
   try {
     const rating = new Rating(req.body)
@@ -87,6 +88,7 @@ router.post('/rate', async (req: Request, res: Response) => {
   }
 })
 
+// TODO: Add auth.
 router.put('/edit/:id', async (req: Request, res: Response) => {
   try {
     const oldRating = await Rating.findById(req.params.id)
@@ -122,6 +124,7 @@ router.put('/edit/:id', async (req: Request, res: Response) => {
   }
 })
 
+// TODO: Add auth.
 router.put('/like', async (req: Request, res: Response) => {
 
   const rating = await Rating.findOne({ _id: req.body.ratingID })
@@ -149,6 +152,7 @@ router.put('/like', async (req: Request, res: Response) => {
   }
 })
 
+// TODO: Add auth.
 router.put('/dislike', async (req: Request, res: Response) => {
 
   const rating = await Rating.findOne({ _id: req.body.ratingID })
@@ -175,6 +179,7 @@ router.put('/dislike', async (req: Request, res: Response) => {
   }
 })
 
+// TODO: Add auth.
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const ratingToDelete = await Rating.findById(req.params.id)
@@ -215,6 +220,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 })
 
 // Reset all shoe ratings to 0 and delete all ratings
+// TODO: Add auth. This one's kind of weird. Maybe hide this behind admin access or something...
 router.put('/reset-all-ratings', async (req: Request, res: Response) => {
   try {
     // Delete all ratings from the database

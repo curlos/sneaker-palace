@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
 
 const express = require('express');
-const mongoose = require('mongoose');
 const Shoe = require('../models/Shoe');
 const User = require('../models/User');
-const { getFullURL } = require('../utils/getFullURL');
 const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sneakerV2_API');
 
 
@@ -174,6 +172,7 @@ router.post('/search', async (req: Request, res: Response) => {
   });
 });
 
+// TODO: Add auth.
 router.put('/favorite', async (req: Request, res: Response) => {
   if (!req.body.shoeID || !req.body.userID) {
     return res.status(400).json({ error: 'Missing shoeID or userID' });
@@ -197,6 +196,8 @@ router.put('/favorite', async (req: Request, res: Response) => {
   }
 });
 
+
+// SNEAKERS V2 API. Possibly add some authentication so no one else but me has access to it.
 router.post('/newShoes', async (req: Request, res: Response) => {
   const result = await addAllShoes(Number(req.body.page), Number(req.body.releaseYear));
   return res.json(result);

@@ -46,6 +46,7 @@ router.get('/:userID', optionalAuth, async (req: Request, res: Response) => {
   }
 })
 
+// TODO: Add auth.
 router.put('/:userID', async (req: Request, res: Response) => {
   if (req.body.password) {
     req.body.password = CryptoJS.AES.encrypt(
@@ -70,6 +71,7 @@ router.put('/:userID', async (req: Request, res: Response) => {
   }
 })
 
+// TODO: Add auth.
 router.put('/password/:userID', async (req: Request, res: Response) => {
   try {
     // Basic validation
