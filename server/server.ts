@@ -18,6 +18,7 @@ const ratingRouter = require('./routes/ratingRouter');
 const stripeRouter = require('./routes/stripeRouter');
 const orderRouter = require('./routes/orderRouter');
 const imageRouter = require('./routes/imageRouter');
+const adminRouter = require('./routes/adminRouter');
 const database = require('./database/connection');
 
 app.use("/assets", express.static(path.join(__dirname, "/assets")));
@@ -53,6 +54,7 @@ app.use('/cart', cartRouter);
 app.use('/rating', ratingRouter);
 app.use('/checkout', stripeRouter);
 app.use('/orders', orderRouter);
+app.use('/admin', adminRouter);
 // app.use('/images', imageRouter);
 
 app.get('/', (req: Request, res: Response) => {

@@ -30,13 +30,8 @@ const userSlice = createSlice({
     logout: (state) => {
       return INITIAL_STATE
     },
-    updatePasswordRequirement: (state, action) => {
-      if (state.currentUser) {
-        state.currentUser.requiresPasswordUpdate = action.payload
-      }
-    }
   }
 })
 
-export const { loginStart, loginSuccess, loginFailure, logout, updatePasswordRequirement } = userSlice.actions
+export const { loginStart, loginSuccess, loginFailure, logout } = userSlice.actions
 export default userSlice.reducer;

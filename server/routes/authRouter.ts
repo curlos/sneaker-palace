@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 
 const router = require('express').Router()
 const User = require('../models/User')
-const CryptoJS = require('crypto-js')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
@@ -54,29 +53,8 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json('Wrong credentials')
     }
 
-    let isValidPassword = false
-    let requiresPasswordUpdate = false
-
-    // Check if it's a bcrypt hash (new format) - supports $2a$, $2b$, $2x$, $2y$
-    if (/^\$2[abxy]\$/.test(user.password)) {
-      isValidPassword = await bcrypt.compare(req.body.password, user.password)
-    } else {
-      // Legacy AES encrypted password
-      try {
-        const hashedPassword = CryptoJS.AES.decrypt(
-          user.password,
-          process.env.PASS_SEC
-        )
-        const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8)
-        
-        if (originalPassword === req.body.password) {
-          isValidPassword = true
-          requiresPasswordUpdate = true
-        }
-      } catch (err) {
-        isValidPassword = false
-      }
-    }
+    // All passwords should be bcrypt after migration
+    const isValidPassword = await bcrypt.compare(req.body.password, user.password)
 
     if (!isValidPassword) {
       return res.status(401).json('Wrong credentials')
@@ -95,8 +73,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     return res.status(200).json({ 
       ...others, 
-      accessToken,
-      requiresPasswordUpdate
+      accessToken
     })
   } catch (err) {
     return res.status(500).json(err)

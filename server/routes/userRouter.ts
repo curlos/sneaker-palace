@@ -8,7 +8,6 @@ declare module 'express-serve-static-core' {
 }
 
 const User = require('../models/User')
-const CryptoJS = require('crypto-js')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const router = require('express').Router()
@@ -86,30 +85,14 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    let isValidCurrentPassword = false
-
-    // Check if current password uses bcrypt (new format)
-    if (/^\$2[abxy]\$/.test(user.password)) {
-      isValidCurrentPassword = await bcrypt.compare(req.body.currentPassword, user.password)
-    } else {
-      // Legacy AES encrypted password
-      try {
-        const hashedPassword = CryptoJS.AES.decrypt(
-          user.password,
-          process.env.PASS_SEC
-        )
-        const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8)
-        isValidCurrentPassword = originalPassword === req.body.currentPassword
-      } catch (err) {
-        isValidCurrentPassword = false
-      }
-    }
+    // Verify current password using bcrypt (all passwords should be bcrypt after auto-upgrade)
+    const isValidCurrentPassword = await bcrypt.compare(req.body.currentPassword, user.password)
 
     if (!isValidCurrentPassword) {
       return res.status(400).json({ error: 'Current password is incorrect' })
     }
 
-    // Always use bcrypt for new passwords
+    // Hash new password with bcrypt
     const newPasswordHash = await bcrypt.hash(req.body.newPassword, 12)
     const newPassword = {
       password: newPasswordHash,
