@@ -4,6 +4,7 @@ const express = require('express')
 const Rating = require('../models/Rating')
 const Shoe = require('../models/Shoe')
 const User = require('../models/User')
+const { verifyToken } = require('./verifyToken')
 
 const router = express.Router()
 
@@ -30,7 +31,7 @@ router.get('/by/:type/:id', async (req: Request, res: Response) => {
     const ratingsWithAuthors = []
 
     for (const rating of ratings) {
-      const user = await User.findById(rating.userID)
+      const user = await User.findById(rating.userID).select('-password')
       ratingsWithAuthors.push({
         ...rating.toObject(),
         postedByUser: user
@@ -59,12 +60,11 @@ const removeRatingFromAverage = (currentAvg: number, currentCount: number, remov
   return (currentAvg * currentCount - removedRating) / (currentCount - 1)
 }
 
-// TODO: Add auth.
-router.post('/rate', async (req: Request, res: Response) => {
+router.post('/rate', verifyToken, async (req: Request, res: Response) => {
   try {
-    const rating = new Rating(req.body)
+    const rating = new Rating({ ...req.body, userID: req.user.id })
     const shoe = await Shoe.findOne({ shoeID: req.body.shoeID })
-    const user = await User.findById(req.body.userID)
+    const user = await User.findById(req.user.id)
     
     if (!shoe || !user) {
       return res.status(404).json({ error: 'Shoe or user not found' })
@@ -81,19 +81,23 @@ router.post('/rate', async (req: Request, res: Response) => {
 
     const updatedShoe = await Shoe.findById(shoe._id)
     const updatedUser = await User.findById(user._id)
+    const { password, ...userWithoutPassword } = updatedUser._doc
 
-    return res.json({ updatedShoe, updatedUser, rating })
+    return res.json({ updatedShoe, updatedUser: userWithoutPassword, rating })
   } catch (error) {
     return res.status(500).json({ error: 'Failed to create rating' })
   }
 })
 
-// TODO: Add auth.
-router.put('/edit/:id', async (req: Request, res: Response) => {
+router.put('/edit/:id', verifyToken, async (req: Request, res: Response) => {
   try {
     const oldRating = await Rating.findById(req.params.id)
     if (!oldRating) {
       return res.status(404).json({ error: 'Rating not found' })
+    }
+    
+    if (oldRating.userID !== req.user.id) {
+      return res.status(403).json({ error: 'Access denied - not your rating' })
     }
 
     const updatedRating = await Rating.findByIdAndUpdate(
@@ -124,14 +128,13 @@ router.put('/edit/:id', async (req: Request, res: Response) => {
   }
 })
 
-// TODO: Add auth.
-router.put('/like', async (req: Request, res: Response) => {
+router.put('/like', verifyToken, async (req: Request, res: Response) => {
 
   const rating = await Rating.findOne({ _id: req.body.ratingID })
-  const user = await User.findOne({ _id: req.body.userID })
+  const user = await User.findOne({ _id: req.user.id })
 
   try {
-    if (!rating.helpful.includes(req.body.userID)) {
+    if (!rating.helpful.includes(req.user.id)) {
       await rating.updateOne({ $push: { helpful: user._id } })
       await user.updateOne({ $push: { helpful: rating._id } })
       await rating.updateOne({ $pull: { notHelpful: user._id } })
@@ -139,52 +142,58 @@ router.put('/like', async (req: Request, res: Response) => {
 
       const updatedRating = await Rating.findById(rating._id)
       const updatedUser = await User.findById(user._id)
-      return res.status(200).json({ updatedRating, updatedUser })
+      const { password, ...userWithoutPassword } = updatedUser._doc
+      return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword })
     } else {
       await rating.updateOne({ $pull: { helpful: user._id } })
       await user.updateOne({ $pull: { helpful: rating._id } })
       const updatedRating = await Rating.findById(rating._id)
       const updatedUser = await User.findById(user._id)
-      return res.status(200).json({ updatedRating, updatedUser })
+      const { password, ...userWithoutPassword } = updatedUser._doc
+      return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword })
     }
   } catch (err) {
     return res.json(err)
   }
 })
 
-// TODO: Add auth.
-router.put('/dislike', async (req: Request, res: Response) => {
+router.put('/dislike', verifyToken, async (req: Request, res: Response) => {
 
   const rating = await Rating.findOne({ _id: req.body.ratingID })
-  const user = await User.findOne({ _id: req.body.userID })
+  const user = await User.findOne({ _id: req.user.id })
 
   try {
-    if (!rating.notHelpful.includes(req.body.userID)) {
+    if (!rating.notHelpful.includes(req.user.id)) {
       await rating.updateOne({ $push: { notHelpful: user._id } })
       await user.updateOne({ $push: { notHelpful: rating._id } })
       await rating.updateOne({ $pull: { helpful: user._id } })
       await user.updateOne({ $pull: { helpful: rating._id } })
       const updatedRating = await Rating.findById(rating._id)
       const updatedUser = await User.findById(user._id)
-      return res.status(200).json({ updatedRating, updatedUser })
+      const { password, ...userWithoutPassword } = updatedUser._doc
+      return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword })
     } else {
       await rating.updateOne({ $pull: { notHelpful: user._id } })
       await user.updateOne({ $pull: { notHelpful: rating._id } })
       const updatedRating = await Rating.findById(rating._id)
       const updatedUser = await User.findById(user._id)
-      return res.status(200).json({ updatedRating, updatedUser })
+      const { password, ...userWithoutPassword } = updatedUser._doc
+      return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword })
     }
   } catch (err) {
     return res.json(err)
   }
 })
 
-// TODO: Add auth.
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', verifyToken, async (req: Request, res: Response) => {
   try {
     const ratingToDelete = await Rating.findById(req.params.id)
     if (!ratingToDelete) {
       return res.status(404).json({ error: 'Rating not found' })
+    }
+    
+    if (ratingToDelete.userID !== req.user.id) {
+      return res.status(403).json({ error: 'Access denied - not your rating' })
     }
 
     const shoe = await Shoe.findOne({ shoeID: ratingToDelete.shoeID })

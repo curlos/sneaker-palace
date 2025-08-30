@@ -116,7 +116,7 @@ const Profile = () => {
           </div>
         ) : profileUserReviews.length > 0 && profileUser ? (
           <div className="">
-            {profileUserReviews.map((review: any) => <SmallReview key={review._id} review={review} author={profileUser} />)}
+            {[...(profileUserReviews || [])].sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((review: any) => <SmallReview key={review._id} review={review} author={profileUser} />)}
           </div>
         ) : null)}
 
@@ -128,7 +128,7 @@ const Profile = () => {
           </div>
         ) : favoriteShoes.length > 0 ? (
           <div className="flex flex-wrap justify-start bg-white border border-gray-300 rounded-lg p-3">
-            {favoriteShoes.map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
+            {[...(favoriteShoes || [])].sort((a: Shoe, b: Shoe) => (b.rating || 0) - (a.rating || 0)).map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
           </div>
         ) : (
           <div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
