@@ -2,8 +2,10 @@ import { Request, Response } from 'express'
 
 const router = require('express').Router()
 const User = require('../models/User')
+const Shoe = require('../models/Shoe')
 const CryptoJS = require('crypto-js')
 const bcrypt = require('bcrypt')
+const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sneakerV2_API')
 
 // Simple admin authentication middleware
 const adminAuth = (req: Request, res: Response, next: any) => {
@@ -80,5 +82,28 @@ router.post('/migrate-passwords', adminAuth, async (_req: Request, res: Response
     })
   }
 })
+
+// Shoe management endpoints - Admin only (Development environment only)
+if (process.env.NODE_ENV !== 'production') {
+  router.post('/shoes/newShoes', adminAuth, async (req: Request, res: Response) => {
+    const result = await addAllShoes(Number(req.body.page), Number(req.body.releaseYear));
+    return res.json(result);
+  });
+
+  router.post('/shoes/newShoes/brand', adminAuth, async (req: Request, res: Response) => {
+    const result = await addAllShoesByBrand(req.body.brand);
+    return res.json(result);
+  });
+
+  router.post('/shoes/newShoe', adminAuth, async (req: Request, res: Response) => {
+    const result = await addShoeByName(req.body.name);
+    return res.json(result);
+  });
+
+  router.post('/shoes/delete', adminAuth, async (req: Request, res: Response) => {
+    const result = await Shoe.deleteMany({ brand: { $in: ['Louis Vuitton'] } });
+    return res.json(result);
+  });
+}
 
 module.exports = router

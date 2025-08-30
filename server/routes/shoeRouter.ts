@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 const express = require('express');
 const Shoe = require('../models/Shoe');
 const User = require('../models/User');
-const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sneakerV2_API');
 const { verifyToken } = require('./verifyToken');
 
 
@@ -195,25 +194,5 @@ router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response)
 });
 
 
-// SNEAKERS V2 API. Possibly add some authentication so no one else but me has access to it.
-router.post('/newShoes', async (req: Request, res: Response) => {
-  const result = await addAllShoes(Number(req.body.page), Number(req.body.releaseYear));
-  return res.json(result);
-});
-
-router.post('/newShoes/brand', async (req: Request, res: Response) => {
-  const result = await addAllShoesByBrand(req.body.brand);
-  return res.json(result);
-});
-
-router.post('/newShoe', async (req: Request, res: Response) => {
-  const result = await addShoeByName(req.body.name);
-  return res.json(result);
-});
-
-router.post('/delete', async (req: Request, res: Response) => {
-  const result = await Shoe.deleteMany({ brand: { $in: ['Louis Vuitton'] } });
-  return res.json(result);
-});
 
 module.exports = router;
