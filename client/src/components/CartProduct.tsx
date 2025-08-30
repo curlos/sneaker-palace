@@ -44,7 +44,6 @@ const CartProduct = ({ productInfo }: Props) => {
       // Logged in user - use updateUserCart with full products array
       try {
         await updateUserCart({
-          cartId: cartData._id,
           products: updatedProducts
         }).unwrap()
       } catch (error) {
@@ -80,7 +79,6 @@ const CartProduct = ({ productInfo }: Props) => {
       // Logged in user - use updateUserCart with full products array
       try {
         await updateUserCart({
-          cartId: cartData._id,
           products: updatedProducts
         }).unwrap()
       } catch (error) {
@@ -110,7 +108,6 @@ const CartProduct = ({ productInfo }: Props) => {
       // Logged in user - use updateUserCart with filtered products array
       try {
         await updateUserCart({
-          cartId: cartData._id,
           products: updatedProducts
         }).unwrap()
       } catch (error) {

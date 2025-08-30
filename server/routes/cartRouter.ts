@@ -1,14 +1,14 @@
 import { Request, Response } from 'express'
 
 const Cart = require('../models/Cart')
+const { verifyToken } = require('./verifyToken')
 
 const router = require('express').Router()
 
-// TODO: Add auth.
 // Create cart
-router.post('/:userID', async (req: Request, res: Response) => {
+router.post('/', verifyToken, async (req: Request, res: Response) => {
   const newCart = new Cart({
-    userID: req.params.userID,
+    userID: req.user.id,
     products: []
   })
 
@@ -16,51 +16,27 @@ router.post('/:userID', async (req: Request, res: Response) => {
   return res.json(savedCart)
 })
 
-// TODO: Add auth.
 // Update cart
-router.put('/:id', async (req: Request, res: Response) => {
-  const updatedCart = await Cart.findByIdAndUpdate(
-    req.params.id,
+router.put('/', verifyToken, async (req: Request, res: Response) => {
+  const updatedCart = await Cart.findOneAndUpdate(
+    { userID: req.user.id },
     {
       $set: req.body,
     },
     { new: true }
   )
 
+  if (!updatedCart) {
+    return res.status(404).json({ error: 'Cart not found' })
+  }
 
   return res.status(200).json(updatedCart)
 })
 
-// TODO: Add auth.
-// Update specific product in cart 
-router.put('/:id', async (req: Request, res: Response) => {
-  const updatedCart = await Cart.findByIdAndUpdate(
-    req.params.id,
-    {
-      $set: req.body,
-    },
-    { new: true }
-  )
-  return res.status(200).json(updatedCart)
-})
-
-// TODO: Add auth.
 // Get user's cart
-router.get('/find/:userID', async (req: Request, res: Response) => {
-  const cart = await Cart.findOne({ userID: req.params.userID })
+router.get('/', verifyToken, async (req: Request, res: Response) => {
+  const cart = await Cart.findOne({ userID: req.user.id })
   return res.status(200).json(cart)
 })
-
-// TODO: Add auth.
-// Delete 
-router.delete('/:id', async (req: Request, res: Response) => {
-  try {
-    await Cart.findByIdAndDelete(req.params.id)
-    return res.status(200).json('Cart has been deleted...')
-  } catch (err) {
-    return res.status(500).json(err)
-  }
-})
-
 
 module.exports = router;

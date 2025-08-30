@@ -86,7 +86,6 @@ const PaymentSuccess = () => {
                 if (currentCart?._id) {
                   try {
                     await updateUserCart({
-                      cartId: currentCart._id,
                       products: []
                     }).unwrap()
                   } catch (error) {

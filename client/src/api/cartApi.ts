@@ -49,10 +49,16 @@ export const cartApi = baseAPI.injectEndpoints({
     }),
 
     getUserCart: builder.query({
-      queryFn: async (userId: string) => {
+      queryFn: async (arg, { getState }) => {
         try {
+          const token = (getState() as any).user?.currentUser?.accessToken
+          
           // Try to fetch existing cart
-          const response = await fetch(`${process.env.REACT_APP_DEV_URL}/cart/find/${userId}`)
+          const response = await fetch(`${process.env.REACT_APP_DEV_URL}/cart`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          })
           
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
@@ -62,10 +68,11 @@ export const cartApi = baseAPI.injectEndpoints({
           
           // If user doesn't have a cart, create one
           if (!cartData) {
-            const createResponse = await fetch(`${process.env.REACT_APP_DEV_URL}/cart/${userId}`, {
+            const createResponse = await fetch(`${process.env.REACT_APP_DEV_URL}/cart`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
               },
             })
             
@@ -95,22 +102,16 @@ export const cartApi = baseAPI.injectEndpoints({
 
     // Update entire cart (the only backend endpoint that actually exists)
     updateUserCart: builder.mutation({
-      query: ({ cartId, products }: { cartId: string; products: any[] }) => ({
-        url: `/cart/${cartId}`,
+      query: ({ products }: { products: any[] }) => ({
+        url: `/cart`,
         method: 'PUT',
         body: { products },
       }),
       
       async onQueryStarted({ products }, { dispatch, queryFulfilled, getState }) {
-        // Get current user ID for cache key
-        const state = getState() as RootState
-        const userId = state.user.currentUser?._id
-        
-        if (!userId) return
-
         // Optimistically update the cart cache
         const patchResult = dispatch(
-          cartApi.util.updateQueryData('getUserCart', userId, (draft) => {
+          cartApi.util.updateQueryData('getUserCart', undefined, (draft) => {
             if (draft) {
               draft.products = products
               draft.total = calculateCartTotal(products)
@@ -168,7 +169,7 @@ export const useCart = () => {
   const userId = useSelector((s: RootState) => s.user.currentUser?._id);
   
   // Use appropriate query based on authentication status
-  const userCartQuery = useGetUserCartQuery(userId, { skip: !userId })
+  const userCartQuery = useGetUserCartQuery(undefined, { skip: !userId })
   const guestCartQuery = useGetGuestCartQuery(undefined, { skip: !!userId })
   
   // Return the appropriate data

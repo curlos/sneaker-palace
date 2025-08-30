@@ -4,7 +4,7 @@ import { UserType } from '../types/types'
 const jwt = require('jsonwebtoken')
 
 const verifyToken = (req: Request, res: Response, next: any) => {
-  const authHeader: any = req.headers.token
+  const authHeader: any = req.headers.authorization
 
   if (authHeader) {
     const token = authHeader.split(' ')[1]

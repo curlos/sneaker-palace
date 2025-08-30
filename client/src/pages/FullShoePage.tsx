@@ -77,35 +77,14 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
     };
 
     if (user?._id) {
-      // Logged in user - use user cart API (create cart if needed)
-      if (cartData?._id) {
-        // Cart exists - update it
-        const updatedProducts = [...(cartData.products || []), newProduct];
-        try {
-          await updateUserCart({
-            cartId: cartData._id,
-            products: updatedProducts
-          }).unwrap();
-        } catch (error) {
-          console.error('Failed to add to cart:', error);
-        }
-      } else {
-        // Cart doesn't exist - create it first by calling the API
-        try {
-          const response = await fetch(`/api/cart/${user._id}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-          });
-          const newCart = await response.json();
-          
-          // Now update the cart with the product
-          await updateUserCart({
-            cartId: newCart._id,
-            products: [newProduct]
-          }).unwrap();
-        } catch (error) {
-          console.error('Failed to create cart and add product:', error);
-        }
+      // Logged in user - add to existing cart (getUserCart API ensures cart exists)
+      const updatedProducts = [...(cartData?.products || []), newProduct];
+      try {
+        await updateUserCart({
+          products: updatedProducts
+        }).unwrap();
+      } catch (error) {
+        console.error('Failed to add to cart:', error);
       }
     } else {
       // Guest user - use unified guest cart mutation

@@ -14,7 +14,7 @@ const router = require('express').Router()
 const { verifyToken } = require('./verifyToken')
 
 const optionalAuth = (req: Request, _res: Response, next: any) => {
-  const authHeader: any = req.headers.token
+  const authHeader: any = req.headers.authorization
   
   if (authHeader) {
     const token = authHeader.split(' ')[1]

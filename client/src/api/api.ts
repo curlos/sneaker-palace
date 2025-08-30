@@ -14,7 +14,7 @@ export const baseAPI = createApi({
       // Add auth headers for authenticated requests
       const token = (getState() as any).user?.currentUser?.accessToken
       if (token) {
-        headers.set('token', `Bearer ${token}`)
+        headers.set('Authorization', `Bearer ${token}`)
       }
       return headers
     },
