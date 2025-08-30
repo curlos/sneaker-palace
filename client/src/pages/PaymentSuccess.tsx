@@ -70,8 +70,6 @@ const PaymentSuccess = () => {
           }
 
           if (user?._id) {
-            body.userID = user._id
-
             // Only create order if there are products in cart
             if (currentCart.products.length > 0) {
               try {
