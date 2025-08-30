@@ -19,6 +19,7 @@ const AccountDetails = () => {
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [showFailureMessage, setShowFailureMessage] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const [showModal, setShowModal] = useState(false)
 
   const [updateUserInfo, { isLoading }] = useUpdateUserInfoMutation()
@@ -50,8 +51,12 @@ const AccountDetails = () => {
       // Show success message and auto-dismiss after 3 seconds
       setShowSuccessMessage(true)
       timeoutRef.current = setTimeout(() => setShowSuccessMessage(false), 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update user preferences:', error)
+      
+      // Extract error message from backend response or use default
+      const backendErrorMessage = error?.data?.error || 'Settings not updated, error occurred!'
+      setErrorMessage(backendErrorMessage)
       
       // Show error message and auto-dismiss after 3 seconds
       setShowFailureMessage(true)
@@ -102,7 +107,7 @@ const AccountDetails = () => {
       </form>
 
       {showSuccessMessage ? <SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'} /> : null}
-      {showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={'Settings not updated, error occured!'} /> : null}
+      {showFailureMessage ? <FailureMessage setShowMessage={setShowFailureMessage} message={errorMessage} /> : null}
 
       <div className="flex justify-end">
         <button 

@@ -26,7 +26,7 @@ export const userApi = baseAPI.injectEndpoints({
         }
 
         return await baseQuery({
-          url: `/users/${userId}`,
+          url: `/users`,
           method: 'PUT',
           body,
         })
@@ -63,7 +63,7 @@ export const userApi = baseAPI.injectEndpoints({
         }
 
         return await baseQuery({
-          url: `/users/password/${userId}`,
+          url: `/users/password`,
           method: 'PUT',
           body,
         })

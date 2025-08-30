@@ -11,6 +11,7 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const router = require('express').Router()
+const { verifyToken } = require('./verifyToken')
 
 const optionalAuth = (req: Request, _res: Response, next: any) => {
   const authHeader: any = req.headers.token
@@ -46,29 +47,51 @@ router.get('/:userID', optionalAuth, async (req: Request, res: Response) => {
   }
 })
 
-// TODO: Add auth.
-router.put('/:userID', async (req: Request, res: Response) => {
+router.put('/', verifyToken, async (req: Request, res: Response) => {
   // Remove password from body - passwords should only be changed via dedicated password endpoint.
   const { password, ...updateData } = req.body;
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.userID,
+    // If email is being updated, check if it's different and unique
+    if (updateData.email) {
+      const currentUser = await User.findById(req.user.id)
+      
+      if (!currentUser) {
+        return res.status(404).json({ error: 'User not found' })
+      }
+
+      // Check if the new email is different from current email
+      if (updateData.email !== currentUser.email) {
+        // Check if the new email already exists in the database
+        const existingUser = await User.findOne({ email: updateData.email })
+        
+        if (existingUser) {
+          return res.status(400).json({ error: 'Email already exists' })
+        }
+
+        // Also update lowerCaseEmail if it exists in the schema
+        if (updateData.email) {
+          updateData.lowerCaseEmail = updateData.email.toLowerCase()
+        }
+      }
+    }
+
+    await User.findByIdAndUpdate(
+      req.user.id,
       {
         $set: updateData,
       },
       { new: true }
     )
 
-    return res.status(200).json(updatedUser);
+    return res.status(200).json({ message: 'User updated successfully' });
   } catch (err) {
 
     return res.json({ error: err });
   }
 })
 
-// TODO: Add auth.
-router.put('/password/:userID', async (req: Request, res: Response) => {
+router.put('/password', verifyToken, async (req: Request, res: Response) => {
   try {
     // Basic validation
     if (!req.body.currentPassword || !req.body.newPassword) {
@@ -79,7 +102,7 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'New password must be at least 8 characters long' })
     }
 
-    const user = await User.findOne({ _id: req.params.userID })
+    const user = await User.findOne({ _id: req.user.id })
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
@@ -98,15 +121,15 @@ router.put('/password/:userID', async (req: Request, res: Response) => {
       password: newPasswordHash,
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.userID,
+    await User.findByIdAndUpdate(
+      req.user.id,
       {
         $set: newPassword,
       },
       { new: true }
     );
 
-    return res.status(200).json(updatedUser);
+    return res.status(200).json({ message: 'Password updated successfully' });
   } catch (err) {
     return res.status(500).json({ error: 'Internal server error' });
   }
