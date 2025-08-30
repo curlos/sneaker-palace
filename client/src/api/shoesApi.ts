@@ -64,10 +64,9 @@ export const shoesApi = baseAPI.injectEndpoints({
 
     // Favorite/unfavorite a shoe
     toggleFavoriteShoe: builder.mutation({
-      query: ({ shoeID, userID, shoe_id }: { shoeID: string; userID: string; shoe_id?: string }) => ({
-        url: '/shoes/favorite',
+      query: ({ shoeID }: { shoeID: string; userID: string; shoe_id?: string }) => ({
+        url: `/shoes/favorite/${shoeID}`,
         method: 'PUT',
-        body: { shoeID, userID },
       }),
       // Optimistic update
       onQueryStarted: async ({ shoeID, userID, shoe_id }, { dispatch, queryFulfilled }) => {

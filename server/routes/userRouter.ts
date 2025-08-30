@@ -76,7 +76,7 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
       }
     }
 
-    await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       {
         $set: updateData,
@@ -84,7 +84,8 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
       { new: true }
     )
 
-    return res.status(200).json({ message: 'User updated successfully' });
+    const { password, ...userWithoutPassword } = updatedUser._doc;
+    return res.status(200).json({ message: 'User updated successfully', user: userWithoutPassword });
   } catch (err) {
 
     return res.json({ error: err });
@@ -121,7 +122,7 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
       password: newPasswordHash,
     }
 
-    await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       {
         $set: newPassword,
@@ -129,7 +130,8 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
       { new: true }
     );
 
-    return res.status(200).json({ message: 'Password updated successfully' });
+    const { password, ...userWithoutPassword } = updatedUser._doc;
+    return res.status(200).json({ message: 'Password updated successfully', user: userWithoutPassword });
   } catch (err) {
     return res.status(500).json({ error: 'Internal server error' });
   }
