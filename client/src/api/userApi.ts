@@ -44,12 +44,19 @@ export const userApi = baseAPI.injectEndpoints({
 							Object.assign(draft, user as object);
 						})
 					);
+
+					// Update the getUserProfile cache for the same user
+					dispatch(
+						userApi.util.updateQueryData('getUserProfile', user._id, (draft: any) => {
+							Object.assign(draft, user as object);
+						})
+					);
 				} catch {
 					// Handle error if needed
 				}
 			},
 
-			invalidatesTags: ['User'],
+			invalidatesTags: ['User', 'RatingsByShoe', 'RatingsByUser'],
 		}),
 
 		updateUserPassword: builder.mutation({
@@ -91,7 +98,7 @@ export const userApi = baseAPI.injectEndpoints({
 
 		getUserProfile: builder.query<UserType, string>({
 			query: (userId: string) => `/users/${userId}`,
-			providesTags: (result, error, userId) => [{ type: 'User', id: userId }],
+			providesTags: (_result, _error, userId) => [{ type: 'User', id: userId }],
 		}),
 	}),
 });
