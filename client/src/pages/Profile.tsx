@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import SmallReview from '../components/SmallReview';
 import SmallShoe from '../components/SmallShoe';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
+import { Pagination } from '../components/Pagination';
 import { useGetUserProfileQuery } from '../api/userApi';
 import { useGetRatingsByUserQuery } from '../api/ratingsApi';
 import { useGetShoesByObjectIdsQuery } from '../api/shoesApi';
@@ -10,6 +11,8 @@ import { Shoe } from '../types/types';
 
 const DEFAULT_AVATAR =
 	'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png';
+
+const ITEMS_PER_PAGE = 10;
 
 const formatJoinDate = (dateString: string) => {
 	const date = new Date(dateString);
@@ -23,6 +26,9 @@ const formatJoinDate = (dateString: string) => {
 
 const Profile = () => {
 	const [activeTab, setActiveTab] = useState<'reviews' | 'favorites'>('reviews');
+	const [reviewsCurrentPage, setReviewsCurrentPage] = useState(1);
+	const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
+	const tabsRef = useRef<HTMLDivElement>(null);
 
 	const { userID }: { userID: string } = useParams();
 
@@ -34,6 +40,25 @@ const Profile = () => {
 		profileUser?.favorites || [],
 		{ skip: activeTab !== 'favorites' || !profileUser?.favorites || profileUser.favorites.length === 0 }
 	);
+
+	// Pagination logic for reviews
+	const sortedReviews = [...(profileUserReviews || [])].sort(
+		(a: any, b: any) =>
+			new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+	);
+	const reviewsTotalPages = Math.ceil(sortedReviews.length / ITEMS_PER_PAGE);
+	const reviewsStartIndex = (reviewsCurrentPage - 1) * ITEMS_PER_PAGE;
+	const reviewsEndIndex = reviewsStartIndex + ITEMS_PER_PAGE;
+	const paginatedReviews = sortedReviews.slice(reviewsStartIndex, reviewsEndIndex);
+
+	// Pagination logic for favorites
+	const sortedFavorites = [...(favoriteShoes || [])].sort(
+		(a: Shoe, b: Shoe) => (b.rating || 0) - (a.rating || 0)
+	);
+	const favoritesTotalPages = Math.ceil(sortedFavorites.length / ITEMS_PER_PAGE);
+	const favoritesStartIndex = (favoritesCurrentPage - 1) * ITEMS_PER_PAGE;
+	const favoritesEndIndex = favoritesStartIndex + ITEMS_PER_PAGE;
+	const paginatedFavorites = sortedFavorites.slice(favoritesStartIndex, favoritesEndIndex);
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -99,7 +124,7 @@ const Profile = () => {
 					</>
 				)}
 
-				<div className="flex border-b border-gray-300 mb-4">
+				<div ref={tabsRef} className="flex border-b border-gray-300 mb-4">
 					<button
 						onClick={() => setActiveTab('reviews')}
 						className={`px-4 py-2 font-medium border-b-2 ${
@@ -129,16 +154,23 @@ const Profile = () => {
 								<CircleLoader size={12} />
 							</div>
 						</div>
-					) : profileUserReviews.length > 0 && profileUser ? (
-						<div className="">
-							{[...(profileUserReviews || [])]
-								.sort(
-									(a: any, b: any) =>
-										new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-								)
-								.map((review: any) => (
+					) : sortedReviews.length > 0 && profileUser ? (
+						<div>
+							<div>
+								{paginatedReviews.map((review: any) => (
 									<SmallReview key={review._id} review={review} author={profileUser} />
 								))}
+							</div>
+							{sortedReviews.length > ITEMS_PER_PAGE && (
+								<Pagination
+									pageLimit={reviewsTotalPages}
+									dataLimit={ITEMS_PER_PAGE}
+									currentPage={reviewsCurrentPage}
+									setCurrentPage={setReviewsCurrentPage}
+									totalItemCount={sortedReviews.length}
+									scrollTarget={tabsRef}
+								/>
+							)}
 						</div>
 					) : null)}
 
@@ -149,11 +181,21 @@ const Profile = () => {
 								<CircleLoader size={12} />
 							</div>
 						</div>
-					) : favoriteShoes.length > 0 ? (
-						<div className="flex flex-wrap justify-start bg-white border border-gray-300 rounded-lg p-3">
-							{[...(favoriteShoes || [])]
-								.sort((a: Shoe, b: Shoe) => (b.rating || 0) - (a.rating || 0))
-								.map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
+					) : sortedFavorites.length > 0 ? (
+						<div>
+							<div className="flex flex-wrap justify-start bg-white border border-gray-300 rounded-lg p-3">
+								{paginatedFavorites.map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
+							</div>
+							{sortedFavorites.length > ITEMS_PER_PAGE && (
+								<Pagination
+									pageLimit={favoritesTotalPages}
+									dataLimit={ITEMS_PER_PAGE}
+									currentPage={favoritesCurrentPage}
+									setCurrentPage={setFavoritesCurrentPage}
+									totalItemCount={sortedFavorites.length}
+									scrollTarget={tabsRef}
+								/>
+							)}
 						</div>
 					) : (
 						<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">

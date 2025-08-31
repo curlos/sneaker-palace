@@ -103,9 +103,20 @@ export const Pagination = ({
 					<span className="hidden sm:block">Previous</span>
 				</div>
 
-				{pageLimit - currentPage < 5
+				{pageLimit <= 5
+					? Array.from({ length: pageLimit }, (_, i) => i + 1).map((pageNum) => (
+						<div
+							key={pageNum}
+							className={`p-3 px-4 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`}
+							onClick={changePage}
+						>
+							{pageNum}
+						</div>
+					))
+					: pageLimit - currentPage < 5
 					? getPaginationGroup()
-							.slice(pageLimit - 5, pageLimit)
+							.slice(Math.max(0, pageLimit - 5), pageLimit)
+							.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit)
 							.map((pageNum) => (
 								<div
 									key={pageNum}
@@ -116,7 +127,8 @@ export const Pagination = ({
 								</div>
 							))
 					: getPaginationGroup()
-							.slice(currentPage - 1, currentPage + 4)
+							.slice(Math.max(0, currentPage - 1), Math.min(pageLimit, currentPage + 4))
+							.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit)
 							.map((pageNum) => (
 								<div
 									key={pageNum}
