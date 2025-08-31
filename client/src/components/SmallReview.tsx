@@ -51,7 +51,7 @@ const SmallReview = ({ review, author }: Props) => {
 						starDimension="16px"
 						starSpacing="1px"
 					/>
-					<div className="text-sm text-orange-700">Verified Purchase</div>
+					{/* <div className="text-sm text-orange-700">Verified Purchase</div> */}
 				</div>
 				<div className="font-bold">{review.summary}</div>
 				<div className="text-sm">{review.text}</div>
