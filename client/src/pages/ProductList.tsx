@@ -2,6 +2,7 @@ import { MenuIcon, XIcon } from '@heroicons/react/solid';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useGetPaginatedShoesQuery } from '../api/shoesApi';
+import { AppliedFilters } from '../components/AppliedFilters';
 import { Pagination } from '../components/Pagination';
 import Sidebar from '../components/Sidebar';
 import SmallShoe from '../components/SmallShoe';
@@ -53,10 +54,12 @@ const ProductList = () => {
 	}, [query.get('query'), currentPage]);
 
 	useEffect(() => {
-		window.scrollTo(0, 0);
+		if (windowSize.width >= 768) {
+			window.scrollTo(0, 0);
+		}
 		setCurrentPage(1);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filters, sortType, query.get('query')]);
+	}, [filters, sortType, query.get('query'), windowSize.width]);
 
 	useEffect(() => {
 		setFilters(getInitialFilters(state));
@@ -101,6 +104,8 @@ const ProductList = () => {
 							<SortDropdown sortType={sortType} setSortType={setSortType} />
 						</div>
 					</div>
+
+					<AppliedFilters filters={filters} setFilters={setFilters} />
 
 					{loading ? (
 						<div className="flex justify-center flex-wrap lg:justify-between py-4">
