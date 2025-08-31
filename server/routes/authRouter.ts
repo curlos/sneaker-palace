@@ -1,83 +1,83 @@
-import { Request, Response } from 'express'
+import { Request, Response } from 'express';
 
-const router = require('express').Router()
-const User = require('../models/User')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
+const router = require('express').Router();
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 // Register User
 router.post('/register', async (req: Request, res: Response) => {
-  // Basic validation
-  if (!req.body.firstName || req.body.firstName.trim().length === 0) {
-    return res.status(400).json({ error: 'First name is required' })
-  }
+	// Basic validation
+	if (!req.body.firstName || req.body.firstName.trim().length === 0) {
+		return res.status(400).json({ error: 'First name is required' });
+	}
 
-  if (!req.body.password) {
-    return res.status(400).json({ error: 'Password is required' })
-  }
+	if (!req.body.password) {
+		return res.status(400).json({ error: 'Password is required' });
+	}
 
-  if (req.body.password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters long' })
-  }
+	if (req.body.password.length < 8) {
+		return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+	}
 
-  const foundUser = await User.findOne({ lowerCaseEmail: req.body.email.toLowerCase() })
+	const foundUser = await User.findOne({ lowerCaseEmail: req.body.email.toLowerCase() });
 
-  if (foundUser) {
-    return res.status(400).json({ error: 'Email taken' })
-  } else {
-    const hashedPassword = await bcrypt.hash(req.body.password, 12)
-    
-    const newUser = new User({
-      email: req.body.email,
-      password: hashedPassword,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      lowerCaseEmail: req.body.email
-    })
+	if (foundUser) {
+		return res.status(400).json({ error: 'Email taken' });
+	} else {
+		const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
-    try {
-      const savedUser = await newUser.save()
-      return res.status(201).json(savedUser)
-    } catch (err) {
-      return res.status(500).json(err)
-    }
-  }
-})
+		const newUser = new User({
+			email: req.body.email,
+			password: hashedPassword,
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			lowerCaseEmail: req.body.email,
+		});
+
+		try {
+			const savedUser = await newUser.save();
+			return res.status(201).json(savedUser);
+		} catch (err) {
+			return res.status(500).json(err);
+		}
+	}
+});
 
 // Login User
 router.post('/login', async (req: Request, res: Response) => {
-  try {
-    const user = await User.findOne({ email: req.body.email })
+	try {
+		const user = await User.findOne({ email: req.body.email });
 
-    if (!user) {
-      return res.status(401).json('Wrong credentials')
-    }
+		if (!user) {
+			return res.status(401).json('Wrong credentials');
+		}
 
-    // All passwords should be bcrypt after migration
-    const isValidPassword = await bcrypt.compare(req.body.password, user.password)
+		// All passwords should be bcrypt after migration
+		const isValidPassword = await bcrypt.compare(req.body.password, user.password);
 
-    if (!isValidPassword) {
-      return res.status(401).json('Wrong credentials')
-    }
+		if (!isValidPassword) {
+			return res.status(401).json('Wrong credentials');
+		}
 
-    const accessToken = jwt.sign(
-      {
-        id: user._id,
-        isAdmin: user.isAdmin,
-      },
-      process.env.JWT_SEC,
-      { expiresIn: "3d" }
-    )
+		const accessToken = jwt.sign(
+			{
+				id: user._id,
+				isAdmin: user.isAdmin,
+			},
+			process.env.JWT_SEC,
+			{ expiresIn: '3d' }
+		);
 
-    const { password, ...others } = user._doc
+		const { password, ...others } = user._doc;
 
-    return res.status(200).json({ 
-      ...others, 
-      accessToken
-    })
-  } catch (err) {
-    return res.status(500).json(err)
-  }
-})
+		return res.status(200).json({
+			...others,
+			accessToken,
+		});
+	} catch (err) {
+		return res.status(500).json(err);
+	}
+});
 
-module.exports = router
+module.exports = router;

@@ -5,194 +5,195 @@ const Shoe = require('../models/Shoe');
 const User = require('../models/User');
 const { verifyToken } = require('./verifyToken');
 
-
 const router = express.Router();
 
 router.get('/page/:pageNum', async (req: Request, res: Response) => {
-  const options = {
-    page: Number(req.params.pageNum),
-    limit: 12,
-    collation: {
-      locale: 'en',
-    },
-    lean: true,
-    select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
-  };
+	const options = {
+		page: Number(req.params.pageNum),
+		limit: 12,
+		collation: {
+			locale: 'en',
+		},
+		lean: true,
+		select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
+	};
 
-  Shoe.paginate({}, options, (err: any, result: any) => {
-    return res.json(result);
-  });
+	Shoe.paginate({}, options, (err: any, result: any) => {
+		return res.json(result);
+	});
 });
 
 router.post('/', async (req: Request, res: Response) => {
-  const getSortType = () => {
-    switch (req.body.sortType) {
-      case "Newest":
-        return { releaseDate: -1 };
-      case "Oldest":
-        return { releaseDate: 1 };
-      case "Price: High-Low":
-        return { retailPrice: -1 };
-      case "Price: Low-High":
-        return { retailPrice: 1 };
-    }
-  };
+	const getSortType = () => {
+		switch (req.body.sortType) {
+			case 'Newest':
+				return { releaseDate: -1 };
+			case 'Oldest':
+				return { releaseDate: 1 };
+			case 'Price: High-Low':
+				return { retailPrice: -1 };
+			case 'Price: Low-High':
+				return { retailPrice: 1 };
+		}
+	};
 
-  const getCompleteQuery = () => {
-    const completeQuery: any = {};
-    const filters = req.body.filters;
-    if (req.body.query) {
-      completeQuery.name = { "$regex": req.body.query.trim(), "$options": "i" };
-    }
+	const getCompleteQuery = () => {
+		const completeQuery: any = {};
+		const filters = req.body.filters;
+		if (req.body.query) {
+			completeQuery.name = { $regex: req.body.query.trim(), $options: 'i' };
+		}
 
-    const selectedColors = [...Object.keys(filters.colors).filter((color) => filters.colors[color])];
+		const selectedColors = [...Object.keys(filters.colors).filter((color) => filters.colors[color])];
 
-    const selectedBrands = [...Object.keys(filters.brands).filter((brand) => filters.brands[brand])];
+		const selectedBrands = [...Object.keys(filters.brands).filter((brand) => filters.brands[brand])];
 
-    const selectedGenders = [...Object.keys(filters.genders).filter((gender) => filters.genders[gender])];
+		const selectedGenders = [...Object.keys(filters.genders).filter((gender) => filters.genders[gender])];
 
-    const selectedPriceRanges = [...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked)];
+		const selectedPriceRanges = [
+			...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked),
+		];
 
-    const selectedReleaseYears = [...Object.keys(filters.releaseYears).filter((releaseYear) => filters.releaseYears[releaseYear])];
+		const selectedReleaseYears = [
+			...Object.keys(filters.releaseYears).filter((releaseYear) => filters.releaseYears[releaseYear]),
+		];
 
-    if (filters.colors && selectedColors.length > 0) {
-      const regex = selectedColors.join('|');
-      completeQuery.colorway = { "$regex": regex, "$options": "i" };
-    }
+		if (filters.colors && selectedColors.length > 0) {
+			const regex = selectedColors.join('|');
+			completeQuery.colorway = { $regex: regex, $options: 'i' };
+		}
 
-    if (filters.brands && selectedBrands.length > 0) {
-      completeQuery.brand = { $in: selectedBrands };
-    }
+		if (filters.brands && selectedBrands.length > 0) {
+			completeQuery.brand = { $in: selectedBrands };
+		}
 
-    if (filters.genders && selectedGenders.length > 0) {
-      completeQuery.gender = { $in: selectedGenders };
-    }
+		if (filters.genders && selectedGenders.length > 0) {
+			completeQuery.gender = { $in: selectedGenders };
+		}
 
-    if (filters.releaseYears && selectedReleaseYears.length > 0) {
-      completeQuery.releaseYear = { $in: selectedReleaseYears };
-    }
+		if (filters.releaseYears && selectedReleaseYears.length > 0) {
+			completeQuery.releaseYear = { $in: selectedReleaseYears };
+		}
 
-    if (filters.priceRanges && selectedPriceRanges.length > 0) {
-      const priceRangeConditions: any = [];
+		if (filters.priceRanges && selectedPriceRanges.length > 0) {
+			const priceRangeConditions: any = [];
 
-      selectedPriceRanges.forEach((priceRange) => {
-        if (!filters.priceRanges[priceRange].priceRanges.high) {
-          priceRangeConditions.push({
-            retailPrice: {
-              $gte: filters.priceRanges[priceRange].priceRanges.low
-            }
-          });
-        } else {
-          priceRangeConditions.push({
-            retailPrice: {
-              $gte: filters.priceRanges[priceRange].priceRanges.low,
-              $lte: filters.priceRanges[priceRange].priceRanges.high
-            }
-          });
-        }
-      });
+			selectedPriceRanges.forEach((priceRange) => {
+				if (!filters.priceRanges[priceRange].priceRanges.high) {
+					priceRangeConditions.push({
+						retailPrice: {
+							$gte: filters.priceRanges[priceRange].priceRanges.low,
+						},
+					});
+				} else {
+					priceRangeConditions.push({
+						retailPrice: {
+							$gte: filters.priceRanges[priceRange].priceRanges.low,
+							$lte: filters.priceRanges[priceRange].priceRanges.high,
+						},
+					});
+				}
+			});
 
-      completeQuery["$or"] = [...priceRangeConditions];
-    }
-    return completeQuery;
-  };
+			completeQuery['$or'] = [...priceRangeConditions];
+		}
+		return completeQuery;
+	};
 
-  const options = {
-    page: Number(req.body.pageNum),
-    limit: 12,
-    collation: {
-      locale: 'en',
-    },
-    lean: true,
-    select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
-    sort: getSortType()
-  };
+	const options = {
+		page: Number(req.body.pageNum),
+		limit: 12,
+		collation: {
+			locale: 'en',
+		},
+		lean: true,
+		select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
+		sort: getSortType(),
+	};
 
-  const query = getCompleteQuery();
+	const query = getCompleteQuery();
 
-  Shoe.paginate(query, options, (err: any, result: any) => {
-    return res.json(result);
-  });
+	Shoe.paginate(query, options, (err: any, result: any) => {
+		return res.json(result);
+	});
 });
 
 router.get('/:shoeID', async (req: Request, res: Response) => {
-  const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });
-  return res.json(shoe);
+	const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });
+	return res.json(shoe);
 });
 
 router.get('/objectID/:id', async (req: Request, res: Response) => {
-  const shoe = await Shoe.findOne({ _id: req.params.id });
-  return res.json(shoe);
+	const shoe = await Shoe.findOne({ _id: req.params.id });
+	return res.json(shoe);
 });
 
 router.post('/objectIDs', async (req: Request, res: Response) => {
-  const { ids } = req.body;
-  
-  if (!ids || !Array.isArray(ids)) {
-    return res.status(400).json({ error: 'Invalid or missing ids array' });
-  }
+	const { ids } = req.body;
 
-  const shoes = await Shoe.find({ _id: { $in: ids } });
-  return res.json(shoes);
+	if (!ids || !Array.isArray(ids)) {
+		return res.status(400).json({ error: 'Invalid or missing ids array' });
+	}
+
+	const shoes = await Shoe.find({ _id: { $in: ids } });
+	return res.json(shoes);
 });
 
 router.post('/bulk', async (req: Request, res: Response) => {
-  const { ids, key = '_id' } = req.body;
-  
-  if (!ids || !Array.isArray(ids)) {
-    return res.status(400).json({ error: 'Invalid or missing ids array' });
-  }
+	const { ids, key = '_id' } = req.body;
 
-  const validKeys = ['_id', 'shoeID'];
-  if (!validKeys.includes(key)) {
-    return res.status(400).json({ error: 'Invalid key. Must be one of: ' + validKeys.join(', ') });
-  }
+	if (!ids || !Array.isArray(ids)) {
+		return res.status(400).json({ error: 'Invalid or missing ids array' });
+	}
 
-  const shoes = await Shoe.find({ [key]: { $in: ids } });
-  return res.json(shoes);
+	const validKeys = ['_id', 'shoeID'];
+	if (!validKeys.includes(key)) {
+		return res.status(400).json({ error: 'Invalid key. Must be one of: ' + validKeys.join(', ') });
+	}
+
+	const shoes = await Shoe.find({ [key]: { $in: ids } });
+	return res.json(shoes);
 });
 
 router.post('/search', async (req: Request, res: Response) => {
-  const query = { "name": { "$regex": req.body.searchText.trim(), "$options": "i" } };
+	const query = { name: { $regex: req.body.searchText.trim(), $options: 'i' } };
 
-  const options = {
-    page: Number(req.body.pageNum),
-    limit: 12,
-    collation: {
-      locale: 'en',
-    },
-    lean: true,
-    select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
-    sort: {}
-  };
+	const options = {
+		page: Number(req.body.pageNum),
+		limit: 12,
+		collation: {
+			locale: 'en',
+		},
+		lean: true,
+		select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
+		sort: {},
+	};
 
-  Shoe.paginate(query, options, (err: any, result: any) => {
-    if (err) return res.json({ error: err });
-    return res.json(result);
-  });
+	Shoe.paginate(query, options, (err: any, result: any) => {
+		if (err) return res.json({ error: err });
+		return res.json(result);
+	});
 });
 
 router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response) => {
-  const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });
-  const user = await User.findOne({ _id: req.user.id });
+	const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });
+	const user = await User.findOne({ _id: req.user.id });
 
-  if (!shoe.favorites.includes(req.user.id)) {
-    await shoe.updateOne({ $push: { favorites: user._id } });
-    await user.updateOne({ $push: { favorites: shoe._id } });
-    const updatedShoe = await Shoe.findById(shoe._id);
-    const updatedUser = await User.findById(user._id);
-    const { password, ...userWithoutPassword } = updatedUser._doc;
-    return res.status(200).json({ updatedShoe, updatedUser: userWithoutPassword });
-  } else {
-    await shoe.updateOne({ $pull: { favorites: user._id } });
-    await user.updateOne({ $pull: { favorites: shoe._id } });
-    const updatedShoe = await Shoe.findById(shoe._id);
-    const updatedUser = await User.findById(user._id);
-    const { password, ...userWithoutPassword } = updatedUser._doc;
-    return res.status(200).json({ updatedShoe, updatedUser: userWithoutPassword });
-  }
+	if (!shoe.favorites.includes(req.user.id)) {
+		await shoe.updateOne({ $push: { favorites: user._id } });
+		await user.updateOne({ $push: { favorites: shoe._id } });
+		const updatedShoe = await Shoe.findById(shoe._id);
+		const updatedUser = await User.findById(user._id);
+		const { password, ...userWithoutPassword } = updatedUser._doc;
+		return res.status(200).json({ updatedShoe, updatedUser: userWithoutPassword });
+	} else {
+		await shoe.updateOne({ $pull: { favorites: user._id } });
+		await user.updateOne({ $pull: { favorites: shoe._id } });
+		const updatedShoe = await Shoe.findById(shoe._id);
+		const updatedUser = await User.findById(user._id);
+		const { password, ...userWithoutPassword } = updatedUser._doc;
+		return res.status(200).json({ updatedShoe, updatedUser: userWithoutPassword });
+	}
 });
-
-
 
 module.exports = router;

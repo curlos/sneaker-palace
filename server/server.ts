@@ -1,12 +1,12 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express';
 
 const express = require('express');
-const session = require("express-session");
-const passport = require("passport");
+const session = require('express-session');
+const passport = require('passport');
 const logger = require('morgan');
 const app = express();
 const cors = require('cors');
-const path = require("path");
+const path = require('path');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 8888;
@@ -21,30 +21,30 @@ const imageRouter = require('./routes/imageRouter');
 const adminRouter = require('./routes/adminRouter');
 const database = require('./database/connection');
 
-app.use("/assets", express.static(path.join(__dirname, "/assets")));
+app.use('/assets', express.static(path.join(__dirname, '/assets')));
 
 app.use(logger('dev'));
 app.use(cors({ origin: ['http://localhost:3000', 'https://sneaker-palace.vercel.app'] }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
+app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    database.connectToServer((err: any) => {
-      if (err) {
-        console.error(err);
-      }
-    });
-    
-    next();
-  } catch (err) {
-    console.error('❌ Failed to connect to DB:', err);
-    res.status(500).json({ error: 'Database connection failed' });
-  }
+	try {
+		database.connectToServer((err: any) => {
+			if (err) {
+				console.error(err);
+			}
+		});
+
+		next();
+	} catch (err) {
+		console.error('❌ Failed to connect to DB:', err);
+		res.status(500).json({ error: 'Database connection failed' });
+	}
 });
 
 app.use('/auth', authRouter);
@@ -65,8 +65,8 @@ app.get('/', (req: Request, res: Response) => {
 if (!process.env.VERCEL) {
 	// Vercel sets process.env.VERCEL = 1 during runtime
 	app.listen(PORT, () => {
-    console.log(`Server starting on port ${PORT}`);
-  });
+		console.log(`Server starting on port ${PORT}`);
+	});
 }
 
-export default app
+export default app;
