@@ -69,6 +69,7 @@ const PaymentSuccess = () => {
 						paymentIntentID: paymentIntentID,
 						orderDate: new Date().toString(),
 						deliveryDate: new Date(moment().add(2, 'days').format('ddd, MMM D').toUpperCase()).toString(),
+						userID: user?._id, // Add userID for cache invalidation
 					};
 
 					if (user?._id) {
