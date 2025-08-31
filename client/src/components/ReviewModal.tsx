@@ -13,21 +13,23 @@ interface Props {
 const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 	return (
 		<div
-			className="fixed z-20 max-w-100 w-screen h-screen bg-black bg-opacity-40 p-24 top-0 left-0 flex justify-center items-center sm:py-4 sm:px-2 overflow-auto"
+			className="fixed z-20 inset-0 bg-black bg-opacity-40 p-6 sm:p-4 flex justify-center items-center overflow-auto"
 			onClick={() => setShowModal(!showModal)}
 		>
-			<div className="placeholder-gray-400">
+			<div className="placeholder-gray-400 max-w-4xl max-h-full w-full overflow-hidden flex flex-col"
+				onClick={(e) => e.stopPropagation()}
+			>
 				<div className="flex justify-end rounded-t-2xl bg-gray-300 border-0 border-b border-solid border-gray-400 p-3">
 					<XIcon className="h-6 w-6 cursor-pointer" onClick={() => setShowModal(false)} />
 				</div>
 
-				<div className="overflow-y bg-white">
+				<div className="bg-white flex-1 overflow-y-auto" style={{scrollbarWidth: 'thin'}}>
 					<div className="p-3 flex xl:block">
 						<div className="flex-2">
 							<img
 								src={`${review.photo}`}
 								alt=""
-								className="mr-4 xl:mr-0"
+								className="mr-4 xl:mr-0 max-w-full h-auto max-h-96"
 							/>
 						</div>
 
