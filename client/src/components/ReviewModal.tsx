@@ -25,7 +25,7 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 					<div className="p-3 flex xl:block">
 						<div className="flex-2">
 							<img
-								src={`${process.env.REACT_APP_DEV_URL}${review.photo}`}
+								src={`${review.photo}`}
 								alt=""
 								className="mr-4 xl:mr-0"
 							/>

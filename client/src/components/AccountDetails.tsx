@@ -78,7 +78,7 @@ const AccountDetails = () => {
 					{file || user?.profilePic ? (
 						<img
 							src={
-								file ? URL.createObjectURL(file) : `${process.env.REACT_APP_DEV_URL}${user?.profilePic}`
+								file ? URL.createObjectURL(file) : `${user?.profilePic}`
 							}
 							alt=""
 							className="h-150 w-150 rounded-full object-cover mb-3"

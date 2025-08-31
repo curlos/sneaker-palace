@@ -76,7 +76,7 @@ const Profile = () => {
 								<img
 									src={
 										profileUser?.profilePic
-											? `${process.env.REACT_APP_DEV_URL}${profileUser.profilePic}`
+											? `${profileUser.profilePic}`
 											: DEFAULT_AVATAR
 									}
 									alt=""

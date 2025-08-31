@@ -438,7 +438,7 @@ const ReviewForm = () => {
 								src={
 									file
 										? URL.createObjectURL(file)
-										: `${process.env.REACT_APP_DEV_URL}${reviewInfo.photo}`
+										: `${reviewInfo.photo}`
 								}
 								alt=""
 								className="h-150 object-cover my-3"

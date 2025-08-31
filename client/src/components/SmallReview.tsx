@@ -26,7 +26,7 @@ const SmallReview = ({ review, author }: Props) => {
 				<div>
 					<img
 						src={
-							author.profilePic ? `${process.env.REACT_APP_DEV_URL}${author.profilePic}` : DEFAULT_AVATAR
+							author.profilePic ? `${author.profilePic}` : DEFAULT_AVATAR
 						}
 						alt={author?.firstName}
 						className="h-9 w-9 rounded-full object-cover"
@@ -49,10 +49,16 @@ const SmallReview = ({ review, author }: Props) => {
 						starDimension="16px"
 						starSpacing="1px"
 					/>
-					{/* <div className="text-sm text-orange-700">Verified Purchase</div> */}
 				</div>
 				<div className="font-bold">{review.summary}</div>
 				<div className="text-sm">{review.text}</div>
+				{review.photo && (
+					<img
+						src={review.photo}
+						alt=""
+						className="max-h-32 w-auto object-cover my-2 rounded"
+					/>
+				)}
 				<div className="border border-gray-300 rounded-lg bg-white mt-2">
 					<Link to={`/shoe/${shoe.shoeID}`}>
 						<div className="flex items-center gap-2">

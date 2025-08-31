@@ -57,7 +57,7 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 					<img
 						src={
 							review.postedByUser.profilePic
-								? `${process.env.REACT_APP_DEV_URL}${review.postedByUser.profilePic}`
+								? `${review.postedByUser.profilePic}`
 								: DEFAULT_AVATAR
 						}
 						alt={review.postedByUser.firstName}
@@ -102,7 +102,7 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 
 			{review.photo ? (
 				<img
-					src={`${process.env.REACT_APP_DEV_URL}${review.photo}`}
+					src={`${review.photo}`}
 					alt=""
 					className="h-36 object-cover my-2 cursor-pointer"
 					onClick={() => setShowModal(true)}
