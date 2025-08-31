@@ -29,3 +29,13 @@ export const sortByLowestPrice = (shoesToSort: Array<Shoe>) =>
 
 export const sortByHighestPrice = (shoesToSort: Array<Shoe>) =>
 	[...shoesToSort].sort((shoeOne, shoeTwo) => (shoeOne.retailPrice > shoeTwo.retailPrice ? -1 : 1));
+
+export const sortByMostPopular = (shoesToSort: Array<Shoe>) =>
+	[...shoesToSort].sort((shoeOne, shoeTwo) => shoeTwo.favorites.length - shoeOne.favorites.length);
+
+export const sortByMostReviewed = (shoesToSort: Array<Shoe>) =>
+	[...shoesToSort].sort((shoeOne, shoeTwo) => shoeTwo.ratings.length - shoeOne.ratings.length);
+
+export const sortByHighestRated = (shoesToSort: Array<Shoe>) =>
+	[...shoesToSort].sort((shoeOne, shoeTwo) => (shoeTwo.rating > shoeOne.rating ? 1 : -1));
+

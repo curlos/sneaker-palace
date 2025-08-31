@@ -29,7 +29,7 @@ const ProductList = () => {
 	const { state } = useLocation<stateType>();
 	const windowSize = useWindowSize();
 
-	const [sortType, setSortType] = useState('Newest');
+	const [sortType, setSortType] = useState('Newest Arrivals');
 	const [filters, setFilters] = useState<any>(getInitialFilters(state));
 	const [currentPage, setCurrentPage] = useState(1);
 	const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true);

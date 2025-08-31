@@ -26,14 +26,33 @@ router.get('/page/:pageNum', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
 	const getSortType = () => {
 		switch (req.body.sortType) {
-			case 'Newest':
+			case 'Newest Arrivals':
 				return { releaseDate: -1 };
-			case 'Oldest':
+			case 'Classic Releases':
 				return { releaseDate: 1 };
-			case 'Price: High-Low':
+			case 'Price: High to Low':
 				return { retailPrice: -1 };
-			case 'Price: Low-High':
+			case 'Price: Low to High':
 				return { retailPrice: 1 };
+			case 'Highest Rated':
+				return { rating: -1 };
+			default:
+				return { releaseDate: -1 };
+		}
+	};
+
+	const isArrayLengthSort = () => {
+		return ['Most Popular', 'Most Reviewed'].includes(req.body.sortType);
+	};
+
+	const getArraySortDirection = () => {
+		switch (req.body.sortType) {
+			case 'Most Popular':
+				return { favoritesCount: -1 };
+			case 'Most Reviewed':
+				return { ratingsCount: -1 };
+			default:
+				return { favoritesCount: -1 };
 		}
 	};
 
@@ -100,22 +119,87 @@ router.post('/', async (req: Request, res: Response) => {
 		return completeQuery;
 	};
 
-	const options = {
-		page: Number(req.body.pageNum),
-		limit: 12,
-		collation: {
-			locale: 'en',
-		},
-		lean: true,
-		select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
-		sort: getSortType(),
-	};
+	if (isArrayLengthSort()) {
+		const pipeline = [
+			{ $match: getCompleteQuery() },
+			{
+				$addFields: {
+					favoritesCount: { $size: '$favorites' },
+					ratingsCount: { $size: '$ratings' }
+				}
+			},
+			{ $sort: getArraySortDirection() }
+		];
 
-	const query = getCompleteQuery();
+		const pageNum = Number(req.body.pageNum);
+		const limit = 12;
+		const skip = (pageNum - 1) * limit;
 
-	Shoe.paginate(query, options, (err: any, result: any) => {
-		return res.json(result);
-	});
+		try {
+			const [results, totalCount] = await Promise.all([
+				Shoe.aggregate([
+					...pipeline,
+					{ $skip: skip },
+					{ $limit: limit },
+					{
+						$project: {
+							shoeID: 1,
+							'image.original': 1,
+							name: 1,
+							gender: 1,
+							colorway: 1,
+							ratings: 1,
+							retailPrice: 1,
+							brand: 1,
+							rating: 1,
+							favorites: 1
+						}
+					}
+				]),
+				Shoe.aggregate([
+					...pipeline,
+					{ $count: 'total' }
+				])
+			]);
+
+			const total = totalCount[0]?.total || 0;
+			const totalPages = Math.ceil(total / limit);
+
+			const paginatedResult = {
+				docs: results,
+				totalDocs: total,
+				limit: limit,
+				page: pageNum,
+				totalPages: totalPages,
+				hasNextPage: pageNum < totalPages,
+				hasPrevPage: pageNum > 1,
+				nextPage: pageNum < totalPages ? pageNum + 1 : null,
+				prevPage: pageNum > 1 ? pageNum - 1 : null,
+				pagingCounter: skip + 1
+			};
+
+			return res.json(paginatedResult);
+		} catch (error) {
+			return res.status(500).json({ error: 'Error fetching shoes' });
+		}
+	} else {
+		const options = {
+			page: Number(req.body.pageNum),
+			limit: 12,
+			collation: {
+				locale: 'en',
+			},
+			lean: true,
+			select: 'shoeID image.original name gender colorway ratings retailPrice brand rating favorites',
+			sort: getSortType(),
+		};
+
+		const query = getCompleteQuery();
+
+		Shoe.paginate(query, options, (_err: any, result: any) => {
+			return res.json(result);
+		});
+	}
 });
 
 router.get('/:shoeID', async (req: Request, res: Response) => {

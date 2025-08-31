@@ -7,11 +7,43 @@ interface Props {
 	setSortType: React.Dispatch<React.SetStateAction<string>>;
 }
 
+interface SortMenuItemProps {
+	sortValue: string;
+	displayText: string;
+	setSortType: React.Dispatch<React.SetStateAction<string>>;
+}
+
 const classNames = (...classes: Array<string>) => {
 	return classes.filter(Boolean).join(' ');
 };
 
+const SortMenuItem = ({ sortValue, displayText, setSortType }: SortMenuItemProps) => (
+	<Menu.Item>
+		{({ active }) => (
+			<span
+				className={classNames(
+					active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+					'block px-4 py-2 text-sm cursor-pointer'
+				)}
+				onClick={() => setSortType(sortValue)}
+			>
+				{displayText}
+			</span>
+		)}
+	</Menu.Item>
+);
+
 export const SortDropdown = ({ sortType, setSortType }: Props) => {
+	const sortOptions = [
+		{ value: 'Newest Arrivals', label: 'Newest Arrivals' },
+		{ value: 'Most Popular', label: 'Most Popular' },
+		{ value: 'Highest Rated', label: 'Highest Rated' },
+		{ value: 'Most Reviewed', label: 'Most Reviewed' },
+		{ value: 'Price: Low to High', label: 'Price: Low to High' },
+		{ value: 'Price: High to Low', label: 'Price: High to Low' },
+		{ value: 'Classic Releases', label: 'Classic Releases' },
+	];
+
 	return (
 		<div className="flex justify-end">
 			<Menu as="div" className="relative inline-block text-left">
@@ -32,59 +64,14 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
 				>
 					<Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
 						<div className="py-1">
-							<Menu.Item>
-								{({ active }) => (
-									<span
-										className={classNames(
-											active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-											'block px-4 py-2 text-sm cursor-pointer'
-										)}
-										onClick={() => setSortType('Newest')}
-									>
-										Newest
-									</span>
-								)}
-							</Menu.Item>
-							<Menu.Item>
-								{({ active }) => (
-									<span
-										className={classNames(
-											active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-											'block px-4 py-2 text-sm cursor-pointer'
-										)}
-										onClick={() => setSortType('Oldest')}
-									>
-										Oldest
-									</span>
-								)}
-							</Menu.Item>
-							<Menu.Item>
-								{({ active }) => (
-									<span
-										className={classNames(
-											active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-											'block px-4 py-2 text-sm cursor-pointer'
-										)}
-										onClick={() => setSortType('Price: High-Low')}
-									>
-										Price: High-Low
-									</span>
-								)}
-							</Menu.Item>
-
-							<Menu.Item>
-								{({ active }) => (
-									<span
-										className={classNames(
-											active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-											'block px-4 py-2 text-sm cursor-pointer'
-										)}
-										onClick={() => setSortType('Price: Low-High')}
-									>
-										Price: Low-High
-									</span>
-								)}
-							</Menu.Item>
+							{sortOptions.map((option) => (
+								<SortMenuItem
+									key={option.value}
+									sortValue={option.value}
+									displayText={option.label}
+									setSortType={setSortType}
+								/>
+							))}
 						</div>
 					</Menu.Items>
 				</Transition>

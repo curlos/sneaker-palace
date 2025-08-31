@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from '@heroicons/react/solid';
+import { ChevronDownIcon, HeartIcon } from '@heroicons/react/solid';
 import { Link } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import { Props } from '../types/types';
@@ -32,10 +32,14 @@ const SmallShoe = ({ shoe }: Props) => {
 						starDimension="16px"
 						starSpacing="1px"
 					/>
-					<span className="flex items-center">
-						<ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
-						{shoe.ratings.length}
+					<span className="flex items-center ml-2">
+						<ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
+						{shoe.ratings?.length || 0}
 					</span>
+				</div>
+				<div className="flex items-center">
+					<HeartIcon className="h-4 w-4 text-black" aria-hidden="true" />
+					<span className="ml-1">{shoe.favorites?.length || 0}</span>
 				</div>
 				<span className="font-medium text-lg">${shoe.retailPrice}</span>
 			</div>
