@@ -14,6 +14,7 @@ import { useDeleteRatingMutation } from '../api/ratingsApi';
 import { useGetLoggedInUserQuery } from '../api/userApi';
 import { RootState } from '../redux/store';
 import { IRating, Shoe } from '../types/types';
+import { DEFAULT_AVATAR } from '../utils/userConstants';
 import ReviewModal from './ReviewModal';
 
 interface Props {
@@ -23,9 +24,6 @@ interface Props {
 	onDislike: (ratingID: string) => void;
 	isLoading: boolean;
 }
-
-const DEFAULT_AVATAR =
-	'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png';
 
 const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 	const userId = useSelector((s: RootState) => s.user.currentUser?._id);

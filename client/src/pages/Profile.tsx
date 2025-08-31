@@ -8,9 +8,7 @@ import { useGetUserProfileQuery } from '../api/userApi';
 import { useGetRatingsByUserQuery } from '../api/ratingsApi';
 import { useGetShoesByObjectIdsQuery } from '../api/shoesApi';
 import { Shoe } from '../types/types';
-
-const DEFAULT_AVATAR =
-	'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png';
+import { DEFAULT_AVATAR } from '../utils/userConstants';
 
 const ITEMS_PER_PAGE = 10;
 

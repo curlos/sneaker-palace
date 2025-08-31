@@ -2,13 +2,11 @@ import { ChangeEvent, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { postImage } from '../utils/postImage';
+import { DEFAULT_AVATAR } from '../utils/userConstants';
 import FailureMessage from './FailureMessage';
 import NewPasswordModal from './NewPasswordModal';
 import SuccessMessage from './SuccessMessage';
 import { useGetLoggedInUserQuery, useUpdateUserInfoMutation } from '../api/userApi';
-
-const DEFAULT_AVATAR =
-	'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png';
 
 const AccountDetails = () => {
 	const userId = useSelector((s: RootState) => s.user.currentUser?._id);

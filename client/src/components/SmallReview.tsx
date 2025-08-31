@@ -6,14 +6,12 @@ import { useGetShoeQuery } from '../api/shoesApi';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import ShoeImage from './ShoeImage';
 import { IRating, UserType } from '../types/types';
+import { DEFAULT_AVATAR } from '../utils/userConstants';
 
 interface Props {
 	review: IRating;
 	author: Partial<UserType>;
 }
-
-const DEFAULT_AVATAR =
-	'https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/default._CR0,0,1024,1024_SX460_.png';
 
 const SmallReview = ({ review, author }: Props) => {
 	const { data: shoe, isLoading: loading } = useGetShoeQuery(review.shoeID);
