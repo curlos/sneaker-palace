@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 const express = require('express');
 const session = require('express-session');
@@ -21,6 +21,14 @@ const imageRouter = require('./routes/imageRouter');
 const adminRouter = require('./routes/adminRouter');
 const database = require('./database/connection');
 
+// Connect to database on startup
+database.connectToServer((err: any) => {
+	if (err) {
+		console.error('❌ Failed to connect to DB on startup:', err);
+		process.exit(1);
+	}
+});
+
 app.use('/assets', express.static(path.join(__dirname, '/assets')));
 
 app.use(logger('dev'));
@@ -32,21 +40,6 @@ app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		database.connectToServer((err: any) => {
-			if (err) {
-				console.error(err);
-			}
-		});
-
-		next();
-	} catch (err) {
-		console.error('❌ Failed to connect to DB:', err);
-		res.status(500).json({ error: 'Database connection failed' });
-	}
-});
-
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/shoes', shoeRouter);
@@ -57,7 +50,7 @@ app.use('/orders', orderRouter);
 app.use('/admin', adminRouter);
 app.use('/images', imageRouter);
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
 	res.send('Hello World!');
 });
 
