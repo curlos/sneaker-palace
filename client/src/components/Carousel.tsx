@@ -29,11 +29,13 @@ const Carousel = () => {
 				backgroundColor: currentShoe.bgColor,
 			}}
 		>
-			<div className="ml-10 pb-10 w-1/4 sm:w-3/4">
-				<div className="text-5xl mb-3 sm:text-5xl">{currentShoe.name}</div>
-				<Link to={`/shoe/${currentShoe.shoeID}`} className="underline">
-					Shop Now
-				</Link>
+			<div className="container mx-auto max-w-7xl">
+				<div className="ml-10 pb-10 w-1/3 sm:w-3/4">
+					<div className="text-5xl mb-3 sm:text-5xl" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>{currentShoe.name}</div>
+					<Link to={`/shoe/${currentShoe.shoeID}`} className="underline">
+						Shop Now
+					</Link>
+				</div>
 			</div>
 		</div>
 	);
