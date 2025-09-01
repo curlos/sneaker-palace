@@ -66,7 +66,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 					<div className="flex p-4 py-6">
 						<SearchIcon className="h-7 w-7 text-gray-400" onClick={handleSubmit} />
 						<input
-							className="ml-5 placeholder-gray-400 placeholder-opacity-100 outline-none uppercase text-lg font-medium"
+							className="ml-5 placeholder-gray-400 placeholder-opacity-100 outline-none uppercase text-lg font-medium w-full"
 							placeholder="TYPE TO SEARCH"
 							value={searchText}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchText(e.currentTarget.value)}
