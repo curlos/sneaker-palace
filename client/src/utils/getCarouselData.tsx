@@ -1,25 +1,22 @@
 export const getCarouselData = () => {
 	return [
 		{
-			shoeID: 'd8efc352-2ae6-473a-b20a-70b810f388ee',
-			name: 'Nike Kobe 5 Protro Undefeated Hall of Fame',
-			imageName: 'bg-kobe-hof-shoes',
-			relativeURL: '/assets/landing_page/kobes-min.jpeg',
-			bgColor: '#644481',
+			shoeID: '724a1c4b-30e3-4ac4-b289-bbb7e868c26e',
+			name: 'Air Jordan 4 Retro OG SP Nigel Sylvester \'Brick by Brick\'',
+			relativeURL: '/assets/landing_page/jordan-4-nigel-sylvester-brick-5.webp',
+			bgColor: '#E04511',
 		},
 		{
-			shoeID: '5f6da0cf-a27a-4bfc-aaec-bc4ce69ca76a',
-			name: 'Nike LeBron 8 South Beach (2021)',
-			imageName: 'bg-lebron-south-beach-shoes',
-			relativeURL: '/assets/landing_page/lebrons-min.jpeg',
-			bgColor: '#62CBC4',
+			shoeID: 'b62b550f-0f12-4717-9ce4-4efc7f938a0d',
+			name: 'Nike Kobe 6 Protro Dodgers',
+			relativeURL: '/assets/landing_page/nike-kobe-6-protro-dodgers-CW2190-400-release-date-1.webp',
+			bgColor: '#3371CC',
 		},
 		{
-			shoeID: 'c41e7155-2a83-4f0c-99b1-7a047526f7c8',
-			name: 'Jordan 1 Retro High Trophy Room Chicago',
-			imageName: 'bg-jordan-trophy-room-shoes',
-			relativeURL: '/assets/landing_page/jordans-min.jpeg',
-			bgColor: '#7D202A',
+			shoeID: '4a6eb94c-233b-497d-a51c-ede6740072e7',
+			name: 'Jordan 4 Retro White Cement (2025)',
+			relativeURL: '/assets/landing_page/white-cement-jordan-4s-2025-2.webp',
+			bgColor: '#95A9C7',
 		},
 	];
 };
