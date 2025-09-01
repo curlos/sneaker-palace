@@ -5,6 +5,7 @@ const Shoe = require('../models/Shoe');
 class SearchService {
 	private fuse: Fuse<any> | null = null;
 	private shoes: any[] = [];
+	private searchableShoes: any[] = []; // Lightweight objects for FuseJS
 	private isInitialized = false;
 
 	async initialize(): Promise<void> {
@@ -13,6 +14,16 @@ class SearchService {
 			
 			// Load all shoes from database
 			this.shoes = await Shoe.find({}).lean();
+			
+			// Create lightweight search objects with only the fields we need
+			this.searchableShoes = this.shoes.map((shoe: any, index: number) => ({
+				index, // Reference back to full shoe object
+				name: shoe.name,
+				brand: shoe.brand,
+				colorway: shoe.colorway,
+				silhouette: shoe.silhouette,
+				story: shoe.story
+			}));
 			
 			console.log(`Loaded ${this.shoes.length} shoes for search`);
 
@@ -46,8 +57,8 @@ class SearchService {
 				minMatchCharLength: 3,
 			};
 
-			// Initialize FuseJS with all shoes
-			this.fuse = new Fuse(this.shoes, fuseOptions);
+			// Initialize FuseJS with lightweight search objects
+			this.fuse = new Fuse(this.searchableShoes, fuseOptions);
 			this.isInitialized = true;
 			
 			console.log('Search service initialized successfully');
@@ -67,7 +78,8 @@ class SearchService {
 		}
 
 		const results = this.fuse.search(query.trim());
-		return results.map(result => result.item);
+		// Map back to full shoe objects using the index
+		return results.map(result => this.shoes[result.item.index]);
 	}
 
 	getAllShoes(): any[] {

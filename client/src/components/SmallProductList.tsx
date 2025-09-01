@@ -19,7 +19,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSub
 	});
 
 	// Use the search query for actual searches (only when finalSearchText exists)
-	const { data: searchData, isLoading: searchLoading } = useSearchShoesQuery(
+	const { data: searchData, isLoading: searchLoading, isFetching: searchFetching } = useSearchShoesQuery(
 		{
 			searchText: finalSearchText ? finalSearchText.toLowerCase() : '',
 			pageNum: 1,
@@ -31,7 +31,7 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSub
 
 	// Determine what data to show and loading state
 	const shoes = finalSearchText.trim() ? searchData?.docs || [] : initialData?.docs || [];
-	const loading = finalSearchText.trim() ? searchLoading : initialLoading;
+	const loading = finalSearchText.trim() ? (searchLoading || searchFetching) : initialLoading;
 
 	return loading ? (
 		<div className="flex justify-center py-4">
