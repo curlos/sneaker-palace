@@ -1,6 +1,6 @@
 import { MenuIcon, XIcon } from '@heroicons/react/solid';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useGetPaginatedShoesQuery } from '../api/shoesApi';
 import { AppliedFilters } from '../components/AppliedFilters';
 import { Pagination } from '../components/Pagination';
@@ -27,9 +27,13 @@ const useQuery = () => {
 const ProductList = () => {
 	const query = useQuery();
 	const { state } = useLocation<stateType>();
+	const history = useHistory();
 	const windowSize = useWindowSize();
 
-	const [sortType, setSortType] = useState('Newest Arrivals');
+	const [sortType, setSortType] = useState(() => {
+		const searchQuery = query.get('query');
+		return searchQuery?.trim() ? 'Most Relevant' : 'Newest Arrivals';
+	});
 	const [filters, setFilters] = useState<any>(getInitialFilters(state));
 	const [currentPage, setCurrentPage] = useState(1);
 	const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true);
@@ -48,10 +52,19 @@ const ProductList = () => {
 		setShowSidebar(windowSize.width < 1280 ? false : true);
 	}, [windowSize]);
 
+
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [query.get('query'), currentPage]);
+
+	useEffect(() => {
+		// Set sortType to 'Most Relevant' when there's a search query
+		const searchQuery = query.get('query');
+		if (searchQuery?.trim()) {
+			setSortType('Most Relevant');
+		}
+	}, [query.get('query')]);
 
 	useEffect(() => {
 		if (windowSize.width >= 768) {
@@ -86,10 +99,21 @@ const ProductList = () => {
 					<div className="flex justify-between">
 						<div>
 							{query.get('query') ? <div>Search results for</div> : null}
-							<div className="text-lg font-bold">
-								{query.get('query')
-									? `${query.get('query')} (${totalShoeCount})`
-									: `Sneakers (${totalShoeCount.toLocaleString()})`}
+							<div className="flex items-center gap-3">
+								<div className="text-lg font-bold">
+									{query.get('query')
+										? `${query.get('query')} (${totalShoeCount})`
+										: `Sneakers (${totalShoeCount.toLocaleString()})`}
+								</div>
+								{query.get('query') && (
+									<button
+										onClick={() => history.push('/shoes')}
+										className="flex items-center justify-center w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
+										title="Clear search"
+									>
+										<XIcon className="h-4 w-4 text-gray-600" />
+									</button>
+								)}
 							</div>
 						</div>
 

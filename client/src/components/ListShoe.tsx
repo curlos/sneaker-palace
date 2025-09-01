@@ -13,7 +13,7 @@ const ListShoe = ({ shoe, setShowModal }: Props) => {
 	return (
 		<Link
 			to={`/shoe/${shoe.shoeID}`}
-			className="flex justify-between items-center py-4 border-0 border-b border-solid border-gray-300"
+			className="flex justify-between items-center py-4 border-0 border-b border-solid border-gray-300 px-6"
 			onClick={() => setShowModal(false)}
 		>
 			<div className="flex items-center">

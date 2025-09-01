@@ -39,6 +39,7 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
 		{ value: 'Most Popular', label: 'Most Popular' },
 		{ value: 'Highest Rated', label: 'Highest Rated' },
 		{ value: 'Most Reviewed', label: 'Most Reviewed' },
+		{ value: 'Most Relevant', label: 'Most Relevant' },
 		{ value: 'Price: Low to High', label: 'Price: Low to High' },
 		{ value: 'Price: High to Low', label: 'Price: High to Low' },
 		{ value: 'Classic Releases', label: 'Classic Releases' },
