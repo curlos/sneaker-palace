@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { searchService } from '../services/searchService';
 
 const express = require('express');
 const Shoe = require('../models/Shoe');
@@ -59,149 +60,177 @@ router.post('/', async (req: Request, res: Response) => {
 		}
 	};
 
-	const getCompleteQuery = () => {
-		const completeQuery: any = {};
+	const applyFilters = (shoes: any[]) => {
 		const filters = req.body.filters;
-		if (req.body.query) {
-			completeQuery.$text = { $search: req.body.query.trim() };
-		}
-
+		
 		const selectedColors = [...Object.keys(filters.colors).filter((color) => filters.colors[color])];
-
 		const selectedBrands = [...Object.keys(filters.brands).filter((brand) => filters.brands[brand])];
-
 		const selectedGenders = [...Object.keys(filters.genders).filter((gender) => filters.genders[gender])];
-
 		const selectedPriceRanges = [
 			...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked),
 		];
-
 		const selectedReleaseYears = [
 			...Object.keys(filters.releaseYears).filter((releaseYear) => filters.releaseYears[releaseYear]),
 		];
 
-		if (filters.colors && selectedColors.length > 0) {
-			const regex = selectedColors.join('|');
-			completeQuery.colorway = { $regex: regex, $options: 'i' };
+		return shoes.filter((shoe) => {
+			// Color filter
+			if (selectedColors.length > 0) {
+				const regex = new RegExp(selectedColors.join('|'), 'i');
+				if (!regex.test(shoe.colorway)) return false;
+			}
+
+			// Brand filter
+			if (selectedBrands.length > 0) {
+				if (!selectedBrands.includes(shoe.brand)) return false;
+			}
+
+			// Gender filter
+			if (selectedGenders.length > 0) {
+				if (!selectedGenders.includes(shoe.gender)) return false;
+			}
+
+			// Release year filter
+			if (selectedReleaseYears.length > 0) {
+				if (!selectedReleaseYears.includes(shoe.releaseYear)) return false;
+			}
+
+			// Price range filter
+			if (selectedPriceRanges.length > 0) {
+				const matchesPriceRange = selectedPriceRanges.some((priceRange) => {
+					const range = filters.priceRanges[priceRange].priceRanges;
+					if (!range.high) {
+						return shoe.retailPrice >= range.low;
+					} else {
+						return shoe.retailPrice >= range.low && shoe.retailPrice <= range.high;
+					}
+				});
+				if (!matchesPriceRange) return false;
+			}
+
+			return true;
+		});
+	};
+
+	try {
+		// Ensure search service is initialized
+		if (!searchService.isReady()) {
+			console.log('Search service not ready, initializing...');
+			await searchService.initialize();
 		}
 
-		if (filters.brands && selectedBrands.length > 0) {
-			completeQuery.brand = { $in: selectedBrands };
+		// Get shoes from search service (FuseJS)
+		let shoes: any[];
+		if (req.body.query && req.body.query.trim()) {
+			shoes = searchService.search(req.body.query.trim());
+		} else {
+			shoes = searchService.getAllShoes();
 		}
 
-		if (filters.genders && selectedGenders.length > 0) {
-			completeQuery.gender = { $in: selectedGenders };
-		}
+		// Apply filters
+		const filteredShoes = applyFilters(shoes);
 
-		if (filters.releaseYears && selectedReleaseYears.length > 0) {
-			completeQuery.releaseYear = { $in: selectedReleaseYears };
-		}
+		// Handle array-based sorting (favorites/ratings count)
+		if (isArrayLengthSort()) {
+			// Add computed fields and sort
+			const shoesWithCounts = filteredShoes.map((shoe) => ({
+				...shoe,
+				favoritesCount: shoe.favorites ? shoe.favorites.length : 0,
+				ratingsCount: shoe.ratings ? shoe.ratings.length : 0,
+			}));
 
-		if (filters.priceRanges && selectedPriceRanges.length > 0) {
-			const priceRangeConditions: any = [];
+			const sortDirection = getArraySortDirection();
+			const sortKey = Object.keys(sortDirection)[0] as 'favoritesCount' | 'ratingsCount';
+			const sortOrder = (sortDirection as any)[sortKey];
 
-			selectedPriceRanges.forEach((priceRange) => {
-				if (!filters.priceRanges[priceRange].priceRanges.high) {
-					priceRangeConditions.push({
-						retailPrice: {
-							$gte: filters.priceRanges[priceRange].priceRanges.low,
-						},
-					});
+			shoesWithCounts.sort((a, b) => {
+				const aVal = sortKey === 'favoritesCount' ? a.favoritesCount : a.ratingsCount;
+				const bVal = sortKey === 'favoritesCount' ? b.favoritesCount : b.ratingsCount;
+				
+				if (sortOrder === -1) {
+					return bVal - aVal;
 				} else {
-					priceRangeConditions.push({
-						retailPrice: {
-							$gte: filters.priceRanges[priceRange].priceRanges.low,
-							$lte: filters.priceRanges[priceRange].priceRanges.high,
-						},
-					});
+					return aVal - bVal;
 				}
 			});
 
-			completeQuery['$or'] = [...priceRangeConditions];
+			filteredShoes.splice(0, filteredShoes.length, ...shoesWithCounts);
+		} else {
+			// Handle regular sorting
+			const sortType = getSortType();
+			
+			if (req.body.query && req.body.sortType === 'Most Relevant') {
+				// For search queries with "Most Relevant", keep FuseJS ranking
+				// FuseJS already provides the best ranking for search results
+			} else {
+				// Apply other sort types
+				const sortKey = Object.keys(sortType)[0];
+				const sortOrder = (sortType as any)[sortKey];
+
+				filteredShoes.sort((a, b) => {
+					let aVal: any, bVal: any;
+					
+					if (sortKey === 'releaseDate') {
+						aVal = a.releaseDate;
+						bVal = b.releaseDate;
+					} else if (sortKey === 'retailPrice') {
+						aVal = a.retailPrice;
+						bVal = b.retailPrice;
+					} else if (sortKey === 'rating') {
+						aVal = a.rating;
+						bVal = b.rating;
+					} else {
+						aVal = a[sortKey];
+						bVal = b[sortKey];
+					}
+					
+					if (sortOrder === -1) {
+						return bVal > aVal ? 1 : bVal < aVal ? -1 : 0;
+					} else {
+						return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+					}
+				});
+			}
 		}
-		return completeQuery;
-	};
 
-	if (isArrayLengthSort()) {
-		const pipeline = [
-			{ $match: getCompleteQuery() },
-			{
-				$addFields: {
-					favoritesCount: { $size: '$favorites' },
-					ratingsCount: { $size: '$ratings' }
-				}
-			},
-			{ $sort: getArraySortDirection() }
-		];
-
+		// Pagination
 		const pageNum = Number(req.body.pageNum);
 		const limit = 12;
 		const skip = (pageNum - 1) * limit;
+		const total = filteredShoes.length;
+		const totalPages = Math.ceil(total / limit);
 
-		try {
-			const [results, totalCount] = await Promise.all([
-				Shoe.aggregate([
-					...pipeline,
-					{ $skip: skip },
-					{ $limit: limit },
-					{
-						$project: {
-							shoeID: 1,
-							'image.original': 1,
-							name: 1,
-							gender: 1,
-							colorway: 1,
-							ratings: 1,
-							retailPrice: 1,
-							brand: 1,
-							rating: 1,
-							favorites: 1
-						}
-					}
-				]),
-				Shoe.aggregate([
-					...pipeline,
-					{ $count: 'total' }
-				])
-			]);
+		const paginatedShoes = filteredShoes.slice(skip, skip + limit);
 
-			const total = totalCount[0]?.total || 0;
-			const totalPages = Math.ceil(total / limit);
-
-			const paginatedResult = {
-				docs: results,
-				totalDocs: total,
-				limit: limit,
-				page: pageNum,
-				totalPages: totalPages,
-				hasNextPage: pageNum < totalPages,
-				hasPrevPage: pageNum > 1,
-				nextPage: pageNum < totalPages ? pageNum + 1 : null,
-				prevPage: pageNum > 1 ? pageNum - 1 : null,
-				pagingCounter: skip + 1
-			};
-
-			return res.json(paginatedResult);
-		} catch (error) {
-			return res.status(500).json({ error: 'Error fetching shoes' });
-		}
-	} else {
-		const options = {
-			page: Number(req.body.pageNum),
-			limit: 12,
-			collation: {
-				locale: 'en',
-			},
-			lean: true,
-			select: 'shoeID image.original name gender colorway ratings retailPrice brand rating favorites',
-			sort: getSortType(),
+		// Format response to match existing API
+		const paginatedResult = {
+			docs: paginatedShoes.map((shoe) => ({
+				shoeID: shoe.shoeID,
+				image: { original: shoe.image.original },
+				name: shoe.name,
+				gender: shoe.gender,
+				colorway: shoe.colorway,
+				ratings: shoe.ratings,
+				retailPrice: shoe.retailPrice,
+				brand: shoe.brand,
+				rating: shoe.rating,
+				favorites: shoe.favorites
+			})),
+			totalDocs: total,
+			limit: limit,
+			page: pageNum,
+			totalPages: totalPages,
+			hasNextPage: pageNum < totalPages,
+			hasPrevPage: pageNum > 1,
+			nextPage: pageNum < totalPages ? pageNum + 1 : null,
+			prevPage: pageNum > 1 ? pageNum - 1 : null,
+			pagingCounter: skip + 1
 		};
 
-		const query = getCompleteQuery();
-
-		Shoe.paginate(query, options, (_err: any, result: any) => {
-			return res.json(result);
-		});
+		return res.json(paginatedResult);
+	} catch (error) {
+		console.error('Search error:', error);
+		return res.status(500).json({ error: 'Error fetching shoes' });
 	}
 });
 
