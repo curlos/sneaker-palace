@@ -167,11 +167,11 @@ const getShoesFromBrand = async (brand: String) => {
 	return addShoesToDatabase(options);
 };
 
-const addAllShoes = async (pageNum: number, releaseYear: number) => {
+const addAllShoes = async (pageNum: number, name: string) => {
 	const options = {
 		method: 'GET',
 		url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
-		params: { limit: '100', page: pageNum },
+		params: { limit: '100', page: pageNum, name },
 		headers: {
 			'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
 			'x-rapidapi-key': process.env.RAPID_API_KEY,

@@ -83,7 +83,7 @@ router.post('/migrate-passwords', adminAuth, async (_req: Request, res: Response
 // Shoe management endpoints - Admin only (Development environment only)
 if (process.env.NODE_ENV !== 'production') {
 	router.post('/shoes/newShoes', adminAuth, async (req: Request, res: Response) => {
-		const result = await addAllShoes(Number(req.body.page), Number(req.body.releaseYear));
+		const result = await addAllShoes(Number(req.body.page), req.body.name);
 		return res.json({ data: result });
 	});
 
