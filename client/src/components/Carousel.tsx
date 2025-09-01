@@ -23,8 +23,9 @@ const Carousel = () => {
 
 	return (
 		<div
-			className={`h-screen bg-cover flex items-center text-white font-bold transition-all ease-in-out duration-1000 transform translate-x-0 slide`}
+			className={`bg-cover flex items-center text-white font-bold transition-all ease-in-out duration-1000 transform translate-x-0 slide`}
 			style={{
+				height: 'calc(100vh - 72px)',
 				backgroundImage: `url(${currentShoe.relativeURL})`,
 				backgroundColor: currentShoe.bgColor,
 			}}

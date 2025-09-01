@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Carousel from '../components/Carousel';
+import GenderShopLink from '../components/GenderShopLink';
 
 const Home = () => {
 	useEffect(() => {
@@ -56,35 +57,21 @@ const Home = () => {
 				</div>
 
 				<div className="mt-5 flex w-full mb-10 md:block">
-					<div className="w-4/12 md:w-full md:mb-8">
-						<Link
-							to={{ pathname: '/shoes', state: { gender: 'men' } }}
-							className="hover:underline font-bold text-xl md:text-3xl"
-						>
-							<img src="/assets/landing_page/mens.jpeg" alt="Mens Shoe" className="w-full md:mb-2" />
-							<span>Shop Men</span>
-						</Link>
-					</div>
-
-					<div className="w-4/12 md:w-full md:mb-8">
-						<Link
-							to={{ pathname: '/shoes', state: { gender: 'women' } }}
-							className="hover:underline font-bold text-xl md:text-3xl"
-						>
-							<img src="/assets/landing_page/womens.jpeg" alt="Mens Shoe" className="w-full md:mb-2" />
-							<span>Shop Women</span>
-						</Link>
-					</div>
-
-					<div className="w-4/12 md:w-full md:mb-8">
-						<Link
-							to={{ pathname: '/shoes', state: { gender: 'youth' } }}
-							className="text-xl font-bold md:text-3xl"
-						>
-							<img src="/assets/landing_page/kids.jpeg" alt="Mens Shoe" className="w-full md:mb-2" />
-							<span>Shop Kids</span>
-						</Link>
-					</div>
+					<GenderShopLink
+						gender="men"
+						imageSrc="/assets/landing_page/mens.jpeg"
+						label="Shop Men"
+					/>
+					<GenderShopLink
+						gender="women"
+						imageSrc="/assets/landing_page/womens.jpeg"
+						label="Shop Women"
+					/>
+					<GenderShopLink
+						gender="youth"
+						imageSrc="/assets/landing_page/kids.jpeg"
+						label="Shop Kids"
+					/>
 				</div>
 			</div>
 		</div>

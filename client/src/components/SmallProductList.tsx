@@ -43,7 +43,9 @@ const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSub
 				{shoes && shoes.length > 0 ? (
 					shoes
 						.slice(0, 12)
-						.map((shoe: Shoe) => <ListShoe key={shoe._id} shoe={shoe} setShowModal={setShowModal} />)
+						.map((shoe: Shoe) => (
+							<ListShoe key={shoe._id || shoe.shoeID} shoe={shoe} setShowModal={setShowModal} />
+						))
 				) : (
 					<div className="flex flex-col items-center py-8 text-center text-gray-500">
 						<div className="text-lg font-medium mb-2">No shoes found</div>

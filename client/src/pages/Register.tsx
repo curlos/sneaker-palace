@@ -56,8 +56,9 @@ const Register = () => {
 
 	return (
 		<form
-			className="h-screen bg-login-image bg-cover flex justify-center items-start"
+			className="h-screen bg-cover flex justify-center items-start"
 			onSubmit={handleRegisterUser}
+			style={{ backgroundImage: 'url(/assets/upscaled-images/bg-login-image.webp)'}}
 		>
 			<div className="flex flex-col gap-4 items-center bg-white w-2/5 p-4 rounded-lg my-6 xl:w-4/5 xl:py-10 sm:w-97/100">
 				<span className="font-bold text-2xl">BECOME A MEMBER</span>
