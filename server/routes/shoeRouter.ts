@@ -36,6 +36,9 @@ router.post('/', async (req: Request, res: Response) => {
 				return { retailPrice: 1 };
 			case 'Highest Rated':
 				return { rating: -1 };
+			case 'Most Relevant':
+				// Only use text score if there's actually a text search query
+				return req.body.query ? { score: { $meta: 'textScore' } } : { releaseDate: -1 };
 			default:
 				return { releaseDate: -1 };
 		}
@@ -60,7 +63,7 @@ router.post('/', async (req: Request, res: Response) => {
 		const completeQuery: any = {};
 		const filters = req.body.filters;
 		if (req.body.query) {
-			completeQuery.name = { $regex: req.body.query.trim(), $options: 'i' };
+			completeQuery.$text = { $search: req.body.query.trim() };
 		}
 
 		const selectedColors = [...Object.keys(filters.colors).filter((color) => filters.colors[color])];
@@ -239,25 +242,6 @@ router.post('/bulk', async (req: Request, res: Response) => {
 	return res.json(shoes);
 });
 
-router.post('/search', async (req: Request, res: Response) => {
-	const query = { name: { $regex: req.body.searchText.trim(), $options: 'i' } };
-
-	const options = {
-		page: Number(req.body.pageNum),
-		limit: 12,
-		collation: {
-			locale: 'en',
-		},
-		lean: true,
-		select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
-		sort: {},
-	};
-
-	Shoe.paginate(query, options, (err: any, result: any) => {
-		if (err) return res.json({ error: err });
-		return res.json(result);
-	});
-});
 
 router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response) => {
 	const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });

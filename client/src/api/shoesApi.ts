@@ -55,12 +55,23 @@ export const shoesApi = baseAPI.injectEndpoints({
 			providesTags: ['Shoe'],
 		}),
 
-		// Search shoes
+		// Search shoes (using main endpoint with enhanced search)
 		searchShoes: builder.query({
 			query: ({ searchText, pageNum }: { searchText: string; pageNum: number }) => ({
-				url: '/shoes/search',
+				url: '/shoes',
 				method: 'POST',
-				body: { searchText, pageNum },
+				body: { 
+					filters: {
+						colors: {},
+						brands: {},
+						genders: {},
+						priceRanges: {},
+						releaseYears: {}
+					}, 
+					sortType: 'Most Relevant',
+					pageNum, 
+					query: searchText 
+				},
 			}),
 			providesTags: ['Shoe'],
 		}),

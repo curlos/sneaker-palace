@@ -36,6 +36,15 @@ const shoeSchema = new mongoose.Schema({
 
 shoeSchema.plugin(mongoosePaginate);
 
+// Add text search index for multi-field search
+shoeSchema.index({
+	name: 'text',
+	brand: 'text', 
+	colorway: 'text',
+	silhouette: 'text',
+	story: 'text'
+});
+
 const Shoe = mongoose.model('Shoe', shoeSchema);
 
 module.exports = Shoe;
