@@ -6,8 +6,8 @@ const FOOTER_BRANDS = [
 		brand: 'NIKE',
 		displayName: 'Nike',
 		shoes: [
+			{ id: 'b62b550f-0f12-4717-9ce4-4efc7f938a0d', name: 'Nike Kobe 6 Protro Dodgers' },
 			{ id: 'aec68b9b-eb62-4e0c-8da3-eee6ce1dadc9', name: 'Nike Kobe 6 Protro Sail All-Star' },
-			{ id: '48c749e4-0dff-4dfa-a1f5-cc7f91ca57d8', name: 'Caitlin Clark x Zoom Kobe 5 Protro \'Indiana Fever\'' },
 			{ id: '306e3e4b-8a21-4aa8-ac36-3a2fccb0e262', name: 'Supreme x Air Max 1 \'87 SP \'Triple White\''},
 			{ id: 'f422be92-e733-4ef0-962b-e19ec798212e', name: 'Corteiz x Air Max 95 SP \'Honey Blacks\''},
 			{ id: 'f76a7cac-38a2-40c3-8546-01ba0f4ccbe6', name: 'Vomero 18 \'Black Coconut Milk\''}
@@ -17,10 +17,10 @@ const FOOTER_BRANDS = [
 		brand: 'JORDAN',
 		displayName: 'Jordan',
 		shoes: [
+			{ id: '724a1c4b-30e3-4ac4-b289-bbb7e868c26e', name: 'Air Jordan 4 Retro OG SP Nigel Sylvester \'Brick by Brick\'' },
 			{ id: '4a6eb94c-233b-497d-a51c-ede6740072e7', name: 'Jordan 4 Retro White Cement (2025)' },
 			{ id: '0164a95e-9f85-4182-b26c-1d43d8178466', name: 'Jordan 1 Retro High \'85 OG Bred (2025)' },
 			{ id: '307833c8-77c4-4563-84e9-c1ba41cf3419', name: 'Jordan 5 Retro OG Black Metallic Reimagined' },
-			{ id: '724a1c4b-30e3-4ac4-b289-bbb7e868c26e', name: 'Air Jordan 4 Retro OG SP Nigel Sylvester Bike Air Firewood Orange' },
 			{ id: 'd9d3ab09-e2eb-41fa-9a1e-60f993dc9351', name: 'Jordan 3 Retro OG Rare Air' }
 		],
 	},
