@@ -12,6 +12,7 @@ import { Shoe } from '../types/types';
 import getInitialFilters from '../utils/getInitialFilters';
 import { useWindowSize } from '../utils/useWindowSize';
 import { SHOE_SIZES } from '../utils/shoeConstants';
+import { AdjustmentsIcon } from '@heroicons/react/outline';
 
 interface stateType {
 	brand?: string;
@@ -96,7 +97,7 @@ const ProductList = () => {
 				{showSidebar ? <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES} /> : null}
 
 				<div className="flex-10 p-4 lg:p-3">
-					<div className="flex justify-between">
+					<div className="flex justify-between sm:flex-col">
 						<div>
 							{query.get('query') ? <div>Search results for</div> : null}
 							<div className="flex items-center gap-3">
@@ -117,13 +118,13 @@ const ProductList = () => {
 							</div>
 						</div>
 
-						<div className="flex items-center gap-3">
+						<div className="flex items-center gap-3 sm:mt-3">
 							<div
-								className="flex items-center gap-2 cursor-pointer"
+								className="flex items-center gap-2 cursor-pointer p-2 border border-gray-300 rounded-full"
 								onClick={() => setShowSidebar(!showSidebar)}
 							>
-								<span>Filters</span>
-								<MenuIcon className="h-5 w-5" />
+								<span className="">Filters</span>
+								<AdjustmentsIcon className="h-5 w-5" />
 							</div>
 							<SortDropdown sortType={sortType} setSortType={setSortType} />
 						</div>

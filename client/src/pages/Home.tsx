@@ -3,6 +3,21 @@ import { Link } from 'react-router-dom';
 import Carousel from '../components/Carousel';
 import GenderShopLink from '../components/GenderShopLink';
 
+interface BrandLinkProps {
+	brands: string[];
+	logoPath: string;
+}
+
+const BrandLink = ({ brands, logoPath }: BrandLinkProps) => {
+	return (
+		<div className="w-14/100 md:w-5/12">
+			<Link to={{ pathname: '/shoes', state: { brands } }}>
+				<img src={logoPath} className="w-full" alt="" />
+			</Link>
+		</div>
+	);
+};
+
 const Home = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -19,41 +34,12 @@ const Home = () => {
 					</Link>
 				</div>
 				<div className="flex flex-wrap gap-2 items-center justify-between md:mt-4">
-					<div className="w-14/100 md:w-5/12">
-						<Link to={{ pathname: '/shoes', state: { brand: 'Nike' } }}>
-							<img src="/assets/brand_logos/nike.svg" className="w-full" alt="" />
-						</Link>
-					</div>
-
-					<div className="w-14/100 md:w-5/12">
-						<Link to={{ pathname: '/shoes', state: { brand: 'AIR JORDAN' } }}>
-							<img src="/assets/brand_logos/jordan.svg" className="w-full" alt="" />
-						</Link>
-					</div>
-
-					<div className="w-14/100 md:w-5/12">
-						<Link to={{ pathname: '/shoes', state: { brand: 'ADIDAS' } }}>
-							<img src="/assets/brand_logos/adidas.svg" className="w-full" alt="" />
-						</Link>
-					</div>
-
-					<div className="w-14/100 md:w-5/12">
-						<Link to={{ pathname: '/shoes', state: { brand: 'NEW BALANCE' } }}>
-							<img src="/assets/brand_logos/new balance.svg" className="w-full" alt="" />
-						</Link>
-					</div>
-
-					<div className="w-14/100 md:w-5/12">
-						<Link to={{ pathname: '/shoes', state: { brand: 'LOUIS VUITTON' } }}>
-							<img src="/assets/brand_logos/louis vuitton.svg" className="w-full" alt="" />
-						</Link>
-					</div>
-
-					<div className="w-14/100 md:w-5/12">
-						<Link to={{ pathname: '/shoes', state: { brand: 'GUCCI' } }}>
-							<img src="/assets/brand_logos/gucci.svg" className="w-full" alt="" />
-						</Link>
-					</div>
+					<BrandLink brands={["Nike"]} logoPath="/assets/brand_logos/nike.svg" />
+					<BrandLink brands={["jordan", "air jordan"]} logoPath="/assets/brand_logos/jordan.svg" />
+					<BrandLink brands={["ADIDAS"]} logoPath="/assets/brand_logos/adidas.svg" />
+					<BrandLink brands={["NEW BALANCE"]} logoPath="/assets/brand_logos/new balance.svg" />
+					<BrandLink brands={["ASICS"]} logoPath="/assets/brand_logos/asics.svg" />
+					<BrandLink brands={["Hoka One One"]} logoPath="/assets/brand_logos/hoka.svg" />
 				</div>
 
 				<div className="mt-5 flex w-full mb-10 md:block">

@@ -1,7 +1,7 @@
 import { SHOE_SIZES } from './shoeConstants';
 
 interface stateType {
-	brand?: string;
+	brands?: string[];
 	gender?: string;
 }
 
@@ -9,7 +9,7 @@ const BRANDS_LOWERCASE: any = {
 	adidas: 'adidas',
 	'air jordan': 'Air Jordan',
 	'alexander mcqueen': 'Alexander McQueen',
-	asics: 'Asics',
+	asics: 'ASICS',
 	balenciaga: 'Balenciaga',
 	burberry: 'Burberry',
 	chanel: 'Chanel',
@@ -19,6 +19,7 @@ const BRANDS_LOWERCASE: any = {
 	diadora: 'Diadora',
 	dior: 'Dior',
 	gucci: 'Gucci',
+	'hoka one one': 'Hoka One One',
 	jordan: 'Jordan',
 	'li-ning': 'Li-Ning',
 	'louis vuitton': 'Louis Vuitton',
@@ -53,7 +54,7 @@ const getInitialFilters = (state: stateType) => {
 			adidas: false as boolean,
 			'Air Jordan': false as boolean,
 			'Alexander McQueen': false as boolean,
-			Asics: false as boolean,
+			ASICS: false as boolean,
 			Balenciaga: false as boolean,
 			Burberry: false as boolean,
 			Chanel: false as boolean,
@@ -63,6 +64,7 @@ const getInitialFilters = (state: stateType) => {
 			Diadora: false as boolean,
 			Dior: false as boolean,
 			Gucci: false as boolean,
+			'Hoka One One': false as boolean,
 			Jordan: false as boolean,
 			'Li-Ning': false as boolean,
 			'New Balance': false as boolean,
@@ -161,9 +163,13 @@ const getInitialFilters = (state: stateType) => {
 		filters['genders'][state.gender] = true;
 	}
 
-	if (state && state.brand) {
-		const brandName = BRANDS_LOWERCASE[state.brand.toLowerCase()];
-		filters['brands'][brandName] = true;
+	if (state && state.brands) {
+		state.brands.forEach(brand => {
+			const brandName = BRANDS_LOWERCASE[brand.toLowerCase()];
+			if (brandName) {
+				filters['brands'][brandName] = true;
+			}
+		});
 	}
 
 	return filters;

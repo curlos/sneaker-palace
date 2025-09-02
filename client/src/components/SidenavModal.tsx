@@ -84,7 +84,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { brand: 'Jordan' } }}
+								to={{ pathname: '/shoes', state: { brands: ['Jordan', 'Air Jordan'] } }}
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Jordan
@@ -93,7 +93,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { brand: 'Nike' } }}
+								to={{ pathname: '/shoes', state: { brands: ['Nike'] } }}
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Nike
@@ -102,7 +102,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { brand: 'adidas' } }}
+								to={{ pathname: '/shoes', state: { brands: ['adidas'] } }}
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Adidas

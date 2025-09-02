@@ -49,7 +49,7 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
 		<div className="flex justify-end">
 			<Menu as="div" className="relative inline-block text-left">
 				<div>
-					<Menu.Button className="flex items-center">
+					<Menu.Button className="flex items-center border border-gray-300 p-2 rounded-full">
 						{sortType} <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
 					</Menu.Button>
 				</div>

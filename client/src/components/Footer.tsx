@@ -14,8 +14,8 @@ const FOOTER_BRANDS = [
 		],
 	},
 	{
-		brand: 'AIR JORDAN',
-		displayName: 'Air Jordan',
+		brand: 'JORDAN',
+		displayName: 'Jordan',
 		shoes: [
 			{ id: '4a6eb94c-233b-497d-a51c-ede6740072e7', name: 'Jordan 4 Retro White Cement (2025)' },
 			{ id: '0164a95e-9f85-4182-b26c-1d43d8178466', name: 'Jordan 1 Retro High \'85 OG Bred (2025)' },
