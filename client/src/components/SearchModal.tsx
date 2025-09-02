@@ -25,6 +25,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 	const [searchText, setSearchText] = useState(() => getInitialSearchText());
 	const [finalSearchText, setFinalSearchText] = useState(() => getInitialSearchText());
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const handleBubblingDownClick = (e: React.FormEvent) => {
 		e.stopPropagation();
@@ -52,6 +53,13 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 		};
 	}, [searchText]);
 
+	// Focus the input when modal opens
+	useEffect(() => {
+		if (showSearchModal && inputRef.current) {
+			inputRef.current.focus();
+		}
+	}, [showSearchModal]);
+
 	return (
 		<div
 			className="fixed z-20 w-screen h-screen bg-black bg-opacity-40"
@@ -66,6 +74,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 					<div className="flex p-4 py-6">
 						<SearchIcon className="h-7 w-7 text-gray-400" onClick={handleSubmit} />
 						<input
+							ref={inputRef}
 							className="ml-5 placeholder-gray-400 placeholder-opacity-100 outline-none uppercase text-lg font-medium w-full"
 							placeholder="TYPE TO SEARCH"
 							value={searchText}

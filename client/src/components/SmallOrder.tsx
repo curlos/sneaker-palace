@@ -29,9 +29,9 @@ const SmallOrder = ({ order }: Props) => {
 		.map((product: IProduct) => {
 			const shoe = shoeLookup.get(product.productID);
 			if (!shoe) {
-				console.warn(`Shoe not found for productID: ${product.productID}`);
 				return null;
 			}
+
 			return {
 				shoe,
 				product,

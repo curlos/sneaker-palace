@@ -2,28 +2,94 @@ import { useState, useEffect } from 'react';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
-import { useGetShoesFromPageQuery } from '../api/shoesApi';
+import { useGetShoesFromPageQuery, useGetPaginatedShoesQuery } from '../api/shoesApi';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import { Shoe } from '../types/types';
+import getInitialFilters from '../utils/getInitialFilters';
 import SmallShoe from './SmallShoe';
 import * as short from 'short-uuid';
+import { useLocation } from 'react-router-dom';
 
 interface MoreShoesProps {
-	currentShoeId?: string;
+	shoe?: Shoe;
 }
 
-const MoreShoes = ({ currentShoeId }: MoreShoesProps) => {
+interface stateType {
+	brand?: string;
+	gender?: string;
+	sortType?: string;
+}
+
+const MoreShoes = ({ shoe }: MoreShoesProps) => {
+	const { state } = useLocation<stateType>();
 	const [randomPageNum, setRandomPageNum] = useState(() => Math.floor(Math.random() * 800));
 
-	// Regenerate random page when currentShoeId changes (if provided)
+	// Regenerate random page when shoe changes (if provided)
 	useEffect(() => {
-		if (currentShoeId) {
+		if (!shoe) {
 			setRandomPageNum(Math.floor(Math.random() * 800));
 		}
-	}, [currentShoeId]);
+	}, [shoe]);
 
-	const { data: shoesData, isLoading: loading } = useGetShoesFromPageQuery(randomPageNum);
-	const allShoes = shoesData?.docs || [];
+	// Get filters (empty filters for this use case)
+	const filters = getInitialFilters(state);
+
+	// Use search query when shoe is provided (fetch 13 to account for filtering out current shoe)
+	const { data: searchShoesData, isLoading: searchLoading, isFetching: searchFetching } = useGetPaginatedShoesQuery(
+		{
+			filters,
+			sortType: 'Most Relevant',
+			pageNum: 1,
+			query: shoe?.name ? shoe.name.toLowerCase() : '',
+			limit: 13, // Fetch 13 so we can filter out 1 and still have 12
+		},
+		{
+			skip: !shoe, // Skip when no shoe is provided
+		}
+	);
+
+	// Filter search results to exclude current shoe
+	const filteredSearchShoes = shoe && searchShoesData?.docs 
+		? searchShoesData.docs
+			.filter((shoeItem: Shoe) => 
+				shoeItem._id !== shoe._id && shoeItem.shoeID !== shoe.shoeID
+			)
+			.slice(0, 12)
+		: [];
+
+	// Determine if we need to fall back to random shoes
+	// This happens when: 1) No shoe provided, OR 2) Shoe provided but search returned no usable results
+	const needsRandomFallback = !shoe || (shoe && !searchLoading && !searchFetching && filteredSearchShoes.length === 0);
+
+	// Use random page query when no shoe is provided OR when search returns no results
+	const { data: randomShoesData, isLoading: randomLoading } = useGetShoesFromPageQuery(
+		randomPageNum,
+		{
+			skip: !needsRandomFallback, // Skip when we don't need random fallback
+		}
+	);
+
+	// Determine what data to show and loading state
+	let allShoes: Shoe[] = [];
+	let loading = false;
+
+	if (!shoe) {
+		// No shoe provided - use random shoes
+		allShoes = randomShoesData?.docs || [];
+		loading = randomLoading;
+	} else if (searchLoading || searchFetching) {
+		// Shoe provided and search is loading
+		allShoes = [];
+		loading = true;
+	} else if (filteredSearchShoes.length > 0) {
+		// Shoe provided and search found results
+		allShoes = filteredSearchShoes;
+		loading = false;
+	} else {
+		// Shoe provided but search found no results - fall back to random
+		allShoes = randomShoesData?.docs || [];
+		loading = randomLoading;
+	}
 
 	// Responsive breakpoints for carousel
 	const responsive = {

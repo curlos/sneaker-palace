@@ -268,7 +268,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 						<FullShoeReviews shoe={shoe || {}} shoeRatings={(shoeRatings as any) || []} />
 					)}
 
-					<MoreShoes currentShoeId={shoeID} />
+					<MoreShoes shoe={shoe} />
 				</div>
 			</div>
 

@@ -138,7 +138,7 @@ const OrderDetails = () => {
 			</div>
 
 			<div className="py-10">
-				<MoreShoes />
+				<MoreShoes shoe={orderedItems[0]?.shoe} />
 			</div>
 		</div>
 	) : (

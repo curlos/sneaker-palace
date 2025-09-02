@@ -113,7 +113,7 @@ router.post('/', async (req: Request, res: Response) => {
 	const buildPipeline = () => {
 		const pipeline: any[] = [];
 		const pageNum = Number(req.body.pageNum);
-		const limit = 12;
+		const limit = req.body.limit || 12;
 		const skip = (pageNum - 1) * limit;
 
 		// Step 1: Search or match stage
@@ -307,7 +307,7 @@ router.post('/', async (req: Request, res: Response) => {
 		if (req.body.query && req.body.query.trim()) {
 			try {
 				const fallbackPageNum = Number(req.body.pageNum);
-				const fallbackLimit = 12;
+				const fallbackLimit = req.body.limit || 12;
 				const fallbackSkip = (fallbackPageNum - 1) * fallbackLimit;
 				
 				const fallbackResults = await Shoe.find(

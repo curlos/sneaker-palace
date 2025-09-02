@@ -36,15 +36,17 @@ export const shoesApi = baseAPI.injectEndpoints({
 				sortType,
 				pageNum,
 				query,
+				limit,
 			}: {
 				filters: any;
 				sortType: string;
 				pageNum: number;
 				query: string;
+				limit?: number;
 			}) => ({
 				url: '/shoes',
 				method: 'POST',
-				body: { filters, sortType, pageNum, query },
+				body: { filters, sortType, pageNum, query: query ? query.toLowerCase() : '', limit },
 			}),
 			providesTags: ['Shoe'],
 		}),
