@@ -32,7 +32,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		history.push(`/shoes?query=${searchText}`);
+		history.push(`/shoes?query=${searchText}`, { state: { sortType: 'Most Relevant' }});
 		setShowSearchModal(false);
 	};
 

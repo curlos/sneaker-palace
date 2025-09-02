@@ -55,26 +55,6 @@ export const shoesApi = baseAPI.injectEndpoints({
 			providesTags: ['Shoe'],
 		}),
 
-		// Search shoes (using main endpoint with enhanced search)
-		searchShoes: builder.query({
-			query: ({ searchText, pageNum }: { searchText: string; pageNum: number }) => ({
-				url: '/shoes',
-				method: 'POST',
-				body: { 
-					filters: {
-						colors: {},
-						brands: {},
-						genders: {},
-						priceRanges: {},
-						releaseYears: {}
-					}, 
-					sortType: 'Most Relevant',
-					pageNum, 
-					query: searchText 
-				},
-			}),
-			providesTags: ['Shoe'],
-		}),
 
 		// Favorite/unfavorite a shoe
 		toggleFavoriteShoe: builder.mutation({
@@ -142,6 +122,5 @@ export const {
 	useGetShoesBulkQuery,
 	useGetPaginatedShoesQuery,
 	useGetShoesFromPageQuery,
-	useSearchShoesQuery,
 	useToggleFavoriteShoeMutation,
 } = shoesApi;

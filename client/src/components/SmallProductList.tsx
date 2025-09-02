@@ -1,8 +1,10 @@
 import React, { FormEvent } from 'react';
+import { useLocation } from 'react-router-dom';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import { Shoe } from '../types/types';
 import ListShoe from './ListShoe';
-import { useSearchShoesQuery } from '../api/shoesApi';
+import { useGetPaginatedShoesQuery } from '../api/shoesApi';
+import getInitialFilters from '../utils/getInitialFilters';
 
 interface Props {
 	searchText: string;
@@ -11,18 +13,34 @@ interface Props {
 	handleSubmit: (e: FormEvent<Element>) => Promise<void>;
 }
 
+interface stateType {
+	brand?: string;
+	gender?: string;
+	sortType?: string;
+}
+
 const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSubmit }: Props) => {
-	// Use the search query for initial load (empty search)
-	const { data: initialData, isLoading: initialLoading } = useSearchShoesQuery({
-		searchText: '',
-		pageNum: 1,
-	});
+	const { state } = useLocation<stateType>();
+	
+	// Get filters like in ProductList
+	const filters = getInitialFilters(state);
+
+	// Use the search query for initial load (empty search) - only when no search text
+	const { data: initialData, isLoading: initialLoading } = useGetPaginatedShoesQuery(
+		{
+			filters,
+			sortType: 'Newest Arrivals',
+			pageNum: 1,
+			query: '',
+		});
 
 	// Use the search query for actual searches (only when finalSearchText exists)
-	const { data: searchData, isLoading: searchLoading, isFetching: searchFetching } = useSearchShoesQuery(
+	const { data: searchData, isLoading: searchLoading, isFetching: searchFetching } = useGetPaginatedShoesQuery(
 		{
-			searchText: finalSearchText ? finalSearchText.toLowerCase() : '',
+			filters,
+			sortType: 'Most Relevant',
 			pageNum: 1,
+			query: finalSearchText ? finalSearchText.toLowerCase() : '',
 		},
 		{
 			skip: !finalSearchText.trim(), // Skip query when no search text
