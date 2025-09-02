@@ -20,22 +20,9 @@ const orderRouter = require('./routes/orderRouter');
 const imageRouter = require('./routes/imageRouter');
 const adminRouter = require('./routes/adminRouter');
 const database = require('./database/connection');
-import { searchService } from './services/searchService';
 
 // Connect to database on startup
 database.connectToServer();
-
-// Initialize search service after database connection
-const mongoose = require('mongoose');
-mongoose.connection.once('open', async () => {
-	try {
-		await searchService.initialize();
-		console.log('✅ Search service initialized');
-	} catch (error) {
-		console.error('❌ Failed to initialize search service:', error);
-		process.exit(1);
-	}
-});
 
 app.use('/assets', express.static(path.join(__dirname, '/assets')));
 
