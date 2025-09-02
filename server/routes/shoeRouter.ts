@@ -66,7 +66,7 @@ router.post('/', async (req: Request, res: Response) => {
 			selectedBrands: [...Object.keys(filters.brands).filter((brand) => filters.brands[brand])],
 			selectedGenders: [...Object.keys(filters.genders).filter((gender) => filters.genders[gender])],
 			selectedPriceRanges: [...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked)],
-			selectedReleaseYears: [...Object.keys(filters.releaseYears).filter((releaseYear) => filters.releaseYears[releaseYear])],
+			selectedReleaseYears: [...Object.keys(filters.releaseYears).filter((releaseYear) => Number(filters.releaseYears[releaseYear]))],
 			filters
 		};
 	};
@@ -89,7 +89,9 @@ router.post('/', async (req: Request, res: Response) => {
 		}
 
 		if (selectedReleaseYears.length > 0) {
-			matchConditions.releaseYear = { $in: selectedReleaseYears };
+			// Convert string years to numbers for database matching
+			const numericYears = selectedReleaseYears.map(year => Number(year));
+			matchConditions.releaseYear = { $in: numericYears };
 		}
 
 		if (selectedPriceRanges.length > 0) {
