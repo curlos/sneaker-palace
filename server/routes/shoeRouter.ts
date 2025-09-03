@@ -129,7 +129,7 @@ router.post('/', async (req: Request, res: Response) => {
 							{
 								text: {
 									query: req.body.query.trim(),
-									path: ["name", "brand", "colorway", "silhouette", "story"],
+									path: ["name", "brand", "colorway", "silhouette", "story", "releaseYear"],
 									fuzzy: { 
 										maxEdits: 1,
 										prefixLength: 3
@@ -171,6 +171,13 @@ router.post('/', async (req: Request, res: Response) => {
 									query: req.body.query.trim(),
 									path: "story",
 									score: { boost: { value: 2 } }
+								}
+							},
+							{
+								text: {
+									query: req.body.query.trim(),
+									path: "releaseYear",
+									score: { boost: { value: 5 } }
 								}
 							}
 						]
