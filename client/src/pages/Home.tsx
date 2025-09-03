@@ -11,7 +11,7 @@ interface BrandLinkProps {
 const BrandLink = ({ brands, logoPath }: BrandLinkProps) => {
 	return (
 		<div className="w-14/100 md:w-5/12">
-			<Link to={{ pathname: '/shoes', state: { brands } }}>
+			<Link to={`/shoes?brands=${encodeURIComponent(brands.join(','))}`}>
 				<img src={logoPath} className="w-full" alt="" />
 			</Link>
 		</div>
@@ -35,9 +35,9 @@ const Home = () => {
 				</div>
 				<div className="flex flex-wrap gap-2 items-center justify-between md:mt-4">
 					<BrandLink brands={["Nike"]} logoPath="/assets/brand_logos/nike.svg" />
-					<BrandLink brands={["jordan", "air jordan"]} logoPath="/assets/brand_logos/jordan.svg" />
-					<BrandLink brands={["ADIDAS"]} logoPath="/assets/brand_logos/adidas.svg" />
-					<BrandLink brands={["NEW BALANCE"]} logoPath="/assets/brand_logos/new balance.svg" />
+					<BrandLink brands={["Jordan", "Air Jordan"]} logoPath="/assets/brand_logos/jordan.svg" />
+					<BrandLink brands={["adidas"]} logoPath="/assets/brand_logos/adidas.svg" />
+					<BrandLink brands={["New Balance"]} logoPath="/assets/brand_logos/new balance.svg" />
 					<BrandLink brands={["ASICS"]} logoPath="/assets/brand_logos/asics.svg" />
 					<BrandLink brands={["Hoka One One"]} logoPath="/assets/brand_logos/hoka.svg" />
 				</div>

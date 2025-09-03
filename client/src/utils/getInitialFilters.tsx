@@ -1,4 +1,5 @@
 import { SHOE_SIZES } from './shoeConstants';
+import { parseFiltersFromURL } from './urlFilterUtils';
 
 interface stateType {
 	brands?: string[];
@@ -36,7 +37,7 @@ const BRANDS_LOWERCASE: any = {
 	yeezy: 'Yeezy',
 };
 
-const getInitialFilters = (state: stateType) => {
+const getInitialFilters = (state: stateType, searchParams?: URLSearchParams) => {
 	let filters: any = {
 		colors: {
 			red: false as boolean,
@@ -168,6 +169,27 @@ const getInitialFilters = (state: stateType) => {
 			const brandName = BRANDS_LOWERCASE[brand.toLowerCase()];
 			if (brandName) {
 				filters['brands'][brandName] = true;
+			}
+		});
+	}
+
+	// Apply URL parameters if provided
+	if (searchParams) {
+		const urlFilters = parseFiltersFromURL(searchParams);
+		
+		// Merge URL filters with base filters
+		Object.keys(urlFilters).forEach(filterType => {
+			if (filters[filterType]) {
+				Object.keys(urlFilters[filterType]).forEach(key => {
+					if (filterType === 'priceRanges') {
+						// Handle price ranges special structure
+						if (filters[filterType][key]) {
+							filters[filterType][key].checked = urlFilters[filterType][key].checked;
+						}
+					} else {
+						filters[filterType][key] = urlFilters[filterType][key];
+					}
+				});
 			}
 		});
 	}

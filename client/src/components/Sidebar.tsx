@@ -10,11 +10,11 @@ interface Props {
 		releaseYears: any;
 		shoeSizes: any;
 	};
-	setFilters: any;
+	updateFilters: any;
 	shoeSizes: Array<string>;
 }
 
-const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
+const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 	const [showColors, setShowColors] = useState(false);
 	const [showBrands, setShowBrands] = useState(false);
 	const [showGender, setShowGender] = useState(false);
@@ -23,26 +23,26 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
 	const [showSizes, setShowSizes] = useState(false);
 
 	const handleColorClick = (color: string) => {
-		setFilters({ ...filters, colors: { ...filters.colors, [color]: !filters.colors[color] } });
+		updateFilters({ ...filters, colors: { ...filters.colors, [color]: !filters.colors[color] } });
 	};
 
 	const handleBrandClick = (brand: string) => {
-		setFilters({ ...filters, brands: { ...filters.brands, [brand]: !filters.brands[brand] } });
+		updateFilters({ ...filters, brands: { ...filters.brands, [brand]: !filters.brands[brand] } });
 	};
 
 	const handleGenderClick = (gender: string) => {
-		setFilters({ ...filters, genders: { ...filters.genders, [gender]: !filters.genders[gender] } });
+		updateFilters({ ...filters, genders: { ...filters.genders, [gender]: !filters.genders[gender] } });
 	};
 
 	const handleReleaseYearClick = (releaseYear: string) => {
-		setFilters({
+		updateFilters({
 			...filters,
 			releaseYears: { ...filters.releaseYears, [releaseYear]: !filters.releaseYears[releaseYear] },
 		});
 	};
 
 	const handlePriceClick = (priceRange: string) => {
-		setFilters({
+		updateFilters({
 			...filters,
 			priceRanges: {
 				...filters.priceRanges,
@@ -52,7 +52,7 @@ const Sidebar = ({ filters, setFilters, shoeSizes }: Props) => {
 	};
 
 	const handleSizeClick = (size: string) => {
-		setFilters({ ...filters, shoeSizes: { ...filters.shoeSizes, [size]: !filters.shoeSizes[size] } });
+		updateFilters({ ...filters, shoeSizes: { ...filters.shoeSizes, [size]: !filters.shoeSizes[size] } });
 	};
 
 	return (

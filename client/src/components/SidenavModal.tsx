@@ -48,7 +48,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { gender: 'men' } }}
+								to="/shoes?genders=men"
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Men
@@ -57,7 +57,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { gender: 'women' } }}
+								to="/shoes?genders=women"
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Women
@@ -66,7 +66,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { gender: 'youth' } }}
+								to="/shoes?genders=youth"
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Youth
@@ -75,7 +75,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { gender: 'infant' } }}
+								to="/shoes?genders=infant"
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Infant
@@ -84,7 +84,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { brands: ['Jordan', 'Air Jordan'] } }}
+								to="/shoes?brands=Jordan,Air%20Jordan"
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Jordan
@@ -93,7 +93,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { brands: ['Nike'] } }}
+								to="/shoes?brands=Nike"
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Nike
@@ -102,7 +102,7 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { brands: ['adidas'] } }}
+								to="/shoes?brands=adidas"
 								onClick={() => setShowSidenavModal(false)}
 							>
 								Adidas

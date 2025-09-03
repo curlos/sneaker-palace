@@ -2,10 +2,10 @@ import { XIcon } from '@heroicons/react/solid';
 
 interface Props {
 	filters: any;
-	setFilters: React.Dispatch<React.SetStateAction<any>>;
+	updateFilters: (newFilters: any) => void;
 }
 
-export const AppliedFilters = ({ filters, setFilters }: Props) => {
+export const AppliedFilters = ({ filters, updateFilters }: Props) => {
 	const getGroupedFilters = () => {
 		const grouped: { [key: string]: { displayName: string; values: string[]; type: string } } = {};
 
@@ -73,23 +73,21 @@ export const AppliedFilters = ({ filters, setFilters }: Props) => {
 	};
 
 	const clearFilterCategory = (type: string) => {
-		setFilters((prevFilters: any) => {
-			const newFilters = { ...prevFilters };
-			
-			if (type === 'priceRanges') {
-				newFilters[type] = { ...prevFilters[type] };
-				Object.keys(newFilters[type]).forEach(key => {
-					newFilters[type][key] = { ...newFilters[type][key], checked: false };
-				});
-			} else {
-				newFilters[type] = { ...prevFilters[type] };
-				Object.keys(newFilters[type]).forEach(key => {
-					newFilters[type][key] = false;
-				});
-			}
-			
-			return newFilters;
-		});
+		const newFilters = { ...filters };
+		
+		if (type === 'priceRanges') {
+			newFilters[type] = { ...filters[type] };
+			Object.keys(newFilters[type]).forEach(key => {
+				newFilters[type][key] = { ...newFilters[type][key], checked: false };
+			});
+		} else {
+			newFilters[type] = { ...filters[type] };
+			Object.keys(newFilters[type]).forEach(key => {
+				newFilters[type][key] = false;
+			});
+		}
+		
+		updateFilters(newFilters);
 	};
 
 	const groupedFilters = getGroupedFilters();

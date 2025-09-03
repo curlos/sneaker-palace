@@ -1,6 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const getBrandFilterValue = (footerBrand: string): string => {
+	switch (footerBrand) {
+		case 'ADIDAS':
+			return 'adidas';
+		case 'HOKA':
+			return 'Hoka One One';
+		case 'JORDAN':
+			return 'Jordan,Air Jordan'; // Include both Jordan brands
+		case 'NIKE':
+			return 'Nike';
+		case 'NEW BALANCE':
+			return 'New Balance';
+		case 'ASICS':
+			return 'ASICS';
+		default:
+			return footerBrand;
+	}
+};
+
 const FOOTER_BRANDS = [
 	{
 		brand: 'NIKE',
@@ -78,7 +97,7 @@ export const Footer = () => {
 					<div key={brandData.brand} className="w-1/6 px-4 lg:w-full lg:flex lg:flex-col lg:mb-4">
 						<div>
 							<Link
-								to={{ pathname: '/shoes', state: { brand: brandData.brand } }}
+								to={`/shoes?brands=${encodeURIComponent(getBrandFilterValue(brandData.brand))}`}
 								className="text-sm lg:text-2xl"
 							>
 								{brandData.displayName}

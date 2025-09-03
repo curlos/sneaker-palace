@@ -1,4 +1,4 @@
-import { MenuIcon, XIcon } from '@heroicons/react/solid';
+import { XIcon } from '@heroicons/react/solid';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useGetPaginatedShoesQuery } from '../api/shoesApi';
@@ -11,6 +11,7 @@ import SmallShoeSkeleton from '../skeleton_loaders/SmallShoeSkeleton';
 import { Shoe } from '../types/types';
 import getInitialFilters from '../utils/getInitialFilters';
 import { useWindowSize } from '../utils/useWindowSize';
+import { buildURLFromFilters } from '../utils/urlFilterUtils';
 import { SHOE_SIZES } from '../utils/shoeConstants';
 import { AdjustmentsIcon } from '@heroicons/react/outline';
 
@@ -35,16 +36,36 @@ const ProductList = () => {
 		const searchQuery = query.get('query');
 		return searchQuery?.trim() ? 'Most Relevant' : 'Newest Arrivals';
 	});
-	const [filters, setFilters] = useState<any>(getInitialFilters(state));
+	
+	// Get filters from URL instead of useState
+	const filters = React.useMemo(() => getInitialFilters(state, query), [state, query]);
+	
+	// Filter setter that updates URL
+	const updateFilters = React.useCallback((newFilters: any) => {
+		const currentQuery = query.get('query');
+		const filterParams = buildURLFromFilters(newFilters);
+		
+		let newSearch = '';
+		if (currentQuery) {
+			newSearch = `query=${encodeURIComponent(currentQuery)}`;
+		}
+		if (filterParams) {
+			newSearch = newSearch ? `${newSearch}&${filterParams}` : filterParams;
+		}
+		
+		history.push(`/shoes${newSearch ? `?${newSearch}` : ''}`);
+	}, [query, history]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true);
+	
+	const searchQuery = query.get('query');
 
 	// RTK Query
 	const { data: shoesData, isLoading: loading } = useGetPaginatedShoesQuery({
 		filters,
 		sortType,
 		pageNum: currentPage,
-		query: query.get('query') || '',
+		query: searchQuery || '',
 	});
 	const paginatedShoes = shoesData?.docs || [];
 	const totalShoeCount = shoesData?.totalDocs || 0;
@@ -57,28 +78,23 @@ const ProductList = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [query.get('query'), currentPage]);
+	}, [searchQuery, currentPage]);
 
 	useEffect(() => {
 		// Set sortType to 'Most Relevant' when there's a search query
-		const searchQuery = query.get('query');
 		if (searchQuery?.trim()) {
 			setSortType('Most Relevant');
 		}
-	}, [query.get('query')]);
-
+	}, [searchQuery]);
+	
 	useEffect(() => {
 		if (windowSize.width >= 768) {
 			window.scrollTo(0, 0);
 		}
 		setCurrentPage(1);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filters, sortType, query.get('query'), windowSize.width]);
+	}, [filters, sortType, searchQuery, windowSize.width]);
 
-	useEffect(() => {
-		setFilters(getInitialFilters(state));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [state && state['gender'], state && state['brand']]);
 
 	return (
 		<div className="text-xl-lg">
@@ -94,19 +110,19 @@ const ProductList = () => {
 					</div>
 				) : null}
 
-				{showSidebar ? <Sidebar filters={filters} setFilters={setFilters} shoeSizes={SHOE_SIZES} /> : null}
+				{showSidebar ? <Sidebar filters={filters} updateFilters={updateFilters} shoeSizes={SHOE_SIZES} /> : null}
 
 				<div className="flex-10 p-4 lg:p-3">
 					<div className="flex justify-between sm:flex-col">
 						<div>
-							{query.get('query') ? <div>Search results for</div> : null}
+							{searchQuery ? <div>Search results for</div> : null}
 							<div className="flex items-center gap-3">
 								<div className="text-lg font-bold">
-									{query.get('query')
-										? `${query.get('query')} (${totalShoeCount})`
+									{searchQuery
+										? `${searchQuery} (${totalShoeCount})`
 										: `Sneakers (${totalShoeCount.toLocaleString()})`}
 								</div>
-								{query.get('query') && (
+								{searchQuery && (
 									<button
 										onClick={() => history.push('/shoes')}
 										className="flex items-center justify-center w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
@@ -130,7 +146,7 @@ const ProductList = () => {
 						</div>
 					</div>
 
-					<AppliedFilters filters={filters} setFilters={setFilters} />
+					<AppliedFilters filters={filters} updateFilters={updateFilters} />
 
 					{loading ? (
 						<div className="flex justify-center flex-wrap lg:justify-between py-4">

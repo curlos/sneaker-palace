@@ -47,7 +47,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 					</Link>
 					<div className="lg:hidden">
 						<Link
-							to={{ pathname: '/shoes', state: { gender: 'men' } }}
+							to="/shoes?genders=men"
 							onClick={() => setShowSidenavModal(false)}
 						>
 							Men
@@ -55,7 +55,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 					</div>
 
 					<div className="lg:hidden">
-						<Link to={{ pathname: '/shoes', state: { gender: 'women' } }}>Women</Link>
+						<Link to="/shoes?genders=women">Women</Link>
 					</div>
 					{user ? (
 						<span>
