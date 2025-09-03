@@ -30,11 +30,14 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
 	const [likeRating, { isLoading: isLikeLoading }] = useLikeRatingMutation();
 	const [dislikeRating, { isLoading: isDislikeLoading }] = useDislikeRatingMutation();
 
+	// Sort reviews from newest to oldest
+	const sortedReviews = [...shoeRatings].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+	
 	// Pagination logic
-	const totalPages = Math.ceil(shoeRatings.length / REVIEWS_PER_PAGE);
+	const totalPages = Math.ceil(sortedReviews.length / REVIEWS_PER_PAGE);
 	const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
 	const endIndex = startIndex + REVIEWS_PER_PAGE;
-	const paginatedReviews = shoeRatings.slice(startIndex, endIndex);
+	const paginatedReviews = sortedReviews.slice(startIndex, endIndex);
 
 	const handleLike = async (ratingID: string) => {
 		if (!user) {
@@ -73,7 +76,7 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
 	return (
 		<div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
 			<div className="mr-12 flex-2 xl:mb-10">
-				<div className="text-2xl font-bold">Customer reviews</div>
+				<div className="text-2xl font-bold">Customer Reviews</div>
 				<div className="flex gap-2 items-center">
 					<StarRatings
 						rating={Number((shoe.rating || 0).toFixed(2))}
@@ -127,7 +130,7 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
 			{shoeRatings.length > 0 ? (
 				<div className="flex-8">
 					<div ref={reviewsRef} className="text-2xl font-bold mb-4">
-						Top reviews
+						Reviews
 					</div>
 
 					<div>

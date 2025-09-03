@@ -1,6 +1,7 @@
 import { XIcon } from '@heroicons/react/outline';
 import moment from 'moment';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import StarRatings from 'react-star-ratings';
 import { IRating } from '../types/types';
 
@@ -24,17 +25,17 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 				</div>
 
 				<div className="bg-white flex-1 overflow-y-auto" style={{scrollbarWidth: 'thin'}}>
-					<div className="p-3 flex xl:block">
-						<div className="flex-2">
+					<div className="p-4 flex xl:block">
+						<div className="w-full" style={{ maxWidth: '250px' }}>
 							<img
 								src={`${review.photo}`}
 								alt=""
-								className="mr-4 xl:mr-0 max-w-full h-auto max-h-96"
+								className="mr-4 xl:mr-0 w-full h-auto rounded-md"
 							/>
 						</div>
 
-						<div className="flex-2 ml-4">
-							<div className="flex">
+						<div className="sm:ml-0 ml-4">
+							<div className="sm:block flex gap-2">
 								<StarRatings
 									rating={review.ratingNum || 0}
 									starRatedColor="#F5B327"
@@ -44,16 +45,18 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 									starSpacing="1px"
 								/>
 
-								<div className="ml-2 font-bold">{review.summary}</div>
+								<div className="font-bold">{review.summary}</div>
 							</div>
 
-							<div className="flex-2">
-								<div className="text-sm text-gray-600">
+							<div>
+								<div className="text-sm text-gray-600 mb-2">
 									By {review.postedByUser.firstName} {review.postedByUser.lastName} on{' '}
 									{moment(review.createdAt).format('MMMM Do, YYYY')}
 								</div>
 
-								<div>{review.text}</div>
+								<div>
+									<ReactMarkdown>{review.text}</ReactMarkdown>
+								</div>
 							</div>
 						</div>
 					</div>

@@ -97,14 +97,13 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 			</div>
 
 			<div className="text-sm text-gray-600">Reviewed on {moment(review.createdAt).format('MMMM Do, YYYY')}</div>
-			{/* <div className="text-sm font-medium text-orange-700">Verified Purchase</div> */}
 			<div className="text-sm my-2">{review.text}</div>
 
 			{review.photo ? (
 				<img
 					src={`${review.photo}`}
 					alt=""
-					className="h-36 object-cover my-2 cursor-pointer"
+					className="h-36 object-cover my-2 cursor-pointer rounded-md"
 					onClick={() => setShowModal(true)}
 				/>
 			) : null}

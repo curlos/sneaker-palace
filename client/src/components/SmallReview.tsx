@@ -1,5 +1,6 @@
 import moment from 'moment';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import { useGetShoeQuery } from '../api/shoesApi';
@@ -51,7 +52,9 @@ const SmallReview = ({ review, author }: Props) => {
 					/>
 				</div>
 				<div className="font-bold">{review.summary}</div>
-				<div className="text-sm">{review.text}</div>
+				<div className="text-sm">
+					<ReactMarkdown>{review.text}</ReactMarkdown>
+				</div>
 				{review.photo && (
 					<img
 						src={review.photo}
