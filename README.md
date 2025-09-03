@@ -6,7 +6,7 @@
   <h3>The Ultimate Sneaker E-Commerce Experience</h3>
   
   <p>
-    <a href="https://ecommerce-shoes-shop.vercel.app/" target="_blank">🌐 Live Demo</a>
+    <a href="https://sneaker-palace.vercel.app/" target="_blank">🌐 Live Demo</a>
     ·
     <a href="https://github.com/curlos/sneaker-palace/issues">🐛 Report Bug</a>
     ·
@@ -75,7 +75,7 @@ Sneaker Palace is a modern, full-stack e-commerce platform dedicated to sneaker 
 
 ## 🌐 Live Demo
 
-Visit the live website: **[https://ecommerce-shoes-shop.vercel.app/](https://ecommerce-shoes-shop.vercel.app/)**
+Visit the live website: **[https://sneaker-palace.vercel.app/](https://sneaker-palace.vercel.app/)**
 
 ## 🎯 Website Features
 
@@ -214,6 +214,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <div align="center">
   <p>Built with ❤️ for sneaker enthusiasts worldwide</p>
   <p>
-    <a href="https://ecommerce-shoes-shop.vercel.app/">Visit Sneaker Palace</a>
+    <a href="https://sneaker-palace.vercel.app/">Visit Sneaker Palace</a>
   </p>
 </div>
