@@ -104,7 +104,7 @@ const App = () => {
 						</Route>
 
 						<Route path="/profile/:userID" exact>
-							{!user ? <Redirect to="/" /> : <Profile />}
+							<Profile />
 						</Route>
 
 						<Route path="/orders" exact>
