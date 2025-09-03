@@ -10,7 +10,7 @@ import { useGetShoesByObjectIdsQuery } from '../api/shoesApi';
 import { Shoe } from '../types/types';
 import { DEFAULT_AVATAR } from '../utils/userConstants';
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 12;
 
 const formatJoinDate = (dateString: string) => {
 	const date = new Date(dateString);
