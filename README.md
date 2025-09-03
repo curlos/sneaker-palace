@@ -174,10 +174,10 @@ The backend provides RESTful APIs for:
 <div align="center">
 
 ### 🏠 Homepage (Desktop & Mobile)
-<img src="https://user-images.githubusercontent.com/41396365/142689973-9c4e8840-4bd3-4817-a41b-d7cfed5bb210.png" height="250" /> <img src="https://user-images.githubusercontent.com/41396365/142695769-d95be33d-4585-4d92-a688-88b40ed3628f.png" height="250" />
+<img src="https://github.com/user-attachments/assets/8fce99ad-bdeb-4557-bc7e-190fdbeb8205" height="250" /> <img src="https://github.com/user-attachments/assets/de025e7b-a264-4111-b3d8-a9a54b430de0" height="250" />
 
 ### 👟 Product Catalog (Desktop & Mobile)
-<img src="https://user-images.githubusercontent.com/41396365/142696625-ef567e1f-f7ed-4574-8e61-8848bc1effcc.png" height="250" /> <img src="https://user-images.githubusercontent.com/41396365/142696613-19f12ad7-c324-4014-bfea-66b16832e77e.png" height="250" />
+<img src="https://user-images.githubusercontent.com/41396365/142696625-ef567e1f-f7ed-4574-8e61-8848bc1effcc.png" height="250" /> <img src="https://github.com/user-attachments/assets/de025e7b-a264-4111-b3d8-a9a54b430de0" height="250" />
 
 ### 📱 Product Details (Desktop & Mobile)
 <img src="https://user-images.githubusercontent.com/41396365/142696795-4b73ba82-c315-4ab7-b135-c9c845be2e06.png" height="250" /> <img src="https://user-images.githubusercontent.com/41396365/142696813-c59eefca-c232-448e-a137-f435ab300027.png" height="250" />
