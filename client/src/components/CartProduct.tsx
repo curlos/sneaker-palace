@@ -15,9 +15,10 @@ const QUANTITIES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 interface Props {
 	productInfo: IProduct;
+	isLast?: boolean;
 }
 
-const CartProduct = ({ productInfo }: Props) => {
+const CartProduct = ({ productInfo, isLast = false }: Props) => {
 	const userId = useSelector((s: RootState) => s.user.currentUser?._id);
 	const { data: user } = useGetLoggedInUserQuery(userId);
 
@@ -125,7 +126,7 @@ const CartProduct = ({ productInfo }: Props) => {
 	return loading ? (
 		<CartProductSkeleton />
 	) : (
-		<div className="flex py-5 mb-5 border-0 border-b border-solid border-gray-300">
+		<div className={`flex py-5 mb-5 ${!isLast ? 'border-0 border-b border-solid border-gray-300' : ''}`}>
 			<Link to={`/shoe/${shoe.shoeID}`} className="sm:w-1/4">
 				<ShoeImage src={shoe?.image?.thumbnail || ''} alt={shoe?.name || ''} className="cart-shoe-image" />
 			</Link>
