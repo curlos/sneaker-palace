@@ -45,6 +45,13 @@ shoeSchema.index({
 	story: 'text'
 });
 
+// Add indexes for sorting fields to fix memory limit issues
+shoeSchema.index({ releaseDate: -1 }); // For "Newest Arrivals"
+shoeSchema.index({ releaseDate: 1 });  // For "Classic Releases"
+shoeSchema.index({ retailPrice: -1 }); // For "Price: High to Low"
+shoeSchema.index({ retailPrice: 1 });  // For "Price: Low to High"  
+shoeSchema.index({ rating: -1 });      // For "Highest Rated"
+
 const Shoe = mongoose.model('Shoe', shoeSchema);
 
 module.exports = Shoe;

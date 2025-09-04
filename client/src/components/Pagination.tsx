@@ -10,7 +10,7 @@ interface Props {
 	pageLimit: number;
 	dataLimit: number;
 	currentPage: number;
-	setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+	setCurrentPage: (page: number) => void;
 	totalItemCount: number;
 	scrollTarget?: React.RefObject<HTMLElement>;
 }
@@ -44,7 +44,7 @@ export const Pagination = ({
 			return;
 		}
 
-		setCurrentPage((page) => page + 1);
+		setCurrentPage(currentPage + 1);
 	};
 
 	const goToPreviousPage = () => {
@@ -52,15 +52,15 @@ export const Pagination = ({
 			return;
 		}
 
-		setCurrentPage((page) => page - 1);
+		setCurrentPage(currentPage - 1);
 	};
 
 	const goToFirstPage = () => {
-		setCurrentPage((page) => 1);
+		setCurrentPage(1);
 	};
 
 	const goToLastPage = () => {
-		setCurrentPage((page) => pageLimit);
+		setCurrentPage(pageLimit);
 	};
 
 	const changePage = (e: any) => {

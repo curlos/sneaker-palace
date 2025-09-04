@@ -55,7 +55,10 @@ const ProductList = () => {
 		
 		history.push(`/shoes${newSearch ? `?${newSearch}` : ''}`);
 	}, [query, history]);
-	const [currentPage, setCurrentPage] = useState(1);
+	const [currentPage, setCurrentPage] = useState(() => {
+		const pageParam = query.get('page');
+		return pageParam ? parseInt(pageParam, 10) || 1 : 1;
+	});
 	const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true);
 	
 	const searchQuery = query.get('query');
@@ -95,6 +98,30 @@ const ProductList = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filters, sortType, searchQuery, windowSize.width]);
 
+	// Callback to handle page changes and URL updates
+	const handlePageChange = (newPage: number) => {
+		setCurrentPage(newPage);
+		
+		const currentSearchParams = new URLSearchParams(window.location.search);
+		if (newPage > 1) {
+			currentSearchParams.set('page', newPage.toString());
+		} else {
+			currentSearchParams.delete('page');
+		}
+		
+		const newSearch = currentSearchParams.toString();
+		const newUrl = `/shoes${newSearch ? `?${newSearch}` : ''}`;
+		history.replace(newUrl);
+	};
+
+	// Update currentPage when URL page parameter changes
+	useEffect(() => {
+		const pageParam = query.get('page');
+		const urlPage = pageParam ? parseInt(pageParam, 10) || 1 : 1;
+		if (urlPage !== currentPage) {
+			setCurrentPage(urlPage);
+		}
+	}, [query, currentPage]);
 
 	return (
 		<div className="text-xl-lg">
@@ -166,7 +193,7 @@ const ProductList = () => {
 								pageLimit={Math.ceil(totalShoeCount / 12)}
 								dataLimit={12}
 								currentPage={currentPage}
-								setCurrentPage={setCurrentPage}
+								setCurrentPage={handlePageChange}
 								totalItemCount={totalShoeCount}
 							/>
 						</div>
