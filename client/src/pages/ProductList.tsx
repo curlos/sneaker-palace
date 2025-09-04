@@ -67,9 +67,11 @@ const ProductList = () => {
 	// Sort type setter that updates URL
 	const updateSortType = React.useCallback((newSortType: string) => {
 		setSortType(newSortType);
+		setCurrentPage(1);
 		
 		const currentSearchParams = new URLSearchParams(window.location.search);
 		currentSearchParams.set('sort-type', newSortType);
+		currentSearchParams.delete('page');
 		
 		const newSearch = currentSearchParams.toString();
 		const newUrl = `/shoes?${newSearch}`;
