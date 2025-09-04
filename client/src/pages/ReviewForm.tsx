@@ -2,6 +2,7 @@ import { ChangeEvent, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
+import { XIcon } from '@heroicons/react/outline';
 import { useGetShoeQuery } from '../api/shoesApi';
 import { useGetRatingQuery, useCreateRatingMutation, useUpdateRatingMutation } from '../api/ratingsApi';
 import { useGetLoggedInUserQuery } from '../api/userApi';
@@ -77,13 +78,21 @@ const ReviewForm = () => {
 		setFile(file);
 	};
 
+	const handleRemovePhoto = () => {
+		setFile(undefined);
+		setReviewInfo((prev: any) => ({ ...prev, photo: '' }));
+	};
+
 	const handleEditReview = async () => {
 		try {
-			let imagePath = null;
+			let imagePath = existingRating?.photo || null;
 
 			if (file) {
 				const results = await postImage(file);
 				imagePath = results.imagePath;
+			} else if (reviewInfo.photo === '') {
+				// Photo was explicitly removed
+				imagePath = null;
 			}
 
 			const body = {
@@ -444,15 +453,24 @@ const ReviewForm = () => {
 					<div className="flex-2 w-full sm:mb-5">
 						<div className="text-gray-500 w-10/12">Upload photo</div>
 						{(file || reviewInfo.photo) && (
-							<img
-								src={
-									file
-										? URL.createObjectURL(file)
-										: `${reviewInfo.photo}`
-								}
-								alt=""
-								className="h-150 object-cover my-3"
-							/>
+							<div className="relative inline-block">
+								<img
+									src={
+										file
+											? URL.createObjectURL(file)
+											: `${reviewInfo.photo}`
+									}
+									alt=""
+									className="h-150 object-cover my-3"
+								/>
+								<button
+									onClick={handleRemovePhoto}
+									className="absolute top-2 -right-3 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-md"
+									type="button"
+								>
+									<XIcon className="w-5 h-5" />
+								</button>
+							</div>
 						)}
 						<input onChange={handleSelectFile} type="file" accept="image/*" className="w-full"></input>
 						<div className="text-sm text-gray-500 w-10/12 sm:w-full">Upload your .PNG or .JPG file</div>
