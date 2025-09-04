@@ -32,7 +32,7 @@ Sneaker Palace is a modern, full-stack e-commerce platform for sneaker enthusias
 <div align="center">
 
 ### 🏠 Homepage (Desktop & Mobile)
-<img src="https://github.com/user-attachments/assets/8fce99ad-bdeb-4557-bc7e-190fdbeb8205" height="250" /> <img src="https://github.com/user-attachments/assets/de025e7b-a264-4111-b3d8-a9a54b430de0" height="250" />
+<img src="https://github.com/user-attachments/assets/4d7958e3-1272-4349-ae6e-50b1ab1f4e24" height="250" /> <img src="https://github.com/user-attachments/assets/506ba847-8bac-443e-a88f-7e0b8c5435c1" height="250" />
 
 ### 👟 Product Catalog (Desktop & Mobile)
 <img src="https://github.com/user-attachments/assets/9472dc1d-f5af-4010-ad80-26adeed4d824" height="250" /> <img src="https://github.com/user-attachments/assets/3538cc17-e3e9-4350-8a85-0c47e6da7e52" height="250" />
