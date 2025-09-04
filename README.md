@@ -177,16 +177,16 @@ The backend provides RESTful APIs for:
 <img src="https://github.com/user-attachments/assets/8fce99ad-bdeb-4557-bc7e-190fdbeb8205" height="250" /> <img src="https://github.com/user-attachments/assets/de025e7b-a264-4111-b3d8-a9a54b430de0" height="250" />
 
 ### 👟 Product Catalog (Desktop & Mobile)
-<img src="https://user-images.githubusercontent.com/41396365/142696625-ef567e1f-f7ed-4574-8e61-8848bc1effcc.png" height="250" /> <img src="https://github.com/user-attachments/assets/de025e7b-a264-4111-b3d8-a9a54b430de0" height="250" />
+<img src="https://github.com/user-attachments/assets/9472dc1d-f5af-4010-ad80-26adeed4d824" height="250" /> <img src="https://github.com/user-attachments/assets/3538cc17-e3e9-4350-8a85-0c47e6da7e52" height="250" />
 
 ### 📱 Product Details (Desktop & Mobile)
-<img src="https://user-images.githubusercontent.com/41396365/142696795-4b73ba82-c315-4ab7-b135-c9c845be2e06.png" height="250" /> <img src="https://user-images.githubusercontent.com/41396365/142696813-c59eefca-c232-448e-a137-f435ab300027.png" height="250" />
+<img src="https://github.com/user-attachments/assets/1a371f71-ca41-4f1e-935c-72f217e50a4b" height="250" /> <img src="https://github.com/user-attachments/assets/81561a55-6bf3-476b-a7d9-d9ecf034fbbc" height="250" />
 
 ### 🛒 Shopping Cart (Desktop & Mobile)
-<img src="https://user-images.githubusercontent.com/41396365/142690077-f7bde4bf-f729-4b7d-a0a6-4068dc1c20ea.png" height="250" /> <img src="https://user-images.githubusercontent.com/41396365/142695597-0a2ad142-a106-425e-b8a8-acbf1b16c02d.png" height="250" />
+<img src="https://github.com/user-attachments/assets/ead5e7e5-b403-4eec-9aef-63d69a055fee" height="250" /> <img src="https://github.com/user-attachments/assets/479c01f1-2939-46bf-a183-633969ace52a" height="250" />
 
 ### 💳 Checkout (Desktop & Mobile)
-<img src="https://user-images.githubusercontent.com/41396365/142690146-638dc554-8278-4297-a895-85228171bdc4.png" height="250" /> <img src="https://user-images.githubusercontent.com/41396365/142695683-b0698eae-48ea-45e7-af6f-9996bdc4aab7.png" height="250" />
+<img src="https://github.com/user-attachments/assets/00640182-bea9-4089-9f91-a4e79bf1a759" height="250" /> <img src="https://github.com/user-attachments/assets/b3a918cc-ebf2-4c93-b72b-dd7fa6c8015a" height="250" />
 
 </div>
 
