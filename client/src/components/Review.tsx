@@ -7,6 +7,7 @@ import {
 import { ThumbDownIcon as ThumbDownSolid, ThumbUpIcon as ThumbUpSolid } from '@heroicons/react/solid';
 import moment from 'moment';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
@@ -97,7 +98,9 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 			</div>
 
 			<div className="text-sm text-gray-600">Reviewed on {moment(review.createdAt).format('MMMM Do, YYYY')}</div>
-			<div className="text-sm my-2">{review.text}</div>
+			<div className="text-sm my-2">
+				<ReactMarkdown>{review.text}</ReactMarkdown>
+			</div>
 
 			{review.photo ? (
 				<img
