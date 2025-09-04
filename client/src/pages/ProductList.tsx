@@ -33,6 +33,10 @@ const ProductList = () => {
 	const windowSize = useWindowSize();
 
 	const [sortType, setSortType] = useState(() => {
+		const sortParam = query.get('sort-type');
+		if (sortParam) {
+			return sortParam;
+		}
 		const searchQuery = query.get('query');
 		return searchQuery?.trim() ? 'Most Relevant' : 'Newest Arrivals';
 	});
@@ -53,8 +57,24 @@ const ProductList = () => {
 			newSearch = newSearch ? `${newSearch}&${filterParams}` : filterParams;
 		}
 		
+		// Reset sortType to default when filters change
+		const defaultSortType = currentQuery?.trim() ? 'Most Relevant' : 'Newest Arrivals';
+		setSortType(defaultSortType);
+		
 		history.push(`/shoes${newSearch ? `?${newSearch}` : ''}`);
 	}, [query, history]);
+
+	// Sort type setter that updates URL
+	const updateSortType = React.useCallback((newSortType: string) => {
+		setSortType(newSortType);
+		
+		const currentSearchParams = new URLSearchParams(window.location.search);
+		currentSearchParams.set('sort-type', newSortType);
+		
+		const newSearch = currentSearchParams.toString();
+		const newUrl = `/shoes?${newSearch}`;
+		history.replace(newUrl);
+	}, [history]);
 	const [currentPage, setCurrentPage] = useState(() => {
 		const pageParam = query.get('page');
 		return pageParam ? parseInt(pageParam, 10) || 1 : 1;
@@ -123,6 +143,14 @@ const ProductList = () => {
 		}
 	}, [query, currentPage]);
 
+	// Update sortType when URL sort-type parameter changes
+	useEffect(() => {
+		const sortParam = query.get('sort-type');
+		if (sortParam && sortParam !== sortType) {
+			setSortType(sortParam);
+		}
+	}, [query, sortType]);
+
 	return (
 		<div className="text-xl-lg">
 			<div className="bg-gray-200">
@@ -169,7 +197,7 @@ const ProductList = () => {
 								<span className="">Filters</span>
 								<AdjustmentsIcon className="h-5 w-5" />
 							</div>
-							<SortDropdown sortType={sortType} setSortType={setSortType} />
+							<SortDropdown sortType={sortType} setSortType={updateSortType} />
 						</div>
 					</div>
 

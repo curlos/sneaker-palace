@@ -4,13 +4,13 @@ import { Fragment } from 'react';
 
 interface Props {
 	sortType: string;
-	setSortType: React.Dispatch<React.SetStateAction<string>>;
+	setSortType: (sortType: string) => void;
 }
 
 interface SortMenuItemProps {
 	sortValue: string;
 	displayText: string;
-	setSortType: React.Dispatch<React.SetStateAction<string>>;
+	setSortType: (sortType: string) => void;
 }
 
 const classNames = (...classes: Array<string>) => {
