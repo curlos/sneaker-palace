@@ -32,7 +32,7 @@ const Login = () => {
 
 	return (
 		<form className="h-screen bg-cover flex justify-center items-start" onSubmit={handleLoginUser} style={{ backgroundImage: 'url(/assets/upscaled-images/bg-login-image.webp)'}}>
-			<div className="flex flex-col gap-4 items-center bg-white w-2/5 p-4 rounded-lg my-6 xl:w-4/5 xl:py-10 sm:w-97/100 shadow-2xl shadow-black border border-gray-300">
+			<div className="flex flex-col gap-4 items-center bg-white p-4 rounded-lg my-6 xl:py-10 sm:w-97/100 shadow-2xl shadow-black border border-gray-300 w-2/5 container mx-auto max-w-7xl">
 				<span className="font-bold text-2xl">YOUR ACCOUNT FOR EVERYTHING</span>
 				<input
 					type="email"
