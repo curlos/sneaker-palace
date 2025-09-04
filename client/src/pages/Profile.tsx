@@ -24,6 +24,7 @@ const formatJoinDate = (dateString: string) => {
 
 const Profile = () => {
 	const [activeTab, setActiveTab] = useState<'reviews' | 'favorites'>('reviews');
+	const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
 	const [reviewsCurrentPage, setReviewsCurrentPage] = useState(1);
 	const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
 	const tabsRef = useRef<HTMLDivElement>(null);
@@ -36,7 +37,6 @@ const Profile = () => {
 	});
 	const { data: favoriteShoes = [], isLoading: favoritesLoading } = useGetShoesByObjectIdsQuery(
 		profileUser?.favorites || [],
-		{ skip: activeTab !== 'favorites' || !profileUser?.favorites || profileUser.favorites.length === 0 }
 	);
 
 	// Pagination logic for reviews
@@ -61,6 +61,25 @@ const Profile = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, [userID]);
+
+	// Set initial tab based on content availability
+	useEffect(() => {
+		if (!hasSetInitialTab && !reviewsLoading && !favoritesLoading && profileUser) {
+			const hasReviews = profileUserReviews && profileUserReviews.length > 0;
+			const hasFavorites = favoriteShoes && favoriteShoes.length > 0;
+			
+			// Default to reviews unless reviews is empty but favorites has content
+			if (!hasReviews && hasFavorites) {
+				setActiveTab('favorites');
+			} else {
+				setActiveTab('reviews'); // Default case
+			}
+			
+			setHasSetInitialTab(true);
+		}
+	}, [hasSetInitialTab, reviewsLoading, favoritesLoading, profileUser, profileUserReviews, favoriteShoes]);
+
+	console.log(activeTab)
 
 	return (
 		<div className="container mx-auto px-4 py-10 bg-gray-100 max-w-6xl flex-grow">
@@ -170,7 +189,11 @@ const Profile = () => {
 								/>
 							)}
 						</div>
-					) : null)}
+					) : (
+						<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
+							<div className="text-center text-gray-600">No reviews found.</div>
+						</div>
+					))}
 
 				{activeTab === 'favorites' &&
 					(favoritesLoading ? (
