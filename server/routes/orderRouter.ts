@@ -45,13 +45,19 @@ const verifyOrderAccess = async (req: Request, res: Response, next: any) => {
 	}
 };
 
-router.get('/:orderID', verifyOrderAccess, async (req: Request, res: Response) => {
-	return res.json(req.order);
+router.get('/user', verifyToken, async (req: Request, res: Response) => {
+	try {
+		
+		const orders = await Order.find({ userID: req.user.id || req.user._id });
+		return res.json(orders);
+	} catch (error) {
+		console.error('Error fetching user orders:', error);
+		return res.status(500).json({ error: 'Failed to fetch orders' });
+	}
 });
 
-router.get('/user/:userID', async (req: Request, res: Response) => {
-	const orders = await Order.find({ userID: req.params.userID });
-	return res.json(orders);
+router.get('/:orderID', verifyOrderAccess, async (req: Request, res: Response) => {
+	return res.json(req.order);
 });
 
 router.post('/', verifyToken, async (req: Request, res: Response) => {

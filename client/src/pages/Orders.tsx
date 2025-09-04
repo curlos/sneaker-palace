@@ -15,7 +15,7 @@ const Orders = () => {
 	const ordersRef = useRef<HTMLDivElement>(null);
 	const userId = useSelector((s: RootState) => s.user.currentUser?._id);
 
-	const { data: orders, isLoading: loading } = useGetUserOrdersQuery(userId, {
+	const { data: orders, isLoading: loading } = useGetUserOrdersQuery(undefined, {
 		skip: !userId,
 	});
 

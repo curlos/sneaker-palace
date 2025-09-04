@@ -2,16 +2,16 @@ import { baseAPI } from './api';
 
 export const ordersApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
-		// Get orders for a specific user
+		// Get orders for logged-in user
 		getUserOrders: builder.query({
-			query: (userId: string) => `/orders/user/${userId}`,
-			providesTags: (result, _, userId) =>
+			query: () => `/orders/user`,
+			providesTags: (result) =>
 				result
 					? [
 							...result.map((order: any) => ({ type: 'Order', id: order._id })),
-							{ type: 'Order', id: `USER_${userId}` },
+							{ type: 'Order', id: 'USER_ORDERS' },
 						]
-					: [{ type: 'Order', id: `USER_${userId}` }],
+					: [{ type: 'Order', id: 'USER_ORDERS' }],
 		}),
 
 		// Get a single order by ID
@@ -29,7 +29,7 @@ export const ordersApi = baseAPI.injectEndpoints({
 			}),
 			invalidatesTags: (result, error, orderData) => [
 				{ type: 'User', id: orderData.userID },
-				{ type: 'Order', id: `USER_${orderData.userID}` },
+				{ type: 'Order', id: 'USER_ORDERS' },
 			],
 		}),
 
