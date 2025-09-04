@@ -16,7 +16,7 @@ export const getCarouselData = () => {
 			shoeID: '4a6eb94c-233b-497d-a51c-ede6740072e7',
 			name: 'Jordan 4 Retro White Cement (2025)',
 			relativeURL: '/assets/upscaled-images/homepage-carousel-sneakers/white-cement-jordan-4s-2025-2.webp',
-			bgColor: '#95A9C7',
+			bgColor: '#C4C3C3',
 		},
 	];
 };

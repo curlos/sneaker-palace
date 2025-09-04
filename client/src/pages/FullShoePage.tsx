@@ -176,7 +176,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
 								<div className="flex justify-between xl:block gap-2">
 									<button
-										className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 w-1/2 xl:w-full xl:mb-0"
+										className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-800 w-1/2 xl:w-full xl:mb-0"
 										onClick={handleAddToCart}
 									>
 										Add to Bag

@@ -23,7 +23,7 @@ const Carousel = () => {
 
 	return (
 		<div
-			className={`bg-cover flex items-center text-white font-bold transition-all ease-in-out duration-1000 transform translate-x-0 slide`}
+			className={`carousel-bg flex items-center text-white font-bold transition-all ease-in-out duration-1000 transform translate-x-0 slide`}
 			style={{
 				height: 'calc(100vh - 72px)',
 				backgroundImage: `url(${currentShoe.relativeURL})`,
@@ -32,8 +32,8 @@ const Carousel = () => {
 		>
 			<div className="container mx-auto max-w-7xl">
 				<div className="ml-10 pb-10 w-1/3 sm:w-3/4">
-					<div className="text-5xl mb-3 sm:text-5xl" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>{currentShoe.name}</div>
-					<Link to={`/shoe/${currentShoe.shoeID}`} className="underline">
+					<div className="text-5xl mb-6" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>{currentShoe.name}</div>
+					<Link to={`/shoe/${currentShoe.shoeID}`} className="bg-black text-white text-xl rounded-full px-6 py-2 no-underline hover:bg-gray-800">
 						Shop Now
 					</Link>
 				</div>

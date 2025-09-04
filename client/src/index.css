@@ -42,4 +42,28 @@ body {
       max-width: 250px;
     }
   }
+
+  .carousel-bg {
+    background-size: 600px auto;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  @media (min-width: 576px) {
+    .carousel-bg {
+      background-size: 800px auto;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .carousel-bg {
+      background-size: 1000px auto;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .carousel-bg {
+      background-size: 1200px auto;
+    }
+  }
 }
