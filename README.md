@@ -88,10 +88,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 🙏 Acknowledgments
 
+- **Sneaker Data** - [The Sneaker Database API](https://rapidapi.com/tg4-solutions-tg4-solutions-default/api/the-sneaker-database)
 - **Icons** - [Freepik](https://www.freepik.com) from [Flaticon](https://www.flaticon.com/)
-- **Product Data** - Various sneaker retailers and manufacturers
 - **Images** - Product images from official brand sources
-- **Inspiration** - Modern e-commerce platforms and design systems
 
 ---
 
