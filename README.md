@@ -31,19 +31,19 @@ Sneaker Palace is a modern, full-stack e-commerce platform for sneaker enthusias
 
 <div align="center">
 
-### 🏠 Homepage (Desktop & Mobile)
+### 🏠 Home Page (Desktop & Mobile)
 <img src="https://github.com/user-attachments/assets/4d7958e3-1272-4349-ae6e-50b1ab1f4e24" height="250" /> <img src="https://github.com/user-attachments/assets/506ba847-8bac-443e-a88f-7e0b8c5435c1" height="250" />
 
-### 👟 Product Catalog (Desktop & Mobile)
+### 👟 Product List Page (Desktop & Mobile)
 <img src="https://github.com/user-attachments/assets/9472dc1d-f5af-4010-ad80-26adeed4d824" height="250" /> <img src="https://github.com/user-attachments/assets/3538cc17-e3e9-4350-8a85-0c47e6da7e52" height="250" />
 
-### 📱 Product Details (Desktop & Mobile)
+### 📱 Product Details Page (Desktop & Mobile)
 <img src="https://github.com/user-attachments/assets/1a371f71-ca41-4f1e-935c-72f217e50a4b" height="250" /> <img src="https://github.com/user-attachments/assets/81561a55-6bf3-476b-a7d9-d9ecf034fbbc" height="250" />
 
-### 🛒 Shopping Cart (Desktop & Mobile)
+### 🛒 Cart Page (Desktop & Mobile)
 <img src="https://github.com/user-attachments/assets/ead5e7e5-b403-4eec-9aef-63d69a055fee" height="250" /> <img src="https://github.com/user-attachments/assets/479c01f1-2939-46bf-a183-633969ace52a" height="250" />
 
-### 💳 Checkout (Desktop & Mobile)
+### 💳 Checkout Page (Desktop & Mobile)
 <img src="https://github.com/user-attachments/assets/00640182-bea9-4089-9f91-a4e79bf1a759" height="250" /> <img src="https://github.com/user-attachments/assets/b3a918cc-ebf2-4c93-b72b-dd7fa6c8015a" height="250" />
 
 </div>
