@@ -56,7 +56,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
 	useEffect(() => {
 		setSelectedSize(initialSize);
-	}, [user]);
+	}, [user, initialSize]);
 
 	const handleAddToCart = async () => {
 		setShowShoppingCartModal(true);
