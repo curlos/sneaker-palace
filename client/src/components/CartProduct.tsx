@@ -7,7 +7,6 @@ import { RootState } from '../redux/store';
 import CartProductSkeleton from '../skeleton_loaders/CartProductSkeleton';
 import ShoeImage from './ShoeImage';
 import { IProduct } from '../types/types';
-import * as short from 'short-uuid';
 import { useGetLoggedInUserQuery } from '../api/userApi';
 import { SHOE_SIZES } from '../utils/shoeConstants';
 
@@ -154,7 +153,7 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 								onChange={handleChangeSize}
 							>
 								{SHOE_SIZES.map((shoeSize) => (
-									<option key={`${shoeSize}-${short.generate()}`} value={shoeSize}>
+									<option key={shoeSize} value={shoeSize}>
 										{shoeSize}
 									</option>
 								))}
@@ -172,7 +171,7 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 								onChange={handleChangeQuantity}
 							>
 								{QUANTITIES.map((quantity) => (
-									<option key={`${quantity}-${short.generate()}`} value={quantity}>
+									<option key={quantity} value={quantity}>
 										{quantity}
 									</option>
 								))}
@@ -182,7 +181,7 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 				</div>
 
 				<div className="">
-					<button className="text-gray-500 mr-5 underline cursor-pointer" onClick={handleRemoveProduct}>
+					<button type="button" className="text-gray-500 mr-5 underline cursor-pointer" onClick={handleRemoveProduct}>
 						Remove
 					</button>
 				</div>
