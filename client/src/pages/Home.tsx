@@ -12,7 +12,7 @@ const BrandLink = ({ brands, logoPath }: BrandLinkProps) => {
 	return (
 		<div className="w-14/100 md:w-5/12">
 			<Link to={`/shoes?brands=${encodeURIComponent(brands.join(','))}`}>
-				<img src={logoPath} className="w-full" alt="" />
+				<img src={logoPath} className="w-full" alt={brands[0]} />
 			</Link>
 		</div>
 	);

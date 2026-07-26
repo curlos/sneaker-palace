@@ -14,7 +14,7 @@ const GenderShopLink = ({ gender, imageSrc, label, className = '' }: GenderShopL
 				to={`/shoes?genders=${encodeURIComponent(gender)}`}
 				className="hover:underline font-bold text-xl md:text-2xl"
 			>
-				<img src={imageSrc} alt={`${label} Shoe`} className="w-full md:mb-2" />
+				<img src={imageSrc} alt="" className="w-full md:mb-2" />
 				<div className="mt-2">{label}</div>
 			</Link>
 		</div>
