@@ -28,6 +28,28 @@ const Profile = () => {
 	const [reviewsCurrentPage, setReviewsCurrentPage] = useState(1);
 	const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
 	const tabsRef = useRef<HTMLDivElement>(null);
+	const tabButtonRefs = useRef<Record<'reviews' | 'favorites', HTMLButtonElement | null>>({
+		reviews: null,
+		favorites: null,
+	});
+
+	const tabOrder: Array<'reviews' | 'favorites'> = ['reviews', 'favorites'];
+	const handleTabKeyDown = (e: React.KeyboardEvent) => {
+		const currentIndex = tabOrder.indexOf(activeTab);
+		let newIndex;
+		if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+			newIndex = (currentIndex + 1) % tabOrder.length;
+		} else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+			newIndex = (currentIndex - 1 + tabOrder.length) % tabOrder.length;
+		} else {
+			return;
+		}
+
+		e.preventDefault();
+		const newTab = tabOrder[newIndex];
+		setActiveTab(newTab);
+		tabButtonRefs.current[newTab]?.focus();
+	};
 
 	const { userID }: { userID: string } = useParams();
 
@@ -139,8 +161,24 @@ const Profile = () => {
 					</>
 				)}
 
-				<div ref={tabsRef} className="flex border-b border-gray-300 mb-4">
+				<div
+					ref={tabsRef}
+					role="tablist"
+					aria-label="Profile sections"
+					tabIndex={-1}
+					className="flex border-b border-gray-300 mb-4 outline-none"
+				>
 					<button
+						type="button"
+						role="tab"
+						id="reviews-tab"
+						aria-selected={activeTab === 'reviews'}
+						aria-controls="reviews-panel"
+						tabIndex={activeTab === 'reviews' ? 0 : -1}
+						ref={(el) => {
+							tabButtonRefs.current.reviews = el;
+						}}
+						onKeyDown={handleTabKeyDown}
 						onClick={() => setActiveTab('reviews')}
 						className={`px-4 py-2 font-medium border-b-2 ${
 							activeTab === 'reviews'
@@ -151,6 +189,16 @@ const Profile = () => {
 						Reviews
 					</button>
 					<button
+						type="button"
+						role="tab"
+						id="favorites-tab"
+						aria-selected={activeTab === 'favorites'}
+						aria-controls="favorites-panel"
+						tabIndex={activeTab === 'favorites' ? 0 : -1}
+						ref={(el) => {
+							tabButtonRefs.current.favorites = el;
+						}}
+						onKeyDown={handleTabKeyDown}
 						onClick={() => setActiveTab('favorites')}
 						className={`px-4 py-2 font-medium border-b-2 ${
 							activeTab === 'favorites'
@@ -162,65 +210,71 @@ const Profile = () => {
 					</button>
 				</div>
 
-				{activeTab === 'reviews' &&
-					(reviewsLoading ? (
-						<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
-							<div className="flex justify-center py-4">
-								<CircleLoader size={12} />
+				{activeTab === 'reviews' && (
+					<div role="tabpanel" id="reviews-panel" aria-labelledby="reviews-tab" tabIndex={0}>
+						{reviewsLoading ? (
+							<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
+								<div className="flex justify-center py-4">
+									<CircleLoader size={12} />
+								</div>
 							</div>
-						</div>
-					) : sortedReviews.length > 0 && profileUser ? (
-						<div>
+						) : sortedReviews.length > 0 && profileUser ? (
 							<div>
-								{paginatedReviews.map((review: any) => (
-									<SmallReview key={review._id} review={review} author={profileUser} />
-								))}
+								<div>
+									{paginatedReviews.map((review: any) => (
+										<SmallReview key={review._id} review={review} author={profileUser} />
+									))}
+								</div>
+								{sortedReviews.length > ITEMS_PER_PAGE && (
+									<Pagination
+										pageLimit={reviewsTotalPages}
+										dataLimit={ITEMS_PER_PAGE}
+										currentPage={reviewsCurrentPage}
+										setCurrentPage={setReviewsCurrentPage}
+										totalItemCount={sortedReviews.length}
+										scrollTarget={tabsRef}
+									/>
+								)}
 							</div>
-							{sortedReviews.length > ITEMS_PER_PAGE && (
-								<Pagination
-									pageLimit={reviewsTotalPages}
-									dataLimit={ITEMS_PER_PAGE}
-									currentPage={reviewsCurrentPage}
-									setCurrentPage={setReviewsCurrentPage}
-									totalItemCount={sortedReviews.length}
-									scrollTarget={tabsRef}
-								/>
-							)}
-						</div>
-					) : (
-						<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
-							<div className="text-center text-gray-600">No reviews found.</div>
-						</div>
-					))}
+						) : (
+							<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
+								<div className="text-center text-gray-600">No reviews found.</div>
+							</div>
+						)}
+					</div>
+				)}
 
-				{activeTab === 'favorites' &&
-					(favoritesLoading ? (
-						<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
-							<div className="flex justify-center py-4">
-								<CircleLoader size={12} />
+				{activeTab === 'favorites' && (
+					<div role="tabpanel" id="favorites-panel" aria-labelledby="favorites-tab" tabIndex={0}>
+						{favoritesLoading ? (
+							<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
+								<div className="flex justify-center py-4">
+									<CircleLoader size={12} />
+								</div>
 							</div>
-						</div>
-					) : sortedFavorites.length > 0 ? (
-						<div>
-							<div className="flex flex-wrap justify-start bg-white border border-gray-300 rounded-lg p-3">
-								{paginatedFavorites.map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
+						) : sortedFavorites.length > 0 ? (
+							<div>
+								<div className="flex flex-wrap justify-start bg-white border border-gray-300 rounded-lg p-3">
+									{paginatedFavorites.map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
+								</div>
+								{sortedFavorites.length > ITEMS_PER_PAGE && (
+									<Pagination
+										pageLimit={favoritesTotalPages}
+										dataLimit={ITEMS_PER_PAGE}
+										currentPage={favoritesCurrentPage}
+										setCurrentPage={setFavoritesCurrentPage}
+										totalItemCount={sortedFavorites.length}
+										scrollTarget={tabsRef}
+									/>
+								)}
 							</div>
-							{sortedFavorites.length > ITEMS_PER_PAGE && (
-								<Pagination
-									pageLimit={favoritesTotalPages}
-									dataLimit={ITEMS_PER_PAGE}
-									currentPage={favoritesCurrentPage}
-									setCurrentPage={setFavoritesCurrentPage}
-									totalItemCount={sortedFavorites.length}
-									scrollTarget={tabsRef}
-								/>
-							)}
-						</div>
-					) : (
-						<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
-							<div className="text-center text-gray-600">No shoes in favorites.</div>
-						</div>
-					))}
+						) : (
+							<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
+								<div className="text-center text-gray-600">No shoes in favorites.</div>
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 		</div>
 	);

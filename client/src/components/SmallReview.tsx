@@ -42,14 +42,16 @@ const SmallReview = ({ review, author }: Props) => {
 			</div>
 			<div className="p-3">
 				<div className="flex items-center gap-2">
-					<StarRatings
-						rating={review.ratingNum || 0}
-						starRatedColor="#F5B327"
-						numberOfStars={5}
-						name="rating"
-						starDimension="16px"
-						starSpacing="1px"
-					/>
+					<span aria-label={`Rated ${review.ratingNum || 0} out of 5`}>
+						<StarRatings
+							rating={review.ratingNum || 0}
+							starRatedColor="#F5B327"
+							numberOfStars={5}
+							name="rating"
+							starDimension="16px"
+							starSpacing="1px"
+						/>
+					</span>
 				</div>
 				<div className="font-bold">{review.summary}</div>
 				<div className="text-sm">
@@ -68,22 +70,27 @@ const SmallReview = ({ review, author }: Props) => {
 							<div>
 								<ShoeImage
 									src={shoe?.image?.original || ''}
-									alt={shoe?.name || ''}
+									alt=""
 									className="h-24 w-24 sm:h-16 sm:w-16"
 								/>
 							</div>
 							<div>
 								<div className="text-sm">{shoe.name}</div>
 								<div className="flex items-center gap-2">
-									<StarRatings
-										rating={shoe.rating || 0}
-										starRatedColor="#F5B327"
-										numberOfStars={5}
-										name="rating"
-										starDimension="14px"
-										starSpacing="1px"
-									/>
-									<div className="text-sm text-gray-700">{shoe?.ratings?.length}</div>
+									<span aria-label={`Rated ${(shoe.rating || 0).toFixed(2)} out of 5`}>
+										<StarRatings
+											rating={shoe.rating || 0}
+											starRatedColor="#F5B327"
+											numberOfStars={5}
+											name="rating"
+											starDimension="14px"
+											starSpacing="1px"
+										/>
+									</span>
+									<div className="text-sm text-gray-700">
+										{shoe?.ratings?.length}
+										<span className="sr-only">reviews</span>
+									</div>
 								</div>
 							</div>
 						</div>
