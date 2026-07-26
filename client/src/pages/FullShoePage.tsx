@@ -1,7 +1,7 @@
 import { HeartIcon as HeartOutline } from '@heroicons/react/outline';
 import { HeartIcon as HeartSolid } from '@heroicons/react/solid';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useGetRatingsByShoeQuery } from '../api/ratingsApi';
 import { useGetShoeQuery, useToggleFavoriteShoeMutation } from '../api/shoesApi';
@@ -14,7 +14,6 @@ import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
 import { IProduct } from '../types/types';
 import { ObjectId } from 'bson';
-import * as short from 'short-uuid';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import MoreShoes from '../components/MoreShoes';
@@ -48,6 +47,23 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 	const [selectedSize, setSelectedSize] = useState(initialSize);
 	const [imageNum, setImageNum] = useState(0);
 	const [showModal, setShowModal] = useState(false);
+	const sizeButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+	const handleSizeKeyDown = (e: React.KeyboardEvent, currentIndex: number) => {
+		let newIndex;
+		if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+			newIndex = (currentIndex + 1) % SHOE_SIZES.length;
+		} else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+			newIndex = (currentIndex - 1 + SHOE_SIZES.length) % SHOE_SIZES.length;
+		} else {
+			return;
+		}
+
+		e.preventDefault();
+		const newSize = SHOE_SIZES[newIndex];
+		setSelectedSize(newSize);
+		sizeButtonRefs.current[newSize]?.focus();
+	};
 
 	// Scroll to top when shoe changes
 	useEffect(() => {
@@ -161,18 +177,23 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 								<div className="text-xl text-red-800 mt-1">${shoe?.retailPrice}</div>
 								<div id="size-label" className="mt-5 mb-2">Select Size</div>
 								<div role="radiogroup" aria-labelledby="size-label" className="flex flex-wrap box-border justify-between">
-									{SHOE_SIZES.map((shoeSize) => {
+									{SHOE_SIZES.map((shoeSize, index) => {
 										return (
 											<button
 												type="button"
-												key={shoeSize + '-' + short.generate()}
+												key={shoeSize}
+												ref={(el) => {
+													sizeButtonRefs.current[shoeSize] = el;
+												}}
 												role="radio"
 												aria-checked={shoeSize === selectedSize}
+												tabIndex={shoeSize === selectedSize ? 0 : -1}
 												className={
 													`box-border cursor-pointer text-center border py-2 mb-2 hover:border-gray-600 w-32/100 ` +
 													(shoeSize === selectedSize ? 'border-black' : 'border-gray-300')
 												}
 												onClick={() => setSelectedSize(shoeSize)}
+												onKeyDown={(e) => handleSizeKeyDown(e, index)}
 											>
 												{shoeSize}
 											</button>
@@ -242,13 +263,15 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 								<div className="flex w-full my-5">
 									{shoe?.links?.flightClub ? (
 										<a href={shoe.links.flightClub} target="_blank" rel="noreferrer">
-											<img src="/assets/flight_club.png" alt={'Flight Club'} className="w-32" />
+											<img src="/assets/flight_club.png" alt="" className="w-32" />
+											<span className="sr-only">View {shoe?.name} on Flight Club (opens in new tab)</span>
 										</a>
 									) : null}
 
 									{shoe?.links?.goat ? (
 										<a href={shoe.links.goat} target="_blank" rel="noreferrer">
-											<img src="/assets/goat.png" alt={'Goat'} className="w-32" />
+											<img src="/assets/goat.png" alt="" className="w-32" />
+											<span className="sr-only">View {shoe?.name} on GOAT (opens in new tab)</span>
 										</a>
 									) : null}
 
@@ -256,15 +279,17 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 										<a href={shoe.links.stadiumGoods} target="_blank" rel="noreferrer">
 											<img
 												src="/assets/stadium_goods.svg"
-												alt={'Stadium Goods'}
+												alt=""
 												className="w-32"
 											/>
+											<span className="sr-only">View {shoe?.name} on Stadium Goods (opens in new tab)</span>
 										</a>
 									) : null}
 
 									{shoe?.links?.stockX ? (
 										<a href={shoe.links.stockX} target="_blank" rel="noreferrer">
-											<img src="/assets/stockx.jpeg" alt={'Stock X'} className="w-32" />
+											<img src="/assets/stockx.jpeg" alt="" className="w-32" />
+											<span className="sr-only">View {shoe?.name} on StockX (opens in new tab)</span>
 										</a>
 									) : null}
 								</div>
