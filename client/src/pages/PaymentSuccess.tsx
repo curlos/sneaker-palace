@@ -137,22 +137,21 @@ const PaymentSuccess = () => {
 		<div className="container mx-auto px-4 py-7 max-w-6xl flex-grow">
 			<div className="text-lg">
 				{user ? (
-					<div className="text-4xl">
-						Hello {user.firstName} {user.lastName},
-					</div>
+					<h1 className="text-4xl">Hello {user.firstName},</h1>
 				) : (
-					<div className="text-4xl">Hello user,</div>
+					<h1 className="text-4xl">Hello Guest,</h1>
 				)}
-				<div>We'll email you an order confirmation with details and tracking info.</div>
+				<div>Your order has been placed successfully.</div>
 
 				<div className="flex gap-3 mt-3 sm:flex-col">
-					<Link to="/shoes" className="">
-						<button className="bg-black p-4 text-white rounded-full">Continue Shopping</button>
+					<Link to="/shoes" className="bg-black p-4 text-white rounded-full text-center">
+						Continue Shopping
 					</Link>
-					<Link to={`/order-details/${orderID}`}>
-						<button className="bg-white p-4 text-black border border-black rounded-full">
-							View or manage order
-						</button>
+					<Link
+						to={`/order-details/${orderID}`}
+						className="bg-white p-4 text-black border border-black rounded-full text-center"
+					>
+						View or manage order
 					</Link>
 				</div>
 			</div>
