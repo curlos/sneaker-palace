@@ -9,7 +9,6 @@ import { useCart, useUpdateUserCartMutation, useUpdateGuestCartMutation } from '
 import { useGetLoggedInUserQuery } from '../api/userApi';
 import FullShoeReviews from '../components/FullShoeReviews';
 import ShoeImage from '../components/ShoeImage';
-import ShoppingCartModal from '../components/ShoppingCartModal';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import FullShoeSkeleton from '../skeleton_loaders/FullShoeSkeleton';
 import { IProduct } from '../types/types';
@@ -46,7 +45,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 	// Local state
 	const [selectedSize, setSelectedSize] = useState(initialSize);
 	const [imageNum, setImageNum] = useState(0);
-	const [showModal, setShowModal] = useState(false);
 	const sizeButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
 	const handleSizeKeyDown = (e: React.KeyboardEvent, currentIndex: number) => {
@@ -308,8 +306,6 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 					<MoreShoes shoe={shoe} />
 				</div>
 			</div>
-
-			<ShoppingCartModal showModal={showModal} setShowModal={setShowModal} />
 		</div>
 	);
 };
