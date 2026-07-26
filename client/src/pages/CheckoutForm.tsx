@@ -89,8 +89,11 @@ export default function CheckoutForm() {
 			className="container mx-auto px-4 py-10 max-w-6xl flex gap-4 sm:block flex-grow"
 		>
 			<div className="flex-6">
+				<h1 className="text-2xl font-bold mb-4">Checkout</h1>
 				<div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4 mb-4">
-					<div className="text-yellow-800 font-medium mb-1">⚠️ For Testing Purposes Only</div>
+					<div className="text-yellow-800 font-medium mb-1">
+						<span aria-hidden="true">⚠️</span> For Testing Purposes Only
+					</div>
 					<div className="text-yellow-700 text-sm">
 						This is a demo store. Real cards will not be accepted. Use test card number <span className="font-mono font-medium">4242 4242 4242 4242</span> with any future date and CVC to test the checkout process.
 					</div>
