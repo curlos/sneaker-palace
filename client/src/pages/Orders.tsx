@@ -42,9 +42,9 @@ const Orders = () => {
 			{!orders || orders.length < 1 ? (
 				<div className="text-base flex items-center gap-2">
 					<div>No orders found</div>
-					<button className="py-4 px-10 sm:px-2 bg-black text-white">
-						<Link to="/shoes">Order shoes</Link>
-					</button>
+					<Link to="/shoes" className="py-4 px-10 sm:px-2 bg-black text-white">
+						Order shoes
+					</Link>
 				</div>
 			) : sortedOrders.length > 0 ? (
 				<div>
