@@ -124,6 +124,7 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 			<div className="text-sm flex gap-2">
 				<div>Helpful? </div>
 				<button
+					type="button"
 					className={`flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-75'}`}
 					onClick={handleLike}
 					disabled={isLoading}
@@ -138,6 +139,7 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 					<span className="ml-1">{review.helpful.length}</span>
 				</button>
 				<button
+					type="button"
 					className={`flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-75'}`}
 					onClick={handleDislike}
 					disabled={isLoading}

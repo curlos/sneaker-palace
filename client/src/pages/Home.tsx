@@ -28,7 +28,7 @@ const Home = () => {
 			<Carousel />
 			<div className="container mx-auto px-4 max-w-7xl">
 				<div className="flex justify-between text-xl font-semibold mt-4 md:text-lg">
-					<div>Popular Brands</div>
+					<h2>Popular Brands</h2>
 					<Link to={`/shoes`} className="underline">
 						See All
 					</Link>

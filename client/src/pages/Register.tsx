@@ -61,7 +61,7 @@ const Register = () => {
 			style={{ backgroundImage: 'url(/assets/upscaled-images/bg-login-image.webp)'}}
 		>
 			<div className="flex flex-col gap-4 items-center bg-white p-4 rounded-lg my-6 xl:py-10 sm:w-97/100 shadow-2xl shadow-black border border-gray-300 w-2/5 container mx-auto max-w-7xl">
-				<span className="font-bold text-2xl">BECOME A MEMBER</span>
+				<h1 className="font-bold text-2xl">BECOME A MEMBER</h1>
 				<label htmlFor="register-email" className="sr-only">
 					Email address
 				</label>

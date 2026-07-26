@@ -188,6 +188,7 @@ const ProductList = () => {
 								</h1>
 								{searchQuery && (
 									<button
+										type="button"
 										onClick={() => history.push('/shoes')}
 										className="flex items-center justify-center w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
 										aria-label="Clear search"

@@ -55,7 +55,7 @@ const SmallProductList = ({ finalSearchText, setShowModal }: Props) => {
 		</div>
 	) : (
 		<div>
-			<div className="pt-0">
+			<div className="pt-0" aria-live="polite">
 				{shoes && shoes.length > 0 ? (
 					shoes
 						.slice(0, 12)

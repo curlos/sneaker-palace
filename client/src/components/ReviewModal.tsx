@@ -48,14 +48,16 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 
 						<div className="sm:ml-0 ml-4">
 							<div className="sm:block flex gap-2">
-								<StarRatings
-									rating={review.ratingNum || 0}
-									starRatedColor="#F5B327"
-									numberOfStars={5}
-									name="rating"
-									starDimension="18px"
-									starSpacing="1px"
-								/>
+								<span aria-label={`Rated ${review.ratingNum || 0} out of 5`}>
+									<StarRatings
+										rating={review.ratingNum || 0}
+										starRatedColor="#F5B327"
+										numberOfStars={5}
+										name="rating"
+										starDimension="18px"
+										starSpacing="1px"
+									/>
+								</span>
 
 								<div className="font-bold">{review.summary}</div>
 							</div>

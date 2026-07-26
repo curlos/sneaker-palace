@@ -201,6 +201,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
 								<div className="flex justify-between xl:block gap-2">
 									<button
+										type="button"
 										className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-800 w-1/2 xl:w-full xl:mb-0"
 										onClick={handleAddToCart}
 									>
@@ -208,6 +209,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 									</button>
 
 									<button
+										type="button"
 										className={`flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3 my-5 w-1/2 xl:w-full xl:mb-0 ${isFavoriteLoading ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-600'}`}
 										onClick={handleFavorite}
 										disabled={isFavoriteLoading}

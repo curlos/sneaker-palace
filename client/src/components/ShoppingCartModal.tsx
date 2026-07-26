@@ -91,16 +91,22 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
 					)}
 
 					<div className="my-3">
-						<Link to={`/cart`} onClick={() => setShowModal(false)}>
-							<button className="rounded-full border border-gray-400 w-full p-3">
-								View Bag ({cartProducts.length})
-							</button>
+						<Link
+							to={`/cart`}
+							onClick={() => setShowModal(false)}
+							className="rounded-full border border-gray-400 w-full p-3 block text-center"
+						>
+							View Bag ({cartProducts.length})
 						</Link>
 					</div>
 
 					<div>
-						<Link to={`/payment`} onClick={() => setShowModal(false)}>
-							<button className="bg-black text-white rounded-full w-full p-3">Checkout</button>
+						<Link
+							to={`/payment`}
+							onClick={() => setShowModal(false)}
+							className="bg-black text-white rounded-full w-full p-3 block text-center"
+						>
+							Checkout
 						</Link>
 					</div>
 				</div>

@@ -144,6 +144,24 @@ const ReviewForm = () => {
 								name="rating"
 								starDimension="18px"
 							/>
+							{/* Accessible parallel control: react-star-ratings only handles mouse events, so
+								this visually-hidden native radio group lets keyboard/screen reader users set the
+								same reviewInfo.ratingNum state. */}
+							<fieldset className="sr-only">
+								<legend>Overall rating</legend>
+								{[1, 2, 3, 4, 5].map((value) => (
+									<label key={value}>
+										<input
+											type="radio"
+											name="overallRating"
+											value={value}
+											checked={reviewInfo.ratingNum === value}
+											onChange={() => setReviewInfo({ ...reviewInfo, ratingNum: value })}
+										/>
+										{value} {value === 1 ? 'star' : 'stars'}
+									</label>
+								))}
+							</fieldset>
 						</div>
 
 						<fieldset className="flex-2">

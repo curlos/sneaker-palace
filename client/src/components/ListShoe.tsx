@@ -17,7 +17,7 @@ const ListShoe = ({ shoe, setShowModal }: Props) => {
 			onClick={() => setShowModal(false)}
 		>
 			<div className="flex items-center">
-				<ShoeImage src={shoe.image.original} alt={shoe.name} className="h-16" />
+				<ShoeImage src={shoe.image.original} alt="" className="h-16" />
 
 				<div className="ml-5">{shoe.name}</div>
 			</div>
