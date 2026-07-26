@@ -11,7 +11,7 @@ const SmallShoe = ({ shoe }: Props) => {
 				<div className="w-full relative overflow-hidden" style={{ paddingBottom: '100%' }}>
 					<ShoeImage
 						src={shoe.image.original}
-						alt={shoe.name}
+						alt=""
 						className="absolute inset-0 h-full w-full object-cover"
 						missingOriginalImageClassName="absolute inset-0 h-2/3 w-2/3 object-contain m-auto"
 					/>
@@ -24,22 +24,28 @@ const SmallShoe = ({ shoe }: Props) => {
 					<span className="capitalize">{shoe.colorway}</span>
 				</div>
 				<div className="flex items-center">
-					<StarRatings
-						rating={shoe.rating || 0}
-						starRatedColor="#F5B327"
-						numberOfStars={5}
-						name="rating"
-						starDimension="16px"
-						starSpacing="1px"
-					/>
+					<span aria-label={`Rated ${(shoe.rating || 0).toFixed(2)} out of 5`}>
+						<StarRatings
+							rating={shoe.rating || 0}
+							starRatedColor="#F5B327"
+							numberOfStars={5}
+							name="rating"
+							starDimension="16px"
+							starSpacing="1px"
+						/>
+					</span>
 					<span className="flex items-center ml-2">
 						<ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
 						{shoe.ratings?.length || 0}
+						<span className="sr-only">reviews</span>
 					</span>
 				</div>
 				<div className="flex items-center">
 					<HeartIcon className="h-4 w-4 text-black" aria-hidden="true" />
-					<span className="ml-1">{shoe.favorites?.length || 0}</span>
+					<span className="ml-1">
+						{shoe.favorites?.length || 0}
+						<span className="sr-only">favorites</span>
+					</span>
 				</div>
 				<span className="font-medium text-lg">${shoe.retailPrice}</span>
 			</div>

@@ -56,7 +56,7 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 	};
 
 	return (
-		<aside className="top-0 p-5 w-full flex-2 flex-grow-1 overflow-y-auto bg-white xl:w-screen max-w-100 ">
+		<aside id="shoe-filters-sidebar" className="top-0 p-5 w-full flex-2 flex-grow-1 overflow-y-auto bg-white xl:w-screen max-w-100 ">
 			<div className="border-0 border-b border-solid border-gray-300 py-3">
 				<button
 					type="button"
@@ -65,11 +65,16 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-color"
 					onClick={() => setShowColors(!showColors)}
 				>
-					<div className="font-bold mb-3">Color</div>{' '}
+					<div id="filter-label-color" className="font-bold mb-3">Color</div>{' '}
 					{showColors ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
 				</button>
 				{showColors ? (
-					<div id="filter-panel-color" className="flex justify-between flex-wrap gap-2 p-3">
+					<div
+						id="filter-panel-color"
+						role="group"
+						aria-labelledby="filter-label-color"
+						className="flex justify-between flex-wrap gap-2 p-3"
+					>
 						{Object.keys(filters.colors).map((color) => {
 							return (
 								<div
@@ -102,12 +107,12 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-brand"
 					onClick={() => setShowBrands(!showBrands)}
 				>
-					<span className="font-bold mb-3">Brand</span>{' '}
+					<span id="filter-label-brand" className="font-bold mb-3">Brand</span>{' '}
 					{showBrands ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
 				</button>
 
 				{showBrands ? (
-					<div id="filter-panel-brand">
+					<div id="filter-panel-brand" role="group" aria-labelledby="filter-label-brand">
 						{Object.keys(filters.brands).map((brand) => {
 							return (
 								<label key={`${brand}`} className="flex items-center">
@@ -133,12 +138,12 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-gender"
 					onClick={() => setShowGender(!showGender)}
 				>
-					<span className="font-bold mb-3">Gender</span>{' '}
+					<span id="filter-label-gender" className="font-bold mb-3">Gender</span>{' '}
 					{showGender ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
 				</button>
 
 				{showGender ? (
-					<div id="filter-panel-gender">
+					<div id="filter-panel-gender" role="group" aria-labelledby="filter-label-gender">
 						{Object.keys(filters.genders).map((gender) => {
 							return (
 								<label key={`${gender}`} className="flex items-center">
@@ -164,12 +169,12 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-price"
 					onClick={() => setShowPriceRanges(!showPriceRanges)}
 				>
-					<span className="font-bold mb-3">Shop by Price</span>{' '}
+					<span id="filter-label-price" className="font-bold mb-3">Shop by Price</span>{' '}
 					{showPriceRanges ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
 				</button>
 
 				{showPriceRanges ? (
-					<div id="filter-panel-price">
+					<div id="filter-panel-price" role="group" aria-labelledby="filter-label-price">
 						{Object.keys(filters.priceRanges).map((priceRange) => {
 							return (
 								<label key={`${priceRange}`} className="flex items-center">
@@ -195,12 +200,12 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-release-year"
 					onClick={() => setShowReleaseYear(!showReleaseYear)}
 				>
-					<span className="font-bold mb-3">Release Year</span>{' '}
+					<span id="filter-label-release-year" className="font-bold mb-3">Release Year</span>{' '}
 					{showReleaseYear ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
 				</button>
 
 				{showReleaseYear ? (
-					<div id="filter-panel-release-year">
+					<div id="filter-panel-release-year" role="group" aria-labelledby="filter-label-release-year">
 						{Object.keys(filters.releaseYears)
 							.sort((a, b) => Number(b) - Number(a))
 							.map((releaseYear) => {
@@ -228,12 +233,17 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-size"
 					onClick={() => setShowSizes(!showSizes)}
 				>
-					<span className="font-bold mb-3">Size</span>{' '}
+					<span id="filter-label-size" className="font-bold mb-3">Size</span>{' '}
 					{showSizes ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
 				</button>
 
 				{showSizes ? (
-					<div id="filter-panel-size" className="flex flex-wrap">
+					<div
+						id="filter-panel-size"
+						role="group"
+						aria-labelledby="filter-label-size"
+						className="flex flex-wrap"
+					>
 						{shoeSizes.map((shoeSize) => {
 							return (
 								<button

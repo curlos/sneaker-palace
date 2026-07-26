@@ -202,6 +202,7 @@ const ProductList = () => {
 							<button
 								type="button"
 								aria-expanded={showSidebar}
+								aria-controls="shoe-filters-sidebar"
 								className="flex items-center gap-2 cursor-pointer p-2 border border-gray-300 rounded-full"
 								onClick={() => setShowSidebar(!showSidebar)}
 							>
@@ -212,10 +213,14 @@ const ProductList = () => {
 						</div>
 					</div>
 
+					<div aria-live="polite" className="sr-only">
+						{loading ? 'Loading products…' : `${totalShoeCount.toLocaleString()} results`}
+					</div>
+
 					<AppliedFilters filters={filters} updateFilters={updateFilters} />
 
 					{loading ? (
-						<div className="flex justify-center flex-wrap lg:justify-between py-4">
+						<div aria-hidden="true" className="flex justify-center flex-wrap lg:justify-between py-4">
 							{Array.from({ length: 12 }, (_, index) => (
 								<SmallShoeSkeleton key={index} />
 							))}
