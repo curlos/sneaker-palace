@@ -160,6 +160,7 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
 
 				<div className="flex justify-end">
 					<button
+						type="button"
 						onClick={handleEditPassword}
 						disabled={isLoading}
 						className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 px-5 py-3 disabled:opacity-50"

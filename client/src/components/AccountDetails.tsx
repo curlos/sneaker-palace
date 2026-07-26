@@ -87,7 +87,8 @@ const AccountDetails = () => {
 						<img src={DEFAULT_AVATAR} alt="" className="h-150 w-150 rounded-full object-cover mb-3" />
 					)}
 
-					<input onChange={handleSelectFile} type="file" accept="image/*"></input>
+					<label htmlFor="account-profile-pic" className="mb-1 block">Profile Picture</label>
+					<input id="account-profile-pic" onChange={handleSelectFile} type="file" accept="image/*"></input>
 				</div>
 
 				<div className="mb-4">
@@ -161,6 +162,7 @@ const AccountDetails = () => {
 
 			<div className="flex justify-end">
 				<button
+					type="button"
 					onClick={handleEdit}
 					disabled={isLoading}
 					className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 px-5 py-3 disabled:opacity-50"

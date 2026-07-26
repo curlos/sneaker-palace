@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import FailureMessage from './FailureMessage';
 import SuccessMessage from './SuccessMessage';
-import * as short from 'short-uuid';
 import { useGetLoggedInUserQuery, useUpdateUserInfoMutation } from '../api/userApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -72,7 +71,7 @@ const ShopPreferences = () => {
 						onChange={(e: ChangeEvent<HTMLSelectElement>) => setPreselectedShoeSize(e.currentTarget.value)}
 					>
 						{SHOE_SIZES.map((shoeSize) => (
-							<option key={`${shoeSize}-${short.generate()}`} value={shoeSize}>
+							<option key={shoeSize} value={shoeSize}>
 								{shoeSize}
 							</option>
 						))}
@@ -154,6 +153,7 @@ const ShopPreferences = () => {
 
 				<div className="flex justify-end">
 					<button
+						type="button"
 						onClick={handleEdit}
 						disabled={isLoading}
 						className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-700 px-5 py-3 disabled:opacity-50"
