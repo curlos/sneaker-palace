@@ -88,14 +88,16 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 				)}
 			</div>
 			<div className="flex sm:block">
-				<StarRatings
-					rating={review.ratingNum || 0}
-					starRatedColor="#F5B327"
-					numberOfStars={5}
-					name="rating"
-					starDimension="16px"
-					starSpacing="1px"
-				/>
+				<span aria-label={`Rated ${review.ratingNum || 0} out of 5`}>
+					<StarRatings
+						rating={review.ratingNum || 0}
+						starRatedColor="#F5B327"
+						numberOfStars={5}
+						name="rating"
+						starDimension="16px"
+						starSpacing="1px"
+					/>
+				</span>
 				<div className="ml-2 font-bold sm:ml-0">{review.summary}</div>
 			</div>
 
@@ -105,7 +107,12 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 			</div>
 
 			{review.photo ? (
-				<button type="button" onClick={() => setShowModal(true)} className="block">
+				<button
+					type="button"
+					aria-label="View full review photo"
+					onClick={() => setShowModal(true)}
+					className="block"
+				>
 					<img
 						src={`${review.photo}`}
 						alt=""
