@@ -1,6 +1,7 @@
 import { SearchIcon } from '@heroicons/react/outline';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import { useModalA11y } from '../hooks/useModalA11y';
 import SmallProductList from './SmallProductList';
 
 interface Props {
@@ -53,7 +54,9 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 		};
 	}, [searchText]);
 
-	// Focus the input when modal opens
+	const dialogRef = useModalA11y(() => setShowSearchModal(false));
+
+	// Focus the input when modal opens (runs after useModalA11y's initial focus, so it takes priority)
 	useEffect(() => {
 		if (showSearchModal && inputRef.current) {
 			inputRef.current.focus();
@@ -61,21 +64,35 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 	}, [showSearchModal]);
 
 	return (
+		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
 			className="fixed z-20 w-screen h-screen bg-black bg-opacity-40"
 			onClick={() => setShowSearchModal(!showSearchModal)}
 		>
+			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
 			<aside
+				ref={dialogRef}
+				role="dialog"
+				aria-modal="true"
+				aria-label="Search"
 				className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll sm:no-scrollbar ease-in-out transition-all duration-1000 ${showSearchModal ? 'translate-x-0' : 'translate-x-full'} sm:w-10/12`}
 				onClick={handleBubblingDownClick}
 				style={{scrollbarWidth: 'thin'}}
 			>
 				<form onSubmit={handleSubmit} className="border-0 border-b border-solid border-gray-300">
 					<div className="flex p-4 py-6">
-						<SearchIcon className="h-7 w-7 text-gray-400" onClick={handleSubmit} />
+						<button type="submit" aria-label="Search">
+							<SearchIcon className="h-7 w-7 text-gray-600" aria-hidden="true" />
+						</button>
+						<label htmlFor="search-input" className="sr-only">
+							Search
+						</label>
 						<input
 							ref={inputRef}
-							className="ml-5 placeholder-gray-400 placeholder-opacity-100 outline-none uppercase text-lg font-medium w-full"
+							id="search-input"
+							type="text"
+							autoComplete="off"
+							className="ml-5 placeholder-gray-600 placeholder-opacity-100 focus:outline-none focus:ring-2 focus:ring-black uppercase text-lg font-medium w-full"
 							placeholder="TYPE TO SEARCH"
 							value={searchText}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchText(e.currentTarget.value)}
@@ -94,10 +111,8 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 				</form>
 
 				<SmallProductList
-					searchText={searchText}
 					finalSearchText={finalSearchText}
 					setShowModal={setShowSearchModal}
-					handleSubmit={handleSubmit}
 				/>
 			</aside>
 		</div>

@@ -59,12 +59,13 @@ const ShopPreferences = () => {
 
 	return (
 		<div className="w-1/2 sm:w-full sm:mt-8">
-			<div className="text-2xl font-medium mb-4">Shop Preferences</div>
+			<h2 className="text-2xl font-medium mb-4">Shop Preferences</h2>
 
 			<form>
 				<div className="mb-4">
-					<div className="mb-1 font-medium w-full">Shoe Size</div>
+					<label htmlFor="shoe-size" className="mb-1 font-medium w-full block">Shoe Size</label>
 					<select
+						id="shoe-size"
 						name="shoeSizes"
 						className="border-gray-500 rounded-lg text-black w-full"
 						value={preselectedShoeSize}
@@ -81,11 +82,12 @@ const ShopPreferences = () => {
 					</div>
 				</div>
 
-				<div className="mb-4">
-					<div className="font-medium mb-3">Preferred Shop Settings</div>
+				<fieldset className="mb-4">
+					<legend className="font-medium mb-3">Preferred Shop Settings</legend>
 
 					<div className="flex items-center mb-2">
 						<input
+							id="gender-women"
 							name="gender"
 							type="radio"
 							value="Yes"
@@ -93,11 +95,12 @@ const ShopPreferences = () => {
 							checked={preferredGender === 'women'}
 							onChange={() => setPreferredGender('women')}
 						/>
-						<label>Women's</label>
+						<label htmlFor="gender-women">Women's</label>
 					</div>
 
 					<div className="flex items-center mb-2">
 						<input
+							id="gender-men"
 							name="gender"
 							type="radio"
 							value="Yes"
@@ -105,15 +108,16 @@ const ShopPreferences = () => {
 							checked={preferredGender === 'men'}
 							onChange={() => setPreferredGender('men')}
 						/>
-						<label>Men's</label>
+						<label htmlFor="gender-men">Men's</label>
 					</div>
-				</div>
+				</fieldset>
 
-				<div className="mb-4">
-					<div className="font-medium mb-3">Unit of Measure</div>
+				<fieldset className="mb-4">
+					<legend className="font-medium mb-3">Unit of Measure</legend>
 
 					<div className="flex items-center mb-2">
 						<input
+							id="unit-metric"
 							name="unitOfMeasure"
 							type="radio"
 							value="Yes"
@@ -121,11 +125,12 @@ const ShopPreferences = () => {
 							checked={unitOfMeasure === 'metric'}
 							onChange={() => setUnitOfMeasure('metric')}
 						/>
-						<label>Metric</label>
+						<label htmlFor="unit-metric">Metric</label>
 					</div>
 
 					<div className="flex items-center mb-2">
 						<input
+							id="unit-imperial"
 							name="unitOfMeasure"
 							type="radio"
 							value="Yes"
@@ -133,9 +138,9 @@ const ShopPreferences = () => {
 							checked={unitOfMeasure === 'imperial'}
 							onChange={() => setUnitOfMeasure('imperial')}
 						/>
-						<label>Imperial</label>
+						<label htmlFor="unit-imperial">Imperial</label>
 					</div>
-				</div>
+				</fieldset>
 
 				{showSuccessMessage && (
 					<SuccessMessage setShowMessage={setShowSuccessMessage} message={'Settings updated!'} />

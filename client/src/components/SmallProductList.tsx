@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import { Shoe } from '../types/types';
@@ -7,10 +7,8 @@ import { useGetPaginatedShoesQuery } from '../api/shoesApi';
 import getInitialFilters from '../utils/getInitialFilters';
 
 interface Props {
-	searchText: string;
 	finalSearchText: string;
 	setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-	handleSubmit: (e: FormEvent<Element>) => Promise<void>;
 }
 
 interface stateType {
@@ -19,7 +17,7 @@ interface stateType {
 	sortType?: string;
 }
 
-const SmallProductList = ({ searchText, finalSearchText, setShowModal, handleSubmit }: Props) => {
+const SmallProductList = ({ finalSearchText, setShowModal }: Props) => {
 	const { state } = useLocation<stateType>();
 	
 	// Get filters like in ProductList

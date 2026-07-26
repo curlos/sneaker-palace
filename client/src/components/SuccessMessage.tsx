@@ -8,13 +8,12 @@ interface Props {
 
 const SuccessMessage = ({ setShowMessage, message }: Props) => {
 	return (
-		<div className="p-3 bg-green-200 text-green-500 w-full border border-green-600 rounded-lg my-3">
+		<div role="status" className="p-3 bg-green-200 text-green-800 w-full border border-green-600 rounded-lg my-3">
 			<div className="flex justify-between items-center text-lg">
 				<div>{message}</div>
-				<XIcon
-					className="h-5 w-5 text-gray-600 hover:text-gray-800 cursor-pointer"
-					onClick={() => setShowMessage(false)}
-				/>
+				<button type="button" aria-label="Dismiss" onClick={() => setShowMessage(false)}>
+					<XIcon className="h-5 w-5 text-gray-600 hover:text-gray-800 cursor-pointer" aria-hidden="true" />
+				</button>
 			</div>
 		</div>
 	);

@@ -1,5 +1,5 @@
 import { XIcon } from '@heroicons/react/solid';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useGetPaginatedShoesQuery } from '../api/shoesApi';
 import { AppliedFilters } from '../components/AppliedFilters';
@@ -103,7 +103,7 @@ const ProductList = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchQuery, currentPage]);
+	}, [searchQuery]);
 
 	useEffect(() => {
 		// Set sortType to 'Most Relevant' when there's a search query
@@ -123,18 +123,23 @@ const ProductList = () => {
 	// Callback to handle page changes and URL updates
 	const handlePageChange = (newPage: number) => {
 		setCurrentPage(newPage);
-		
+		history.replace(getPageHref(newPage));
+	};
+
+	// Builds the shareable URL for a given page, preserving the other search params
+	const getPageHref = (page: number) => {
 		const currentSearchParams = new URLSearchParams(window.location.search);
-		if (newPage > 1) {
-			currentSearchParams.set('page', newPage.toString());
+		if (page > 1) {
+			currentSearchParams.set('page', page.toString());
 		} else {
 			currentSearchParams.delete('page');
 		}
-		
+
 		const newSearch = currentSearchParams.toString();
-		const newUrl = `/shoes${newSearch ? `?${newSearch}` : ''}`;
-		history.replace(newUrl);
+		return `/shoes${newSearch ? `?${newSearch}` : ''}`;
 	};
+
+	const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
 
 	// Update currentPage when URL page parameter changes
 	useEffect(() => {
@@ -162,8 +167,10 @@ const ProductList = () => {
 			</div>
 			<div className="container mx-auto max-w-7xl flex xl:block flex-grow">
 				{showSidebar ? (
-					<div className="flex justify-end p-3 pb-0 cursor-pointer hidden xl:block">
-						<XIcon className="h-5 w-5" onClick={() => setShowSidebar(false)} />{' '}
+					<div className="flex justify-end p-3 pb-0 hidden xl:block">
+						<button type="button" aria-label="Close filters" onClick={() => setShowSidebar(false)}>
+							<XIcon className="h-5 w-5 cursor-pointer" aria-hidden="true" />
+						</button>
 					</div>
 				) : null}
 
@@ -174,31 +181,33 @@ const ProductList = () => {
 						<div>
 							{searchQuery ? <div>Search results for</div> : null}
 							<div className="flex items-center gap-3">
-								<div className="text-lg font-bold">
+								<h1 ref={resultsHeadingRef} tabIndex={-1} className="text-lg font-bold outline-none">
 									{searchQuery
 										? `${searchQuery} (${totalShoeCount})`
 										: `Sneakers (${totalShoeCount.toLocaleString()})`}
-								</div>
+								</h1>
 								{searchQuery && (
 									<button
 										onClick={() => history.push('/shoes')}
 										className="flex items-center justify-center w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
-										title="Clear search"
+										aria-label="Clear search"
 									>
-										<XIcon className="h-4 w-4 text-gray-600" />
+										<XIcon className="h-4 w-4 text-gray-600" aria-hidden="true" />
 									</button>
 								)}
 							</div>
 						</div>
 
 						<div className="flex items-center gap-3 sm:mt-3">
-							<div
+							<button
+								type="button"
+								aria-expanded={showSidebar}
 								className="flex items-center gap-2 cursor-pointer p-2 border border-gray-300 rounded-full"
 								onClick={() => setShowSidebar(!showSidebar)}
 							>
 								<span className="">Filters</span>
-								<AdjustmentsIcon className="h-5 w-5" />
-							</div>
+								<AdjustmentsIcon className="h-5 w-5" aria-hidden="true" />
+							</button>
 							<SortDropdown sortType={sortType} setSortType={updateSortType} />
 						</div>
 					</div>
@@ -217,7 +226,7 @@ const ProductList = () => {
 								{paginatedShoes.map((shoe: Shoe) => {
 									return <SmallShoe key={shoe.shoeID} shoe={shoe} />;
 								})}
-							</div>
+							</div>			
 
 							<Pagination
 								pageLimit={Math.ceil(totalShoeCount / 12)}
@@ -225,6 +234,8 @@ const ProductList = () => {
 								currentPage={currentPage}
 								setCurrentPage={handlePageChange}
 								totalItemCount={totalShoeCount}
+								scrollTarget={resultsHeadingRef}
+								getPageHref={getPageHref}
 							/>
 						</div>
 					)}

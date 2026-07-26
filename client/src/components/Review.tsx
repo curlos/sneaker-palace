@@ -52,7 +52,7 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 	};
 
 	return (
-		<div className="mb-6">
+		<article className="mb-6">
 			<div className="flex justify-between items-center">
 				<div className="flex gap-2 items-center">
 					<img
@@ -61,7 +61,7 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 								? `${review.postedByUser.profilePic}`
 								: DEFAULT_AVATAR
 						}
-						alt={review.postedByUser.firstName}
+						alt={`${review.postedByUser.firstName || 'User'}'s avatar`}
 						className="h-9 w-9 rounded-full object-cover"
 					/>
 
@@ -72,14 +72,16 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 
 				{review.postedByUser._id === user?._id ? (
 					<div className="flex gap-2">
-						<Link to={`/shoe/edit-review/${shoe.shoeID}/${review._id}`}>
-							<PencilAltIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" />
+						<Link to={`/shoe/edit-review/${shoe.shoeID}/${review._id}`} aria-label="Edit review">
+							<PencilAltIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" aria-hidden="true" />
 						</Link>
 
-						<TrashIcon
-							className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer"
-							onClick={handleDeleteReview}
-						/>
+						<button type="button" aria-label="Delete review" onClick={handleDeleteReview}>
+							<TrashIcon
+								className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer"
+								aria-hidden="true"
+							/>
+						</button>
 					</div>
 				) : (
 					<div></div>
@@ -103,12 +105,13 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 			</div>
 
 			{review.photo ? (
-				<img
-					src={`${review.photo}`}
-					alt=""
-					className="h-36 object-cover my-2 cursor-pointer rounded-md"
-					onClick={() => setShowModal(true)}
-				/>
+				<button type="button" onClick={() => setShowModal(true)} className="block">
+					<img
+						src={`${review.photo}`}
+						alt=""
+						className="h-36 object-cover my-2 cursor-pointer rounded-md"
+					/>
+				</button>
 			) : null}
 
 			<div className="text-sm flex gap-2">
@@ -117,11 +120,13 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 					className={`flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-75'}`}
 					onClick={handleLike}
 					disabled={isLoading}
+					aria-pressed={!!user?.helpful?.includes(review._id)}
+					aria-label="Mark as helpful"
 				>
 					{user?.helpful?.includes(review._id) ? (
-						<ThumbUpSolid className="h-5 w-5" />
+						<ThumbUpSolid className="h-5 w-5" aria-hidden="true" />
 					) : (
-						<ThumbUpOutline className="h-5 w-5" />
+						<ThumbUpOutline className="h-5 w-5" aria-hidden="true" />
 					)}
 					<span className="ml-1">{review.helpful.length}</span>
 				</button>
@@ -129,18 +134,20 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 					className={`flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-75'}`}
 					onClick={handleDislike}
 					disabled={isLoading}
+					aria-pressed={!!user?.notHelpful?.includes(review._id)}
+					aria-label="Mark as not helpful"
 				>
 					{user?.notHelpful?.includes(review._id) ? (
-						<ThumbDownSolid className="h-5 w-5" />
+						<ThumbDownSolid className="h-5 w-5" aria-hidden="true" />
 					) : (
-						<ThumbDownOutline className="h-5 w-5" />
+						<ThumbDownOutline className="h-5 w-5" aria-hidden="true" />
 					)}
 					<span className="ml-1">{review.notHelpful.length}</span>
 				</button>
 			</div>
 
 			{showModal ? <ReviewModal showModal={showModal} setShowModal={setShowModal} review={review} /> : null}
-		</div>
+		</article>
 	);
 };
 

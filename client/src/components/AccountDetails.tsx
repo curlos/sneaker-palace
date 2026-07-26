@@ -71,7 +71,7 @@ const AccountDetails = () => {
 
 	return (
 		<div className="w-1/2 sm:w-full sm:mt-8">
-			<div className="text-2xl font-medium mb-4">Account Details</div>
+			<h2 className="text-2xl font-medium mb-4">Account Details</h2>
 
 			<form>
 				<div className="mb-4">
@@ -91,10 +91,13 @@ const AccountDetails = () => {
 				</div>
 
 				<div className="mb-4">
-					<div className="mb-1">First Name</div>
+					<label htmlFor="account-first-name" className="mb-1 block">First Name</label>
 					<input
+						id="account-first-name"
 						type="text"
-						placeholder="Email"
+						required
+						autoComplete="given-name"
+						placeholder="First Name"
 						className="rounded-lg w-full"
 						value={firstName}
 						onChange={(e) => setFirstName(e.target.value)}
@@ -102,9 +105,12 @@ const AccountDetails = () => {
 				</div>
 
 				<div className="mb-4">
-					<div className="mb-1">Last Name</div>
+					<label htmlFor="account-last-name" className="mb-1 block">Last Name</label>
 					<input
+						id="account-last-name"
 						type="text"
+						required
+						autoComplete="family-name"
 						placeholder="Last Name"
 						className="rounded-lg w-full"
 						value={lastName}
@@ -113,9 +119,12 @@ const AccountDetails = () => {
 				</div>
 
 				<div className="mb-4">
-					<div className="mb-1">Email</div>
+					<label htmlFor="account-email" className="mb-1 block">Email</label>
 					<input
-						type="text"
+						id="account-email"
+						type="email"
+						required
+						autoComplete="email"
 						placeholder="Email"
 						className="rounded-lg w-full"
 						value={email}
@@ -124,14 +133,21 @@ const AccountDetails = () => {
 				</div>
 
 				<div className="mb-4">
-					<div className="mb-1">Password</div>
+					<label htmlFor="account-password" className="mb-1 block">Password</label>
 					<input
-						type="password"
-						placeholder="Password"
-						className="rounded-lg w-full cursor-pointer"
-						value={'*********'}
-						onClick={() => setShowModal(true)}
+						id="account-password"
+						type="text"
+						role="button"
 						readOnly
+						value="*********"
+						className="rounded-lg w-full cursor-pointer"
+						onClick={() => setShowModal(true)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								e.preventDefault();
+								setShowModal(true);
+							}
+						}}
 					/>
 				</div>
 			</form>

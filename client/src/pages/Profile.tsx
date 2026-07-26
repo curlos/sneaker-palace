@@ -79,8 +79,6 @@ const Profile = () => {
 		}
 	}, [hasSetInitialTab, reviewsLoading, favoritesLoading, profileUser, profileUserReviews, favoriteShoes]);
 
-	console.log(activeTab)
-
 	return (
 		<div className="container mx-auto px-4 py-10 bg-gray-100 max-w-6xl flex-grow">
 			<div>
@@ -103,9 +101,9 @@ const Profile = () => {
 								/>
 							</div>
 							<div className="ml-2">
-								<div className="text-2xl font-medium">
+								<h1 className="text-2xl font-medium">
 									{profileUser?.firstName} {profileUser?.lastName}
-								</div>
+								</h1>
 								<div className="text-gray-500">
 									{profileUser?.createdAt ? formatJoinDate(profileUser.createdAt) : ''}
 								</div>

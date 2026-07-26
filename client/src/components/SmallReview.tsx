@@ -22,14 +22,14 @@ const SmallReview = ({ review, author }: Props) => {
 			<CircleLoader size={16} />
 		</div>
 	) : (
-		<div className="border border-gray-300 rounded-lg bg-white mb-4">
+		<article className="border border-gray-300 rounded-lg bg-white mb-4">
 			<div className="flex items-center gap-3 text-sm my-3 border-0 border-b border-solid border-gray-300 p-3">
 				<div>
 					<img
 						src={
 							author.profilePic ? `${author.profilePic}` : DEFAULT_AVATAR
 						}
-						alt={author?.firstName}
+						alt={`${author?.firstName || 'User'}'s avatar`}
 						className="h-9 w-9 rounded-full object-cover"
 					/>
 				</div>
@@ -91,7 +91,7 @@ const SmallReview = ({ review, author }: Props) => {
 				</div>
 				<div></div>
 			</div>
-		</div>
+		</article>
 	);
 };
 

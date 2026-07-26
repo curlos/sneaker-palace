@@ -12,7 +12,7 @@ const ORDERS_PER_PAGE = 10;
 
 const Orders = () => {
 	const [currentPage, setCurrentPage] = useState(1);
-	const ordersRef = useRef<HTMLDivElement>(null);
+	const ordersRef = useRef<HTMLHeadingElement>(null);
 	const userId = useSelector((s: RootState) => s.user.currentUser?._id);
 
 	const { data: orders, isLoading: loading } = useGetUserOrdersQuery(undefined, {
@@ -38,7 +38,7 @@ const Orders = () => {
 		</div>
 	) : (
 		<div className="container mx-auto px-4 max-w-6xl flex-grow">
-			<div ref={ordersRef} className="text-3xl py-5">Your Orders</div>
+			<h1 ref={ordersRef} tabIndex={-1} className="text-3xl py-5 outline-none">Your Orders</h1>
 			{!orders || orders.length < 1 ? (
 				<div className="text-base flex items-center gap-2">
 					<div>No orders found</div>
@@ -60,6 +60,7 @@ const Orders = () => {
 							currentPage={currentPage}
 							setCurrentPage={setCurrentPage}
 							totalItemCount={sortedOrders.length}
+							scrollTarget={ordersRef}
 						/>
 					)}
 				</div>

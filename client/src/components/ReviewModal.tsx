@@ -3,6 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import StarRatings from 'react-star-ratings';
+import { useModalA11y } from '../hooks/useModalA11y';
 import { IRating } from '../types/types';
 
 interface Props {
@@ -12,16 +13,27 @@ interface Props {
 }
 
 const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
+	const dialogRef = useModalA11y<HTMLDivElement>(() => setShowModal(false));
+
 	return (
+		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
 			className="fixed z-20 inset-0 bg-black bg-opacity-40 p-6 sm:p-4 flex justify-center items-center overflow-auto"
 			onClick={() => setShowModal(!showModal)}
 		>
-			<div className="placeholder-gray-400 max-w-4xl max-h-full w-full overflow-hidden flex flex-col"
+			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
+			<div
+				ref={dialogRef}
+				role="dialog"
+				aria-modal="true"
+				aria-label="Full review"
+				className="placeholder-gray-400 max-w-4xl max-h-full w-full overflow-hidden flex flex-col"
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="flex justify-end rounded-t-2xl bg-gray-300 border-0 border-b border-solid border-gray-400 p-3">
-					<XIcon className="h-6 w-6 cursor-pointer" onClick={() => setShowModal(false)} />
+					<button type="button" aria-label="Close" onClick={() => setShowModal(false)}>
+						<XIcon className="h-6 w-6 cursor-pointer" aria-hidden="true" />
+					</button>
 				</div>
 
 				<div className="bg-white flex-1 overflow-y-auto" style={{scrollbarWidth: 'thin'}}>

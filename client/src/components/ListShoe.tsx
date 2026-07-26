@@ -23,7 +23,7 @@ const ListShoe = ({ shoe, setShowModal }: Props) => {
 			</div>
 
 			<div>
-				<ChevronRightIcon className="h-5 w-5" />
+				<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
 			</div>
 		</Link>
 	);

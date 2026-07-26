@@ -134,6 +134,9 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 								{shoe && shoe.image && shoe.image['360'].length > 0 ? (
 									<div className="xl:px-4">
 										<img src={shoe?.image['360'][imageNum]} alt={shoe.name} />
+										<label htmlFor="volume" className="sr-only">
+											Rotate {shoe.name} image
+										</label>
 										<input
 											type="range"
 											id="volume"
@@ -151,17 +154,20 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 							</div>
 
 							<div className="flex-2 p-10 xl:p-4">
-								<div className="text-2xl">{shoe?.name}</div>
+								<h1 className="text-2xl">{shoe?.name}</h1>
 								<div className="text-gray-500">
 									{shoe?.gender?.charAt(0).toUpperCase() + shoe?.gender?.slice(1)}'s Shoes
 								</div>
 								<div className="text-xl text-red-800 mt-1">${shoe?.retailPrice}</div>
-								<div className="mt-5 mb-2">Select Size</div>
-								<div className="flex flex-wrap box-border justify-between">
+								<div id="size-label" className="mt-5 mb-2">Select Size</div>
+								<div role="radiogroup" aria-labelledby="size-label" className="flex flex-wrap box-border justify-between">
 									{SHOE_SIZES.map((shoeSize) => {
 										return (
-											<div
+											<button
+												type="button"
 												key={shoeSize + '-' + short.generate()}
+												role="radio"
+												aria-checked={shoeSize === selectedSize}
 												className={
 													`box-border cursor-pointer text-center border py-2 mb-2 hover:border-gray-600 w-32/100 ` +
 													(shoeSize === selectedSize ? 'border-black' : 'border-gray-300')
@@ -169,7 +175,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 												onClick={() => setSelectedSize(shoeSize)}
 											>
 												{shoeSize}
-											</div>
+											</button>
 										);
 									})}
 								</div>
@@ -186,16 +192,22 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 										className={`flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3 my-5 w-1/2 xl:w-full xl:mb-0 ${isFavoriteLoading ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-600'}`}
 										onClick={handleFavorite}
 										disabled={isFavoriteLoading}
+										aria-pressed={!!(user && shoe?._id && user?.favorites?.includes(shoe?._id))}
+										aria-label={
+											user && shoe?._id && user?.favorites?.includes(shoe?._id)
+												? 'Remove from favorites'
+												: 'Add to favorites'
+										}
 									>
 										{user && shoe?._id && user?.favorites?.includes(shoe?._id) ? (
 											<span className="inline-flex items-center">
 												{' '}
-												<HeartSolid className="mr-2 h-5 w-5" />
+												<HeartSolid className="mr-2 h-5 w-5" aria-hidden="true" />
 											</span>
 										) : (
 											<span className="inline-flex items-center">
 												{' '}
-												<HeartOutline className="mr-2 h-5 w-5" />
+												<HeartOutline className="mr-2 h-5 w-5" aria-hidden="true" />
 											</span>
 										)}
 										{shoe?.favorites?.length}

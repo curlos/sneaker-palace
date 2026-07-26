@@ -91,7 +91,7 @@ const FOOTER_BRANDS = [
 
 export const Footer = () => {
 	return (
-		<div className="bg-black text-white text-xs pt-10 lg:text-lg">
+		<footer className="bg-black text-white text-xs pt-10 lg:text-lg">
 			<div className="container mx-auto px-4 max-w-7xl flex justify-center py-5 border-0 border-b border-solid border-gray-400 lg:hidden">
 				{FOOTER_BRANDS.map((brandData) => (
 					<div key={brandData.brand} className="w-1/6 px-4 lg:w-full lg:flex lg:flex-col lg:mb-4">
@@ -115,22 +115,23 @@ export const Footer = () => {
 			</div>
 
 			<div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center lg:flex-col lg:gap-2 lg:text-xs">
-				<div className="flex gap-4 text-gray-400">
-					<div className="cursor-pointer">Terms</div>
-					<div className="cursor-pointer">Privacy</div>
-					<div className="cursor-pointer">Press</div>
-					<div className="cursor-pointer">Jobs</div>
-				</div>
-
-				<div className="text-gray-400">&#169; Sneaker Palace LLC. All Rights Reserved</div>
+				<div className="text-gray-400">&#169; Sneaker Palace</div>
 
 				<div className="text-2xl">
-					<i className="fab fa-twitter-square mr-3 cursor-pointer"></i>
-					<i className="fab fa-facebook-square mr-3 cursor-pointer"></i>
-					<i className="fab fa-instagram-square mr-3 cursor-pointer"></i>
-					<i className="fab fa-youtube-square mr-3 cursor-pointer"></i>
+					<a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter">
+						<i className="fab fa-twitter-square mr-3 cursor-pointer" aria-hidden="true"></i>
+					</a>
+					<a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook">
+						<i className="fab fa-facebook-square mr-3 cursor-pointer" aria-hidden="true"></i>
+					</a>
+					<a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram">
+						<i className="fab fa-instagram-square mr-3 cursor-pointer" aria-hidden="true"></i>
+					</a>
+					<a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube">
+						<i className="fab fa-youtube-square mr-3 cursor-pointer" aria-hidden="true"></i>
+					</a>
 				</div>
 			</div>
-		</div>
+		</footer>
 	);
 };

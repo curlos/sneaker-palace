@@ -105,10 +105,13 @@ export const AppliedFilters = ({ filters, updateFilters }: Props) => {
 						className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm"
 					>
 						<span><span className="font-bold">{group.displayName}</span>: {group.values.join(', ')}</span>
-						<XIcon
-							className="h-4 w-4 cursor-pointer hover:text-red-500"
+						<button
+							type="button"
+							aria-label={`Clear ${group.displayName} filter`}
 							onClick={() => clearFilterCategory(group.type)}
-						/>
+						>
+							<XIcon className="h-4 w-4 cursor-pointer hover:text-red-500" aria-hidden="true" />
+						</button>
 					</div>
 				))}
 			</div>

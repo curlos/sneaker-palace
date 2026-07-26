@@ -145,8 +145,9 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 					<div className="text-gray-500 sm:hidden">{shoe?.colorway}</div>
 					<div>
 						<span className="sm:block">
-							<label className="mr-2 text-gray-500 sm:mr-1">Size</label>
+							<label htmlFor={`size-${productInfo._id}`} className="mr-2 text-gray-500 sm:mr-1">Size</label>
 							<select
+								id={`size-${productInfo._id}`}
 								name="shoeSizes"
 								className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0"
 								value={productInfo.size}
@@ -161,9 +162,10 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 						</span>
 
 						<span className="sm:block">
-							<label className="mx-2 text-gray-500 sm:mx-0 sm:mr-1">Quantity</label>
+							<label htmlFor={`quantity-${productInfo._id}`} className="mx-2 text-gray-500 sm:mx-0 sm:mr-1">Quantity</label>
 
 							<select
+								id={`quantity-${productInfo._id}`}
 								name="quantities"
 								className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0"
 								value={productInfo.quantity}

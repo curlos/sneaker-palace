@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { RootState } from '../redux/store';
 import { logout } from '../redux/userRedux';
 import { baseAPI } from '../api/api';
+import { useModalA11y } from '../hooks/useModalA11y';
 import { useGetLoggedInUserQuery } from '../api/userApi';
 
 interface Props {
@@ -29,12 +30,20 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 		history.push('/');
 	};
 
+	const dialogRef = useModalA11y(() => setShowSidenavModal(false));
+
 	return (
+		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
 			className="fixed z-20 max-w-100 w-screen h-screen bg-black bg-opacity-40"
 			onClick={() => setShowSidenavModal(!showSidenavModal)}
 		>
+			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
 			<aside
+				ref={dialogRef}
+				role="dialog"
+				aria-modal="true"
+				aria-label="Menu"
 				className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll sm:no-scrollbar ease-in-out transition-all duration-1000 ${showSidenavModal ? 'translate-x-0' : 'translate-x-full'} sm:w-10/12`}
 				onClick={handleBubblingDownClick}
 			>

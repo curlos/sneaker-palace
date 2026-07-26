@@ -31,12 +31,12 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 	};
 
 	return (
-		<div className="sticky top-0 z-10 w-full bg-white border-b border-gray-300">
+		<nav aria-label="Main" className="sticky top-0 z-10 w-full bg-white border-b border-gray-300">
 			<div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center">
 				<div className="flex items-center w-6/12">
 					<div>
 						<Link to="/">
-							<img src="/assets/icon.png" className="h-10 w-10" alt="" />
+							<img src="/assets/icon.png" className="h-10 w-10" alt="Sneaker Palace home" />
 						</Link>
 					</div>
 				</div>
@@ -71,9 +71,12 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 							</Link>
 						</span>
 					)}
-					<SearchIcon className="h-5 w-5 cursor-pointer" onClick={() => setShowSearchModal(true)} />
+					<button type="button" aria-label="Search" onClick={() => setShowSearchModal(true)}>
+						<SearchIcon className="h-5 w-5 cursor-pointer" aria-hidden="true" />
+					</button>
 					<Link to="/cart" className="inline-flex relative">
-						<ShoppingBagIcon className="h-7 w-7" />
+						<span className="sr-only">Shopping cart,</span>
+						<ShoppingBagIcon className="h-7 w-7" aria-hidden="true" />
 						<span
 							className={`z-10 inline-flex justify-center items-center text-white text-sm bg-red-800 h-6 w-6 border rounded-full absolute ml-4`}
 						>
@@ -81,13 +84,17 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 						</span>
 					</Link>
 
-					<MenuIcon
-						className="h-5 w-5 cursor-pointer hidden lg:block"
+					<button
+						type="button"
+						aria-label="Menu"
+						className="hidden lg:block"
 						onClick={() => setShowSidenavModal(true)}
-					/>
+					>
+						<MenuIcon className="h-5 w-5 cursor-pointer" aria-hidden="true" />
+					</button>
 				</div>
 			</div>
-		</div>
+		</nav>
 	);
 };
 

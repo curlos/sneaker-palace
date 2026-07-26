@@ -5,6 +5,7 @@ import {
 	ChevronRightIcon,
 } from '@heroicons/react/solid';
 import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Props {
 	pageLimit: number;
@@ -13,7 +14,33 @@ interface Props {
 	setCurrentPage: (page: number) => void;
 	totalItemCount: number;
 	scrollTarget?: React.RefObject<HTMLElement>;
+	getPageHref?: (page: number) => string;
 }
+
+interface PageControlProps {
+	href?: string;
+	onClick: () => void;
+	ariaLabel: string;
+	ariaCurrent?: 'page';
+	className: string;
+	children: React.ReactNode;
+}
+
+const PageControl = ({ href, onClick, ariaLabel, ariaCurrent, className, children }: PageControlProps) => {
+	if (href) {
+		return (
+			<Link to={href} replace onClick={onClick} aria-label={ariaLabel} aria-current={ariaCurrent} className={className}>
+				{children}
+			</Link>
+		);
+	}
+
+	return (
+		<button type="button" onClick={onClick} aria-label={ariaLabel} aria-current={ariaCurrent} className={className}>
+			{children}
+		</button>
+	);
+};
 
 export const Pagination = ({
 	pageLimit,
@@ -22,6 +49,7 @@ export const Pagination = ({
 	setCurrentPage,
 	totalItemCount,
 	scrollTarget,
+	getPageHref,
 }: Props) => {
 	const isFirstRender = useRef(true);
 
@@ -29,6 +57,7 @@ export const Pagination = ({
 		if (scrollTarget?.current) {
 			if (!isFirstRender.current) {
 				scrollTarget.current.scrollIntoView({ behavior: 'smooth' });
+				scrollTarget.current.focus({ preventScroll: true });
 			}
 		} else {
 			window.scrollTo(0, 0);
@@ -63,16 +92,22 @@ export const Pagination = ({
 		setCurrentPage(pageLimit);
 	};
 
-	const changePage = (e: any) => {
-		const pageNumber = Number(e.target.textContent);
-		setCurrentPage(pageNumber);
-	};
-
 	const getPaginationGroup = () => {
 		let start = Math.floor((currentPage - 1) / pageLimit) * pageLimit;
 
 		return new Array(pageLimit).fill(undefined).map((_, idx) => start + idx + 1);
 	};
+
+	const pageNumbers =
+		pageLimit <= 5
+			? Array.from({ length: pageLimit }, (_, i) => i + 1)
+			: pageLimit - currentPage < 5
+			? getPaginationGroup()
+					.slice(Math.max(0, pageLimit - 5), pageLimit)
+					.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit)
+			: getPaginationGroup()
+					.slice(Math.max(0, currentPage - 1), Math.min(pageLimit, currentPage + 4))
+					.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit);
 
 	return (
 		<div className="flex justify-between items-center my-4 text-black sm:justify-between sm:px-3">
@@ -88,71 +123,56 @@ export const Pagination = ({
 			</div>
 
 			<div className="flex w-1/2 justify-end sm:justify-between sm:w-full sm:gap-4">
-				<div
-					className="p-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg flex items-center justify-center sm:hidden"
+				<PageControl
+					href={getPageHref?.(1)}
 					onClick={goToFirstPage}
+					ariaLabel="First page"
+					className="p-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg flex items-center justify-center sm:hidden"
 				>
-					<ChevronDoubleLeftIcon className="h-5 w-5" />
-				</div>
+					<ChevronDoubleLeftIcon className="h-5 w-5" aria-hidden="true" />
+				</PageControl>
 
-				<div
-					className="p-3 px-3 border border-gray-300 border-r-0 cursor-pointer flex items-center justify-center sm:border-l sm:w-1/2 sm:border-r sm:rounded-lg"
+				<PageControl
+					href={getPageHref?.(Math.max(1, currentPage - 1))}
 					onClick={goToPreviousPage}
+					ariaLabel="Previous page"
+					className="p-3 px-3 border border-gray-300 border-r-0 cursor-pointer flex items-center justify-center sm:border-l sm:w-1/2 sm:border-r sm:rounded-lg"
 				>
-					<ChevronLeftIcon className="h-5 w-5 sm:hidden" />
+					<ChevronLeftIcon className="h-5 w-5 sm:hidden" aria-hidden="true" />
 					<span className="hidden sm:block">Previous</span>
-				</div>
+				</PageControl>
 
-				{pageLimit <= 5
-					? Array.from({ length: pageLimit }, (_, i) => i + 1).map((pageNum) => (
-						<div
-							key={pageNum}
-							className={`p-3 px-4 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`}
-							onClick={changePage}
-						>
-							{pageNum}
-						</div>
-					))
-					: pageLimit - currentPage < 5
-					? getPaginationGroup()
-							.slice(Math.max(0, pageLimit - 5), pageLimit)
-							.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit)
-							.map((pageNum) => (
-								<div
-									key={pageNum}
-									className={`p-3 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`}
-									onClick={changePage}
-								>
-									{pageNum}
-								</div>
-							))
-					: getPaginationGroup()
-							.slice(Math.max(0, currentPage - 1), Math.min(pageLimit, currentPage + 4))
-							.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit)
-							.map((pageNum) => (
-								<div
-									key={pageNum}
-									className={`p-3 px-4 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`}
-									onClick={changePage}
-								>
-									{pageNum}
-								</div>
-							))}
+				{pageNumbers.map((pageNum) => (
+					<PageControl
+						key={pageNum}
+						href={getPageHref?.(pageNum)}
+						onClick={() => setCurrentPage(pageNum)}
+						ariaLabel={`Page ${pageNum}`}
+						ariaCurrent={currentPage === pageNum ? 'page' : undefined}
+						className={`p-3 px-4 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`}
+					>
+						{pageNum}
+					</PageControl>
+				))}
 
-				<div
-					className="p-3 border border-r-0 border-gray-300 cursor-pointer flex items-center justify-center sm:border-r sm:w-1/2  sm:rounded-lg"
+				<PageControl
+					href={getPageHref?.(Math.min(pageLimit, currentPage + 1))}
 					onClick={goToNextPage}
+					ariaLabel="Next page"
+					className="p-3 border border-r-0 border-gray-300 cursor-pointer flex items-center justify-center sm:border-r sm:w-1/2  sm:rounded-lg"
 				>
-					<ChevronRightIcon className="h-5 w-5 sm:hidden" />
+					<ChevronRightIcon className="h-5 w-5 sm:hidden" aria-hidden="true" />
 					<span className="hidden sm:block">Next</span>
-				</div>
+				</PageControl>
 
-				<div
-					className="p-3 border border-gray-300 border-r-1 rounded-tr-lg rounded-br-lg cursor-pointer flex items-center justify-center sm:hidden"
+				<PageControl
+					href={getPageHref?.(pageLimit)}
 					onClick={goToLastPage}
+					ariaLabel="Last page"
+					className="p-3 border border-gray-300 border-r-1 rounded-tr-lg rounded-br-lg cursor-pointer flex items-center justify-center sm:hidden"
 				>
-					<ChevronDoubleRightIcon className="h-5 w-5" />
-				</div>
+					<ChevronDoubleRightIcon className="h-5 w-5" aria-hidden="true" />
+				</PageControl>
 			</div>
 		</div>
 	);

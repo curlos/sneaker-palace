@@ -20,15 +20,16 @@ const classNames = (...classes: Array<string>) => {
 const SortMenuItem = ({ sortValue, displayText, setSortType }: SortMenuItemProps) => (
 	<Menu.Item>
 		{({ active }) => (
-			<span
+			<button
+				type="button"
 				className={classNames(
 					active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-					'block px-4 py-2 text-sm cursor-pointer'
+					'block w-full text-left px-4 py-2 text-sm cursor-pointer'
 				)}
 				onClick={() => setSortType(sortValue)}
 			>
 				{displayText}
-			</span>
+			</button>
 		)}
 	</Menu.Item>
 );

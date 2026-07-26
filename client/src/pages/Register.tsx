@@ -62,38 +62,75 @@ const Register = () => {
 		>
 			<div className="flex flex-col gap-4 items-center bg-white p-4 rounded-lg my-6 xl:py-10 sm:w-97/100 shadow-2xl shadow-black border border-gray-300 w-2/5 container mx-auto max-w-7xl">
 				<span className="font-bold text-2xl">BECOME A MEMBER</span>
+				<label htmlFor="register-email" className="sr-only">
+					Email address
+				</label>
 				<input
+					id="register-email"
 					type="email"
+					required
+					autoComplete="email"
 					placeholder="Email address"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
-					className={`rounded-lg p-2 px-4 w-full focus:outline-none ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
+					aria-invalid={error}
+					aria-describedby={error ? 'register-error' : undefined}
+					className={`rounded-lg p-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-black ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
 				></input>
+				<label htmlFor="register-password" className="sr-only">
+					Password
+				</label>
 				<input
+					id="register-password"
 					type="password"
+					required
+					autoComplete="new-password"
 					placeholder="Password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
-					className={`rounded-lg p-2 px-4 w-full focus:outline-none ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
+					aria-invalid={error}
+					aria-describedby={error ? 'register-error' : undefined}
+					className={`rounded-lg p-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-black ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
 				></input>
+				<label htmlFor="register-first-name" className="sr-only">
+					First Name
+				</label>
 				<input
+					id="register-first-name"
 					type="text"
+					required
+					autoComplete="given-name"
 					placeholder="First Name"
 					value={firstName}
 					onChange={(e) => setFirstName(e.target.value)}
-					className={`rounded-lg p-2 px-4 w-full focus:outline-none ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
+					aria-invalid={error}
+					aria-describedby={error ? 'register-error' : undefined}
+					className={`rounded-lg p-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-black ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
 				></input>
+				<label htmlFor="register-last-name" className="sr-only">
+					Last Name
+				</label>
 				<input
+					id="register-last-name"
 					type="text"
+					required
+					autoComplete="family-name"
 					placeholder="Last Name"
 					value={lastName}
 					onChange={(e) => setLastName(e.target.value)}
-					className={`rounded-lg p-2 px-4 w-full focus:outline-none ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
+					aria-invalid={error}
+					aria-describedby={error ? 'register-error' : undefined}
+					className={`rounded-lg p-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-black ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
 				></input>
 
-				{error ? <span className="text-red-600">{errorMessage}</span> : null}
+				{error ? (
+					<span id="register-error" role="alert" className="text-red-600">
+						{errorMessage}
+					</span>
+				) : null}
 
 				<button
+					type="submit"
 					className="bg-black text-white w-full py-2 rounded-lg hover:bg-gray-600"
 					onClick={handleRegisterUser}
 				>

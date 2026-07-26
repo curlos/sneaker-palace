@@ -34,28 +34,49 @@ const Login = () => {
 		<form className="h-screen bg-cover flex justify-center items-start" onSubmit={handleLoginUser} style={{ backgroundImage: 'url(/assets/upscaled-images/bg-login-image.webp)'}}>
 			<div className="flex flex-col gap-4 items-center bg-white p-4 rounded-lg my-6 xl:py-10 sm:w-97/100 shadow-2xl shadow-black border border-gray-300 w-2/5 container mx-auto max-w-7xl">
 				<span className="font-bold text-2xl">YOUR ACCOUNT FOR EVERYTHING</span>
+				<label htmlFor="login-email" className="sr-only">
+					Email address
+				</label>
 				<input
+					id="login-email"
 					type="email"
+					required
+					autoComplete="email"
 					placeholder="Email address"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
-					className={`rounded-lg p-2 px-4 w-full focus:outline-none ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
+					aria-invalid={error}
+					aria-describedby={error ? 'login-error' : undefined}
+					className={`rounded-lg p-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-black ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
 				></input>
+				<label htmlFor="login-password" className="sr-only">
+					Password
+				</label>
 				<input
+					id="login-password"
 					type="password"
+					required
+					autoComplete="current-password"
 					placeholder="Password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
-					className={`rounded-lg p-2 px-4 w-full focus:outline-none ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
+					aria-invalid={error}
+					aria-describedby={error ? 'login-error' : undefined}
+					className={`rounded-lg p-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-black ${error ? 'border-red-600 border-2' : 'border border-gray-300'}`}
 				></input>
 
 				<button
+					type="submit"
 					className="bg-black text-white w-full py-2 rounded-lg hover:bg-gray-600"
 					onClick={handleLoginUser}
 				>
 					SIGN IN
 				</button>
-				{error ? <span className="text-red-600">Invalid credentials!</span> : null}
+				{error ? (
+					<span id="login-error" role="alert" className="text-red-600">
+						Invalid credentials!
+					</span>
+				) : null}
 				<span className="text-gray-500">
 					Not a member?{' '}
 					<Link to="/register" className="text-black underline">

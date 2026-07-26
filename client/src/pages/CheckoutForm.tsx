@@ -112,11 +112,15 @@ export default function CheckoutForm() {
 					</span>
 				</button>
 				{/* Show any error or success messages */}
-				{message && <div id="payment-message">{message}</div>}
+				{message && (
+					<div id="payment-message" role="alert">
+						{message}
+					</div>
+				)}
 			</div>
 
 			<div className="flex-4 border border-gray-300 rounded-lg sm:my-4">
-				<div className="p-5 bg-gray-200 font-bold rounded-t-lg">IN YOUR CART</div>
+				<h2 className="p-5 bg-gray-200 font-bold rounded-t-lg">IN YOUR CART</h2>
 				<div className="border-0 border-b border-solid border-gray-300 p-5 text-sm">
 					<div className="flex justify-between mb-1">
 						<div>Subtotal</div>
