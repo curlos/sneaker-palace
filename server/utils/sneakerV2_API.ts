@@ -1,7 +1,7 @@
+import Shoe from '../models/Shoe';
+
 const axios = require('axios');
 const mongoose = require('mongoose');
-const database = require('../database/connection');
-const Shoe = require('../models/Shoe');
 
 const timer = (ms: number | undefined) => new Promise((res) => setTimeout(res, ms));
 
@@ -211,10 +211,4 @@ const addShoeByName = async (name: string) => {
 	return addOneShoeToDatabase(options);
 };
 
-module.exports = {
-	getAllBrands,
-	getShoesFromBrand,
-	addAllShoes,
-	addShoeByName,
-	addAllShoesByBrand,
-};
+export { getAllBrands, getShoesFromBrand, addAllShoes, addShoeByName, addAllShoesByBrand };

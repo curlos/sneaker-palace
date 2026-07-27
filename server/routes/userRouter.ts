@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { UserType } from '../types/types';
 import { isValidEmail } from '../utils/validation';
+import User from '../models/User';
+import { verifyToken } from './verifyToken';
 
 declare module 'express-serve-static-core' {
 	interface Request {
@@ -8,11 +10,9 @@ declare module 'express-serve-static-core' {
 	}
 }
 
-const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const router = require('express').Router();
-const { verifyToken } = require('./verifyToken');
 
 const optionalAuth = (req: Request, _res: Response, next: any) => {
 	const authHeader: any = req.headers.authorization;
@@ -141,4 +141,4 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
 	}
 });
 
-module.exports = router;
+export default router;

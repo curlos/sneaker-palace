@@ -21,5 +21,6 @@
     "types": ["node", "jest", "react", "react-dom"],
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["./src/"]
+  "include": ["./src/"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"]
 }

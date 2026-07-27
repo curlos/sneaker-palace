@@ -31,4 +31,4 @@ router.get('/payment-method/:paymentMethodID', async (req: Request, res: Respons
 	return res.json(paymentMethod);
 });
 
-module.exports = router;
+export default router;

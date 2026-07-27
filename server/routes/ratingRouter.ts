@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
+import Rating from '../models/Rating';
+import Shoe from '../models/Shoe';
+import User from '../models/User';
+import { verifyToken } from './verifyToken';
 
 const express = require('express');
-const Rating = require('../models/Rating');
-const Shoe = require('../models/Shoe');
-const User = require('../models/User');
-const { verifyToken } = require('./verifyToken');
 
 const router = express.Router();
 
@@ -246,4 +246,4 @@ router.put('/reset-all-ratings', async (req: Request, res: Response) => {
 	}
 });
 
-module.exports = router;
+export default router;

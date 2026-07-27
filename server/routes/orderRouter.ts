@@ -8,11 +8,12 @@ declare module 'express-serve-static-core' {
 	}
 }
 
+import User from '../models/User';
+import Cart from '../models/Cart';
+import Order from '../models/Order';
+import { verifyToken } from './verifyToken';
+
 const express = require('express');
-const User = require('../models/User');
-const Cart = require('../models/Cart');
-const Order = require('../models/Order');
-const { verifyToken } = require('./verifyToken');
 
 const router = express.Router();
 
@@ -103,4 +104,4 @@ router.post('/no-account', async (req: Request, res: Response) => {
 	return res.json({ order });
 });
 
-module.exports = router;
+export default router;

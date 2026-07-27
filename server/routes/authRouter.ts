@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { isValidEmail } from '../utils/validation';
+import User from '../models/User';
 
 const router = require('express').Router();
-const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -85,4 +85,4 @@ router.post('/login', async (req: Request, res: Response) => {
 	}
 });
 
-module.exports = router;
+export default router;

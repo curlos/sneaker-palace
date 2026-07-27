@@ -54,4 +54,4 @@ shoeSchema.index({ rating: -1 });      // For "Highest Rated"
 
 const Shoe = mongoose.model('Shoe', shoeSchema);
 
-module.exports = Shoe;
+export default Shoe;

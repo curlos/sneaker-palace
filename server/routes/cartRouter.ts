@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-
-const Cart = require('../models/Cart');
-const { verifyToken } = require('./verifyToken');
+import Cart from '../models/Cart';
+import { verifyToken } from './verifyToken';
 
 const router = require('express').Router();
 
@@ -39,4 +38,4 @@ router.get('/', verifyToken, async (req: Request, res: Response) => {
 	return res.status(200).json(cart);
 });
 
-module.exports = router;
+export default router;

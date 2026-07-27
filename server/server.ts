@@ -1,4 +1,14 @@
 import { Request, Response } from 'express';
+import authRouter from './routes/authRouter';
+import userRouter from './routes/userRouter';
+import shoeRouter from './routes/shoeRouter';
+import cartRouter from './routes/cartRouter';
+import ratingRouter from './routes/ratingRouter';
+import stripeRouter from './routes/stripeRouter';
+import orderRouter from './routes/orderRouter';
+import imageRouter from './routes/imageRouter';
+import adminRouter from './routes/adminRouter';
+import { connectToServer } from './database/connection';
 
 const express = require('express');
 const session = require('express-session');
@@ -10,19 +20,9 @@ const path = require('path');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 8888;
-const authRouter = require('./routes/authRouter');
-const userRouter = require('./routes/userRouter');
-const shoeRouter = require('./routes/shoeRouter');
-const cartRouter = require('./routes/cartRouter');
-const ratingRouter = require('./routes/ratingRouter');
-const stripeRouter = require('./routes/stripeRouter');
-const orderRouter = require('./routes/orderRouter');
-const imageRouter = require('./routes/imageRouter');
-const adminRouter = require('./routes/adminRouter');
-const database = require('./database/connection');
 
 // Connect to database on startup
-database.connectToServer();
+connectToServer();
 
 app.use('/assets', express.static(path.join(__dirname, '/assets')));
 

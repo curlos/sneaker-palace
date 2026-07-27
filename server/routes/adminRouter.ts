@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
+import User from '../models/User';
+import Shoe from '../models/Shoe';
+import { addAllShoes, addAllShoesByBrand, addShoeByName } from '../utils/sneakerV2_API';
 
 const router = require('express').Router();
-const User = require('../models/User');
-const Shoe = require('../models/Shoe');
 const CryptoJS = require('crypto-js');
 const bcrypt = require('bcrypt');
-const { addAllShoes, addAllShoesByBrand, addShoeByName } = require('../utils/sneakerV2_API');
 
 // Simple admin authentication middleware
 const adminAuth = (req: Request, res: Response, next: any) => {
@@ -138,4 +138,4 @@ if (process.env.NODE_ENV !== 'production') {
 	});
 }
 
-module.exports = router;
+export default router;

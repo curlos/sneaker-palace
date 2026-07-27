@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
+import Shoe from '../models/Shoe';
+import User from '../models/User';
+import { verifyToken } from './verifyToken';
 
 const express = require('express');
-const Shoe = require('../models/Shoe');
-const User = require('../models/User');
-const { verifyToken } = require('./verifyToken');
 
 const router = express.Router();
 
@@ -411,4 +411,4 @@ router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response)
 	}
 });
 
-module.exports = router;
+export default router;

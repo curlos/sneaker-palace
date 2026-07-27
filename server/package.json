@@ -31,10 +31,16 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
-    "prettier": "^3.6.2"
+    "@types/node": "16.11.6",
+    "@types/supertest": "^7.2.1",
+    "mongodb-memory-server": "^11.2.0",
+    "prettier": "^3.6.2",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "start": "tsc && node dist/server.js",
     "devStart": "nodemon server.ts",
     "tsc": "tsc",
