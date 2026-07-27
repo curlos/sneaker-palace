@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserType } from '../types/types';
+import { isValidEmail } from '../utils/validation';
 
 declare module 'express-serve-static-core' {
 	interface Request {
@@ -54,6 +55,10 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
 	try {
 		// If email is being updated, check if it's different and unique
 		if (updateData.email) {
+			if (!isValidEmail(updateData.email)) {
+				return res.status(400).json({ error: 'A valid email is required' });
+			}
+
 			const currentUser = await User.findById(req.user.id);
 
 			if (!currentUser) {

@@ -17,9 +17,14 @@ export function useModalA11y<T extends HTMLElement = HTMLElement>(onClose: () =>
 				return;
 			}
 
-			if (e.key === 'Tab' && focusable && focusable.length > 0) {
-				const first = focusable[0];
-				const last = focusable[focusable.length - 1];
+			if (e.key === 'Tab') {
+				// Re-query on every keydown instead of reusing the mount-time snapshot above,
+				// since a modal's content (e.g. search results) can change after it opens.
+				const currentFocusable = containerRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+				if (!currentFocusable || currentFocusable.length === 0) return;
+
+				const first = currentFocusable[0];
+				const last = currentFocusable[currentFocusable.length - 1];
 
 				if (e.shiftKey && document.activeElement === first) {
 					e.preventDefault();

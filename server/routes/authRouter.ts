@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { isValidEmail } from '../utils/validation';
 
 const router = require('express').Router();
 const User = require('../models/User');
@@ -18,6 +19,10 @@ router.post('/register', async (req: Request, res: Response) => {
 
 	if (req.body.password.length < 8) {
 		return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+	}
+
+	if (!req.body.email || !isValidEmail(req.body.email)) {
+		return res.status(400).json({ error: 'A valid email is required' });
 	}
 
 	const foundUser = await User.findOne({ lowerCaseEmail: req.body.email.toLowerCase() });

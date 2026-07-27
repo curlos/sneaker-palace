@@ -38,6 +38,7 @@ const ReviewForm = () => {
 		recommended: null,
 	});
 	const [file, setFile] = useState<File>();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Update reviewInfo when existing rating is loaded
 	useEffect(() => {
@@ -51,6 +52,7 @@ const ReviewForm = () => {
 	}, []);
 
 	const handleSubmitReview = async () => {
+		setIsSubmitting(true);
 		try {
 			let imagePath = null;
 
@@ -69,6 +71,7 @@ const ReviewForm = () => {
 			history.push(`/shoe/${shoe?.shoeID}`);
 		} catch (error) {
 			console.error('Failed to submit review:', error);
+			setIsSubmitting(false);
 		}
 	};
 
@@ -84,6 +87,7 @@ const ReviewForm = () => {
 	};
 
 	const handleEditReview = async () => {
+		setIsSubmitting(true);
 		try {
 			let imagePath = existingRating?.photo || null;
 
@@ -108,6 +112,7 @@ const ReviewForm = () => {
 			history.push(`/shoe/${shoe?.shoeID}`);
 		} catch (error) {
 			console.error('Failed to edit review:', error);
+			setIsSubmitting(false);
 		}
 	};
 
@@ -532,10 +537,19 @@ const ReviewForm = () => {
 
 				<button
 					type="button"
-					className="bg-black text-white rounded-full flex-2 py-3 mr-5 my-5 hover:bg-gray-700 p-7"
+					disabled={isSubmitting}
+					className="bg-black text-white rounded-full flex-2 py-3 mr-5 my-5 hover:bg-gray-700 p-7 disabled:opacity-50"
 					onClick={reviewID ? handleEditReview : handleSubmitReview}
 				>
-					{reviewID ? 'EDIT REVIEW' : 'SUBMIT REVIEW'}
+					{isSubmitting ? (
+						<div className="flex justify-center">
+							<CircleLoader size={5} />
+						</div>
+					) : reviewID ? (
+						'EDIT REVIEW'
+					) : (
+						'SUBMIT REVIEW'
+					)}
 				</button>
 			</div>
 		</div>

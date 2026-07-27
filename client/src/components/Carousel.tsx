@@ -34,6 +34,16 @@ const Carousel = () => {
 				backgroundColor: currentShoe.bgColor,
 			}}
 		>
+
+			<div className="container mx-auto max-w-7xl">
+				<div className="ml-10 pb-10 w-1/3 sm:w-3/4">
+					<h1 className="text-5xl mb-6" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>{currentShoe.name}</h1>
+					<Link to={`/shoe/${currentShoe.shoeID}`} className="bg-black border-2 border-gray-300 text-white text-xl rounded-full px-6 py-2 no-underline hover:bg-gray-800">
+						Shop Now
+					</Link>
+				</div>
+			</div>
+			
 			<button
 				type="button"
 				onClick={() => setIsPaused((prev) => !prev)}
@@ -47,15 +57,6 @@ const Carousel = () => {
 					<PauseIcon className="h-6 w-6 text-white" aria-hidden="true" />
 				)}
 			</button>
-
-			<div className="container mx-auto max-w-7xl">
-				<div className="ml-10 pb-10 w-1/3 sm:w-3/4">
-					<h1 className="text-5xl mb-6" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>{currentShoe.name}</h1>
-					<Link to={`/shoe/${currentShoe.shoeID}`} className="bg-black border-2 border-gray-300 text-white text-xl rounded-full px-6 py-2 no-underline hover:bg-gray-800">
-						Shop Now
-					</Link>
-				</div>
-			</div>
 		</div>
 	);
 };
