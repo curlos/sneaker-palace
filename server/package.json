@@ -41,9 +41,9 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "start": "tsc && node dist/server.js",
+    "start": "tsc -p tsconfig.build.json && node dist/server.js",
     "devStart": "nodemon server.ts",
-    "tsc": "tsc",
+    "tsc": "tsc -p tsconfig.build.json",
     "start:prod": "node dist/server.js",
     "format": "prettier --write \"**/*.{ts,js}\"",
     "format:check": "prettier --check \"**/*.{ts,js}\""

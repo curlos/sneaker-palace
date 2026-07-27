@@ -9,5 +9,5 @@
     "forceConsistentCasingInFileNames": true,
     "typeRoots" : ["./node_modules/@types", "./types"]
   },
-  "exclude": ["**/*.test.ts", "vitest.config.ts", "node_modules", "dist"]
+  "exclude": ["vitest.config.ts", "node_modules", "dist"]
 }

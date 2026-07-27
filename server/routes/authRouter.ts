@@ -9,11 +9,15 @@ const bcrypt = require('bcrypt');
 // Register User
 router.post('/register', async (req: Request, res: Response) => {
 	// Basic validation
-	if (!req.body.firstName || req.body.firstName.trim().length === 0) {
+	if (typeof req.body.firstName !== 'string' || req.body.firstName.trim().length === 0) {
 		return res.status(400).json({ error: 'First name is required' });
 	}
 
-	if (!req.body.password) {
+	if (typeof req.body.lastName !== 'string' || req.body.lastName.trim().length === 0) {
+		return res.status(400).json({ error: 'Last name is required' });
+	}
+
+	if (typeof req.body.password !== 'string' || req.body.password.trim().length === 0) {
 		return res.status(400).json({ error: 'Password is required' });
 	}
 
@@ -42,7 +46,8 @@ router.post('/register', async (req: Request, res: Response) => {
 
 		try {
 			const savedUser = await newUser.save();
-			return res.status(201).json(savedUser);
+			const { password, ...others } = savedUser._doc;
+			return res.status(201).json(others);
 		} catch (err) {
 			return res.status(500).json(err);
 		}
