@@ -1,6 +1,4 @@
-export {};
-
-const Shoe = require('../models/Shoe');
+import Shoe from '../models/Shoe';
 
 Shoe.aggregate([
 	{
@@ -11,7 +9,9 @@ Shoe.aggregate([
 		},
 	},
 	{ $match: { count: { $gt: 1 } } },
-]).forEach((doc: any) => {
-	doc.dups.shift();
-	Shoe.remove({ _id: { $in: doc.dups } });
+]).then((docs: any[]) => {
+	docs.forEach((doc: any) => {
+		doc.dups.shift();
+		Shoe.deleteMany({ _id: { $in: doc.dups } });
+	});
 });

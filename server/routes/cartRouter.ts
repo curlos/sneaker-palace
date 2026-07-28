@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import Cart from '../models/Cart';
 import { verifyToken } from './verifyToken';
 
-const router = require('express').Router();
+const router = express.Router();
 
 // Create cart
 router.post('/', verifyToken, async (req: Request, res: Response) => {
@@ -22,7 +22,7 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
 		{
 			$set: req.body,
 		},
-		{ new: true }
+		{ returnDocument: 'after' }
 	);
 
 	if (!updatedCart) {

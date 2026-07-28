@@ -1,8 +1,10 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import Stripe from 'stripe';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
-const router = require('express').Router();
-const stripe = require('stripe')(process.env.STRIPE_KEY);
+dotenv.config();
+const router = express.Router();
+const stripe = new Stripe(process.env.STRIPE_KEY as string, { apiVersion: '2026-06-24.dahlia' });
 
 router.post('/create-payment-intent', async (req: Request, res: Response) => {
 	const { items } = req.body;
@@ -26,7 +28,7 @@ router.post('/create-payment-intent', async (req: Request, res: Response) => {
 });
 
 router.get('/payment-method/:paymentMethodID', async (req: Request, res: Response) => {
-	const paymentMethod = await stripe.paymentMethods.retrieve(req.params.paymentMethodID);
+	const paymentMethod = await stripe.paymentMethods.retrieve(req.params.paymentMethodID as string);
 
 	return res.json(paymentMethod);
 });

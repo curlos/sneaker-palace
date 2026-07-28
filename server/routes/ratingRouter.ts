@@ -1,10 +1,8 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import Rating from '../models/Rating';
 import Shoe from '../models/Shoe';
 import User from '../models/User';
 import { verifyToken } from './verifyToken';
-
-const express = require('express');
 
 const router = express.Router();
 
@@ -81,7 +79,12 @@ router.post('/rate', verifyToken, async (req: Request, res: Response) => {
 
 		const updatedShoe = await Shoe.findById(shoe._id);
 		const updatedUser = await User.findById(user._id);
-		const { password, ...userWithoutPassword } = updatedUser._doc;
+
+		if (!updatedUser) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		const { password, ...userWithoutPassword } = updatedUser.toObject();
 
 		return res.json({ updatedShoe, updatedUser: userWithoutPassword, rating });
 	} catch (error) {
@@ -100,7 +103,7 @@ router.put('/edit/:id', verifyToken, async (req: Request, res: Response) => {
 			return res.status(403).json({ error: 'Access denied - not your rating' });
 		}
 
-		const updatedRating = await Rating.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+		const updatedRating = await Rating.findByIdAndUpdate(req.params.id, { $set: req.body }, { returnDocument: 'after' });
 
 		// Update shoe rating if ratingNum changed
 		if (req.body.ratingNum && req.body.ratingNum !== oldRating.ratingNum) {
@@ -128,6 +131,10 @@ router.put('/like', verifyToken, async (req: Request, res: Response) => {
 	const rating = await Rating.findOne({ _id: req.body.ratingID });
 	const user = await User.findOne({ _id: req.user.id });
 
+	if (!rating || !user) {
+		return res.status(404).json({ error: 'Rating or user not found' });
+	}
+
 	try {
 		if (!rating.helpful.includes(req.user.id)) {
 			await rating.updateOne({ $push: { helpful: user._id } });
@@ -137,14 +144,24 @@ router.put('/like', verifyToken, async (req: Request, res: Response) => {
 
 			const updatedRating = await Rating.findById(rating._id);
 			const updatedUser = await User.findById(user._id);
-			const { password, ...userWithoutPassword } = updatedUser._doc;
+
+			if (!updatedUser) {
+				return res.status(404).json({ error: 'User not found' });
+			}
+
+			const { password, ...userWithoutPassword } = updatedUser.toObject();
 			return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword });
 		} else {
 			await rating.updateOne({ $pull: { helpful: user._id } });
 			await user.updateOne({ $pull: { helpful: rating._id } });
 			const updatedRating = await Rating.findById(rating._id);
 			const updatedUser = await User.findById(user._id);
-			const { password, ...userWithoutPassword } = updatedUser._doc;
+
+			if (!updatedUser) {
+				return res.status(404).json({ error: 'User not found' });
+			}
+
+			const { password, ...userWithoutPassword } = updatedUser.toObject();
 			return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword });
 		}
 	} catch (err) {
@@ -156,6 +173,10 @@ router.put('/dislike', verifyToken, async (req: Request, res: Response) => {
 	const rating = await Rating.findOne({ _id: req.body.ratingID });
 	const user = await User.findOne({ _id: req.user.id });
 
+	if (!rating || !user) {
+		return res.status(404).json({ error: 'Rating or user not found' });
+	}
+
 	try {
 		if (!rating.notHelpful.includes(req.user.id)) {
 			await rating.updateOne({ $push: { notHelpful: user._id } });
@@ -164,14 +185,24 @@ router.put('/dislike', verifyToken, async (req: Request, res: Response) => {
 			await user.updateOne({ $pull: { helpful: rating._id } });
 			const updatedRating = await Rating.findById(rating._id);
 			const updatedUser = await User.findById(user._id);
-			const { password, ...userWithoutPassword } = updatedUser._doc;
+
+			if (!updatedUser) {
+				return res.status(404).json({ error: 'User not found' });
+			}
+
+			const { password, ...userWithoutPassword } = updatedUser.toObject();
 			return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword });
 		} else {
 			await rating.updateOne({ $pull: { notHelpful: user._id } });
 			await user.updateOne({ $pull: { notHelpful: rating._id } });
 			const updatedRating = await Rating.findById(rating._id);
 			const updatedUser = await User.findById(user._id);
-			const { password, ...userWithoutPassword } = updatedUser._doc;
+
+			if (!updatedUser) {
+				return res.status(404).json({ error: 'User not found' });
+			}
+
+			const { password, ...userWithoutPassword } = updatedUser.toObject();
 			return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword });
 		}
 	} catch (err) {

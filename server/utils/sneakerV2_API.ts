@@ -1,17 +1,15 @@
+import axios from 'axios';
 import Shoe from '../models/Shoe';
-
-const axios = require('axios');
-const mongoose = require('mongoose');
 
 const timer = (ms: number | undefined) => new Promise((res) => setTimeout(res, ms));
 
 const getAllBrands = async () => {
 	const options = {
-		method: 'GET',
+		method: 'GET' as const,
 		url: 'https://the-sneaker-database.p.rapidapi.com/brands',
 		headers: {
 			'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
-			'x-rapidapi-key': process.env.RAPID_API_KEY,
+			'x-rapidapi-key': process.env.RAPID_API_KEY as string,
 		},
 	};
 
@@ -143,9 +141,7 @@ const addOneShoeToDatabase = async (options: Object) => {
 			links,
 		});
 
-		await newShoe.save((err: Error, result: typeof Shoe) => {
-			if (err) return console.error(err);
-		});
+		await newShoe.save();
 
 		return response.data.results;
 	} catch (err) {
@@ -155,12 +151,12 @@ const addOneShoeToDatabase = async (options: Object) => {
 
 const getShoesFromBrand = async (brand: String) => {
 	const options = {
-		method: 'GET',
+		method: 'GET' as const,
 		url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
 		params: { limit: '20', brand: brand },
 		headers: {
 			'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
-			'x-rapidapi-key': process.env.RAPID_API_KEY,
+			'x-rapidapi-key': process.env.RAPID_API_KEY as string,
 		},
 	};
 
@@ -169,12 +165,12 @@ const getShoesFromBrand = async (brand: String) => {
 
 const addAllShoes = async (pageNum: number, name: string) => {
 	const options = {
-		method: 'GET',
+		method: 'GET' as const,
 		url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
 		params: { limit: '100', page: pageNum, name },
 		headers: {
 			'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
-			'x-rapidapi-key': process.env.RAPID_API_KEY,
+			'x-rapidapi-key': process.env.RAPID_API_KEY as string,
 		},
 	};
 
@@ -183,12 +179,12 @@ const addAllShoes = async (pageNum: number, name: string) => {
 
 const addAllShoesByBrand = async (brand: string, pageNum: number, releaseYear: number) => {
 	const options = {
-		method: 'GET',
+		method: 'GET' as const,
 		url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
 		params: { limit: '100', brand: brand, page: pageNum },
 		headers: {
 			'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
-			'x-rapidapi-key': process.env.RAPID_API_KEY,
+			'x-rapidapi-key': process.env.RAPID_API_KEY as string,
 		},
 	};
 
@@ -199,12 +195,12 @@ const addAllShoesByBrand = async (brand: string, pageNum: number, releaseYear: n
 
 const addShoeByName = async (name: string) => {
 	const options = {
-		method: 'GET',
+		method: 'GET' as const,
 		url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
 		params: { limit: '100', name: name },
 		headers: {
 			'x-rapidapi-host': 'the-sneaker-database.p.rapidapi.com',
-			'x-rapidapi-key': process.env.RAPID_API_KEY,
+			'x-rapidapi-key': process.env.RAPID_API_KEY as string,
 		},
 	};
 

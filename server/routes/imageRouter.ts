@@ -1,10 +1,7 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import multer from 'multer';
 import { uploadToCloudinary } from '../cloudinary/upload';
 
-const express = require('express');
-
-
-const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();

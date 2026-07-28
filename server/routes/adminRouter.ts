@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import CryptoJS from 'crypto-js';
+import bcrypt from 'bcrypt';
 import User from '../models/User';
 import Shoe from '../models/Shoe';
 import { addAllShoes, addAllShoesByBrand, addShoeByName } from '../utils/sneakerV2_API';
 
-const router = require('express').Router();
-const CryptoJS = require('crypto-js');
-const bcrypt = require('bcrypt');
+const router = express.Router();
 
 // Simple admin authentication middleware
 const adminAuth = (req: Request, res: Response, next: any) => {
@@ -40,7 +40,7 @@ if (process.env.NODE_ENV !== 'production') {
 					}
 
 					// Legacy password - decrypt and upgrade
-					const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC);
+					const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC as string);
 					const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
 					if (!originalPassword) {

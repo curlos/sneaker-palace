@@ -1,9 +1,7 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import Shoe from '../models/Shoe';
 import User from '../models/User';
 import { verifyToken } from './verifyToken';
-
-const express = require('express');
 
 const router = express.Router();
 
@@ -18,7 +16,7 @@ router.get('/page/:pageNum', async (req: Request, res: Response) => {
 		select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
 	};
 
-	Shoe.paginate({}, options, (err: any, result: any) => {
+	(Shoe as any).paginate({}, options, (err: any, result: any) => {
 		return res.json(result);
 	});
 });
@@ -394,19 +392,33 @@ router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response)
 	const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });
 	const user = await User.findOne({ _id: req.user.id });
 
+	if (!shoe || !user) {
+		return res.status(404).json({ error: 'Shoe or user not found' });
+	}
+
 	if (!shoe.favorites.includes(req.user.id)) {
 		await shoe.updateOne({ $push: { favorites: user._id } });
 		await user.updateOne({ $push: { favorites: shoe._id } });
 		const updatedShoe = await Shoe.findById(shoe._id);
 		const updatedUser = await User.findById(user._id);
-		const { password, ...userWithoutPassword } = updatedUser._doc;
+
+		if (!updatedUser) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		const { password, ...userWithoutPassword } = updatedUser.toObject();
 		return res.status(200).json({ updatedShoe, updatedUser: userWithoutPassword });
 	} else {
 		await shoe.updateOne({ $pull: { favorites: user._id } });
 		await user.updateOne({ $pull: { favorites: shoe._id } });
 		const updatedShoe = await Shoe.findById(shoe._id);
 		const updatedUser = await User.findById(user._id);
-		const { password, ...userWithoutPassword } = updatedUser._doc;
+
+		if (!updatedUser) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		const { password, ...userWithoutPassword } = updatedUser.toObject();
 		return res.status(200).json({ updatedShoe, updatedUser: userWithoutPassword });
 	}
 });

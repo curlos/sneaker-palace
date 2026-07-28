@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { UserType } from '../types/types';
 import { isValidEmail } from '../utils/validation';
 import User from '../models/User';
@@ -10,21 +12,19 @@ declare module 'express-serve-static-core' {
 	}
 }
 
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const router = require('express').Router();
+const router = express.Router();
 
 const optionalAuth = (req: Request, _res: Response, next: any) => {
 	const authHeader: any = req.headers.authorization;
 
 	if (authHeader) {
 		const token = authHeader.split(' ')[1];
-		jwt.verify(token, process.env.JWT_SEC, (err: any, user: UserType) => {
+		jwt.verify(token, process.env.JWT_SEC as string, ((err: any, user: UserType) => {
 			if (!err) {
 				req.user = user;
 			}
 			next();
-		});
+		}) as any);
 	} else {
 		next();
 	}
@@ -40,10 +40,10 @@ router.get('/:userID', optionalAuth, async (req: Request, res: Response) => {
 	const isOwnProfile = req.user && req.user.id === req.params.userID;
 
 	if (isOwnProfile) {
-		const { password, ...userWithoutPassword } = user._doc;
+		const { password, ...userWithoutPassword } = user.toObject();
 		return res.json(userWithoutPassword);
 	} else {
-		const { password, email, lowerCaseEmail, isAdmin, orders, ...publicProfile } = user._doc;
+		const { password, email, lowerCaseEmail, isAdmin, orders, ...publicProfile } = user.toObject();
 		return res.json(publicProfile);
 	}
 });
@@ -86,10 +86,14 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
 			{
 				$set: updateData,
 			},
-			{ new: true }
+			{ returnDocument: 'after' }
 		);
 
-		const { password, ...userWithoutPassword } = updatedUser._doc;
+		if (!updatedUser) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		const { password, ...userWithoutPassword } = updatedUser.toObject();
 		return res.status(200).json({ message: 'User updated successfully', user: userWithoutPassword });
 	} catch (err) {
 		return res.json({ error: err });
@@ -131,10 +135,14 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
 			{
 				$set: newPassword,
 			},
-			{ new: true }
+			{ returnDocument: 'after' }
 		);
 
-		const { password, ...userWithoutPassword } = updatedUser._doc;
+		if (!updatedUser) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		const { password, ...userWithoutPassword } = updatedUser.toObject();
 		return res.status(200).json({ message: 'Password updated successfully', user: userWithoutPassword });
 	} catch (err) {
 		return res.status(500).json({ error: 'Internal server error' });

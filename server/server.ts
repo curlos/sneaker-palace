@@ -1,4 +1,10 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import session from 'express-session';
+import passport from 'passport';
+import logger from 'morgan';
+import cors from 'cors';
+import path from 'path';
+import dotenv from 'dotenv';
 import authRouter from './routes/authRouter';
 import userRouter from './routes/userRouter';
 import shoeRouter from './routes/shoeRouter';
@@ -10,14 +16,8 @@ import imageRouter from './routes/imageRouter';
 import adminRouter from './routes/adminRouter';
 import { connectToServer } from './database/connection';
 
-const express = require('express');
-const session = require('express-session');
-const passport = require('passport');
-const logger = require('morgan');
 const app = express();
-const cors = require('cors');
-const path = require('path');
-require('dotenv').config();
+dotenv.config();
 
 const PORT = process.env.PORT || 8888;
 

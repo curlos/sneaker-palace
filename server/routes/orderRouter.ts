@@ -1,4 +1,5 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
 
 // Extend Express Request interface
 declare module 'express-serve-static-core' {
@@ -12,8 +13,6 @@ import User from '../models/User';
 import Cart from '../models/Cart';
 import Order from '../models/Order';
 import { verifyToken } from './verifyToken';
-
-const express = require('express');
 
 const router = express.Router();
 
@@ -70,20 +69,43 @@ router.post('/', verifyToken, async (req: Request, res: Response) => {
 
 	const user = await User.findById(req.user.id);
 	const cart = await Cart.findOne({ userID: req.user.id });
-	cart.products = [];
+
+	if (!user || !cart) {
+		return res.status(404).json({ error: 'User or cart not found' });
+	}
+
+	cart.products.splice(0, cart.products.length);
 
 	const order = new Order({
 		...req.body,
 		userID: req.user.id,
 	});
 
-	await user.updateOne({ $push: { orders: order } });
-	await cart.save();
-	await order.save();
+	const session = await mongoose.startSession();
+
+	try {
+		session.startTransaction();
+
+		await user.updateOne({ $push: { orders: order } }, { session });
+		await cart.save({ session });
+		await order.save({ session });
+
+		await session.commitTransaction();
+	} catch (error) {
+		await session.abortTransaction();
+		return res.status(500).json({ error: 'Failed to place order' });
+	} finally {
+		session.endSession();
+	}
 
 	const updatedUser = await User.findById(req.user.id);
 	const updatedCart = await Cart.findOne({ userID: req.user.id });
-	const { password, ...userWithoutPassword } = updatedUser._doc;
+
+	if (!updatedUser) {
+		return res.status(404).json({ error: 'User not found' });
+	}
+
+	const { password, ...userWithoutPassword } = updatedUser.toObject();
 
 	return res.json({ order, updatedUser: userWithoutPassword, updatedCart });
 });

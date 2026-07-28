@@ -1,6 +1,5 @@
-import { Request, Response } from 'express';
-
-const url = require('url');
+import { Request } from 'express';
+import url from 'url';
 
 export const getFullURL = (req: Request) => {
 	return url.format({
