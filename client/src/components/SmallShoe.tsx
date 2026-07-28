@@ -6,8 +6,8 @@ import ShoeImage from './ShoeImage';
 
 const SmallShoe = ({ shoe }: Props) => {
 	return (
-		<Link to={`/shoe/${shoe.shoeID}`} className="w-4/12 sm:w-6/12">
-			<div className="flex flex-col bg-white cursor-pointer mr-5 mb-5 px-3 sm:mr-0">
+		<Link to={`/shoe/${shoe.shoeID}`} className="w-4/12 max-sm:w-6/12">
+			<div className="flex flex-col bg-white cursor-pointer mr-5 mb-5 px-3 max-sm:mr-0">
 				<div className="w-full relative overflow-hidden" style={{ paddingBottom: '100%' }}>
 					<ShoeImage
 						src={shoe.image.original}

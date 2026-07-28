@@ -79,8 +79,8 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
 	};
 
 	return (
-		<div className="border-t border-gray-300 flex pt-8 xl:block xl:px-4">
-			<div className="mr-12 flex-2 xl:mb-10">
+		<div className="border-t border-gray-300 flex pt-8 max-xl:block max-xl:px-4">
+			<div className="mr-12 flex-[2] max-xl:mb-10">
 				<h2 className="text-2xl font-bold">Customer Reviews</h2>
 				<div className="flex gap-2 items-center">
 					<span aria-label={`Rated ${(shoe.rating || 0).toFixed(2)} out of 5`}>
@@ -120,7 +120,7 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
 			</div>
 
 			{shoeRatings.length > 0 ? (
-				<div className="flex-8">
+				<div className="flex-[8]">
 					<h3 ref={reviewsRef} tabIndex={-1} className="text-2xl font-bold mb-4 outline-none">
 						Reviews
 					</h3>

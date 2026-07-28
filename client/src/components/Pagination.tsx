@@ -110,8 +110,8 @@ export const Pagination = ({
 					.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit);
 
 	return (
-		<div className="flex justify-between items-center my-4 text-black sm:justify-between sm:px-3">
-			<div className="pagResults sm:hidden">
+		<div className="flex justify-between items-center my-4 text-black max-sm:justify-between max-sm:px-3">
+			<div className="pagResults max-sm:hidden">
 				Showing <strong>{(currentPage * dataLimit - dataLimit + 1).toLocaleString()}</strong> to{' '}
 				<strong>
 					{(currentPage * dataLimit - dataLimit + dataLimit - 1 >= totalItemCount
@@ -122,12 +122,12 @@ export const Pagination = ({
 				of <strong>{totalItemCount.toLocaleString()}</strong> results
 			</div>
 
-			<div className="flex w-1/2 justify-end sm:justify-between sm:w-full sm:gap-4">
+			<div className="flex w-1/2 justify-end max-sm:justify-between max-sm:w-full max-sm:gap-4">
 				<PageControl
 					href={getPageHref?.(1)}
 					onClick={goToFirstPage}
 					ariaLabel="First page"
-					className="p-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg flex items-center justify-center sm:hidden"
+					className="p-3 border border-gray-300 border-r-0 cursor-pointer rounded-tl-lg rounded-bl-lg flex items-center justify-center max-sm:hidden"
 				>
 					<ChevronDoubleLeftIcon className="h-5 w-5" aria-hidden="true" />
 				</PageControl>
@@ -136,10 +136,10 @@ export const Pagination = ({
 					href={getPageHref?.(Math.max(1, currentPage - 1))}
 					onClick={goToPreviousPage}
 					ariaLabel="Previous page"
-					className="p-3 px-3 border border-gray-300 border-r-0 cursor-pointer flex items-center justify-center sm:border-l sm:w-1/2 sm:border-r sm:rounded-lg"
+					className="p-3 px-3 border border-gray-300 border-r-0 cursor-pointer flex items-center justify-center max-sm:border-l max-sm:w-1/2 max-sm:border-r max-sm:rounded-lg"
 				>
-					<ChevronLeftIcon className="h-5 w-5 sm:hidden" aria-hidden="true" />
-					<span className="hidden sm:block">Previous</span>
+					<ChevronLeftIcon className="h-5 w-5 max-sm:hidden" aria-hidden="true" />
+					<span className="hidden max-sm:block">Previous</span>
 				</PageControl>
 
 				{pageNumbers.map((pageNum) => (
@@ -149,7 +149,7 @@ export const Pagination = ({
 						onClick={() => setCurrentPage(pageNum)}
 						ariaLabel={`Page ${pageNum}`}
 						ariaCurrent={currentPage === pageNum ? 'page' : undefined}
-						className={`p-3 px-4 border border-gray-300 cursor-pointer sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`}
+						className={`p-3 px-4 border border-gray-300 cursor-pointer max-sm:hidden ${currentPage === pageNum ? 'border-2 border-gray-700 font-bold' : 'border-r-0'}`}
 					>
 						{pageNum}
 					</PageControl>
@@ -159,17 +159,17 @@ export const Pagination = ({
 					href={getPageHref?.(Math.min(pageLimit, currentPage + 1))}
 					onClick={goToNextPage}
 					ariaLabel="Next page"
-					className="p-3 border border-r-0 border-gray-300 cursor-pointer flex items-center justify-center sm:border-r sm:w-1/2  sm:rounded-lg"
+					className="p-3 border border-r-0 border-gray-300 cursor-pointer flex items-center justify-center max-sm:border-r max-sm:w-1/2  max-sm:rounded-lg"
 				>
-					<ChevronRightIcon className="h-5 w-5 sm:hidden" aria-hidden="true" />
-					<span className="hidden sm:block">Next</span>
+					<ChevronRightIcon className="h-5 w-5 max-sm:hidden" aria-hidden="true" />
+					<span className="hidden max-sm:block">Next</span>
 				</PageControl>
 
 				<PageControl
 					href={getPageHref?.(pageLimit)}
 					onClick={goToLastPage}
 					ariaLabel="Last page"
-					className="p-3 border border-gray-300 border-r-1 rounded-tr-lg rounded-br-lg cursor-pointer flex items-center justify-center sm:hidden"
+					className="p-3 border border-gray-300 border-r-1 rounded-tr-lg rounded-br-lg cursor-pointer flex items-center justify-center max-sm:hidden"
 				>
 					<ChevronDoubleRightIcon className="h-5 w-5" aria-hidden="true" />
 				</PageControl>

@@ -7,8 +7,8 @@ import { useCreatePaymentIntentQuery } from '../api/checkoutApi';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 
 // Initialize Stripe with publishable key (safe for frontend)
-const REACT_APP_STRIPE = process.env.REACT_APP_STRIPE;
-const stripePromise = loadStripe(REACT_APP_STRIPE);
+const VITE_STRIPE = import.meta.env.VITE_STRIPE;
+const stripePromise = loadStripe(VITE_STRIPE);
 
 interface Props {
 	children: React.ReactNode;

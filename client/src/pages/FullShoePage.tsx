@@ -143,10 +143,10 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 					{shoeLoading || userLoading ? (
 						<FullShoeSkeleton />
 					) : (
-						<div className="flex md:block">
-							<div className="flex-3">
+						<div className="flex max-md:block">
+							<div className="flex-[3]">
 								{shoe && shoe.image && shoe.image['360'].length > 0 ? (
-									<div className="xl:px-4">
+									<div className="max-xl:px-4">
 										<img src={shoe?.image['360'][imageNum]} alt={shoe.name} />
 										<label htmlFor="volume" className="sr-only">
 											Rotate {shoe.name} image
@@ -167,14 +167,14 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 								)}
 							</div>
 
-							<div className="flex-2 p-10 xl:p-4">
+							<div className="flex-[2] p-10 max-xl:p-4">
 								<h1 className="text-2xl">{shoe?.name}</h1>
 								<div className="text-gray-500">
 									{shoe?.gender?.charAt(0).toUpperCase() + shoe?.gender?.slice(1)}'s Shoes
 								</div>
 								<div className="text-xl text-red-800 mt-1">${shoe?.retailPrice}</div>
 								<div id="size-label" className="mt-5 mb-2">Select Size</div>
-								<div role="radiogroup" aria-labelledby="size-label" className="flex flex-wrap box-border justify-between">
+								<div role="radiogroup" aria-labelledby="size-label" className="flex flex-wrap box-border justify-between max-sm:text-sm">
 									{SHOE_SIZES.map((shoeSize, index) => {
 										return (
 											<button
@@ -187,7 +187,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 												aria-checked={shoeSize === selectedSize}
 												tabIndex={shoeSize === selectedSize ? 0 : -1}
 												className={
-													`box-border cursor-pointer text-center border py-2 mb-2 hover:border-gray-600 w-32/100 ` +
+													`box-border cursor-pointer text-center border py-2 mb-2 hover:border-gray-600 w-[32%] ` +
 													(shoeSize === selectedSize ? 'border-black' : 'border-gray-300')
 												}
 												onClick={() => setSelectedSize(shoeSize)}
@@ -199,10 +199,10 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 									})}
 								</div>
 
-								<div className="flex justify-between xl:block gap-2">
+								<div className="flex justify-between max-xl:block gap-2">
 									<button
 										type="button"
-										className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-800 w-1/2 xl:w-full xl:mb-0"
+										className="bg-black text-white rounded-full py-3 my-5 hover:bg-gray-800 w-1/2 max-xl:w-full max-xl:mb-0"
 										onClick={handleAddToCart}
 									>
 										Add to Bag
@@ -210,7 +210,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
 									<button
 										type="button"
-										className={`flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3 my-5 w-1/2 xl:w-full xl:mb-0 ${isFavoriteLoading ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-600'}`}
+										className={`flex justify-center items-center bg-white border border-gray-300 text-black rounded-full py-3 my-5 w-1/2 max-xl:w-full max-xl:mb-0 ${isFavoriteLoading ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-600'}`}
 										onClick={handleFavorite}
 										disabled={isFavoriteLoading}
 										aria-pressed={!!(user && shoe?._id && user?.favorites?.includes(shoe?._id))}

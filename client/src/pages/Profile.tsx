@@ -119,7 +119,7 @@ const Profile = () => {
 											: DEFAULT_AVATAR
 									}
 									alt=""
-									className="sm:h-20 sm:w-20 h-36 w-36 rounded-full object-cover mb-3"
+									className="max-sm:h-20 max-sm:w-20 h-36 w-36 rounded-full object-cover mb-3"
 								/>
 							</div>
 							<div className="ml-2">
@@ -134,25 +134,25 @@ const Profile = () => {
 
 						<div className="border border-gray-300 p-8 rounded-lg bg-white mb-4">
 							<div className="font-medium mb-2">Insights</div>
-							<div className="flex gap-6 sm:block">
-								<div className="sm:flex sm:items-center sm:gap-2">
+							<div className="flex gap-6 max-sm:block">
+								<div className="max-sm:flex max-sm:items-center max-sm:gap-2">
 									<div className="font-bold text-2xl">{profileUser?.helpful?.length || 0}</div>
 									<div>Helpful votes</div>
 								</div>
 
-								<div className="sm:flex sm:items-center sm:gap-2">
+								<div className="max-sm:flex max-sm:items-center max-sm:gap-2">
 									<div className="font-bold text-2xl">{profileUser?.notHelpful?.length || 0}</div>
 									<div>Unhelpful votes</div>
 								</div>
 
-								<div className="sm:flex sm:items-center sm:gap-2">
+								<div className="max-sm:flex max-sm:items-center max-sm:gap-2">
 									<div className="font-bold text-2xl">
 										{reviewsLoading ? '...' : profileUserReviews.length}
 									</div>
 									<div>Reviews</div>
 								</div>
 
-								<div className="sm:flex sm:items-center sm:gap-2">
+								<div className="max-sm:flex max-sm:items-center max-sm:gap-2">
 									<div className="font-bold text-2xl">{profileUser?.favorites?.length || 0}</div>
 									<div>Favorites</div>
 								</div>

@@ -80,27 +80,27 @@ const OrderDetails = () => {
 	) : order ? (
 		<div className="container mx-auto px-4 py-10 max-w-6xl flex-grow">
 			<h1 className="text-3xl mb-3">Order Details</h1>
-			<span className="border-0 border-r border-gray-300 pr-3 sm:border-none">
+			<span className="border-0 border-r border-gray-300 pr-3 max-sm:border-none">
 				Ordered on {moment(order.orderDate).format('MMMM Do YYYY')}
 			</span>
-			<span className="px-3 sm:block sm:px-0">Order# {order._id}</span>
+			<span className="px-3 max-sm:block max-sm:px-0">Order# {order._id}</span>
 
-			<div className="py-4 flex sm:flex-col sm:gap-4">
-				<div className="flex-2">
+			<div className="py-4 flex max-sm:flex-col max-sm:gap-4">
+				<div className="flex-[2]">
 					<h2 className="font-bold">Shipping Address</h2>
 					<div>{customer ? `${customer.firstName} ${customer.lastName}` : 'Guest'}</div>
 					<div>{order.billingDetails.address.postal_code}</div>
 					<div>{order.billingDetails.address.country}</div>
 				</div>
 
-				<div className="flex-2">
+				<div className="flex-[2]">
 					<h2 className="font-bold">Payment Method</h2>
 					<div>
 						{order.card.brand.toUpperCase()} **** {order.card.last4}
 					</div>
 				</div>
 
-				<div className="flex-2">
+				<div className="flex-[2]">
 					<h2 className="font-bold">Order Summary</h2>
 					<div className="">
 						<div className="flex justify-between">

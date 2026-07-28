@@ -57,7 +57,7 @@ const ShopPreferences = () => {
 	};
 
 	return (
-		<div className="w-1/2 sm:w-full sm:mt-8">
+		<div className="w-1/2 max-sm:w-full max-sm:mt-8">
 			<h2 className="text-2xl font-medium mb-4">Shop Preferences</h2>
 
 			<form>

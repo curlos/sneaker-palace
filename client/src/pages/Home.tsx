@@ -10,7 +10,7 @@ interface BrandLinkProps {
 
 const BrandLink = ({ brands, logoPath }: BrandLinkProps) => {
 	return (
-		<div className="w-14/100 md:w-5/12">
+		<div className="w-[14%] max-md:w-5/12">
 			<Link to={`/shoes?brands=${encodeURIComponent(brands.join(','))}`}>
 				<img src={logoPath} className="w-full" alt={brands[0]} />
 			</Link>
@@ -27,13 +27,13 @@ const Home = () => {
 		<div className="flex-grow">
 			<Carousel />
 			<div className="container mx-auto px-4 max-w-7xl">
-				<div className="flex justify-between text-xl font-semibold mt-4 md:text-lg">
+				<div className="flex justify-between text-xl font-semibold mt-4 max-md:text-lg">
 					<h2>Popular Brands</h2>
 					<Link to={`/shoes`} className="underline">
 						See All
 					</Link>
 				</div>
-				<div className="flex flex-wrap gap-2 items-center justify-between md:mt-4">
+				<div className="flex flex-wrap gap-2 items-center justify-between max-md:mt-4">
 					<BrandLink brands={["Nike"]} logoPath="/assets/brand_logos/nike.svg" />
 					<BrandLink brands={["Jordan", "Air Jordan"]} logoPath="/assets/brand_logos/jordan.svg" />
 					<BrandLink brands={["adidas"]} logoPath="/assets/brand_logos/adidas.svg" />
@@ -42,7 +42,7 @@ const Home = () => {
 					<BrandLink brands={["Hoka One One"]} logoPath="/assets/brand_logos/hoka.svg" />
 				</div>
 
-				<div className="mt-5 flex w-full mb-10 md:block">
+				<div className="mt-5 flex w-full mb-10 max-md:block">
 					<GenderShopLink
 						gender="men"
 						imageSrc="/assets/landing_page/mens.jpeg"

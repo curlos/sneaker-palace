@@ -66,7 +66,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
-			className="fixed z-20 w-screen h-screen bg-black bg-opacity-40"
+			className="fixed z-20 w-screen h-screen bg-black/40"
 			onClick={() => setShowSearchModal(!showSearchModal)}
 		>
 			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
@@ -75,7 +75,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 				role="dialog"
 				aria-modal="true"
 				aria-label="Search"
-				className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll sm:no-scrollbar ease-in-out transition-all duration-1000 ${showSearchModal ? 'translate-x-0' : 'translate-x-full'} sm:w-10/12`}
+				className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll max-sm:no-scrollbar ease-in-out transition-all duration-1000 ${showSearchModal ? 'translate-x-0' : 'translate-x-full'} max-sm:w-10/12`}
 				onClick={handleBubblingDownClick}
 				style={{scrollbarWidth: 'thin'}}
 			>
@@ -92,7 +92,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 							id="search-input"
 							type="text"
 							autoComplete="off"
-							className="ml-5 placeholder-gray-600 placeholder-opacity-100 focus:outline-none focus:ring-2 focus:ring-black uppercase text-lg font-medium w-full"
+							className="ml-5 placeholder-gray-600/70 focus:outline-none focus:ring-2 focus:ring-black uppercase text-lg font-medium w-full"
 							placeholder="TYPE TO SEARCH"
 							value={searchText}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchText(e.currentTarget.value)}

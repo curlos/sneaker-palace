@@ -18,7 +18,7 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
-			className="fixed z-20 inset-0 bg-black bg-opacity-40 p-6 sm:p-4 flex justify-center items-center overflow-auto"
+			className="fixed z-20 inset-0 bg-black/40 p-6 max-sm:p-4 flex justify-center items-center overflow-auto"
 			onClick={() => setShowModal(!showModal)}
 		>
 			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
@@ -37,17 +37,17 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 				</div>
 
 				<div className="bg-white flex-1 overflow-y-auto" style={{scrollbarWidth: 'thin'}}>
-					<div className="p-4 flex xl:block">
+					<div className="p-4 flex max-xl:block">
 						<div className="w-full" style={{ maxWidth: '250px' }}>
 							<img
 								src={`${review.photo}`}
 								alt=""
-								className="mr-4 xl:mr-0 w-full h-auto rounded-md"
+								className="mr-4 max-xl:mr-0 w-full h-auto rounded-md"
 							/>
 						</div>
 
-						<div className="sm:ml-0 ml-4">
-							<div className="sm:block flex gap-2">
+						<div className="max-sm:ml-0 ml-4">
+							<div className="max-sm:block flex gap-2">
 								<span aria-label={`Rated ${review.ratingNum || 0} out of 5`}>
 									<StarRatings
 										rating={review.ratingNum || 0}

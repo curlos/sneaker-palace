@@ -9,12 +9,12 @@ interface GenderShopLinkProps {
 
 const GenderShopLink = ({ gender, imageSrc, label, className = '' }: GenderShopLinkProps) => {
 	return (
-		<div className={`w-4/12 md:w-full md:mb-8 ${className}`}>
+		<div className={`w-4/12 max-md:w-full max-md:mb-8 ${className}`}>
 			<Link
 				to={`/shoes?genders=${encodeURIComponent(gender)}`}
-				className="hover:underline font-bold text-xl md:text-2xl"
+				className="hover:underline font-bold text-xl max-md:text-2xl"
 			>
-				<img src={imageSrc} alt="" className="w-full md:mb-2" />
+				<img src={imageSrc} alt="" className="w-full max-md:mb-2" />
 				<div className="mt-2">{label}</div>
 			</Link>
 		</div>

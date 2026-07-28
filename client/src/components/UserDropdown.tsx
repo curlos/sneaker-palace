@@ -19,9 +19,9 @@ export const UserDropdown = ({ user, handleLogout }: Props) => {
 	};
 
 	return (
-		<Menu as="div" className="relative inline-block text-left sm:hidden">
+		<Menu as="div" className="relative inline-block text-left max-sm:hidden">
 			<div>
-				<Menu.Button className="flex items-center" aria-label={user['firstName'] ? undefined : 'Account menu'}>
+				<Menu.Button className="flex items-center cursor-pointer" aria-label={user['firstName'] ? undefined : 'Account menu'}>
 					<span>{user['firstName'] && `Hi, ${user['firstName']}`}</span>
 					<span>
 						{user['firstName'] && <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />}
@@ -38,7 +38,7 @@ export const UserDropdown = ({ user, handleLogout }: Props) => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+				<Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black/5 focus:outline-none">
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (

@@ -42,7 +42,7 @@ const PaymentSuccess = () => {
 				if (paymentIntent && paymentIntent.paymentIntent) {
 					axios
 						.get(
-							`${process.env.REACT_APP_DEV_URL}/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`
+							`${import.meta.env.VITE_DEV_URL}/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`
 						)
 						.then((result) => {
 							setPaymentInfo({
@@ -143,7 +143,7 @@ const PaymentSuccess = () => {
 				)}
 				<div>Your order has been placed successfully.</div>
 
-				<div className="flex gap-3 mt-3 sm:flex-col">
+				<div className="flex gap-3 mt-3 max-sm:flex-col">
 					<Link to="/shoes" className="bg-black p-4 text-white rounded-full text-center">
 						Continue Shopping
 					</Link>

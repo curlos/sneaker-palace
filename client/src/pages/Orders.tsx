@@ -42,7 +42,7 @@ const Orders = () => {
 			{!orders || orders.length < 1 ? (
 				<div className="text-base flex items-center gap-2">
 					<div>No orders found</div>
-					<Link to="/shoes" className="py-4 px-10 sm:px-2 bg-black text-white">
+					<Link to="/shoes" className="py-4 px-10 max-sm:px-2 bg-black text-white">
 						Order shoes
 					</Link>
 				</div>

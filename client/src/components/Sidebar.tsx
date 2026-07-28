@@ -14,6 +14,19 @@ interface Props {
 	shoeSizes: Array<string>;
 }
 
+const colorSwatchClasses: Record<string, string> = {
+	red: 'bg-red-500',
+	white: 'bg-white',
+	yellow: 'bg-yellow-500',
+	black: 'bg-black',
+	blue: 'bg-blue-500',
+	brown: 'bg-brown-500',
+	green: 'bg-green-500',
+	gray: 'bg-gray-500',
+	pink: 'bg-pink-500',
+	purple: 'bg-purple-500',
+};
+
 const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 	const [showColors, setShowColors] = useState(false);
 	const [showBrands, setShowBrands] = useState(false);
@@ -56,7 +69,7 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 	};
 
 	return (
-		<aside id="shoe-filters-sidebar" className="top-0 p-5 w-full flex-2 flex-grow-1 overflow-y-auto bg-white xl:w-screen max-w-100 ">
+		<aside id="shoe-filters-sidebar" className="top-0 p-5 w-full flex-[2] overflow-y-auto bg-white max-xl:w-screen">
 			<div className="border-0 border-b border-solid border-gray-300 py-3">
 				<button
 					type="button"
@@ -86,7 +99,7 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 										type="button"
 										aria-pressed={!!filters.colors[color]}
 										aria-label={color}
-										className={`h-7 w-7 rounded-full ${color === 'black' || color === 'white' ? `${'bg-' + color}` : `${'bg-' + color + '-500'}`} ${color === 'white' ? 'border border-gray-300' : ''} ${color === 'white' ? 'text-black' : 'text-white'}`}
+										className={`h-7 w-7 rounded-full ${colorSwatchClasses[color]} ${color === 'white' ? 'border border-gray-300' : ''} ${color === 'white' ? 'text-black' : 'text-white'}`}
 										onClick={() => handleColorClick(color)}
 									>
 										{filters.colors[color] ? <CheckIcon aria-hidden="true" /> : null}

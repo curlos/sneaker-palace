@@ -43,8 +43,8 @@ const Settings = () => {
 		<div className="container mx-auto px-4 py-10 max-w-6xl flex-grow">
 			<h1 className="text-2xl font-medium mb-4">Settings</h1>
 
-			<div className="flex sm:block">
-				<div className="flex-2" role="tablist" aria-label="Settings">
+			<div className="flex max-sm:block">
+				<div className="flex-[2]" role="tablist" aria-label="Settings">
 					<button
 						type="button"
 						role="tab"
@@ -87,7 +87,7 @@ const Settings = () => {
 				</div>
 
 				<div
-					className="flex-4"
+					className="flex-[4]"
 					role="tabpanel"
 					id="settings-panel"
 					aria-labelledby={selectedSetting === 'Account Details' ? 'account-details-tab' : 'shop-preferences-tab'}

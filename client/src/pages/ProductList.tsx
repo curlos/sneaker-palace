@@ -165,9 +165,9 @@ const ProductList = () => {
 					FREE SHIPPING ON ALL SHOES
 				</div>
 			</div>
-			<div className="container mx-auto max-w-7xl flex xl:block flex-grow">
+			<div className="container mx-auto max-w-7xl flex max-xl:block flex-grow">
 				{showSidebar ? (
-					<div className="flex justify-end p-3 pb-0 hidden xl:block">
+					<div className="flex justify-end p-3 pb-0 hidden max-xl:block">
 						<button type="button" aria-label="Close filters" onClick={() => setShowSidebar(false)}>
 							<XIcon className="h-5 w-5 cursor-pointer" aria-hidden="true" />
 						</button>
@@ -176,8 +176,8 @@ const ProductList = () => {
 
 				{showSidebar ? <Sidebar filters={filters} updateFilters={updateFilters} shoeSizes={SHOE_SIZES} /> : null}
 
-				<div className="flex-10 p-4 lg:p-3">
-					<div className="flex justify-between sm:flex-col">
+				<div className="flex-[10] p-4 max-lg:p-3">
+					<div className="flex justify-between max-sm:flex-col">
 						<div>
 							{searchQuery ? <div>Search results for</div> : null}
 							<div className="flex items-center gap-3">
@@ -199,7 +199,7 @@ const ProductList = () => {
 							</div>
 						</div>
 
-						<div className="flex items-center gap-3 sm:mt-3">
+						<div className="flex items-center gap-3 max-sm:mt-3">
 							<button
 								type="button"
 								aria-expanded={showSidebar}
@@ -221,14 +221,14 @@ const ProductList = () => {
 					<AppliedFilters filters={filters} updateFilters={updateFilters} />
 
 					{loading ? (
-						<div aria-hidden="true" className="flex justify-center flex-wrap lg:justify-between py-4">
+						<div aria-hidden="true" className="flex justify-center flex-wrap max-lg:justify-between py-4">
 							{Array.from({ length: 12 }, (_, index) => (
 								<SmallShoeSkeleton key={index} />
 							))}
 						</div>
 					) : (
 						<div>
-							<div className="flex justify-center flex-wrap lg:justify-between">
+							<div className="flex justify-center flex-wrap max-lg:justify-between">
 								{paginatedShoes.map((shoe: Shoe) => {
 									return <SmallShoe key={shoe.shoeID} shoe={shoe} />;
 								})}

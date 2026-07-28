@@ -126,11 +126,11 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 		<CartProductSkeleton />
 	) : (
 		<div className={`flex py-5 mb-5 ${!isLast ? 'border-0 border-b border-solid border-gray-300' : ''}`}>
-			<Link to={`/shoe/${shoe.shoeID}`} className="sm:w-1/4">
+			<Link to={`/shoe/${shoe.shoeID}`} className="max-sm:w-1/4">
 				<ShoeImage src={shoe?.image?.thumbnail || ''} alt={shoe?.name || ''} className="cart-shoe-image" />
 			</Link>
 
-			<div className="ml-5 w-full sm:ml-2">
+			<div className="ml-5 w-full max-sm:ml-2">
 				<div>
 					<div className="flex justify-between gap-4">
 						<Link to={`/shoe/${shoe.shoeID}`}>
@@ -141,14 +141,14 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 					<div className="text-gray-500">
 						<span className="capitalize">{shoe?.gender}</span>'s Shoes
 					</div>
-					<div className="text-gray-500 sm:hidden">{shoe?.colorway}</div>
+					<div className="text-gray-500 max-sm:hidden">{shoe?.colorway}</div>
 					<div>
-						<span className="sm:block">
-							<label htmlFor={`size-${productInfo._id}`} className="mr-2 text-gray-500 sm:mr-1">Size</label>
+						<span className="max-sm:block">
+							<label htmlFor={`size-${productInfo._id}`} className="mr-2 text-gray-500 max-sm:mr-1">Size</label>
 							<select
 								id={`size-${productInfo._id}`}
 								name="shoeSizes"
-								className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0"
+								className="border-none rounded-lg text-gray-500 max-sm:pr-10 max-sm:py-0"
 								value={productInfo.size}
 								onChange={handleChangeSize}
 							>
@@ -160,13 +160,13 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 							</select>
 						</span>
 
-						<span className="sm:block">
-							<label htmlFor={`quantity-${productInfo._id}`} className="mx-2 text-gray-500 sm:mx-0 sm:mr-1">Quantity</label>
+						<span className="max-sm:block">
+							<label htmlFor={`quantity-${productInfo._id}`} className="mx-2 text-gray-500 max-sm:mx-0 max-sm:mr-1">Quantity</label>
 
 							<select
 								id={`quantity-${productInfo._id}`}
 								name="quantities"
-								className="border-none rounded-lg text-gray-500 sm:pr-10 sm:py-0"
+								className="border-none rounded-lg text-gray-500 max-sm:pr-10 max-sm:py-0"
 								value={productInfo.quantity}
 								onChange={handleChangeQuantity}
 							>

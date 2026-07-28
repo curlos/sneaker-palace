@@ -1,13 +1,10 @@
-declare global {
-	namespace NodeJS {
-		interface ProcessEnv {
-			REACT_APP_STRIPE: string;
-			REACT_APP_DEV_URL: string;
-			REACT_APP_PRODUCTION_URL: string;
-		}
-	}
+interface ImportMetaEnv {
+	readonly VITE_STRIPE: string;
+	readonly VITE_CLIENT_URL: string;
+	readonly VITE_DEV_URL: string;
+	readonly VITE_PRODUCTION_URL: string;
 }
 
-// If this file has no import/export statements (i.e. is a script)
-// convert it into a module by adding an empty export statement.
-export {};
+interface ImportMeta {
+	readonly env: ImportMetaEnv;
+}

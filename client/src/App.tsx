@@ -52,7 +52,7 @@ const App = () => {
 
 	return (
 		<Router>
-			<div className="m-0 box-border font-urbanist min-h-screen flex flex-col">
+			<div className="m-0 box-border font-system min-h-screen flex flex-col">
 				<a
 					href="#main-content"
 					className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded"

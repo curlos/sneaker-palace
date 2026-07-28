@@ -128,17 +128,17 @@ const ReviewForm = () => {
 				<h1 className="font-bold text-2xl">WRITE YOUR REVIEW</h1>
 				<div className="flex justify-between items-center border border-gray-300 p-4 rounded-lg my-4">
 					<div className="font-bold text-lg">{shoe?.name}</div>
-					<ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} className="h-150 w-150" />
+					<ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} className="h-[150px] w-[150px]" />
 				</div>
 
 				<div className="">
 					<div className="flex">
-						<div className="font-medium flex-2">YOUR OVERALL RATING</div>
-						<div className="font-medium mb-2 flex-2">WOULD YOU RECOMMEND THIS PRODUCT?</div>
+						<div className="font-medium flex-[2]">YOUR OVERALL RATING</div>
+						<div className="font-medium mb-2 flex-[2]">WOULD YOU RECOMMEND THIS PRODUCT?</div>
 					</div>
 
 					<div className="flex my-2">
-						<div className="flex-2">
+						<div className="flex-[2]">
 							<div className="text-sm mb-2">Please select</div>
 							<StarRatings
 								rating={reviewInfo.ratingNum}
@@ -169,7 +169,7 @@ const ReviewForm = () => {
 							</fieldset>
 						</div>
 
-						<fieldset className="flex-2">
+						<fieldset className="flex-[2]">
 							<legend className="sr-only">Would you recommend this product?</legend>
 							<div className="flex items-center mb-2">
 								<input
@@ -200,12 +200,12 @@ const ReviewForm = () => {
 					</div>
 
 					<div className="flex mt-10">
-						<div className="font-medium flex-2" id="size-label">SIZE</div>
-						<div className="font-medium mb-2 flex-2" id="width-label">WIDTH</div>
+						<div className="font-medium flex-[2]" id="size-label">SIZE</div>
+						<div className="font-medium mb-2 flex-[2]" id="width-label">WIDTH</div>
 					</div>
 
 					<div className="flex my-2">
-						<fieldset className="flex-2" aria-labelledby="size-label">
+						<fieldset className="flex-[2]" aria-labelledby="size-label">
 							<legend className="sr-only">Size</legend>
 							<div className="flex items-center mb-2">
 								<input
@@ -270,7 +270,7 @@ const ReviewForm = () => {
 							</div>
 						</fieldset>
 
-						<fieldset className="flex-2" aria-labelledby="width-label">
+						<fieldset className="flex-[2]" aria-labelledby="width-label">
 							<legend className="sr-only">Width</legend>
 							<div className="flex items-center mb-2">
 								<input
@@ -335,12 +335,12 @@ const ReviewForm = () => {
 					</div>
 
 					<div className="flex mt-10">
-						<div className="font-medium flex-2" id="comfort-label">COMFORT</div>
-						<div className="font-medium mb-2 flex-2" id="quality-label">QUALITY</div>
+						<div className="font-medium flex-[2]" id="comfort-label">COMFORT</div>
+						<div className="font-medium mb-2 flex-[2]" id="quality-label">QUALITY</div>
 					</div>
 
 					<div className="flex my-2">
-						<fieldset className="flex-2" aria-labelledby="comfort-label">
+						<fieldset className="flex-[2]" aria-labelledby="comfort-label">
 							<legend className="sr-only">Comfort</legend>
 							<div className="flex items-center mb-2">
 								<input
@@ -403,7 +403,7 @@ const ReviewForm = () => {
 							</div>
 						</fieldset>
 
-						<fieldset className="flex-2" aria-labelledby="quality-label">
+						<fieldset className="flex-[2]" aria-labelledby="quality-label">
 							<legend className="sr-only">Quality</legend>
 							<div className="flex items-center mb-2">
 								<input
@@ -473,35 +473,35 @@ const ReviewForm = () => {
 
 			<div className="container mx-auto px-4 py-10 max-w-4xl">
 				<h2 className="font-bold text-xl mb-4">YOUR REVIEW</h2>
-				<div className="flex mb-4 sm:flex-col">
-					<div className="flex-2 w-full sm:mb-5">
-						<label htmlFor="review-summary" className="text-gray-500 w-10/12 sm:w-full block">Summary</label>
+				<div className="flex mb-4 max-sm:flex-col">
+					<div className="flex-[2] w-full max-sm:mb-5">
+						<label htmlFor="review-summary" className="text-gray-500 w-10/12 max-sm:w-full block">Summary</label>
 						<input
 							id="review-summary"
 							required
 							placeholder="Summary"
-							className="border border-black p-3 w-10/12 sm:w-full"
+							className="border border-black p-3 w-10/12 max-sm:w-full"
 							value={reviewInfo.summary}
 							onChange={(e) => setReviewInfo({ ...reviewInfo, summary: e.target.value })}
 						/>
-						<div className="text-sm text-gray-500 w-10/12 sm:w-full">
+						<div className="text-sm text-gray-500 w-10/12 max-sm:w-full">
 							What's your opinion in one sentence? Example: Best purchase ever.
 						</div>
 
-						<label htmlFor="review-text" className="text-gray-500 w-10/12 sm:w-full sm:mt-4 mt-8 block">Your Review</label>
+						<label htmlFor="review-text" className="text-gray-500 w-10/12 max-sm:w-full max-sm:mt-4 mt-8 block">Your Review</label>
 						<textarea
 							id="review-text"
 							required
-							className="resize-none border w-10/12 h-40 sm:w-full"
+							className="resize-none border w-10/12 h-40 max-sm:w-full"
 							onChange={(e) => setReviewInfo({ ...reviewInfo, text: e.target.value })}
 							value={reviewInfo.text}
 						></textarea>
-						<div className="text-sm text-gray-500 w-10/12 sm:w-full">
+						<div className="text-sm text-gray-500 w-10/12 max-sm:w-full">
 							Tell other people more about the product. What about the quality? Or the comfort?
 						</div>
 					</div>
 
-					<div className="flex-2 w-full sm:mb-5">
+					<div className="flex-[2] w-full max-sm:mb-5">
 						<label htmlFor="review-photo-upload" className="text-gray-500 w-10/12 block">Upload photo</label>
 						{(file || reviewInfo.photo) && (
 							<div className="relative inline-block">
@@ -512,7 +512,7 @@ const ReviewForm = () => {
 											: `${reviewInfo.photo}`
 									}
 									alt="Preview of your upload"
-									className="h-150 object-cover my-3"
+									className="h-[150px] object-cover my-3"
 								/>
 								<button
 									onClick={handleRemovePhoto}
@@ -529,16 +529,16 @@ const ReviewForm = () => {
 							onChange={handleSelectFile}
 							type="file"
 							accept="image/*"
-							className="w-full"
+							className="w-full file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-400 file:text-sm file:font-medium file:bg-gray-200 file:text-gray-800 hover:file:bg-gray-300"
 						></input>
-						<div className="text-sm text-gray-500 w-10/12 sm:w-full">Upload your .PNG or .JPG file</div>
+						<div className="text-sm text-gray-500 w-10/12 max-sm:w-full">Upload your .PNG or .JPG file</div>
 					</div>
 				</div>
 
 				<button
 					type="button"
 					disabled={isSubmitting}
-					className="bg-black text-white rounded-full flex-2 py-3 mr-5 my-5 hover:bg-gray-700 p-7 disabled:opacity-50"
+					className="bg-black text-white rounded-full flex-[2] py-3 mr-5 my-5 hover:bg-gray-700 p-7 disabled:opacity-50"
 					onClick={reviewID ? handleEditReview : handleSubmitReview}
 				>
 					{isSubmitting ? (

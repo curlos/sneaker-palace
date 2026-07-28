@@ -44,7 +44,7 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
-			className="fixed z-20 max-w-100 w-screen h-screen bg-black bg-opacity-40"
+			className="fixed z-20 w-screen h-screen bg-black/40"
 			onClick={() => setShowModal(!showModal)}
 		>
 			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
@@ -53,7 +53,7 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
 				role="dialog"
 				aria-modal="true"
 				aria-label="Added to cart"
-				className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll sm:no-scrollbar ease-in-out transition-all duration-1000 ${showModal ? 'translate-x-0' : 'translate-x-full'} sm:w-10/12`}
+				className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll max-sm:no-scrollbar ease-in-out transition-all duration-1000 ${showModal ? 'translate-x-0' : 'translate-x-full'} max-sm:w-10/12`}
 				onClick={handleBubblingDownClick}
 			>
 				<div className="p-5">

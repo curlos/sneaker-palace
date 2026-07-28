@@ -92,7 +92,7 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
-			className="fixed z-20 w-screen h-screen bg-black bg-opacity-40 p-0 sm:p-8 md:p-16 lg:p-24 top-0 left-0 flex justify-center items-center"
+			className="fixed z-20 w-screen h-screen bg-black/40 p-0 max-sm:p-8 max-md:p-16 max-lg:p-24 top-0 left-0 flex justify-center items-center"
 			onClick={() => setShowModal(!showModal)}
 		>
 			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
@@ -101,7 +101,7 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
 				role="dialog"
 				aria-modal="true"
 				aria-label="Edit Password"
-				className="w-full sm:w-full md:w-4/5 lg:w-3/5 xl:w-1/2 2xl:w-2/5 max-w-none lg:max-w-lg max-h-screen md:h-auto lg:h-4/5 xl:h-3/5 mx-0 sm:mx-0 lg:mx-8 xl:mx-auto bg-white rounded-lg md:rounded-2xl lg:rounded-3xl p-3 md:p-6 lg:p-8 xl:p-12 placeholder-gray-400 overflow-y-auto"
+				className="w-full max-w-lg max-h-screen rounded-lg bg-white p-6 placeholder-gray-400 overflow-y-auto"
 				onClick={handleBubblingDownClick}
 			>
 				<div className="flex justify-between text-lg mb-4">

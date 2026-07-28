@@ -6,13 +6,13 @@
 .env
 /.pnp
 .pnp.js
-/src/react-app-env.d.ts
 
 # testing
 /coverage
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store

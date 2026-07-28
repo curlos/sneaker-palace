@@ -17,11 +17,11 @@ const CheckoutProduct = ({ product, type }: Props) => {
 		</div>
 	) : type === 'small' ? (
 		<div className="flex gap-6 mb-7 text-sm">
-			<div className="flex-2">
+			<div className="flex-[2]">
 				<ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} />
 			</div>
 
-			<div className="text-gray-600 flex-4">
+			<div className="text-gray-600 flex-[4]">
 				<div className="text-black">{shoe?.name}</div>
 				<div>Size: {product.size}</div>
 				<div>Colorway: {shoe?.colorway}</div>
@@ -39,7 +39,7 @@ const CheckoutProduct = ({ product, type }: Props) => {
 				<div className="text-gray-600">
 					<div className="text-black font-medium">{shoe?.name}</div>
 					<div>Size: {product.size}</div>
-					<div className="sm:hidden">Colorway: {shoe?.colorway}</div>
+					<div className="max-sm:hidden">Colorway: {shoe?.colorway}</div>
 					<div>Quantity: {product.quantity}</div>
 				</div>
 			</div>

@@ -9,7 +9,7 @@ export const buildQueryString = (params?: Record<string, any>) => {
 export const baseAPI = createApi({
 	reducerPath: 'api',
 	baseQuery: fetchBaseQuery({
-		baseUrl: process.env.REACT_APP_DEV_URL,
+		baseUrl: import.meta.env.VITE_DEV_URL,
 		prepareHeaders: (headers, { getState }) => {
 			// Add auth headers for authenticated requests
 			const token = (getState() as any).user?.currentUser?.accessToken;

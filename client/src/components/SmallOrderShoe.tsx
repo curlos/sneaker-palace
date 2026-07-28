@@ -15,12 +15,12 @@ const SmallOrder = ({ item }: Props) => {
 	const { shoe, product } = item;
 
 	return (
-		<div className="flex sm:mb-4 sm:gap-3 gap-2">
-			<div className="flex-2">
+		<div className="flex max-sm:mb-4 max-sm:gap-3 gap-2">
+			<div className="flex-[2]">
 				<ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} />
 			</div>
 
-			<div className="flex-8 sm:flex-4">
+			<div className="flex-[8] max-sm:flex-[4]">
 				<Link to={`/shoe/${shoe.shoeID}`} className="text-blue-400 hover:underline">
 					{shoe.name}
 				</Link>
@@ -44,7 +44,7 @@ const SmallOrder = ({ item }: Props) => {
 						</div>
 					)}
 					{shoe.gender && (
-						<div className="sm:hidden">
+						<div className="max-sm:hidden">
 							<span className="font-bold">Gender:</span> {titleCase(shoe.gender)}
 						</div>
 					)}

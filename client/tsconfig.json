@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2022",
     "module": "esnext",
     "outDir": "dist",
     "strict": true,
@@ -11,16 +11,15 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
 
-    // ⬇️ put it here
-    "types": ["node", "jest", "react", "react-dom"],
+    "types": ["vite/client", "node", "react", "react-dom"],
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["./src/"],
+  "include": ["./src/", "./vite.config.ts"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx"]
 }

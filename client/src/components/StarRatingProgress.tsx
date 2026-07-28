@@ -13,7 +13,7 @@ const StarRatingProgress = ({ rating, percentage }: Props) => {
 		<div>
 			<div>{label}</div>
 			<div className="relative pt-1">
-				<div className="overflow-hidden h-3 mb-4 text-xs flex rounded bg-lakersGold-100">
+				<div className="overflow-hidden h-3 mb-4 text-xs flex rounded bg-[#f8e1b0]">
 					<div
 						role="progressbar"
 						aria-label={label}
@@ -21,7 +21,7 @@ const StarRatingProgress = ({ rating, percentage }: Props) => {
 						aria-valuemin={0}
 						aria-valuemax={100}
 						style={{ width: `${roundedPercentage}%` }}
-						className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-lakersGold-500"
+						className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-[#F5B327]"
 					></div>
 				</div>
 			</div>

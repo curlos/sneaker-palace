@@ -12,7 +12,7 @@ export const performLogin = async (
 	dispatch(loginStart());
 
 	const body = { email, password };
-	const response = await axios.post(`${process.env.REACT_APP_DEV_URL}/auth/login`, body);
+	const response = await axios.post(`${import.meta.env.VITE_DEV_URL}/auth/login`, body);
 
 	if (!response.data) {
 		throw new Error('Login failed');

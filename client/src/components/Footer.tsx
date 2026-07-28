@@ -91,14 +91,14 @@ const FOOTER_BRANDS = [
 
 export const Footer = () => {
 	return (
-		<footer className="bg-black text-white text-xs pt-10 lg:text-lg">
-			<div className="container mx-auto px-4 max-w-7xl flex justify-center py-5 border-0 border-b border-solid border-gray-400 lg:hidden">
+		<footer className="bg-black text-white text-xs max-sm:pt-2 pt-10 max-lg:text-lg">
+			<div className="container mx-auto px-4 max-w-7xl flex justify-center py-5 border-0 border-b border-solid border-gray-400 max-lg:hidden">
 				{FOOTER_BRANDS.map((brandData) => (
-					<div key={brandData.brand} className="w-1/6 px-4 lg:w-full lg:flex lg:flex-col lg:mb-4">
+					<div key={brandData.brand} className="w-1/6 px-4 max-lg:w-full max-lg:flex max-lg:flex-col max-lg:mb-4">
 						<div>
 							<Link
 								to={`/shoes?brands=${encodeURIComponent(getBrandFilterValue(brandData.brand))}`}
-								className="text-sm lg:text-2xl"
+								className="text-sm max-lg:text-2xl"
 							>
 								{brandData.displayName}
 							</Link>
@@ -114,7 +114,7 @@ export const Footer = () => {
 				))}
 			</div>
 
-			<div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center lg:flex-col lg:gap-2 lg:text-xs">
+			<div className="container mx-auto p-4 max-w-7xl flex justify-between items-center max-lg:flex-col max-lg:gap-2 max-lg:text-xs">
 				<div className="text-gray-400">&#169; Sneaker Palace</div>
 
 				<div className="text-2xl">

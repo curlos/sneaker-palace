@@ -67,13 +67,11 @@ const SmallReview = ({ review, author }: Props) => {
 				<div className="border border-gray-300 rounded-lg bg-white mt-2">
 					<Link to={`/shoe/${shoe.shoeID}`}>
 						<div className="flex items-center gap-2">
-							<div>
-								<ShoeImage
-									src={shoe?.image?.original || ''}
-									alt=""
-									className="h-24 w-24 sm:h-16 sm:w-16"
-								/>
-							</div>
+							<ShoeImage
+								src={shoe?.image?.original || ''}
+								alt=""
+								className="h-24 w-24 max-sm:h-16 max-sm:w-16"
+							/>
 							<div>
 								<div className="text-sm">{shoe.name}</div>
 								<div className="flex items-center gap-2">

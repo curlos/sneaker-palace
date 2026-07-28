@@ -16,8 +16,8 @@ const Cart = () => {
 	}, []);
 
 	return (
-		<div className="container mx-auto px-4 py-6 max-w-6xl flex flex-start flex-grow sm:block ">
-			<div className="flex-6">
+		<div className="container mx-auto px-4 py-6 max-w-6xl flex flex-start flex-grow max-sm:block ">
+			<div className="flex-[6]">
 				<h1 className="font-bold text-xl mb-5">Bag</h1>
 				{cartProducts.length === 0 ? (
 					<div className="text-gray-600">
@@ -38,7 +38,7 @@ const Cart = () => {
 			</div>
 
 			{cartProducts.length > 0 && (
-			<div className="flex-2 pl-7 sm:pl-0">
+			<div className="flex-[2] pl-7 max-sm:pl-0">
 				<h2 className="font-bold text-xl mb-5">Summary</h2>
 				<div className="flex justify-between items-center mb-2">
 					<div>Subtotal</div>

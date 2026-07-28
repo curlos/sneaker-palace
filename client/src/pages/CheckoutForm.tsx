@@ -64,7 +64,7 @@ export default function CheckoutForm() {
 			elements,
 			confirmParams: {
 				// Make sure to change this to your payment completion page
-				return_url: `${process.env.REACT_APP_CLIENT_URL}/payment-success`,
+				return_url: `${import.meta.env.VITE_CLIENT_URL}/payment-success`,
 			},
 		});
 
@@ -86,9 +86,9 @@ export default function CheckoutForm() {
 		<form
 			id="payment-form"
 			onSubmit={handleSubmit}
-			className="container mx-auto px-4 py-10 max-w-6xl flex gap-4 sm:block flex-grow"
+			className="container mx-auto px-4 py-10 max-w-6xl flex gap-4 max-sm:block flex-grow"
 		>
-			<div className="flex-6">
+			<div className="flex-[6]">
 				<h1 className="text-2xl font-bold mb-4">Checkout</h1>
 				<div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4 mb-4">
 					<div className="text-yellow-800 font-medium mb-1">
@@ -122,7 +122,7 @@ export default function CheckoutForm() {
 				)}
 			</div>
 
-			<div className="flex-4 border border-gray-300 rounded-lg sm:my-4">
+			<div className="flex-[4] border border-gray-300 rounded-lg max-sm:my-4">
 				<h2 className="p-5 bg-gray-200 font-bold rounded-t-lg">IN YOUR CART</h2>
 				<div className="border-0 border-b border-solid border-gray-300 p-5 text-sm">
 					<div className="flex justify-between mb-1">

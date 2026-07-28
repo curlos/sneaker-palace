@@ -42,10 +42,10 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 				</div>
 
 				<div className="flex items-center gap-5">
-					<Link to="/shoes" className="lg:hidden">
+					<Link to="/shoes" className="max-lg:hidden">
 						Sneakers
 					</Link>
-					<div className="lg:hidden">
+					<div className="max-lg:hidden">
 						<Link
 							to="/shoes?genders=men"
 							onClick={() => setShowSidenavModal(false)}
@@ -54,7 +54,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 						</Link>
 					</div>
 
-					<div className="lg:hidden">
+					<div className="max-lg:hidden">
 						<Link to="/shoes?genders=women">Women</Link>
 					</div>
 					{user ? (
@@ -63,10 +63,10 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 						</span>
 					) : (
 						<span className="flex items-center gap-5">
-							<Link to="/login" className="lg:hidden">
+							<Link to="/login" className="max-lg:hidden">
 								Login
 							</Link>
-							<Link to="/register" className="lg:hidden">
+							<Link to="/register" className="max-lg:hidden">
 								Sign Up
 							</Link>
 						</span>
@@ -87,7 +87,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 					<button
 						type="button"
 						aria-label="Menu"
-						className="hidden lg:block"
+						className="hidden max-lg:block"
 						onClick={() => setShowSidenavModal(true)}
 					>
 						<MenuIcon className="h-5 w-5 cursor-pointer" aria-hidden="true" />

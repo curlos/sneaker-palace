@@ -70,7 +70,7 @@ const AccountDetails = () => {
 	};
 
 	return (
-		<div className="w-1/2 sm:w-full sm:mt-8">
+		<div className="w-1/2 max-sm:w-full max-sm:mt-8">
 			<h2 className="text-2xl font-medium mb-4">Account Details</h2>
 
 			<form>
@@ -81,14 +81,14 @@ const AccountDetails = () => {
 								file ? URL.createObjectURL(file) : `${user?.profilePic}`
 							}
 							alt=""
-							className="h-150 w-150 rounded-full object-cover mb-3"
+							className="h-[150px] w-[150px] rounded-full object-cover mb-3"
 						/>
 					) : (
-						<img src={DEFAULT_AVATAR} alt="" className="h-150 w-150 rounded-full object-cover mb-3" />
+						<img src={DEFAULT_AVATAR} alt="" className="h-[150px] w-[150px] rounded-full object-cover mb-3" />
 					)}
 
 					<label htmlFor="account-profile-pic" className="mb-1 block">Profile Picture</label>
-					<input id="account-profile-pic" onChange={handleSelectFile} type="file" accept="image/*"></input>
+					<input id="account-profile-pic" onChange={handleSelectFile} type="file" accept="image/*" className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-400 file:text-sm file:font-medium file:bg-gray-200 file:text-gray-800 hover:file:bg-gray-300"></input>
 				</div>
 
 				<div className="mb-4">
