@@ -42,9 +42,25 @@ router.get('/:userID', optionalAuth, async (req: Request, res: Response) => {
 	}
 });
 
+// Fields the frontend actually sends from AccountDetails.tsx and ShopPreferences.tsx.
+const ALLOWED_UPDATE_FIELDS = [
+	'firstName',
+	'lastName',
+	'email',
+	'profilePic',
+	'preselectedShoeSize',
+	'preferredGender',
+	'unitOfMeasure',
+] as const;
+
 router.put('/', verifyToken, async (req: Request, res: Response) => {
-	// Remove password from body - passwords should only be changed via dedicated password endpoint.
-	const { password, ...updateData } = req.body;
+	// Only allow whitelisted fields through - prevents mass assignment (e.g. isAdmin).
+	const updateData: Partial<Record<(typeof ALLOWED_UPDATE_FIELDS)[number] | 'lowerCaseEmail', string>> = {};
+	for (const field of ALLOWED_UPDATE_FIELDS) {
+		if (req.body[field] !== undefined) {
+			updateData[field] = req.body[field];
+		}
+	}
 
 	try {
 		// If email is being updated, check if it's different and unique

@@ -57,7 +57,15 @@ router.post('/register', async (req: Request, res: Response) => {
 // Login User
 router.post('/login', async (req: Request, res: Response) => {
 	try {
-		const user = await User.findOne({ email: req.body.email });
+		if (typeof req.body.email !== 'string' || req.body.email.trim().length === 0) {
+			return res.status(400).json({ error: 'Email is required' });
+		}
+
+		if (typeof req.body.password !== 'string' || req.body.password.trim().length === 0) {
+			return res.status(400).json({ error: 'Password is required' });
+		}
+
+		const user = await User.findOne({ lowerCaseEmail: req.body.email.toLowerCase() });
 
 		if (!user) {
 			return res.status(401).json('Wrong credentials');

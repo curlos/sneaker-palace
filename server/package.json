@@ -41,7 +41,9 @@
   },
   "scripts": {
     "test": "vitest run",
+    "test:local": "NODE_OPTIONS='-r dotenv/config' DOTENV_CONFIG_PATH=.env.local vitest run",
     "test:watch": "vitest",
+    "test:watch:local": "NODE_OPTIONS='-r dotenv/config' DOTENV_CONFIG_PATH=.env.local vitest",
     "start": "tsc -p tsconfig.build.json && node dist/server.js",
     "devStart": "tsx watch server.ts",
     "devStart:local": "tsx watch --require dotenv/config server.ts dotenv_config_path=.env.local",
