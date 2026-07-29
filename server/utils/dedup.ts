@@ -1,6 +1,13 @@
+import mongoose from 'mongoose';
 import Shoe from '../models/Shoe';
 
-Shoe.aggregate([
+interface DuplicateShoeGroup {
+	_id: { shoeID: string };
+	dups: mongoose.Types.ObjectId[];
+	count: number;
+}
+
+Shoe.aggregate<DuplicateShoeGroup>([
 	{
 		$group: {
 			_id: { shoeID: '$shoeID' },
@@ -9,8 +16,8 @@ Shoe.aggregate([
 		},
 	},
 	{ $match: { count: { $gt: 1 } } },
-]).then((docs: any[]) => {
-	docs.forEach((doc: any) => {
+]).then((docs) => {
+	docs.forEach((doc) => {
 		doc.dups.shift();
 		Shoe.deleteMany({ _id: { $in: doc.dups } });
 	});

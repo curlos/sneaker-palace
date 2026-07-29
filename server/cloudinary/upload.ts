@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from 'cloudinary';
 
 dotenv.config();
 
@@ -11,7 +11,7 @@ cloudinary.config({
 });
 
 // Upload file to Cloudinary
-export const uploadToCloudinary = async (file: any) => {
+export const uploadToCloudinary = async (file: Express.Multer.File): Promise<UploadApiResponse | undefined> => {
 	try {
 		return new Promise((resolve, reject) => {
 			const stream = cloudinary.uploader.upload_stream(
@@ -20,7 +20,7 @@ export const uploadToCloudinary = async (file: any) => {
 					folder: 'sneaker-palace',
 					public_id: `${Date.now()}-${file.originalname?.split('.')[0] || 'upload'}`,
 				},
-				(error: any, result: any) => {
+				(error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
 					if (error) {
 						reject(error);
 					} else {

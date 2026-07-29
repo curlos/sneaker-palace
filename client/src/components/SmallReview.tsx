@@ -59,7 +59,7 @@ const SmallReview = ({ review, author }: Props) => {
 					<img src={review.photo} alt="" className="max-h-32 w-auto object-cover my-2 rounded" />
 				)}
 				<div className="border border-gray-300 rounded-lg bg-white mt-2">
-					<Link to={`/shoe/${shoe.shoeID}`}>
+					<Link to={`/shoe/${shoe?.shoeID}`}>
 						<div className="flex items-center gap-2">
 							<ShoeImage
 								src={shoe?.image?.original || ''}
@@ -67,11 +67,11 @@ const SmallReview = ({ review, author }: Props) => {
 								className="h-24 w-24 max-sm:h-16 max-sm:w-16"
 							/>
 							<div>
-								<div className="text-sm">{shoe.name}</div>
+								<div className="text-sm">{shoe?.name}</div>
 								<div className="flex items-center gap-2">
-									<span aria-label={`Rated ${(shoe.rating || 0).toFixed(2)} out of 5`}>
+									<span aria-label={`Rated ${(shoe?.rating || 0).toFixed(2)} out of 5`}>
 										<StarRatings
-											rating={shoe.rating || 0}
+											rating={shoe?.rating || 0}
 											starRatedColor="#F5B327"
 											numberOfStars={5}
 											name="rating"

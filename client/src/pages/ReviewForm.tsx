@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import StarRatings from '../utils/StarRatingsCompat';
 import { XIcon } from '@heroicons/react/outline';
 import { useGetShoeQuery } from '../api/shoesApi';
-import { useGetRatingQuery, useCreateRatingMutation, useUpdateRatingMutation } from '../api/ratingsApi';
+import { useGetRatingQuery, useCreateRatingMutation, useUpdateRatingMutation, CreateRatingPayload } from '../api/ratingsApi';
 import { useGetLoggedInUserQuery } from '../api/userApi';
 import { RootState } from '../redux/store';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
@@ -24,8 +24,10 @@ const ReviewForm = () => {
 	const [createRating] = useCreateRatingMutation();
 	const [updateRating] = useUpdateRatingMutation();
 
-	const [reviewInfo, setReviewInfo] = useState<any>({
-		userID: user?._id,
+	type ReviewFormState = Omit<CreateRatingPayload, 'recommended'> & { recommended: boolean | null };
+
+	const [reviewInfo, setReviewInfo] = useState<ReviewFormState>({
+		userID: user?._id || '',
 		shoeID: shoeID,
 		ratingNum: 0,
 		summary: '',
@@ -46,7 +48,7 @@ const ReviewForm = () => {
 	if (existingRating !== prevExistingRating) {
 		setPrevExistingRating(existingRating);
 		if (existingRating && reviewID) {
-			setReviewInfo((prev: any) => ({ ...prev, ...existingRating }));
+			setReviewInfo((prev) => ({ ...prev, ...existingRating }));
 		}
 	}
 
@@ -69,7 +71,7 @@ const ReviewForm = () => {
 				photo: imagePath,
 			};
 
-			await createRating(body).unwrap();
+			await createRating(body as CreateRatingPayload).unwrap();
 			// If unwrap() succeeds, the mutation was successful
 			history.push(`/shoe/${shoe?.shoeID}`);
 		} catch (error) {
@@ -86,7 +88,7 @@ const ReviewForm = () => {
 
 	const handleRemovePhoto = () => {
 		setFile(undefined);
-		setReviewInfo((prev: any) => ({ ...prev, photo: '' }));
+		setReviewInfo((prev) => ({ ...prev, photo: '' }));
 	};
 
 	const handleEditReview = async () => {
@@ -109,7 +111,7 @@ const ReviewForm = () => {
 
 			await updateRating({
 				ratingId: reviewID,
-				ratingData: body,
+				ratingData: body as Partial<CreateRatingPayload>,
 			}).unwrap();
 			// If unwrap() succeeds, the mutation was successful
 			history.push(`/shoe/${shoe?.shoeID}`);

@@ -1,13 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AuthUser } from '../types/types';
 
-interface UserState {
-	currentUser: any;
+export interface UserState {
+	currentUser: AuthUser | null;
 	isFetching: boolean;
 	error: boolean;
 }
 
 const INITIAL_STATE: UserState = {
-	currentUser: {},
+	currentUser: null,
 	isFetching: false,
 	error: false,
 };
@@ -19,7 +20,7 @@ const userSlice = createSlice({
 		loginStart: (state) => {
 			state.isFetching = true;
 		},
-		loginSuccess: (state, action) => {
+		loginSuccess: (state, action: PayloadAction<AuthUser>) => {
 			state.isFetching = false;
 			state.currentUser = action.payload;
 		},

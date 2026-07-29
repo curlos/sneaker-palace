@@ -8,7 +8,7 @@ import { useGetShoesBulkQuery } from '../api/shoesApi';
 import MoreShoes from '../components/MoreShoes';
 import SmallOrderShoe from '../components/SmallOrderShoe';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
-import { IProduct, Shoe } from '../types/types';
+import { IProduct, OrderedItem, Shoe } from '../types/types';
 import { RootState } from '../redux/store';
 
 const OrderDetails = () => {
@@ -49,7 +49,7 @@ const OrderDetails = () => {
 				product,
 			};
 		})
-		.filter((item: any): item is { shoe: Shoe; product: IProduct } => item !== null);
+		.filter((item): item is OrderedItem => item !== null);
 
 	const loading = orderLoading || shoesLoading;
 

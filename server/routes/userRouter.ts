@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { UserType } from '../types/types';
@@ -6,29 +6,19 @@ import { isValidEmail } from '../utils/validation';
 import User from '../models/User';
 import { verifyToken } from './verifyToken';
 
-declare module 'express-serve-static-core' {
-	interface Request {
-		user?: any;
-	}
-}
-
 const router = express.Router();
 
-const optionalAuth = (req: Request, _res: Response, next: any) => {
-	const authHeader: any = req.headers.authorization;
+const optionalAuth = (req: Request, _res: Response, next: NextFunction) => {
+	const authHeader = req.headers.authorization;
 
 	if (authHeader) {
 		const token = authHeader.split(' ')[1];
-		jwt.verify(
-			token,
-			process.env.JWT_SEC as string,
-			((err: any, user: UserType) => {
-				if (!err) {
-					req.user = user;
-				}
-				next();
-			}) as any
-		);
+		jwt.verify(token, process.env.JWT_SEC as string, (err: jwt.VerifyErrors | null, decoded: jwt.JwtPayload | string | undefined) => {
+			if (!err) {
+				req.user = decoded as UserType;
+			}
+			next();
+		});
 	} else {
 		next();
 	}
@@ -63,7 +53,7 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
 				return res.status(400).json({ error: 'A valid email is required' });
 			}
 
-			const currentUser = await User.findById(req.user.id);
+			const currentUser = await User.findById(req.user!.id);
 
 			if (!currentUser) {
 				return res.status(404).json({ error: 'User not found' });
@@ -86,7 +76,7 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
 		}
 
 		const updatedUser = await User.findByIdAndUpdate(
-			req.user.id,
+			req.user!.id,
 			{
 				$set: updateData,
 			},
@@ -115,7 +105,7 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
 			return res.status(400).json({ error: 'New password must be at least 8 characters long' });
 		}
 
-		const user = await User.findOne({ _id: req.user.id });
+		const user = await User.findOne({ _id: req.user!.id });
 
 		if (!user) {
 			return res.status(404).json({ error: 'User not found' });
@@ -135,7 +125,7 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
 		};
 
 		const updatedUser = await User.findByIdAndUpdate(
-			req.user.id,
+			req.user!.id,
 			{
 				$set: newPassword,
 			},

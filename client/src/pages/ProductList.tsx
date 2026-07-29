@@ -8,7 +8,7 @@ import Sidebar from '../components/Sidebar';
 import SmallShoe from '../components/SmallShoe';
 import { SortDropdown } from '../components/SortDropdown';
 import SmallShoeSkeleton from '../skeleton_loaders/SmallShoeSkeleton';
-import { Shoe } from '../types/types';
+import { Shoe, ShoeFilters } from '../types/types';
 import getInitialFilters from '../utils/getInitialFilters';
 import { useWindowSize } from '../utils/useWindowSize';
 import { buildURLFromFilters } from '../utils/urlFilterUtils';
@@ -51,7 +51,7 @@ const ProductList = () => {
 
 	// Filter setter that updates URL
 	const updateFilters = React.useCallback(
-		(newFilters: any) => {
+		(newFilters: ShoeFilters) => {
 			const currentQuery = query.get('query');
 			const filterParams = buildURLFromFilters(newFilters);
 

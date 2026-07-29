@@ -60,9 +60,9 @@ const removeRatingFromAverage = (currentAvg: number, currentCount: number, remov
 
 router.post('/rate', verifyToken, async (req: Request, res: Response) => {
 	try {
-		const rating = new Rating({ ...req.body, userID: req.user.id });
+		const rating = new Rating({ ...req.body, userID: req.user!.id });
 		const shoe = await Shoe.findOne({ shoeID: req.body.shoeID });
-		const user = await User.findById(req.user.id);
+		const user = await User.findById(req.user!.id);
 
 		if (!shoe || !user) {
 			return res.status(404).json({ error: 'Shoe or user not found' });
@@ -99,7 +99,7 @@ router.put('/edit/:id', verifyToken, async (req: Request, res: Response) => {
 			return res.status(404).json({ error: 'Rating not found' });
 		}
 
-		if (oldRating.userID !== req.user.id) {
+		if (oldRating.userID !== req.user!.id) {
 			return res.status(403).json({ error: 'Access denied - not your rating' });
 		}
 
@@ -133,14 +133,14 @@ router.put('/edit/:id', verifyToken, async (req: Request, res: Response) => {
 
 router.put('/like', verifyToken, async (req: Request, res: Response) => {
 	const rating = await Rating.findOne({ _id: req.body.ratingID });
-	const user = await User.findOne({ _id: req.user.id });
+	const user = await User.findOne({ _id: req.user!.id });
 
 	if (!rating || !user) {
 		return res.status(404).json({ error: 'Rating or user not found' });
 	}
 
 	try {
-		if (!rating.helpful.includes(req.user.id)) {
+		if (!rating.helpful.some((id) => id.equals(req.user!.id))) {
 			await rating.updateOne({ $push: { helpful: user._id } });
 			await user.updateOne({ $push: { helpful: rating._id } });
 			await rating.updateOne({ $pull: { notHelpful: user._id } });
@@ -175,14 +175,14 @@ router.put('/like', verifyToken, async (req: Request, res: Response) => {
 
 router.put('/dislike', verifyToken, async (req: Request, res: Response) => {
 	const rating = await Rating.findOne({ _id: req.body.ratingID });
-	const user = await User.findOne({ _id: req.user.id });
+	const user = await User.findOne({ _id: req.user!.id });
 
 	if (!rating || !user) {
 		return res.status(404).json({ error: 'Rating or user not found' });
 	}
 
 	try {
-		if (!rating.notHelpful.includes(req.user.id)) {
+		if (!rating.notHelpful.some((id) => id.equals(req.user!.id))) {
 			await rating.updateOne({ $push: { notHelpful: user._id } });
 			await user.updateOne({ $push: { notHelpful: rating._id } });
 			await rating.updateOne({ $pull: { helpful: user._id } });
@@ -221,7 +221,7 @@ router.delete('/:id', verifyToken, async (req: Request, res: Response) => {
 			return res.status(404).json({ error: 'Rating not found' });
 		}
 
-		if (ratingToDelete.userID !== req.user.id) {
+		if (ratingToDelete.userID !== req.user!.id) {
 			return res.status(403).json({ error: 'Access denied - not your rating' });
 		}
 

@@ -126,14 +126,14 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 		<CartProductSkeleton />
 	) : (
 		<div className={`flex py-5 mb-5 ${!isLast ? 'border-0 border-b border-solid border-gray-300' : ''}`}>
-			<Link to={`/shoe/${shoe.shoeID}`} className="max-sm:w-1/4">
+			<Link to={`/shoe/${shoe?.shoeID}`} className="max-sm:w-1/4">
 				<ShoeImage src={shoe?.image?.thumbnail || ''} alt={shoe?.name || ''} className="cart-shoe-image" />
 			</Link>
 
 			<div className="ml-5 w-full max-sm:ml-2">
 				<div>
 					<div className="flex justify-between gap-4">
-						<Link to={`/shoe/${shoe.shoeID}`}>
+						<Link to={`/shoe/${shoe?.shoeID}`}>
 							<span className="font-medium hover:underline">{shoe?.name}</span>
 						</Link>
 						<span>${Number(shoe?.retailPrice) * productInfo?.quantity}.00</span>

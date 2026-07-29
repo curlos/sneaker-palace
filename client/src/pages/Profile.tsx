@@ -63,7 +63,7 @@ const Profile = () => {
 
 	// Pagination logic for reviews
 	const sortedReviews = [...(profileUserReviews || [])].sort(
-		(a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+		(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 	);
 	const reviewsTotalPages = Math.ceil(sortedReviews.length / ITEMS_PER_PAGE);
 	const reviewsStartIndex = (reviewsCurrentPage - 1) * ITEMS_PER_PAGE;
@@ -214,7 +214,7 @@ const Profile = () => {
 						) : sortedReviews.length > 0 && profileUser ? (
 							<div>
 								<div>
-									{paginatedReviews.map((review: any) => (
+									{paginatedReviews.map((review) => (
 										<SmallReview key={review._id} review={review} author={profileUser} />
 									))}
 								</div>

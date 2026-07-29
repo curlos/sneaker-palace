@@ -35,6 +35,23 @@ export interface Props {
 	shoe: Shoe;
 }
 
+export interface PriceRangeFilter {
+	priceRanges: {
+		low: number;
+		high: number | null;
+	};
+	checked: boolean;
+}
+
+export interface ShoeFilters {
+	colors: Record<string, boolean>;
+	brands: Record<string, boolean>;
+	genders: Record<string, boolean>;
+	priceRanges: Record<string, PriceRangeFilter>;
+	releaseYears: Record<string, boolean>;
+	shoeSizes: Record<string, boolean>;
+}
+
 export interface UserType {
 	_id: string;
 	email: string;
@@ -54,6 +71,15 @@ export interface UserType {
 	preselectedShoeSize: string;
 	preferredGender: string;
 	unitOfMeasure: string;
+}
+
+export interface AuthUser extends UserType {
+	accessToken: string;
+}
+
+export interface OrderedItem {
+	shoe: Shoe;
+	product: IProduct;
 }
 
 export interface IProduct {
@@ -97,6 +123,13 @@ export interface IRating {
 	postedByUser: UserType;
 }
 
+export type UpdateUserInfoPayload = Partial<UserType>;
+
+export interface UpdateUserPasswordPayload {
+	currentPassword: string;
+	newPassword: string;
+}
+
 export interface IOrder {
 	amount: number;
 	billingDetails: {
@@ -133,4 +166,19 @@ export interface IOrder {
 	updatedAt: string;
 	userID: string;
 	_id: string;
+}
+
+export type CreateOrderPayload = Omit<IOrder, '_id' | 'status' | 'createdAt' | 'updatedAt'>;
+
+export interface CreatePaymentIntentResponse {
+	clientSecret?: string;
+	error?: string;
+}
+
+export interface CreateOrderResponse {
+	order?: IOrder;
+	updatedUser?: Partial<UserType>;
+	updatedCart?: ICart;
+	error?: string;
+	orderID?: string;
 }

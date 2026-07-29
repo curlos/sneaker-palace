@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { Dispatch } from '@reduxjs/toolkit';
 import { loginStart, loginSuccess } from '../redux/userRedux';
-import { UserType } from '../types/types';
+import { AuthUser, IProduct } from '../types/types';
 
 export const performLogin = async (
 	email: string,
 	password: string,
 	dispatch: Dispatch,
-	updateGuestCart: (cartData: { products: any[]; total: number }) => Promise<any>
-): Promise<UserType> => {
+	updateGuestCart: (cartData: { products: IProduct[]; total: number }) => Promise<unknown>
+): Promise<AuthUser> => {
 	dispatch(loginStart());
 
 	const body = { email, password };

@@ -1,35 +1,44 @@
 import { baseAPI } from './api';
 import { userApi } from './userApi';
+import { IRating, Shoe, UserType } from '../types/types';
+
+export type CreateRatingPayload = Omit<
+	IRating,
+	'_id' | 'createdAt' | 'updatedAt' | 'postedByUser' | 'helpful' | 'notHelpful'
+>;
 
 export const ratingsApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
 		// Get a single rating by ID
-		getRating: builder.query({
+		getRating: builder.query<IRating, string>({
 			query: (ratingId: string) => `/rating/${ratingId}`,
 			providesTags: (result, error, ratingId) => [{ type: 'Rating', id: ratingId }],
 		}),
 
 		// Get ratings for a specific shoe (using new flexible endpoint)
-		getRatingsByShoe: builder.query({
+		getRatingsByShoe: builder.query<IRating[], string>({
 			query: (shoeID: string) => `/rating/by/shoe/${shoeID}`,
 			providesTags: (result, error, shoeID) => [
 				{ type: 'RatingsByShoe' as const, id: shoeID },
-				...(result || []).map((rating: any) => ({ type: 'Rating' as const, id: rating._id })),
+				...(result || []).map((rating) => ({ type: 'Rating' as const, id: rating._id })),
 			],
 		}),
 
 		// Get ratings by a specific user with author data
-		getRatingsByUser: builder.query({
+		getRatingsByUser: builder.query<IRating[], string>({
 			query: (userID: string) => `/rating/by/user/${userID}`,
 			providesTags: (result, error, userID) => [
 				{ type: 'RatingsByUser' as const, id: userID },
-				...(result || []).map((rating: any) => ({ type: 'Rating' as const, id: rating._id })),
+				...(result || []).map((rating) => ({ type: 'Rating' as const, id: rating._id })),
 			],
 		}),
 
 		// Like a rating
-		likeRating: builder.mutation({
-			query: ({ ratingID, userID }: { ratingID: string; userID: string; shoeID: string }) => ({
+		likeRating: builder.mutation<
+			{ updatedRating: IRating; updatedUser: UserType },
+			{ ratingID: string; userID: string; shoeID: string }
+		>({
+			query: ({ ratingID, userID }) => ({
 				url: '/rating/like',
 				method: 'PUT',
 				body: { ratingID, userID },
@@ -56,7 +65,7 @@ export const ratingsApi = baseAPI.injectEndpoints({
 				// Optimistic update for rating in getRatingsByShoe
 				const ratingPatchResult = dispatch(
 					ratingsApi.util.updateQueryData('getRatingsByShoe', shoeID, (draft) => {
-						const rating = draft.find((r: any) => r._id === ratingID);
+						const rating = draft.find((r) => r._id === ratingID);
 						if (rating) {
 							// Ensure arrays exist
 							rating.helpful = rating.helpful || [];
@@ -93,8 +102,11 @@ export const ratingsApi = baseAPI.injectEndpoints({
 		}),
 
 		// Dislike a rating
-		dislikeRating: builder.mutation({
-			query: ({ ratingID, userID }: { ratingID: string; userID: string; shoeID: string }) => ({
+		dislikeRating: builder.mutation<
+			{ updatedRating: IRating; updatedUser: UserType },
+			{ ratingID: string; userID: string; shoeID: string }
+		>({
+			query: ({ ratingID, userID }) => ({
 				url: '/rating/dislike',
 				method: 'PUT',
 				body: { ratingID, userID },
@@ -121,7 +133,7 @@ export const ratingsApi = baseAPI.injectEndpoints({
 				// Optimistic update for rating in getRatingsByShoe
 				const ratingPatchResult = dispatch(
 					ratingsApi.util.updateQueryData('getRatingsByShoe', shoeID, (draft) => {
-						const rating = draft.find((r: any) => r._id === ratingID);
+						const rating = draft.find((r) => r._id === ratingID);
 						if (rating) {
 							// Ensure arrays exist
 							rating.helpful = rating.helpful || [];
@@ -158,27 +170,28 @@ export const ratingsApi = baseAPI.injectEndpoints({
 		}),
 
 		// Delete a rating
-		deleteRating: builder.mutation({
+		deleteRating: builder.mutation<{ deletedRating: IRating; updatedShoe: Shoe }, string>({
 			query: (ratingId: string) => ({
 				url: `/rating/${ratingId}`,
 				method: 'DELETE',
 			}),
 			// Optimistic deletion - remove rating immediately
 			onQueryStarted: async (ratingId, { dispatch, queryFulfilled, getState }) => {
-				const patchResults: any[] = [];
+				const patchResults: { undo: () => void }[] = [];
 
 				// Find all getRatingsByShoe queries and optimistically remove the rating
-				const state = getState() as any;
+				const state = getState() as { api: ReturnType<typeof baseAPI.reducer> };
 				const api = state.api;
 
 				// Look through all cached queries to find ones that contain this rating
-				Object.entries(api.queries).forEach(([queryKey, query]: [string, any]) => {
+				Object.entries(api.queries).forEach(([queryKey, query]) => {
 					if (queryKey.startsWith('getRatingsByShoe') && query?.data) {
 						const shoeID = queryKey.split('(')[1]?.split(')')[0]?.replace(/"/g, '');
-						if (shoeID && query.data.some((rating: any) => rating._id === ratingId)) {
+						const ratings = query.data as IRating[];
+						if (shoeID && ratings.some((rating) => rating._id === ratingId)) {
 							const patchResult = dispatch(
 								ratingsApi.util.updateQueryData('getRatingsByShoe', shoeID, (draft) => {
-									const index = draft.findIndex((rating: any) => rating._id === ratingId);
+									const index = draft.findIndex((rating) => rating._id === ratingId);
 									if (index !== -1) {
 										draft.splice(index, 1);
 									}
@@ -206,8 +219,11 @@ export const ratingsApi = baseAPI.injectEndpoints({
 		}),
 
 		// Create a new rating
-		createRating: builder.mutation({
-			query: (ratingData: any) => ({
+		createRating: builder.mutation<
+			{ updatedShoe: Shoe; updatedUser: UserType; rating: IRating },
+			CreateRatingPayload
+		>({
+			query: (ratingData) => ({
 				url: '/rating/rate',
 				method: 'POST',
 				body: ratingData,
@@ -220,8 +236,8 @@ export const ratingsApi = baseAPI.injectEndpoints({
 		}),
 
 		// Update an existing rating
-		updateRating: builder.mutation({
-			query: ({ ratingId, ratingData }: { ratingId: string; ratingData: any }) => ({
+		updateRating: builder.mutation<IRating, { ratingId: string; ratingData: Partial<CreateRatingPayload> }>({
+			query: ({ ratingId, ratingData }) => ({
 				url: `/rating/edit/${ratingId}`,
 				method: 'PUT',
 				body: ratingData,

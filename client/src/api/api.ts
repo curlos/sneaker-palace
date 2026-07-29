@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { RootState } from '../redux/store';
 
 // Utility function to build query strings
-export const buildQueryString = (params?: Record<string, any>) => {
+export const buildQueryString = (params?: Record<string, string>) => {
 	return params ? new URLSearchParams(params).toString() : '';
 };
 
@@ -12,7 +13,7 @@ export const baseAPI = createApi({
 		baseUrl: import.meta.env.VITE_API_URL,
 		prepareHeaders: (headers, { getState }) => {
 			// Add auth headers for authenticated requests
-			const token = (getState() as any).user?.currentUser?.accessToken;
+			const token = (getState() as RootState).user?.currentUser?.accessToken;
 			if (token) {
 				headers.set('Authorization', `Bearer ${token}`);
 			}

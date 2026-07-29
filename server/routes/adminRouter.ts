@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import CryptoJS from 'crypto-js';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
@@ -8,7 +8,7 @@ import { addAllShoes, addAllShoesByBrand, addShoeByName } from '../utils/sneaker
 const router = express.Router();
 
 // Simple admin authentication middleware
-const adminAuth = (req: Request, res: Response, next: any) => {
+const adminAuth = (req: Request, res: Response, next: NextFunction) => {
 	const adminSecret = req.headers['admin-secret'];
 
 	// Use a temporary secret for this migration
@@ -106,7 +106,7 @@ if (process.env.NODE_ENV !== 'production') {
 		try {
 			const { releaseYear, brand } = req.query;
 
-			const filter: any = {};
+			const filter: Record<string, unknown> = {};
 
 			if (releaseYear) {
 				filter.releaseYear = Number(releaseYear);
@@ -118,18 +118,24 @@ if (process.env.NODE_ENV !== 'production') {
 
 			const shoes = await Shoe.find(filter, 'brand name releaseYear releaseDate').lean();
 
-			const groupedShoes = shoes.reduce((acc: any, shoe: any) => {
-				const { brand, name, releaseYear, releaseDate } = shoe;
-				const yearOrDate = releaseYear ? releaseYear : releaseDate ? releaseDate : '';
-				const formattedString = `${brand} - ${name} (${yearOrDate})`;
+			const groupedShoes = shoes.reduce(
+				(
+					acc: Record<string, string[]>,
+					shoe: { brand: string; name: string; releaseYear?: number; releaseDate?: string }
+				) => {
+					const { brand, name, releaseYear, releaseDate } = shoe;
+					const yearOrDate = releaseYear ? releaseYear : releaseDate ? releaseDate : '';
+					const formattedString = `${brand} - ${name} (${yearOrDate})`;
 
-				if (!acc[brand]) {
-					acc[brand] = [];
-				}
-				acc[brand].push(formattedString);
+					if (!acc[brand]) {
+						acc[brand] = [];
+					}
+					acc[brand].push(formattedString);
 
-				return acc;
-			}, {});
+					return acc;
+				},
+				{} as Record<string, string[]>
+			);
 
 			return res.json(groupedShoes);
 		} catch {

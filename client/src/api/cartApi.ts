@@ -48,10 +48,10 @@ export const cartApi = baseAPI.injectEndpoints({
 			providesTags: ['Cart'],
 		}),
 
-		getUserCart: builder.query({
+		getUserCart: builder.query<Partial<ICart>, void>({
 			queryFn: async (arg, { getState }) => {
 				try {
-					const token = (getState() as any).user?.currentUser?.accessToken;
+					const token = (getState() as RootState).user?.currentUser?.accessToken;
 
 					// Try to fetch existing cart
 					const response = await fetch(`${import.meta.env.VITE_API_URL}/cart`, {
@@ -101,8 +101,8 @@ export const cartApi = baseAPI.injectEndpoints({
 		}),
 
 		// Update entire cart (the only backend endpoint that actually exists)
-		updateUserCart: builder.mutation({
-			query: ({ products }: { products: any[] }) => ({
+		updateUserCart: builder.mutation<Partial<ICart>, { products: IProduct[] }>({
+			query: ({ products }) => ({
 				url: `/cart`,
 				method: 'PUT',
 				body: { products },
@@ -128,7 +128,7 @@ export const cartApi = baseAPI.injectEndpoints({
 			},
 
 			invalidatesTags: ['Cart'],
-			transformResponse: (response: any) => {
+			transformResponse: (response: Partial<ICart>) => {
 				// Add computed total to the response
 				if (response && response.products) {
 					return {

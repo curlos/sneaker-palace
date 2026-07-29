@@ -1,27 +1,28 @@
 import { baseAPI } from './api';
+import { CreateOrderPayload, CreateOrderResponse, IOrder } from '../types/types';
 
 export const ordersApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
 		// Get orders for logged-in user
-		getUserOrders: builder.query({
+		getUserOrders: builder.query<IOrder[], void>({
 			query: () => `/orders/user`,
 			providesTags: (result) =>
 				result
 					? [
-							...result.map((order: any) => ({ type: 'Order', id: order._id })),
+							...result.map((order) => ({ type: 'Order' as const, id: order._id })),
 							{ type: 'Order', id: 'USER_ORDERS' },
 						]
 					: [{ type: 'Order', id: 'USER_ORDERS' }],
 		}),
 
 		// Get a single order by ID
-		getOrderById: builder.query({
+		getOrderById: builder.query<IOrder, string>({
 			query: (orderId: string) => `/orders/${orderId}`,
 			providesTags: (_, __, orderId) => [{ type: 'Order', id: orderId }],
 		}),
 
 		// Create order for logged-in user
-		createUserOrder: builder.mutation({
+		createUserOrder: builder.mutation<CreateOrderResponse, CreateOrderPayload>({
 			query: (orderData) => ({
 				url: '/orders',
 				method: 'POST',
@@ -34,7 +35,7 @@ export const ordersApi = baseAPI.injectEndpoints({
 		}),
 
 		// Create order for guest user (no account)
-		createGuestOrder: builder.mutation({
+		createGuestOrder: builder.mutation<CreateOrderResponse, CreateOrderPayload>({
 			query: (orderData) => ({
 				url: '/orders/no-account',
 				method: 'POST',

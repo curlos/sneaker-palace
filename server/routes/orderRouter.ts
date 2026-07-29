@@ -1,14 +1,5 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
-
-// Extend Express Request interface
-declare module 'express-serve-static-core' {
-	interface Request {
-		user?: any;
-		order?: any;
-	}
-}
-
 import User from '../models/User';
 import Cart from '../models/Cart';
 import Order from '../models/Order';
@@ -16,7 +7,7 @@ import { verifyToken } from './verifyToken';
 
 const router = express.Router();
 
-const verifyOrderAccess = async (req: Request, res: Response, next: any) => {
+const verifyOrderAccess = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const order = await Order.findById(req.params.orderID);
 
@@ -47,7 +38,7 @@ const verifyOrderAccess = async (req: Request, res: Response, next: any) => {
 
 router.get('/user', verifyToken, async (req: Request, res: Response) => {
 	try {
-		const orders = await Order.find({ userID: req.user.id || req.user._id });
+		const orders = await Order.find({ userID: req.user!.id });
 		return res.json(orders);
 	} catch (error) {
 		console.error('Error fetching user orders:', error);
@@ -66,8 +57,8 @@ router.post('/', verifyToken, async (req: Request, res: Response) => {
 		return res.json({ error: 'Already ordered', orderID: orderFound._id });
 	}
 
-	const user = await User.findById(req.user.id);
-	const cart = await Cart.findOne({ userID: req.user.id });
+	const user = await User.findById(req.user!.id);
+	const cart = await Cart.findOne({ userID: req.user!.id });
 
 	if (!user || !cart) {
 		return res.status(404).json({ error: 'User or cart not found' });
@@ -77,7 +68,7 @@ router.post('/', verifyToken, async (req: Request, res: Response) => {
 
 	const order = new Order({
 		...req.body,
-		userID: req.user.id,
+		userID: req.user!.id,
 	});
 
 	const session = await mongoose.startSession();
@@ -97,8 +88,8 @@ router.post('/', verifyToken, async (req: Request, res: Response) => {
 		session.endSession();
 	}
 
-	const updatedUser = await User.findById(req.user.id);
-	const updatedCart = await Cart.findOne({ userID: req.user.id });
+	const updatedUser = await User.findById(req.user!.id);
+	const updatedCart = await Cart.findOne({ userID: req.user!.id });
 
 	if (!updatedUser) {
 		return res.status(404).json({ error: 'User not found' });

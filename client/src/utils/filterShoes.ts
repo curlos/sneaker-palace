@@ -1,8 +1,8 @@
-import { Shoe } from '../types/types';
+import { Shoe, ShoeFilters } from '../types/types';
 
 export {};
 
-export const filterByColor = (filters: any, shoesToFilter: Array<Shoe>) => {
+export const filterByColor = (filters: ShoeFilters, shoesToFilter: Array<Shoe>) => {
 	if (Object.values(filters.colors).every((v) => v === false)) {
 		return shoesToFilter;
 	}
@@ -20,7 +20,7 @@ export const filterByColor = (filters: any, shoesToFilter: Array<Shoe>) => {
 	});
 };
 
-export const filterByBrand = (filters: any, shoesToFilter: Array<Shoe>) => {
+export const filterByBrand = (filters: ShoeFilters, shoesToFilter: Array<Shoe>) => {
 	if (Object.values(filters.brands).every((v) => v === false)) {
 		return shoesToFilter;
 	}
@@ -28,7 +28,7 @@ export const filterByBrand = (filters: any, shoesToFilter: Array<Shoe>) => {
 	return shoesToFilter.filter((shoe: Shoe) => filters.brands[shoe.brand.toUpperCase()]);
 };
 
-export const filterByGender = (filters: any, shoesToFilter: Array<Shoe>) => {
+export const filterByGender = (filters: ShoeFilters, shoesToFilter: Array<Shoe>) => {
 	if (Object.values(filters.genders).every((v) => v === false)) {
 		return shoesToFilter;
 	}
@@ -38,8 +38,8 @@ export const filterByGender = (filters: any, shoesToFilter: Array<Shoe>) => {
 	});
 };
 
-export const filterByPrice = (filters: any, shoesToFilter: Array<Shoe>) => {
-	if (Object.values(filters.priceRanges).every((v: any) => v['checked'] === false)) {
+export const filterByPrice = (filters: ShoeFilters, shoesToFilter: Array<Shoe>) => {
+	if (Object.values(filters.priceRanges).every((v) => v.checked === false)) {
 		return shoesToFilter;
 	}
 
@@ -56,7 +56,7 @@ export const filterByPrice = (filters: any, shoesToFilter: Array<Shoe>) => {
 					break;
 				}
 
-				if (shoe.retailPrice >= low && shoe.retailPrice <= high) {
+				if (high !== null && shoe.retailPrice >= low && shoe.retailPrice <= high) {
 					shoeIncluded = true;
 					break;
 				}

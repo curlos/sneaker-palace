@@ -5,7 +5,7 @@ import User from '../models/User';
 import { startTestServer, stopTestServer } from '../test/testServer';
 
 let mongod: MongoMemoryServer;
-let app: any;
+let app: Awaited<ReturnType<typeof startTestServer>>['app'];
 
 beforeAll(async () => {
 	({ app, mongod } = await startTestServer());
@@ -201,8 +201,9 @@ describe('POST /auth/register', () => {
 
 		const savedUser = await User.findOne({ email });
 
-		expect(savedUser?.password).not.toBe(plainPassword);
-		expect(await bcrypt.compare(plainPassword, savedUser?.password)).toBe(true);
+		expect(savedUser).not.toBeNull();
+		expect(savedUser!.password).not.toBe(plainPassword);
+		expect(await bcrypt.compare(plainPassword, savedUser!.password)).toBe(true);
 	});
 
 	it('returns 500 if the database save fails', async () => {

@@ -1,9 +1,10 @@
 import { baseAPI } from './api';
+import { CreatePaymentIntentResponse, IProduct } from '../types/types';
 
 export const checkoutApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
 		// Create payment intent for Stripe checkout
-		createPaymentIntent: builder.query({
+		createPaymentIntent: builder.query<CreatePaymentIntentResponse, { items: IProduct[]; total: number }>({
 			query: ({ items, total }) => ({
 				url: '/checkout/create-payment-intent',
 				method: 'POST',
@@ -14,7 +15,7 @@ export const checkoutApi = baseAPI.injectEndpoints({
 				{ type: 'PaymentIntent', id: `${JSON.stringify(items || [])}_${total}` },
 			],
 			// Transform response to extract clientSecret
-			transformResponse: (response: any) => {
+			transformResponse: (response: CreatePaymentIntentResponse) => {
 				if (response.error) {
 					throw new Error(response.error);
 				}

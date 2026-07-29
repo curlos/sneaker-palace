@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import CheckoutProduct from '../components/CheckoutProduct';
 import { useCart } from '../api/cartApi';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
+import { IProduct } from '../types/types';
 
 export default function CheckoutForm() {
 	const stripe = useStripe();
@@ -14,7 +15,7 @@ export default function CheckoutForm() {
 	const currentCart = cartData;
 	const total = cartData?.total || 0;
 
-	const [message, setMessage] = useState<any>(null);
+	const [message, setMessage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
@@ -74,7 +75,7 @@ export default function CheckoutForm() {
 		// be redirected to an intermediate site first to authorize the payment, then
 		// redirected to the `return_url`.
 		if (error.type === 'card_error' || error.type === 'validation_error') {
-			setMessage(error.message);
+			setMessage(error.message || 'An unexpected error occured.');
 		} else {
 			setMessage('An unexpected error occured.');
 		}
@@ -154,7 +155,7 @@ export default function CheckoutForm() {
 					</div>
 
 					<div className="">
-						{currentCart?.products?.map((product: any) => (
+						{currentCart?.products?.map((product: IProduct) => (
 							<CheckoutProduct key={product._id} product={product} type="small" />
 						))}
 					</div>

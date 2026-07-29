@@ -1,16 +1,10 @@
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid';
 import React, { useState } from 'react';
+import { ShoeFilters } from '../types/types';
 
 interface Props {
-	filters: {
-		colors: any;
-		brands: any;
-		genders: any;
-		priceRanges: any;
-		releaseYears: any;
-		shoeSizes: any;
-	};
-	updateFilters: any;
+	filters: ShoeFilters;
+	updateFilters: (newFilters: ShoeFilters) => void;
 	shoeSizes: Array<string>;
 }
 

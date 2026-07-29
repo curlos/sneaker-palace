@@ -1,32 +1,33 @@
 import { baseAPI } from './api';
 import { userApi } from './userApi';
+import { Shoe, ShoeFilters } from '../types/types';
 
 export const shoesApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
 		// Get a single shoe by ID
-		getShoe: builder.query({
+		getShoe: builder.query<Shoe, string>({
 			query: (shoeId: string) => `/shoes/${shoeId}`,
 			providesTags: (_, __, shoeId) => [{ type: 'Shoe', id: shoeId }],
 		}),
 
 		// Get multiple shoes by ObjectIDs (batch fetch for favorites)
-		getShoesByObjectIds: builder.query({
+		getShoesByObjectIds: builder.query<Shoe[], string[]>({
 			query: (ids: string[]) => ({
 				url: '/shoes/objectIDs',
 				method: 'POST',
 				body: { ids },
 			}),
-			providesTags: (result) => (result ? result.map((shoe: any) => ({ type: 'Shoe', id: shoe.shoeID })) : []),
+			providesTags: (result) => (result ? result.map((shoe) => ({ type: 'Shoe', id: shoe.shoeID })) : []),
 		}),
 
 		// Get multiple shoes in bulk by any key (flexible batch fetch)
-		getShoesBulk: builder.query({
+		getShoesBulk: builder.query<Shoe[], { ids: string[]; key?: string }>({
 			query: ({ ids, key = '_id' }: { ids: string[]; key?: string }) => ({
 				url: '/shoes/bulk',
 				method: 'POST',
 				body: { ids, key },
 			}),
-			providesTags: (result) => (result ? result.map((shoe: any) => ({ type: 'Shoe', id: shoe.shoeID })) : []),
+			providesTags: (result) => (result ? result.map((shoe) => ({ type: 'Shoe', id: shoe.shoeID })) : []),
 		}),
 
 		// Get paginated shoes (used in ProductList)
@@ -38,7 +39,7 @@ export const shoesApi = baseAPI.injectEndpoints({
 				query,
 				limit,
 			}: {
-				filters: any;
+				filters: ShoeFilters;
 				sortType: string;
 				pageNum: number;
 				query: string;
@@ -82,7 +83,7 @@ export const shoesApi = baseAPI.injectEndpoints({
 				);
 
 				// Optimistic update to user favorites cache
-				let userPatchResult: any = null;
+				let userPatchResult: typeof patchResult | null = null;
 				if (shoe_id && userID) {
 					userPatchResult = dispatch(
 						userApi.util.updateQueryData('getLoggedInUser', userID, (draft) => {

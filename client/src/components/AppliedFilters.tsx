@@ -1,13 +1,14 @@
 import { XIcon } from '@heroicons/react/solid';
+import { ShoeFilters } from '../types/types';
 
 interface Props {
-	filters: any;
-	updateFilters: (newFilters: any) => void;
+	filters: ShoeFilters;
+	updateFilters: (newFilters: ShoeFilters) => void;
 }
 
 export const AppliedFilters = ({ filters, updateFilters }: Props) => {
 	const getGroupedFilters = () => {
-		const grouped: { [key: string]: { displayName: string; values: string[]; type: string } } = {};
+		const grouped: { [key: string]: { displayName: string; values: string[]; type: keyof ShoeFilters } } = {};
 
 		// Colors
 		const selectedColors = Object.keys(filters.colors).filter((color) => filters.colors[color]);
@@ -74,19 +75,21 @@ export const AppliedFilters = ({ filters, updateFilters }: Props) => {
 		return grouped;
 	};
 
-	const clearFilterCategory = (type: string) => {
+	const clearFilterCategory = (type: keyof ShoeFilters) => {
 		const newFilters = { ...filters };
 
 		if (type === 'priceRanges') {
-			newFilters[type] = { ...filters[type] };
-			Object.keys(newFilters[type]).forEach((key) => {
-				newFilters[type][key] = { ...newFilters[type][key], checked: false };
+			const clearedPriceRanges = { ...filters.priceRanges };
+			Object.keys(clearedPriceRanges).forEach((key) => {
+				clearedPriceRanges[key] = { ...clearedPriceRanges[key], checked: false };
 			});
+			newFilters.priceRanges = clearedPriceRanges;
 		} else {
-			newFilters[type] = { ...filters[type] };
-			Object.keys(newFilters[type]).forEach((key) => {
-				newFilters[type][key] = false;
+			const clearedCategory: Record<string, boolean> = { ...filters[type] };
+			Object.keys(clearedCategory).forEach((key) => {
+				clearedCategory[key] = false;
 			});
+			newFilters[type] = clearedCategory;
 		}
 
 		updateFilters(newFilters);

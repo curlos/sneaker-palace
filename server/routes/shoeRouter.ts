@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { PipelineStage } from 'mongoose';
 import Shoe from '../models/Shoe';
 import User from '../models/User';
 import { verifyToken } from './verifyToken';
@@ -16,13 +17,13 @@ router.get('/page/:pageNum', async (req: Request, res: Response) => {
 		select: 'shoeID image.original name gender colorway ratings retailPrice brand rating',
 	};
 
-	(Shoe as any).paginate({}, options, (err: any, result: any) => {
+	Shoe.paginate({}, options, (err, result) => {
 		return res.json(result);
 	});
 });
 
 router.post('/', async (req: Request, res: Response) => {
-	const getSortType = () => {
+	const getSortType = (): Record<string, 1 | -1> => {
 		switch (req.body.sortType) {
 			case 'Newest Arrivals':
 				return { releaseDate: -1 };
@@ -44,7 +45,7 @@ router.post('/', async (req: Request, res: Response) => {
 		return ['Most Popular', 'Most Reviewed'].includes(req.body.sortType);
 	};
 
-	const getArraySortDirection = () => {
+	const getArraySortDirection = (): Record<string, 1 | -1> => {
 		switch (req.body.sortType) {
 			case 'Most Popular':
 				return { favoritesCount: -1 };
@@ -74,7 +75,7 @@ router.post('/', async (req: Request, res: Response) => {
 	const buildFilterMatch = () => {
 		const { selectedColors, selectedBrands, selectedGenders, selectedPriceRanges, selectedReleaseYears, filters } =
 			getSelectedFilters();
-		const matchConditions: any = {};
+		const matchConditions: Record<string, unknown> = {};
 
 		if (selectedColors.length > 0) {
 			const regex = selectedColors.join('|');
@@ -96,7 +97,7 @@ router.post('/', async (req: Request, res: Response) => {
 		}
 
 		if (selectedPriceRanges.length > 0) {
-			const priceRangeConditions: any = [];
+			const priceRangeConditions: Record<string, unknown>[] = [];
 			selectedPriceRanges.forEach((priceRange) => {
 				const range = filters.priceRanges[priceRange].priceRanges;
 				if (!range.high) {
@@ -114,7 +115,7 @@ router.post('/', async (req: Request, res: Response) => {
 	};
 
 	const buildPipeline = () => {
-		const pipeline: any[] = [];
+		const pipeline: PipelineStage[] = [];
 		const pageNum = Number(req.body.pageNum);
 		const limit = req.body.limit || 12;
 		const skip = (pageNum - 1) * limit;
@@ -388,13 +389,13 @@ router.post('/bulk', async (req: Request, res: Response) => {
 
 router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response) => {
 	const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });
-	const user = await User.findOne({ _id: req.user.id });
+	const user = await User.findOne({ _id: req.user!.id });
 
 	if (!shoe || !user) {
 		return res.status(404).json({ error: 'Shoe or user not found' });
 	}
 
-	if (!shoe.favorites.includes(req.user.id)) {
+	if (!shoe.favorites.some((fav) => fav.equals(req.user!.id))) {
 		await shoe.updateOne({ $push: { favorites: user._id } });
 		await user.updateOne({ $push: { favorites: shoe._id } });
 		const updatedShoe = await Shoe.findById(shoe._id);

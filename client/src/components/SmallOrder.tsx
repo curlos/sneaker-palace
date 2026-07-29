@@ -2,7 +2,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { useGetShoesBulkQuery } from '../api/shoesApi';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
-import { IOrder, IProduct, Shoe } from '../types/types';
+import { IOrder, IProduct, OrderedItem, Shoe } from '../types/types';
 import SmallOrderShoe from './SmallOrderShoe';
 
 interface Props {
@@ -37,7 +37,7 @@ const SmallOrder = ({ order }: Props) => {
 				product,
 			};
 		})
-		.filter((item: any): item is { shoe: Shoe; product: IProduct } => item !== null);
+		.filter((item): item is OrderedItem => item !== null);
 
 	return (
 		<div className="border border-gray-300 rounded-lg my-4 p-5 text-gray-800">

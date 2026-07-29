@@ -7,7 +7,7 @@ const router = express.Router();
 // Create cart
 router.post('/', verifyToken, async (req: Request, res: Response) => {
 	const newCart = new Cart({
-		userID: req.user.id,
+		userID: req.user!.id,
 		products: [],
 	});
 
@@ -18,7 +18,7 @@ router.post('/', verifyToken, async (req: Request, res: Response) => {
 // Update cart
 router.put('/', verifyToken, async (req: Request, res: Response) => {
 	const updatedCart = await Cart.findOneAndUpdate(
-		{ userID: req.user.id },
+		{ userID: req.user!.id },
 		{
 			$set: req.body,
 		},
@@ -34,7 +34,7 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
 
 // Get user's cart
 router.get('/', verifyToken, async (req: Request, res: Response) => {
-	const cart = await Cart.findOne({ userID: req.user.id });
+	const cart = await Cart.findOne({ userID: req.user!.id });
 	return res.status(200).json(cart);
 });
 

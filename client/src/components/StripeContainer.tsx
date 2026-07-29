@@ -23,7 +23,7 @@ const StripeContainer = ({ children }: Props) => {
 		isLoading,
 		error,
 	} = useCreatePaymentIntentQuery(
-		{ items: currentCart?.products, total },
+		{ items: currentCart?.products || [], total },
 		{ skip: !currentCart?.products?.length } // Only call when cart has products
 	);
 

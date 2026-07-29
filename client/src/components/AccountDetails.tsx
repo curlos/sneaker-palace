@@ -50,11 +50,12 @@ const AccountDetails = () => {
 			// Show success message and auto-dismiss after 3 seconds
 			setShowSuccessMessage(true);
 			timeoutRef.current = setTimeout(() => setShowSuccessMessage(false), 3000);
-		} catch (error: any) {
+		} catch (error) {
 			console.error('Failed to update user preferences:', error);
 
 			// Extract error message from backend response or use default
-			const backendErrorMessage = error?.data?.error || 'Settings not updated, error occurred!';
+			const backendErrorMessage =
+				(error as { data?: { error?: string } })?.data?.error || 'Settings not updated, error occurred!';
 			setErrorMessage(backendErrorMessage);
 
 			// Show error message and auto-dismiss after 3 seconds

@@ -9,6 +9,15 @@ import { useCreateUserOrderMutation, useCreateGuestOrderMutation } from '../api/
 import { RootState } from '../redux/store';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import { useGetLoggedInUserQuery } from '../api/userApi';
+import { CreateOrderPayload } from '../types/types';
+
+interface PaymentInfo {
+	paymentMethod?: {
+		card?: unknown;
+		billing_details?: unknown;
+	};
+	paymentIntentID?: string;
+}
 
 const PaymentSuccess = () => {
 	const userId = useSelector((s: RootState) => s.user.currentUser?._id);
@@ -28,17 +37,17 @@ const PaymentSuccess = () => {
 	const [createGuestOrder] = useCreateGuestOrderMutation();
 
 	const [loading, setLoading] = useState(true);
-	const [orderID, setOrderID] = useState<any>({});
+	const [orderID, setOrderID] = useState('');
 
 	const stripe = useStripe();
-	const [paymentInfo, setPaymentInfo] = useState<any>({});
+	const [paymentInfo, setPaymentInfo] = useState<PaymentInfo>({});
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		const clientSecret = new URLSearchParams(window.location.search).get('payment_intent_client_secret');
 
 		if (stripe && clientSecret) {
-			stripe.retrievePaymentIntent(clientSecret).then((paymentIntent: any) => {
+			stripe.retrievePaymentIntent(clientSecret).then((paymentIntent) => {
 				if (paymentIntent && paymentIntent.paymentIntent) {
 					axios
 						.get(
@@ -61,26 +70,26 @@ const PaymentSuccess = () => {
 		if (paymentMethod && paymentIntentID && paymentMethod.card && paymentMethod.billing_details) {
 			const addToOrders = async () => {
 				if (currentCart && currentCart.products && currentCart.products.length > 0) {
-					const body: any = {
+					const body: CreateOrderPayload = {
 						products: [...currentCart.products],
 						amount: total,
-						card: paymentMethod.card,
-						billingDetails: paymentMethod.billing_details,
-						paymentIntentID: paymentIntentID,
+						card: paymentMethod.card as CreateOrderPayload['card'],
+						billingDetails: paymentMethod.billing_details as CreateOrderPayload['billingDetails'],
+						paymentIntentID: paymentIntentID as string,
 						orderDate: new Date().toString(),
 						deliveryDate: new Date(moment().add(2, 'days').format('ddd, MMM D').toUpperCase()).toString(),
-						userID: user?._id, // Add userID for cache invalidation
+						userID: user?._id as string, // Add userID for cache invalidation
 					};
 
 					if (user?._id) {
 						// Only create order if there are products in cart
 						if (currentCart.products.length > 0) {
 							try {
-								const response: any = await createUserOrder(body).unwrap();
+								const response = await createUserOrder(body).unwrap();
 
 								if (response && response.error) {
-									setOrderID(response.orderID);
-								} else {
+									setOrderID(response.orderID || '');
+								} else if (response.order) {
 									const { order } = response;
 
 									setOrderID(order._id);
@@ -104,11 +113,11 @@ const PaymentSuccess = () => {
 						// Only create order if there are products in cart
 						if (currentCart.products.length > 0) {
 							try {
-								const response: any = await createGuestOrder(body).unwrap();
+								const response = await createGuestOrder(body).unwrap();
 
 								if (response && response.error) {
-									setOrderID(response.orderID);
-								} else {
+									setOrderID(response.orderID || '');
+								} else if (response.order) {
 									const { order } = response;
 
 									setOrderID(order._id);

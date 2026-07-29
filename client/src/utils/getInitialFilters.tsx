@@ -1,12 +1,13 @@
 import { SHOE_SIZES } from './shoeConstants';
 import { parseFiltersFromURL } from './urlFilterUtils';
+import { ShoeFilters } from '../types/types';
 
 interface stateType {
 	brands?: string[];
 	gender?: string;
 }
 
-const BRANDS_LOWERCASE: any = {
+const BRANDS_LOWERCASE: Record<string, string> = {
 	adidas: 'adidas',
 	'air jordan': 'Air Jordan',
 	'alexander mcqueen': 'Alexander McQueen',
@@ -38,7 +39,7 @@ const BRANDS_LOWERCASE: any = {
 };
 
 const getInitialFilters = (state: stateType, searchParams?: URLSearchParams) => {
-	const filters: any = {
+	const filters: ShoeFilters = {
 		colors: {
 			red: false as boolean,
 			white: false as boolean,
@@ -178,16 +179,19 @@ const getInitialFilters = (state: stateType, searchParams?: URLSearchParams) => 
 		const urlFilters = parseFiltersFromURL(searchParams);
 
 		// Merge URL filters with base filters
-		Object.keys(urlFilters).forEach((filterType) => {
+		Object.keys(urlFilters).forEach((filterTypeKey) => {
+			const filterType = filterTypeKey as keyof ShoeFilters;
 			if (filters[filterType]) {
-				Object.keys(urlFilters[filterType]).forEach((key) => {
+				Object.keys(urlFilters[filterType] ?? {}).forEach((key) => {
 					if (filterType === 'priceRanges') {
 						// Handle price ranges special structure
-						if (filters[filterType][key]) {
-							filters[filterType][key].checked = urlFilters[filterType][key].checked;
+						if (filters.priceRanges[key]) {
+							filters.priceRanges[key].checked = urlFilters.priceRanges![key].checked;
 						}
 					} else {
-						filters[filterType][key] = urlFilters[filterType][key];
+						(filters[filterType] as Record<string, boolean>)[key] = (
+							urlFilters[filterType] as Record<string, boolean>
+						)[key];
 					}
 				});
 			}
