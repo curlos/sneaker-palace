@@ -103,12 +103,10 @@ describe('GET /shoes/page/:pageNum', () => {
 		expect(res.body.docs).toEqual([]);
 	});
 
-	it.only('defaults to page 1 when pageNum is not a valid number', async () => {
+	it('defaults to page 1 when pageNum is not a valid number', async () => {
 		await Shoe.insertMany(Array.from({ length: 2 }, (_, i) => buildShoe(i)));
 
 		const res = await request(app).get('/shoes/page/abc');
-
-		console.log(res.body)
 
 		expect(res.status).toBe(200);
 		expect(res.body.page).toBe(1);
@@ -116,7 +114,22 @@ describe('GET /shoes/page/:pageNum', () => {
 });
 
 describe('GET /shoes/:shoeID', () => {
-	it.todo('TODO');
+	it('returns the shoe when a shoe with the given shoeID exists', async () => {
+		const created = await Shoe.create(buildShoe(0));
+
+		const res = await request(app).get('/shoes/shoe-0');
+
+		expect(res.status).toBe(200);
+		expect(res.body.shoeID).toBe('shoe-0');
+		expect(res.body._id).toBe(created._id.toString());
+	});
+
+	it('returns null when no shoe matches the given shoeID', async () => {
+		const res = await request(app).get('/shoes/does-not-exist');
+
+		expect(res.status).toBe(200);
+		expect(res.body).toBeNull();
+	});
 });
 
 describe('POST /shoes/objectIDs', () => {

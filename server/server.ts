@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import logger from 'morgan';
 import cors from 'cors';
 import path from 'path';
@@ -41,6 +41,16 @@ app.use('/images', imageRouter);
 
 app.get('/', (_req: Request, res: Response) => {
 	res.send('Hello World!');
+});
+
+// Catches errors from routes that don't handle them (e.g. unexpected DB failures),
+// so the client always gets JSON instead of Express's default HTML error page.
+// Express only recognizes error-handling middleware if it has exactly 4 parameters,
+// so `_next` must stay even though it's unused.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+	console.error(err);
+	res.status(500).json({ error: 'Internal server error' });
 });
 
 // Only listen on a port if the script is run locally
