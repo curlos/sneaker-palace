@@ -42,7 +42,7 @@ const PaymentSuccess = () => {
 				if (paymentIntent && paymentIntent.paymentIntent) {
 					axios
 						.get(
-							`${import.meta.env.VITE_DEV_URL}/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`
+							`${import.meta.env.VITE_API_URL}/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`
 						)
 						.then((result) => {
 							setPaymentInfo({

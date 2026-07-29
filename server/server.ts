@@ -1,6 +1,4 @@
 import express, { Request, Response } from 'express';
-import session from 'express-session';
-import passport from 'passport';
 import logger from 'morgan';
 import cors from 'cors';
 import path from 'path';
@@ -30,10 +28,6 @@ app.use(logger('dev'));
 app.use(cors({ origin: ['http://localhost:5173', 'https://sneaker-palace.vercel.app'] }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);

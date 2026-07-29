@@ -19,7 +19,6 @@
     "@types/stripe-checkout": "^1.0.4",
     "axios": "^1.18.1",
     "bson": "^4.5.4",
-    "bson-objectid": "^2.0.1",
     "classnames": "^2.5.1",
     "moment": "^2.30.1",
     "react": "^17.0.2",

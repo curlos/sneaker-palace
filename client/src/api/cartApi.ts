@@ -54,7 +54,7 @@ export const cartApi = baseAPI.injectEndpoints({
 					const token = (getState() as any).user?.currentUser?.accessToken;
 
 					// Try to fetch existing cart
-					const response = await fetch(`${import.meta.env.VITE_DEV_URL}/cart`, {
+					const response = await fetch(`${import.meta.env.VITE_API_URL}/cart`, {
 						headers: {
 							Authorization: `Bearer ${token}`,
 						},
@@ -68,7 +68,7 @@ export const cartApi = baseAPI.injectEndpoints({
 
 					// If user doesn't have a cart, create one
 					if (!cartData) {
-						const createResponse = await fetch(`${import.meta.env.VITE_DEV_URL}/cart`, {
+						const createResponse = await fetch(`${import.meta.env.VITE_API_URL}/cart`, {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/json',

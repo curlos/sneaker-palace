@@ -60,7 +60,7 @@ Sneaker Palace is a modern, full-stack e-commerce platform for sneaker enthusias
 ## 🛠️ Tech Stack
 
 **Frontend:** React, TypeScript, Redux Toolkit, TailwindCSS, Stripe.js  
-**Backend:** Node.js, Express, MongoDB, Mongoose, JWT, Passport.js  
+**Backend:** Node.js, Express, MongoDB, Mongoose, JWT
 **Deployment:** Vercel, MongoDB Atlas, Cloudinary
 
 ## 🌐 Live Demo

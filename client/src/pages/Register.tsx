@@ -33,7 +33,7 @@ const Register = () => {
 		};
 
 		try {
-			const response = await axios.post(`${import.meta.env.VITE_DEV_URL}/auth/register`, body);
+			const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, body);
 
 			if (response.data.error) {
 				setError(true);
