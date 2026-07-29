@@ -44,11 +44,15 @@
     "test:watch": "vitest",
     "start": "tsc -p tsconfig.build.json && node dist/server.js",
     "devStart": "tsx watch server.ts",
+    "devStart:local": "tsx watch --require dotenv/config server.ts dotenv_config_path=.env.local",
     "tsc": "tsc -p tsconfig.build.json",
     "start:prod": "node dist/server.js",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,js}\"",
-    "format:check": "prettier --check \"**/*.{ts,js}\""
+    "format:check": "prettier --check \"**/*.{ts,js}\"",
+    "setup:local-mongo": "chmod +x scripts/setup-local-mongo.sh && ./scripts/setup-local-mongo.sh",
+    "sync:to-atlas": "chmod +x scripts/sync-to-atlas.sh && ./scripts/sync-to-atlas.sh",
+    "sync:from-atlas": "chmod +x scripts/sync-from-atlas.sh && ./scripts/sync-from-atlas.sh"
   },
   "author": "",
   "license": "ISC"
