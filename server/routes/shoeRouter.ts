@@ -355,11 +355,6 @@ router.get('/:shoeID', async (req: Request, res: Response) => {
 	return res.json(shoe);
 });
 
-router.get('/objectID/:id', async (req: Request, res: Response) => {
-	const shoe = await Shoe.findOne({ _id: req.params.id });
-	return res.json(shoe);
-});
-
 router.post('/objectIDs', async (req: Request, res: Response) => {
 	const { ids } = req.body;
 
