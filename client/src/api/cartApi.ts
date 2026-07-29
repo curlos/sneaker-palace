@@ -108,7 +108,7 @@ export const cartApi = baseAPI.injectEndpoints({
 				body: { products },
 			}),
 
-			async onQueryStarted({ products }, { dispatch, queryFulfilled, getState }) {
+			async onQueryStarted({ products }, { dispatch, queryFulfilled }) {
 				// Optimistically update the cart cache
 				const patchResult = dispatch(
 					cartApi.util.updateQueryData('getUserCart', undefined, (draft) => {

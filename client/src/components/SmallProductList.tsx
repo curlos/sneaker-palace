@@ -19,21 +19,24 @@ interface stateType {
 
 const SmallProductList = ({ finalSearchText, setShowModal }: Props) => {
 	const { state } = useLocation<stateType>();
-	
+
 	// Get filters like in ProductList
 	const filters = getInitialFilters(state);
 
 	// Use the search query for initial load (empty search) - only when no search text
-	const { data: initialData, isLoading: initialLoading } = useGetPaginatedShoesQuery(
-		{
-			filters,
-			sortType: 'Newest Arrivals',
-			pageNum: 1,
-			query: '',
-		});
+	const { data: initialData, isLoading: initialLoading } = useGetPaginatedShoesQuery({
+		filters,
+		sortType: 'Newest Arrivals',
+		pageNum: 1,
+		query: '',
+	});
 
 	// Use the search query for actual searches (only when finalSearchText exists)
-	const { data: searchData, isLoading: searchLoading, isFetching: searchFetching } = useGetPaginatedShoesQuery(
+	const {
+		data: searchData,
+		isLoading: searchLoading,
+		isFetching: searchFetching,
+	} = useGetPaginatedShoesQuery(
 		{
 			filters,
 			sortType: 'Most Relevant',
@@ -47,7 +50,7 @@ const SmallProductList = ({ finalSearchText, setShowModal }: Props) => {
 
 	// Determine what data to show and loading state
 	const shoes = finalSearchText.trim() ? searchData?.docs || [] : initialData?.docs || [];
-	const loading = finalSearchText.trim() ? (searchLoading || searchFetching) : initialLoading;
+	const loading = finalSearchText.trim() ? searchLoading || searchFetching : initialLoading;
 
 	return loading ? (
 		<div className="flex justify-center py-4">

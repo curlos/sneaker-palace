@@ -38,37 +38,37 @@ const Cart = () => {
 			</div>
 
 			{cartProducts.length > 0 && (
-			<div className="flex-[2] pl-7 max-sm:pl-0">
-				<h2 className="font-bold text-xl mb-5">Summary</h2>
-				<div className="flex justify-between items-center mb-2">
-					<div>Subtotal</div>
-					<div>${cartTotal}.00</div>
-				</div>
+				<div className="flex-[2] pl-7 max-sm:pl-0">
+					<h2 className="font-bold text-xl mb-5">Summary</h2>
+					<div className="flex justify-between items-center mb-2">
+						<div>Subtotal</div>
+						<div>${cartTotal}.00</div>
+					</div>
 
-				<div className="flex justify-between items-center mb-2">
-					<div>Estimated Shipping & Handling</div>
-					<div>$0.00</div>
-				</div>
+					<div className="flex justify-between items-center mb-2">
+						<div>Estimated Shipping & Handling</div>
+						<div>$0.00</div>
+					</div>
 
-				<div className="flex justify-between items-center mb-2">
-					<div>Estimated Tax</div>
-					<div>-</div>
-				</div>
+					<div className="flex justify-between items-center mb-2">
+						<div>Estimated Tax</div>
+						<div>-</div>
+					</div>
 
-				<div className="border-0 border-b border-solid border-gray-300 my-3"></div>
-				<div className="flex justify-between items-center">
-					<div>Total</div>
-					<div>${cartTotal}.00</div>
-				</div>
-				<div className="border-0 border-b border-solid border-gray-300 my-3"></div>
+					<div className="border-0 border-b border-solid border-gray-300 my-3"></div>
+					<div className="flex justify-between items-center">
+						<div>Total</div>
+						<div>${cartTotal}.00</div>
+					</div>
+					<div className="border-0 border-b border-solid border-gray-300 my-3"></div>
 
-				<Link
-					to={'/payment'}
-					className="bg-black text-white my-4 w-full py-4 px-9 rounded-full hover:bg-gray-900 text-center block"
-				>
-					Checkout
-				</Link>
-			</div>
+					<Link
+						to={'/payment'}
+						className="bg-black text-white my-4 w-full py-4 px-9 rounded-full hover:bg-gray-900 text-center block"
+					>
+						Checkout
+					</Link>
+				</div>
 			)}
 		</div>
 	);

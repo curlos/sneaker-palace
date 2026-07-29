@@ -10,62 +10,64 @@ export const AppliedFilters = ({ filters, updateFilters }: Props) => {
 		const grouped: { [key: string]: { displayName: string; values: string[]; type: string } } = {};
 
 		// Colors
-		const selectedColors = Object.keys(filters.colors).filter(color => filters.colors[color]);
+		const selectedColors = Object.keys(filters.colors).filter((color) => filters.colors[color]);
 		if (selectedColors.length > 0) {
 			grouped.colors = {
 				displayName: selectedColors.length === 1 ? 'Color' : 'Colors',
-				values: selectedColors.map(color => color.charAt(0).toUpperCase() + color.slice(1)),
-				type: 'colors'
+				values: selectedColors.map((color) => color.charAt(0).toUpperCase() + color.slice(1)),
+				type: 'colors',
 			};
 		}
 
 		// Brands
-		const selectedBrands = Object.keys(filters.brands).filter(brand => filters.brands[brand]);
+		const selectedBrands = Object.keys(filters.brands).filter((brand) => filters.brands[brand]);
 		if (selectedBrands.length > 0) {
 			grouped.brands = {
 				displayName: selectedBrands.length === 1 ? 'Brand' : 'Brands',
 				values: selectedBrands,
-				type: 'brands'
+				type: 'brands',
 			};
 		}
 
 		// Genders
-		const selectedGenders = Object.keys(filters.genders).filter(gender => filters.genders[gender]);
+		const selectedGenders = Object.keys(filters.genders).filter((gender) => filters.genders[gender]);
 		if (selectedGenders.length > 0) {
 			grouped.genders = {
 				displayName: selectedGenders.length === 1 ? 'Gender' : 'Genders',
-				values: selectedGenders.map(gender => gender.charAt(0).toUpperCase() + gender.slice(1)),
-				type: 'genders'
+				values: selectedGenders.map((gender) => gender.charAt(0).toUpperCase() + gender.slice(1)),
+				type: 'genders',
 			};
 		}
 
 		// Price Ranges
-		const selectedPriceRanges = Object.keys(filters.priceRanges).filter(range => filters.priceRanges[range].checked);
+		const selectedPriceRanges = Object.keys(filters.priceRanges).filter(
+			(range) => filters.priceRanges[range].checked
+		);
 		if (selectedPriceRanges.length > 0) {
 			grouped.priceRanges = {
 				displayName: selectedPriceRanges.length === 1 ? 'Price Range' : 'Price Ranges',
 				values: selectedPriceRanges,
-				type: 'priceRanges'
+				type: 'priceRanges',
 			};
 		}
 
 		// Release Years
-		const selectedYears = Object.keys(filters.releaseYears).filter(year => filters.releaseYears[year]);
+		const selectedYears = Object.keys(filters.releaseYears).filter((year) => filters.releaseYears[year]);
 		if (selectedYears.length > 0) {
 			grouped.releaseYears = {
 				displayName: selectedYears.length === 1 ? 'Release Year' : 'Release Years',
 				values: selectedYears,
-				type: 'releaseYears'
+				type: 'releaseYears',
 			};
 		}
 
 		// Shoe Sizes
-		const selectedSizes = Object.keys(filters.shoeSizes).filter(size => filters.shoeSizes[size]);
+		const selectedSizes = Object.keys(filters.shoeSizes).filter((size) => filters.shoeSizes[size]);
 		if (selectedSizes.length > 0) {
 			grouped.shoeSizes = {
 				displayName: selectedSizes.length === 1 ? 'Shoe Size' : 'Shoe Sizes',
 				values: selectedSizes,
-				type: 'shoeSizes'
+				type: 'shoeSizes',
 			};
 		}
 
@@ -74,19 +76,19 @@ export const AppliedFilters = ({ filters, updateFilters }: Props) => {
 
 	const clearFilterCategory = (type: string) => {
 		const newFilters = { ...filters };
-		
+
 		if (type === 'priceRanges') {
 			newFilters[type] = { ...filters[type] };
-			Object.keys(newFilters[type]).forEach(key => {
+			Object.keys(newFilters[type]).forEach((key) => {
 				newFilters[type][key] = { ...newFilters[type][key], checked: false };
 			});
 		} else {
 			newFilters[type] = { ...filters[type] };
-			Object.keys(newFilters[type]).forEach(key => {
+			Object.keys(newFilters[type]).forEach((key) => {
 				newFilters[type][key] = false;
 			});
 		}
-		
+
 		updateFilters(newFilters);
 	};
 
@@ -100,11 +102,10 @@ export const AppliedFilters = ({ filters, updateFilters }: Props) => {
 		<div className="py-4">
 			<div className="flex flex-wrap gap-2">
 				{Object.entries(groupedFilters).map(([key, group]) => (
-					<div
-						key={key}
-						className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm"
-					>
-						<span><span className="font-bold">{group.displayName}</span>: {group.values.join(', ')}</span>
+					<div key={key} className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm">
+						<span>
+							<span className="font-bold">{group.displayName}</span>: {group.values.join(', ')}
+						</span>
 						<button
 							type="button"
 							aria-label={`Clear ${group.displayName} filter`}

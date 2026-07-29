@@ -1,8 +1,6 @@
 import axios from 'axios';
 import Shoe from '../models/Shoe';
 
-const timer = (ms: number | undefined) => new Promise((res) => setTimeout(res, ms));
-
 const getAllBrands = async () => {
 	const options = {
 		method: 'GET' as const,
@@ -22,7 +20,7 @@ const getAllBrands = async () => {
 	}
 };
 
-const addShoesToDatabase = async (options: Object) => {
+const addShoesToDatabase = async (options: object) => {
 	try {
 		const response = await axios.request(options);
 		const shoes = response.data.results;
@@ -89,7 +87,7 @@ const addShoesToDatabase = async (options: Object) => {
 	}
 };
 
-const addOneShoeToDatabase = async (options: Object) => {
+const addOneShoeToDatabase = async (options: object) => {
 	try {
 		const response = await axios.request(options);
 		const shoes = response.data.results;
@@ -149,7 +147,7 @@ const addOneShoeToDatabase = async (options: Object) => {
 	}
 };
 
-const getShoesFromBrand = async (brand: String) => {
+const getShoesFromBrand = async (brand: string) => {
 	const options = {
 		method: 'GET' as const,
 		url: 'https://the-sneaker-database.p.rapidapi.com/sneakers',
@@ -177,6 +175,7 @@ const addAllShoes = async (pageNum: number, name: string) => {
 	return addShoesToDatabase(options);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const addAllShoesByBrand = async (brand: string, pageNum: number, releaseYear: number) => {
 	const options = {
 		method: 'GET' as const,

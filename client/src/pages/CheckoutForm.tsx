@@ -95,7 +95,9 @@ export default function CheckoutForm() {
 						<span aria-hidden="true">⚠️</span> For Testing Purposes Only
 					</div>
 					<div className="text-yellow-700 text-sm">
-						This is a demo store. Real cards will not be accepted. Use test card number <span className="font-mono font-medium">4242 4242 4242 4242</span> with any future date and CVC to test the checkout process.
+						This is a demo store. Real cards will not be accepted. Use test card number{' '}
+						<span className="font-mono font-medium">4242 4242 4242 4242</span> with any future date and CVC
+						to test the checkout process.
 					</div>
 				</div>
 				<PaymentElement id="payment-element" />

@@ -57,7 +57,6 @@ export const shoesApi = baseAPI.injectEndpoints({
 			providesTags: ['Shoe'],
 		}),
 
-
 		// Favorite/unfavorite a shoe
 		toggleFavoriteShoe: builder.mutation({
 			query: ({ shoeID }: { shoeID: string; userID: string; shoe_id?: string }) => ({

@@ -144,7 +144,9 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 					<div className="text-gray-500 max-sm:hidden">{shoe?.colorway}</div>
 					<div>
 						<span className="max-sm:block">
-							<label htmlFor={`size-${productInfo._id}`} className="mr-2 text-gray-500 max-sm:mr-1">Size</label>
+							<label htmlFor={`size-${productInfo._id}`} className="mr-2 text-gray-500 max-sm:mr-1">
+								Size
+							</label>
 							<select
 								id={`size-${productInfo._id}`}
 								name="shoeSizes"
@@ -161,7 +163,12 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 						</span>
 
 						<span className="max-sm:block">
-							<label htmlFor={`quantity-${productInfo._id}`} className="mx-2 text-gray-500 max-sm:mx-0 max-sm:mr-1">Quantity</label>
+							<label
+								htmlFor={`quantity-${productInfo._id}`}
+								className="mx-2 text-gray-500 max-sm:mx-0 max-sm:mr-1"
+							>
+								Quantity
+							</label>
 
 							<select
 								id={`quantity-${productInfo._id}`}
@@ -181,7 +188,11 @@ const CartProduct = ({ productInfo, isLast = false }: Props) => {
 				</div>
 
 				<div className="">
-					<button type="button" className="text-gray-500 mr-5 underline cursor-pointer" onClick={handleRemoveProduct}>
+					<button
+						type="button"
+						className="text-gray-500 mr-5 underline cursor-pointer"
+						onClick={handleRemoveProduct}
+					>
 						Remove
 					</button>
 				</div>

@@ -78,8 +78,14 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-color"
 					onClick={() => setShowColors(!showColors)}
 				>
-					<div id="filter-label-color" className="font-bold mb-3">Color</div>{' '}
-					{showColors ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
+					<div id="filter-label-color" className="font-bold mb-3">
+						Color
+					</div>{' '}
+					{showColors ? (
+						<ChevronUpIcon className="h-6 w-6" aria-hidden="true" />
+					) : (
+						<ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+					)}
 				</button>
 				{showColors ? (
 					<div
@@ -120,8 +126,14 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-brand"
 					onClick={() => setShowBrands(!showBrands)}
 				>
-					<span id="filter-label-brand" className="font-bold mb-3">Brand</span>{' '}
-					{showBrands ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
+					<span id="filter-label-brand" className="font-bold mb-3">
+						Brand
+					</span>{' '}
+					{showBrands ? (
+						<ChevronUpIcon className="h-6 w-6" aria-hidden="true" />
+					) : (
+						<ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+					)}
 				</button>
 
 				{showBrands ? (
@@ -151,8 +163,14 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-gender"
 					onClick={() => setShowGender(!showGender)}
 				>
-					<span id="filter-label-gender" className="font-bold mb-3">Gender</span>{' '}
-					{showGender ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
+					<span id="filter-label-gender" className="font-bold mb-3">
+						Gender
+					</span>{' '}
+					{showGender ? (
+						<ChevronUpIcon className="h-6 w-6" aria-hidden="true" />
+					) : (
+						<ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+					)}
 				</button>
 
 				{showGender ? (
@@ -182,8 +200,14 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-price"
 					onClick={() => setShowPriceRanges(!showPriceRanges)}
 				>
-					<span id="filter-label-price" className="font-bold mb-3">Shop by Price</span>{' '}
-					{showPriceRanges ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
+					<span id="filter-label-price" className="font-bold mb-3">
+						Shop by Price
+					</span>{' '}
+					{showPriceRanges ? (
+						<ChevronUpIcon className="h-6 w-6" aria-hidden="true" />
+					) : (
+						<ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+					)}
 				</button>
 
 				{showPriceRanges ? (
@@ -213,8 +237,14 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-release-year"
 					onClick={() => setShowReleaseYear(!showReleaseYear)}
 				>
-					<span id="filter-label-release-year" className="font-bold mb-3">Release Year</span>{' '}
-					{showReleaseYear ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
+					<span id="filter-label-release-year" className="font-bold mb-3">
+						Release Year
+					</span>{' '}
+					{showReleaseYear ? (
+						<ChevronUpIcon className="h-6 w-6" aria-hidden="true" />
+					) : (
+						<ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+					)}
 				</button>
 
 				{showReleaseYear ? (
@@ -246,8 +276,14 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					aria-controls="filter-panel-size"
 					onClick={() => setShowSizes(!showSizes)}
 				>
-					<span id="filter-label-size" className="font-bold mb-3">Size</span>{' '}
-					{showSizes ? <ChevronUpIcon className="h-6 w-6" aria-hidden="true" /> : <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />}
+					<span id="filter-label-size" className="font-bold mb-3">
+						Size
+					</span>{' '}
+					{showSizes ? (
+						<ChevronUpIcon className="h-6 w-6" aria-hidden="true" />
+					) : (
+						<ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+					)}
 				</button>
 
 				{showSizes ? (

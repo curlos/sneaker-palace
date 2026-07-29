@@ -34,11 +34,8 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-		<div
-			className="fixed z-20 w-screen h-full bg-black/40"
-			onClick={() => setShowSidenavModal(!showSidenavModal)}
-		>
-			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
+		<div className="fixed z-20 w-screen h-full bg-black/40" onClick={() => setShowSidenavModal(!showSidenavModal)}>
+			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
 			<aside
 				ref={dialogRef}
 				role="dialog"
@@ -56,64 +53,43 @@ const SidenavModal = ({ showSidenavModal, setShowSidenavModal }: Props) => {
 						</div>
 
 						<div>
-							<Link
-								to="/shoes?genders=men"
-								onClick={() => setShowSidenavModal(false)}
-							>
+							<Link to="/shoes?genders=men" onClick={() => setShowSidenavModal(false)}>
 								Men
 							</Link>
 						</div>
 
 						<div>
-							<Link
-								to="/shoes?genders=women"
-								onClick={() => setShowSidenavModal(false)}
-							>
+							<Link to="/shoes?genders=women" onClick={() => setShowSidenavModal(false)}>
 								Women
 							</Link>
 						</div>
 
 						<div>
-							<Link
-								to="/shoes?genders=youth"
-								onClick={() => setShowSidenavModal(false)}
-							>
+							<Link to="/shoes?genders=youth" onClick={() => setShowSidenavModal(false)}>
 								Youth
 							</Link>
 						</div>
 
 						<div>
-							<Link
-								to="/shoes?genders=infant"
-								onClick={() => setShowSidenavModal(false)}
-							>
+							<Link to="/shoes?genders=infant" onClick={() => setShowSidenavModal(false)}>
 								Infant
 							</Link>
 						</div>
 
 						<div>
-							<Link
-								to="/shoes?brands=Jordan,Air%20Jordan"
-								onClick={() => setShowSidenavModal(false)}
-							>
+							<Link to="/shoes?brands=Jordan,Air%20Jordan" onClick={() => setShowSidenavModal(false)}>
 								Jordan
 							</Link>
 						</div>
 
 						<div>
-							<Link
-								to="/shoes?brands=Nike"
-								onClick={() => setShowSidenavModal(false)}
-							>
+							<Link to="/shoes?brands=Nike" onClick={() => setShowSidenavModal(false)}>
 								Nike
 							</Link>
 						</div>
 
 						<div>
-							<Link
-								to="/shoes?brands=adidas"
-								onClick={() => setShowSidenavModal(false)}
-							>
+							<Link to="/shoes?brands=adidas" onClick={() => setShowSidenavModal(false)}>
 								Adidas
 							</Link>
 						</div>

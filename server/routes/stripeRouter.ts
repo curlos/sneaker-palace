@@ -7,8 +7,6 @@ const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_KEY as string, { apiVersion: '2026-06-24.dahlia' });
 
 router.post('/create-payment-intent', async (req: Request, res: Response) => {
-	const { items } = req.body;
-
 	try {
 		// Create a PaymentIntent with the order amount and currency
 		const paymentIntent = await stripe.paymentIntents.create({

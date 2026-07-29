@@ -40,49 +40,57 @@ const ProductList = () => {
 		const searchQuery = query.get('query');
 		return searchQuery?.trim() ? 'Most Relevant' : 'Newest Arrivals';
 	});
-	
+
 	// Get filters from URL instead of useState
 	const filters = React.useMemo(() => getInitialFilters(state, query), [state, query]);
-	
-	// Filter setter that updates URL
-	const updateFilters = React.useCallback((newFilters: any) => {
-		const currentQuery = query.get('query');
-		const filterParams = buildURLFromFilters(newFilters);
-		
-		let newSearch = '';
-		if (currentQuery) {
-			newSearch = `query=${encodeURIComponent(currentQuery)}`;
-		}
-		if (filterParams) {
-			newSearch = newSearch ? `${newSearch}&${filterParams}` : filterParams;
-		}
-		
-		// Reset sortType to default when filters change
-		const defaultSortType = currentQuery?.trim() ? 'Most Relevant' : 'Newest Arrivals';
-		setSortType(defaultSortType);
-		
-		history.push(`/shoes${newSearch ? `?${newSearch}` : ''}`);
-	}, [query, history]);
 
-	// Sort type setter that updates URL
-	const updateSortType = React.useCallback((newSortType: string) => {
-		setSortType(newSortType);
-		setCurrentPage(1);
-		
-		const currentSearchParams = new URLSearchParams(window.location.search);
-		currentSearchParams.set('sort-type', newSortType);
-		currentSearchParams.delete('page');
-		
-		const newSearch = currentSearchParams.toString();
-		const newUrl = `/shoes?${newSearch}`;
-		history.replace(newUrl);
-	}, [history]);
 	const [currentPage, setCurrentPage] = useState(() => {
 		const pageParam = query.get('page');
 		return pageParam ? parseInt(pageParam, 10) || 1 : 1;
 	});
+
+	// Filter setter that updates URL
+	const updateFilters = React.useCallback(
+		(newFilters: any) => {
+			const currentQuery = query.get('query');
+			const filterParams = buildURLFromFilters(newFilters);
+
+			let newSearch = '';
+			if (currentQuery) {
+				newSearch = `query=${encodeURIComponent(currentQuery)}`;
+			}
+			if (filterParams) {
+				newSearch = newSearch ? `${newSearch}&${filterParams}` : filterParams;
+			}
+
+			// Reset sortType to default when filters change
+			const defaultSortType = currentQuery?.trim() ? 'Most Relevant' : 'Newest Arrivals';
+			setSortType(defaultSortType);
+
+			history.push(`/shoes${newSearch ? `?${newSearch}` : ''}`);
+		},
+		[query, history]
+	);
+
+	// Sort type setter that updates URL
+	const updateSortType = React.useCallback(
+		(newSortType: string) => {
+			setSortType(newSortType);
+			setCurrentPage(1);
+
+			const currentSearchParams = new URLSearchParams(window.location.search);
+			currentSearchParams.set('sort-type', newSortType);
+			currentSearchParams.delete('page');
+
+			const newSearch = currentSearchParams.toString();
+			const newUrl = `/shoes?${newSearch}`;
+			history.replace(newUrl);
+		},
+		[history]
+	);
 	const [showSidebar, setShowSidebar] = useState(windowSize.width < 1280 ? false : true);
-	
+	const [prevWindowWidth, setPrevWindowWidth] = useState(windowSize.width);
+
 	const searchQuery = query.get('query');
 
 	// RTK Query
@@ -95,30 +103,57 @@ const ProductList = () => {
 	const paginatedShoes = shoesData?.docs || [];
 	const totalShoeCount = shoesData?.totalDocs || 0;
 
-	useEffect(() => {
+	// Re-derive sidebar visibility from window width (adjusting state during render,
+	// per https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes),
+	// while still letting the user manually toggle it in between resizes.
+	if (windowSize.width !== prevWindowWidth) {
+		setPrevWindowWidth(windowSize.width);
 		setShowSidebar(windowSize.width < 1280 ? false : true);
-	}, [windowSize]);
-
+	}
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		 
 	}, [searchQuery]);
 
-	useEffect(() => {
-		// Set sortType to 'Most Relevant' when there's a search query
+	const [prevSearchQueryForSort, setPrevSearchQueryForSort] = useState(searchQuery);
+
+	// Set sortType to 'Most Relevant' when there's a search query (adjusting state
+	// during render per https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+	if (searchQuery !== prevSearchQueryForSort) {
+		setPrevSearchQueryForSort(searchQuery);
 		if (searchQuery?.trim()) {
 			setSortType('Most Relevant');
 		}
-	}, [searchQuery]);
-	
-	useEffect(() => {
+	}
+
+	// getInitialFilters() builds a brand-new object every time `query` changes at all
+	// (including when only `page` changes), so comparing `filters` by reference would
+	// falsely detect a "filter change" on every pagination click. Compare by content
+	// instead, since that's what we actually care about here.
+	const filtersKey = JSON.stringify(filters);
+	const [prevFiltersKeyForReset, setPrevFiltersKeyForReset] = useState(filtersKey);
+	const [prevSortTypeForReset, setPrevSortTypeForReset] = useState(sortType);
+	const [prevSearchQueryForReset, setPrevSearchQueryForReset] = useState(searchQuery);
+	const [prevWindowWidthForReset, setPrevWindowWidthForReset] = useState(windowSize.width);
+
+	// Reset to page 1 whenever filters/sort/search/breakpoint change (adjusting state
+	// during render per https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+	if (
+		filtersKey !== prevFiltersKeyForReset ||
+		sortType !== prevSortTypeForReset ||
+		searchQuery !== prevSearchQueryForReset ||
+		windowSize.width !== prevWindowWidthForReset
+	) {
+		setPrevFiltersKeyForReset(filtersKey);
+		setPrevSortTypeForReset(sortType);
+		setPrevSearchQueryForReset(searchQuery);
+		setPrevWindowWidthForReset(windowSize.width);
 		if (windowSize.width >= 768) {
 			window.scrollTo(0, 0);
 		}
 		setCurrentPage(1);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filters, sortType, searchQuery, windowSize.width]);
+	}
 
 	// Callback to handle page changes and URL updates
 	const handlePageChange = (newPage: number) => {
@@ -141,22 +176,30 @@ const ProductList = () => {
 
 	const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
 
-	// Update currentPage when URL page parameter changes
-	useEffect(() => {
+	const [prevQueryForPage, setPrevQueryForPage] = useState(query);
+
+	// Update currentPage when URL page parameter changes (adjusting state during
+	// render per https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+	if (query !== prevQueryForPage) {
+		setPrevQueryForPage(query);
 		const pageParam = query.get('page');
 		const urlPage = pageParam ? parseInt(pageParam, 10) || 1 : 1;
 		if (urlPage !== currentPage) {
 			setCurrentPage(urlPage);
 		}
-	}, [query, currentPage]);
+	}
 
-	// Update sortType when URL sort-type parameter changes
-	useEffect(() => {
+	const [prevQueryForSort, setPrevQueryForSort] = useState(query);
+
+	// Update sortType when URL sort-type parameter changes (adjusting state during
+	// render per https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+	if (query !== prevQueryForSort) {
+		setPrevQueryForSort(query);
 		const sortParam = query.get('sort-type');
 		if (sortParam && sortParam !== sortType) {
 			setSortType(sortParam);
 		}
-	}, [query, sortType]);
+	}
 
 	return (
 		<div className="text-xl-lg">
@@ -174,7 +217,9 @@ const ProductList = () => {
 					</div>
 				) : null}
 
-				{showSidebar ? <Sidebar filters={filters} updateFilters={updateFilters} shoeSizes={SHOE_SIZES} /> : null}
+				{showSidebar ? (
+					<Sidebar filters={filters} updateFilters={updateFilters} shoeSizes={SHOE_SIZES} />
+				) : null}
 
 				<div className="flex-[10] p-4 max-lg:p-3">
 					<div className="flex justify-between max-sm:flex-col">
@@ -232,7 +277,7 @@ const ProductList = () => {
 								{paginatedShoes.map((shoe: Shoe) => {
 									return <SmallShoe key={shoe.shoeID} shoe={shoe} />;
 								})}
-							</div>			
+							</div>
 
 							<Pagination
 								pageLimit={Math.ceil(totalShoeCount / 12)}

@@ -1,6 +1,6 @@
 import { ChevronDownIcon, HeartIcon } from '@heroicons/react/solid';
 import { Link } from 'react-router-dom';
-import StarRatings from 'react-star-ratings';
+import StarRatings from '../utils/StarRatingsCompat';
 import { Props } from '../types/types';
 import ShoeImage from './ShoeImage';
 

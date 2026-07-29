@@ -62,7 +62,9 @@ const ShopPreferences = () => {
 
 			<form>
 				<div className="mb-4">
-					<label htmlFor="shoe-size" className="mb-1 font-medium w-full block">Shoe Size</label>
+					<label htmlFor="shoe-size" className="mb-1 font-medium w-full block">
+						Shoe Size
+					</label>
 					<select
 						id="shoe-size"
 						name="shoeSizes"

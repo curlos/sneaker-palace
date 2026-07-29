@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import StarRatings from 'react-star-ratings';
+import StarRatings from '../utils/StarRatingsCompat';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useState, useRef } from 'react';
@@ -30,8 +30,10 @@ const FullShoeReviews = ({ shoe, shoeRatings }: Props) => {
 	const [dislikeRating, { isLoading: isDislikeLoading }] = useDislikeRatingMutation();
 
 	// Sort reviews from newest to oldest
-	const sortedReviews = [...shoeRatings].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-	
+	const sortedReviews = [...shoeRatings].sort(
+		(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+	);
+
 	// Percentage of reviews with a given star rating (0 when there are no reviews, to avoid NaN)
 	const getStarPercentage = (starNum: number) =>
 		shoeRatings.length > 0

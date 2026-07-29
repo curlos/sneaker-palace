@@ -77,22 +77,34 @@ const AccountDetails = () => {
 				<div className="mb-4">
 					{file || user?.profilePic ? (
 						<img
-							src={
-								file ? URL.createObjectURL(file) : `${user?.profilePic}`
-							}
+							src={file ? URL.createObjectURL(file) : `${user?.profilePic}`}
 							alt=""
 							className="h-[150px] w-[150px] rounded-full object-cover mb-3"
 						/>
 					) : (
-						<img src={DEFAULT_AVATAR} alt="" className="h-[150px] w-[150px] rounded-full object-cover mb-3" />
+						<img
+							src={DEFAULT_AVATAR}
+							alt=""
+							className="h-[150px] w-[150px] rounded-full object-cover mb-3"
+						/>
 					)}
 
-					<label htmlFor="account-profile-pic" className="mb-1 block">Profile Picture</label>
-					<input id="account-profile-pic" onChange={handleSelectFile} type="file" accept="image/*" className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-400 file:text-sm file:font-medium file:bg-gray-200 file:text-gray-800 hover:file:bg-gray-300"></input>
+					<label htmlFor="account-profile-pic" className="mb-1 block">
+						Profile Picture
+					</label>
+					<input
+						id="account-profile-pic"
+						onChange={handleSelectFile}
+						type="file"
+						accept="image/*"
+						className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-400 file:text-sm file:font-medium file:bg-gray-200 file:text-gray-800 hover:file:bg-gray-300"
+					></input>
 				</div>
 
 				<div className="mb-4">
-					<label htmlFor="account-first-name" className="mb-1 block">First Name</label>
+					<label htmlFor="account-first-name" className="mb-1 block">
+						First Name
+					</label>
 					<input
 						id="account-first-name"
 						type="text"
@@ -106,7 +118,9 @@ const AccountDetails = () => {
 				</div>
 
 				<div className="mb-4">
-					<label htmlFor="account-last-name" className="mb-1 block">Last Name</label>
+					<label htmlFor="account-last-name" className="mb-1 block">
+						Last Name
+					</label>
 					<input
 						id="account-last-name"
 						type="text"
@@ -120,7 +134,9 @@ const AccountDetails = () => {
 				</div>
 
 				<div className="mb-4">
-					<label htmlFor="account-email" className="mb-1 block">Email</label>
+					<label htmlFor="account-email" className="mb-1 block">
+						Email
+					</label>
 					<input
 						id="account-email"
 						type="email"
@@ -134,7 +150,9 @@ const AccountDetails = () => {
 				</div>
 
 				<div className="mb-4">
-					<label htmlFor="account-password" className="mb-1 block">Password</label>
+					<label htmlFor="account-password" className="mb-1 block">
+						Password
+					</label>
 					<input
 						id="account-password"
 						type="text"

@@ -29,7 +29,14 @@ interface PageControlProps {
 const PageControl = ({ href, onClick, ariaLabel, ariaCurrent, className, children }: PageControlProps) => {
 	if (href) {
 		return (
-			<Link to={href} replace onClick={onClick} aria-label={ariaLabel} aria-current={ariaCurrent} className={className}>
+			<Link
+				to={href}
+				replace
+				onClick={onClick}
+				aria-label={ariaLabel}
+				aria-current={ariaCurrent}
+				className={className}
+			>
 				{children}
 			</Link>
 		);
@@ -93,7 +100,7 @@ export const Pagination = ({
 	};
 
 	const getPaginationGroup = () => {
-		let start = Math.floor((currentPage - 1) / pageLimit) * pageLimit;
+		const start = Math.floor((currentPage - 1) / pageLimit) * pageLimit;
 
 		return new Array(pageLimit).fill(undefined).map((_, idx) => start + idx + 1);
 	};
@@ -102,12 +109,12 @@ export const Pagination = ({
 		pageLimit <= 5
 			? Array.from({ length: pageLimit }, (_, i) => i + 1)
 			: pageLimit - currentPage < 5
-			? getPaginationGroup()
-					.slice(Math.max(0, pageLimit - 5), pageLimit)
-					.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit)
-			: getPaginationGroup()
-					.slice(Math.max(0, currentPage - 1), Math.min(pageLimit, currentPage + 4))
-					.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit);
+				? getPaginationGroup()
+						.slice(Math.max(0, pageLimit - 5), pageLimit)
+						.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit)
+				: getPaginationGroup()
+						.slice(Math.max(0, currentPage - 1), Math.min(pageLimit, currentPage + 4))
+						.filter((pageNum) => pageNum > 0 && pageNum <= pageLimit);
 
 	return (
 		<div className="flex justify-between items-center my-4 text-black max-sm:justify-between max-sm:px-3">

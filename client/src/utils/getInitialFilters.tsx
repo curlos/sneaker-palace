@@ -38,7 +38,7 @@ const BRANDS_LOWERCASE: any = {
 };
 
 const getInitialFilters = (state: stateType, searchParams?: URLSearchParams) => {
-	let filters: any = {
+	const filters: any = {
 		colors: {
 			red: false as boolean,
 			white: false as boolean,
@@ -165,7 +165,7 @@ const getInitialFilters = (state: stateType, searchParams?: URLSearchParams) => 
 	}
 
 	if (state && state.brands) {
-		state.brands.forEach(brand => {
+		state.brands.forEach((brand) => {
 			const brandName = BRANDS_LOWERCASE[brand.toLowerCase()];
 			if (brandName) {
 				filters['brands'][brandName] = true;
@@ -176,11 +176,11 @@ const getInitialFilters = (state: stateType, searchParams?: URLSearchParams) => 
 	// Apply URL parameters if provided
 	if (searchParams) {
 		const urlFilters = parseFiltersFromURL(searchParams);
-		
+
 		// Merge URL filters with base filters
-		Object.keys(urlFilters).forEach(filterType => {
+		Object.keys(urlFilters).forEach((filterType) => {
 			if (filters[filterType]) {
-				Object.keys(urlFilters[filterType]).forEach(key => {
+				Object.keys(urlFilters[filterType]).forEach((key) => {
 					if (filterType === 'priceRanges') {
 						// Handle price ranges special structure
 						if (filters[filterType][key]) {

@@ -7,6 +7,7 @@ import SearchModal from './components/SearchModal';
 import ShoppingCartModal from './components/ShoppingCartModal';
 import SidenavModal from './components/SidenavModal';
 import StripeContainer from './components/StripeContainer';
+import StripeElementsProvider from './components/StripeElementsProvider';
 import Cart from './pages/Cart';
 import CheckoutForm from './pages/CheckoutForm';
 import FullShoePage from './pages/FullShoePage';
@@ -99,7 +100,7 @@ const App = () => {
 						</Route>
 
 						<Route path="/payment-success" exact>
-							<StripeContainer children={<PaymentSuccess />} />
+							<StripeElementsProvider children={<PaymentSuccess />} />
 						</Route>
 
 						<Route path="/shoes" exact>

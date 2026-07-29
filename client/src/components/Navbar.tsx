@@ -46,10 +46,7 @@ const Navbar = ({ setShowSearchModal, setShowSidenavModal }: Props) => {
 						Sneakers
 					</Link>
 					<div className="max-lg:hidden">
-						<Link
-							to="/shoes?genders=men"
-							onClick={() => setShowSidenavModal(false)}
-						>
+						<Link to="/shoes?genders=men" onClick={() => setShowSidenavModal(false)}>
 							Men
 						</Link>
 					</div>

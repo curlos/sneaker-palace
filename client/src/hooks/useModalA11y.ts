@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const FOCUSABLE_SELECTOR =
-	'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 export function useModalA11y<T extends HTMLElement = HTMLElement>(onClose: () => void) {
 	const containerRef = useRef<T>(null);

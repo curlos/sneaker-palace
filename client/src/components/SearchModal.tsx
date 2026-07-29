@@ -12,7 +12,7 @@ interface Props {
 const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 	const history = useHistory();
 	const location = useLocation();
-	
+
 	// Get query param from URL if on /shoes page
 	const getInitialSearchText = () => {
 		if (location.pathname === '/shoes') {
@@ -22,7 +22,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 		}
 		return '';
 	};
-	
+
 	const [searchText, setSearchText] = useState(() => getInitialSearchText());
 	const [finalSearchText, setFinalSearchText] = useState(() => getInitialSearchText());
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -65,11 +65,8 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-		<div
-			className="fixed z-20 w-screen h-screen bg-black/40"
-			onClick={() => setShowSearchModal(!showSearchModal)}
-		>
-			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
+		<div className="fixed z-20 w-screen h-screen bg-black/40" onClick={() => setShowSearchModal(!showSearchModal)}>
+			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
 			<aside
 				ref={dialogRef}
 				role="dialog"
@@ -77,7 +74,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 				aria-label="Search"
 				className={`transform z-30 top-0 right-0 w-96 bg-white text-black fixed h-full overflow-y-scroll max-sm:no-scrollbar ease-in-out transition-all duration-1000 ${showSearchModal ? 'translate-x-0' : 'translate-x-full'} max-sm:w-10/12`}
 				onClick={handleBubblingDownClick}
-				style={{scrollbarWidth: 'thin'}}
+				style={{ scrollbarWidth: 'thin' }}
 			>
 				<form onSubmit={handleSubmit} className="border-0 border-b border-solid border-gray-300">
 					<div className="flex p-4 py-6">
@@ -100,7 +97,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 					</div>
 					{finalSearchText && (
 						<div className="px-4 pb-4">
-							<button 
+							<button
 								type="submit"
 								className="bg-black text-white py-3 px-4 font-medium hover:bg-gray-800 transition-colors"
 							>
@@ -110,10 +107,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }: Props) => {
 					)}
 				</form>
 
-				<SmallProductList
-					finalSearchText={finalSearchText}
-					setShowModal={setShowSearchModal}
-				/>
+				<SmallProductList finalSearchText={finalSearchText} setShowModal={setShowSearchModal} />
 			</aside>
 		</div>
 	);

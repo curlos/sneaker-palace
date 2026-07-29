@@ -1,12 +1,11 @@
 import { CheckIcon, XIcon } from '@heroicons/react/outline';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useGetShoeQuery } from '../api/shoesApi';
 import { useCart } from '../api/cartApi';
 import { useModalA11y } from '../hooks/useModalA11y';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import ShoeImage from './ShoeImage';
-import { IProduct } from '../types/types';
 
 interface Props {
 	showModal: boolean;
@@ -18,22 +17,14 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
 	const { data: cartData } = useCart();
 	const cartProducts = cartData?.products || [];
 
-	const [productInfo, setProductInfo] = useState<IProduct>();
-
 	// Get the last product added to cart
 	const lastProduct = cartProducts[cartProducts.length - 1];
+	const productInfo = lastProduct;
 
 	// Use RTK Query to fetch shoe data
 	const { data: shoe, isLoading: loading } = useGetShoeQuery(lastProduct?.productID || '', {
 		skip: !lastProduct?.productID,
 	});
-
-	// Update product info when cart changes
-	useEffect(() => {
-		if (lastProduct) {
-			setProductInfo(lastProduct);
-		}
-	}, [lastProduct]);
 
 	const handleBubblingDownClick = (e: React.FormEvent) => {
 		e.stopPropagation();
@@ -43,11 +34,8 @@ const ShoppingCartModal = ({ showModal, setShowModal }: Props) => {
 
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-		<div
-			className="fixed z-20 w-screen h-screen bg-black/40"
-			onClick={() => setShowModal(!showModal)}
-		>
-			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
+		<div className="fixed z-20 w-screen h-screen bg-black/40" onClick={() => setShowModal(!showModal)}>
+			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
 			<aside
 				ref={dialogRef}
 				role="dialog"

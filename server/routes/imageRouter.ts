@@ -14,10 +14,10 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
 			return res.status(400).send({ error: 'No file provided' });
 		}
 
-		const response = await uploadToCloudinary(file) as any;
+		const response = (await uploadToCloudinary(file)) as any;
 
-		return res.send({ 
-			imagePath: response.secure_url
+		return res.send({
+			imagePath: response.secure_url,
 		});
 	} catch (error) {
 		console.error('Error uploading image:', error);

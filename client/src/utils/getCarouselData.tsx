@@ -2,14 +2,15 @@ export const getCarouselData = () => {
 	return [
 		{
 			shoeID: '724a1c4b-30e3-4ac4-b289-bbb7e868c26e',
-			name: 'Air Jordan 4 Retro OG SP Nigel Sylvester \'Brick by Brick\'',
+			name: "Air Jordan 4 Retro OG SP Nigel Sylvester 'Brick by Brick'",
 			relativeURL: '/assets/upscaled-images/homepage-carousel-sneakers/jordan-4-nigel-sylvester-brick-5.webp',
 			bgColor: '#E04511',
 		},
 		{
 			shoeID: 'b62b550f-0f12-4717-9ce4-4efc7f938a0d',
 			name: 'Nike Kobe 6 Protro Dodgers',
-			relativeURL: '/assets/upscaled-images/homepage-carousel-sneakers/nike-kobe-6-protro-dodgers-CW2190-400-release-date-1.webp',
+			relativeURL:
+				'/assets/upscaled-images/homepage-carousel-sneakers/nike-kobe-6-protro-dodgers-CW2190-400-release-date-1.webp',
 			bgColor: '#3371CC',
 		},
 		{

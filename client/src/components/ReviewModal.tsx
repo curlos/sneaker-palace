@@ -2,7 +2,7 @@ import { XIcon } from '@heroicons/react/outline';
 import moment from 'moment';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import StarRatings from 'react-star-ratings';
+import StarRatings from '../utils/StarRatingsCompat';
 import { useModalA11y } from '../hooks/useModalA11y';
 import { IRating } from '../types/types';
 
@@ -21,7 +21,7 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 			className="fixed z-20 inset-0 bg-black/40 p-6 max-sm:p-4 flex justify-center items-center overflow-auto"
 			onClick={() => setShowModal(!showModal)}
 		>
-			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
+			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
 			<div
 				ref={dialogRef}
 				role="dialog"
@@ -36,14 +36,10 @@ const ReviewModal = ({ showModal, setShowModal, review }: Props) => {
 					</button>
 				</div>
 
-				<div className="bg-white flex-1 overflow-y-auto" style={{scrollbarWidth: 'thin'}}>
+				<div className="bg-white flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
 					<div className="p-4 flex max-xl:block">
 						<div className="w-full" style={{ maxWidth: '250px' }}>
-							<img
-								src={`${review.photo}`}
-								alt=""
-								className="mr-4 max-xl:mr-0 w-full h-auto rounded-md"
-							/>
+							<img src={`${review.photo}`} alt="" className="mr-4 max-xl:mr-0 w-full h-auto rounded-md" />
 						</div>
 
 						<div className="max-sm:ml-0 ml-4">

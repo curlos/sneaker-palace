@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { isValidEmail } from '../utils/validation';
 import User from '../models/User';
 
-const router = require('express').Router();
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const router = express.Router();
 
 // Register User
 router.post('/register', async (req: Request, res: Response) => {
@@ -46,7 +46,7 @@ router.post('/register', async (req: Request, res: Response) => {
 
 		try {
 			const savedUser = await newUser.save();
-			const { password, ...others } = savedUser._doc;
+			const { password, ...others } = savedUser.toObject();
 			return res.status(201).json(others);
 		} catch (err) {
 			return res.status(500).json(err);
@@ -75,11 +75,11 @@ router.post('/login', async (req: Request, res: Response) => {
 				id: user._id,
 				isAdmin: user.isAdmin,
 			},
-			process.env.JWT_SEC,
+			process.env.JWT_SEC as string,
 			{ expiresIn: '3d' }
 		);
 
-		const { password, ...others } = user._doc;
+		const { password, ...others } = user.toObject();
 
 		return res.status(200).json({
 			...others,

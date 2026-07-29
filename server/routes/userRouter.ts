@@ -19,12 +19,16 @@ const optionalAuth = (req: Request, _res: Response, next: any) => {
 
 	if (authHeader) {
 		const token = authHeader.split(' ')[1];
-		jwt.verify(token, process.env.JWT_SEC as string, ((err: any, user: UserType) => {
-			if (!err) {
-				req.user = user;
-			}
-			next();
-		}) as any);
+		jwt.verify(
+			token,
+			process.env.JWT_SEC as string,
+			((err: any, user: UserType) => {
+				if (!err) {
+					req.user = user;
+				}
+				next();
+			}) as any
+		);
 	} else {
 		next();
 	}
@@ -144,7 +148,7 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
 
 		const { password, ...userWithoutPassword } = updatedUser.toObject();
 		return res.status(200).json({ message: 'Password updated successfully', user: userWithoutPassword });
-	} catch (err) {
+	} catch {
 		return res.status(500).json({ error: 'Internal server error' });
 	}
 });

@@ -35,8 +35,6 @@ router.post('/', async (req: Request, res: Response) => {
 			case 'Highest Rated':
 				return { rating: -1 };
 
-
-
 			default:
 				return { releaseDate: -1 };
 		}
@@ -63,14 +61,19 @@ router.post('/', async (req: Request, res: Response) => {
 			selectedColors: [...Object.keys(filters.colors).filter((color) => filters.colors[color])],
 			selectedBrands: [...Object.keys(filters.brands).filter((brand) => filters.brands[brand])],
 			selectedGenders: [...Object.keys(filters.genders).filter((gender) => filters.genders[gender])],
-			selectedPriceRanges: [...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked)],
-			selectedReleaseYears: [...Object.keys(filters.releaseYears).filter((releaseYear) => Number(filters.releaseYears[releaseYear]))],
-			filters
+			selectedPriceRanges: [
+				...Object.keys(filters.priceRanges).filter((priceRange) => filters.priceRanges[priceRange].checked),
+			],
+			selectedReleaseYears: [
+				...Object.keys(filters.releaseYears).filter((releaseYear) => Number(filters.releaseYears[releaseYear])),
+			],
+			filters,
 		};
 	};
 
 	const buildFilterMatch = () => {
-		const { selectedColors, selectedBrands, selectedGenders, selectedPriceRanges, selectedReleaseYears, filters } = getSelectedFilters();
+		const { selectedColors, selectedBrands, selectedGenders, selectedPriceRanges, selectedReleaseYears, filters } =
+			getSelectedFilters();
 		const matchConditions: any = {};
 
 		if (selectedColors.length > 0) {
@@ -88,7 +91,7 @@ router.post('/', async (req: Request, res: Response) => {
 
 		if (selectedReleaseYears.length > 0) {
 			// Convert string years to numbers for database matching
-			const numericYears = selectedReleaseYears.map(year => Number(year));
+			const numericYears = selectedReleaseYears.map((year) => Number(year));
 			matchConditions.releaseYear = { $in: numericYears };
 		}
 
@@ -99,8 +102,8 @@ router.post('/', async (req: Request, res: Response) => {
 				if (!range.high) {
 					priceRangeConditions.push({ retailPrice: { $gte: range.low } });
 				} else {
-					priceRangeConditions.push({ 
-						retailPrice: { $gte: range.low, $lte: range.high } 
+					priceRangeConditions.push({
+						retailPrice: { $gte: range.low, $lte: range.high },
 					});
 				}
 			});
@@ -121,73 +124,73 @@ router.post('/', async (req: Request, res: Response) => {
 			// Use Atlas Search
 			pipeline.push({
 				$search: {
-					index: "search_shoes",
+					index: 'search_shoes',
 					compound: {
 						must: [
 							{
 								text: {
 									query: req.body.query.trim(),
-									path: ["name", "brand", "colorway", "silhouette", "story", "releaseYear"],
-									fuzzy: { 
+									path: ['name', 'brand', 'colorway', 'silhouette', 'story', 'releaseYear'],
+									fuzzy: {
 										maxEdits: 1,
-										prefixLength: 3
-									}
-								}
-							}
+										prefixLength: 3,
+									},
+								},
+							},
 						],
 						should: [
 							{
 								text: {
 									query: req.body.query.trim(),
-									path: "name",
-									score: { boost: { value: 10 } }
-								}
+									path: 'name',
+									score: { boost: { value: 10 } },
+								},
 							},
 							{
 								text: {
 									query: req.body.query.trim(),
-									path: "brand", 
-									score: { boost: { value: 8 } }
-								}
+									path: 'brand',
+									score: { boost: { value: 8 } },
+								},
 							},
 							{
 								text: {
 									query: req.body.query.trim(),
-									path: "colorway",
-									score: { boost: { value: 5 } }
-								}
+									path: 'colorway',
+									score: { boost: { value: 5 } },
+								},
 							},
 							{
 								text: {
 									query: req.body.query.trim(),
-									path: "silhouette",
-									score: { boost: { value: 4 } }
-								}
+									path: 'silhouette',
+									score: { boost: { value: 4 } },
+								},
 							},
 							{
 								text: {
 									query: req.body.query.trim(),
-									path: "story",
-									score: { boost: { value: 2 } }
-								}
+									path: 'story',
+									score: { boost: { value: 2 } },
+								},
 							},
 							{
 								text: {
 									query: req.body.query.trim(),
-									path: "releaseYear",
-									score: { boost: { value: 5 } }
-								}
-							}
-						]
-					}
-				}
+									path: 'releaseYear',
+									score: { boost: { value: 5 } },
+								},
+							},
+						],
+					},
+				},
 			});
 
 			// Add search score
 			pipeline.push({
 				$addFields: {
-					score: { $meta: "searchScore" }
-				}
+					score: { $meta: 'searchScore' },
+				},
 			});
 		}
 
@@ -197,39 +200,39 @@ router.post('/', async (req: Request, res: Response) => {
 			pipeline.push({
 				$group: {
 					_id: null,
-					maxScore: { $max: "$score" },
-					docs: { $push: "$$ROOT" }
-				}
+					maxScore: { $max: '$score' },
+					docs: { $push: '$$ROOT' },
+				},
 			});
-			
+
 			// Unwind back to individual documents
 			pipeline.push({
-				$unwind: "$docs"
+				$unwind: '$docs',
 			});
-			
+
 			// Replace root and add maxScore to each document
 			pipeline.push({
-				$replaceRoot: { 
+				$replaceRoot: {
 					newRoot: {
-						$mergeObjects: ["$docs", { maxScore: "$maxScore" }]
-					}
-				}
+						$mergeObjects: ['$docs', { maxScore: '$maxScore' }],
+					},
+				},
 			});
-			
+
 			// Keep only results within 10% of max score (90% threshold)
 			pipeline.push({
 				$match: {
 					$expr: {
-						$gte: ["$score", { $multiply: ["$maxScore", 0.5] }] // 50% of max score
-					}
-				}
+						$gte: ['$score', { $multiply: ['$maxScore', 0.5] }], // 50% of max score
+					},
+				},
 			});
-			
+
 			// Remove the temporary maxScore field
 			pipeline.push({
 				$project: {
-					maxScore: 0
-				}
+					maxScore: 0,
+				},
 			});
 		}
 
@@ -244,8 +247,8 @@ router.post('/', async (req: Request, res: Response) => {
 			pipeline.push({
 				$addFields: {
 					favoritesCount: { $size: '$favorites' },
-					ratingsCount: { $size: '$ratings' }
-				}
+					ratingsCount: { $size: '$ratings' },
+				},
 			});
 			pipeline.push({ $sort: getArraySortDirection() });
 		} else {
@@ -260,7 +263,6 @@ router.post('/', async (req: Request, res: Response) => {
 
 	try {
 		const { pipeline, pageNum, limit, skip } = buildPipeline();
-		
 
 		// Execute aggregation with pagination
 		const [results, totalCount] = await Promise.all([
@@ -280,14 +282,11 @@ router.post('/', async (req: Request, res: Response) => {
 						brand: 1,
 						rating: 1,
 						favorites: 1,
-						score: 1
-					}
-				}
+						score: 1,
+					},
+				},
 			]),
-			Shoe.aggregate([
-				...pipeline,
-				{ $count: 'total' }
-			])
+			Shoe.aggregate([...pipeline, { $count: 'total' }]),
 		]);
 
 		const total = totalCount[0]?.total || 0;
@@ -303,49 +302,49 @@ router.post('/', async (req: Request, res: Response) => {
 			hasPrevPage: pageNum > 1,
 			nextPage: pageNum < totalPages ? pageNum + 1 : null,
 			prevPage: pageNum > 1 ? pageNum - 1 : null,
-			pagingCounter: skip + 1
+			pagingCounter: skip + 1,
 		};
 
 		return res.json(paginatedResult);
 	} catch (error) {
 		console.error('Search error:', error);
-		
+
 		// Fallback to text search if Atlas Search fails
 		if (req.body.query && req.body.query.trim()) {
 			try {
 				const fallbackPageNum = Number(req.body.pageNum);
 				const fallbackLimit = req.body.limit || 12;
 				const fallbackSkip = (fallbackPageNum - 1) * fallbackLimit;
-				
+
 				const fallbackResults = await Shoe.find(
-					{ 
+					{
 						$text: { $search: req.body.query.trim() },
-						...buildFilterMatch()
+						...buildFilterMatch(),
 					},
-					{ score: { $meta: "textScore" } }
+					{ score: { $meta: 'textScore' } }
 				)
-				.sort({ score: { $meta: "textScore" } })
-				.limit(fallbackLimit)
-				.skip(fallbackSkip)
-				.lean();
+					.sort({ score: { $meta: 'textScore' } })
+					.limit(fallbackLimit)
+					.skip(fallbackSkip)
+					.lean();
 
 				return res.json({
 					docs: fallbackResults,
 					totalDocs: fallbackResults.length,
-					limit: fallbackLimit, 
-					page: fallbackPageNum, 
+					limit: fallbackLimit,
+					page: fallbackPageNum,
 					totalPages: 1,
-					hasNextPage: false, 
+					hasNextPage: false,
 					hasPrevPage: false,
-					nextPage: null, 
-					prevPage: null, 
-					pagingCounter: 1
+					nextPage: null,
+					prevPage: null,
+					pagingCounter: 1,
 				});
-			} catch (fallbackError) {
+			} catch {
 				return res.status(500).json({ error: 'Error fetching shoes' });
 			}
 		}
-		
+
 		return res.status(500).json({ error: 'Error fetching shoes' });
 	}
 });
@@ -386,7 +385,6 @@ router.post('/bulk', async (req: Request, res: Response) => {
 	const shoes = await Shoe.find({ [key]: { $in: ids } });
 	return res.json(shoes);
 });
-
 
 router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response) => {
 	const shoe = await Shoe.findOne({ shoeID: req.params.shoeID });

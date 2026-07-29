@@ -35,4 +35,3 @@ export const uploadToCloudinary = async (file: any) => {
 		throw error;
 	}
 };
-

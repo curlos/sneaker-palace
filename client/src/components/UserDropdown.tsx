@@ -6,7 +6,7 @@ import { UserType } from '../types/types';
 
 interface Props {
 	user: Partial<UserType>;
-	handleLogout: Function;
+	handleLogout: () => void;
 }
 
 const classNames = (...classes: Array<string>) => {
@@ -21,7 +21,10 @@ export const UserDropdown = ({ user, handleLogout }: Props) => {
 	return (
 		<Menu as="div" className="relative inline-block text-left max-sm:hidden">
 			<div>
-				<Menu.Button className="flex items-center cursor-pointer" aria-label={user['firstName'] ? undefined : 'Account menu'}>
+				<Menu.Button
+					className="flex items-center cursor-pointer"
+					aria-label={user['firstName'] ? undefined : 'Account menu'}
+				>
 					<span>{user['firstName'] && `Hi, ${user['firstName']}`}</span>
 					<span>
 						{user['firstName'] && <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />}

@@ -1,14 +1,11 @@
 import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import type { Appearance } from '@stripe/stripe-js';
 import React from 'react';
 import { Redirect } from 'react-router';
 import { useCart } from '../api/cartApi';
 import { useCreatePaymentIntentQuery } from '../api/checkoutApi';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
-
-// Initialize Stripe with publishable key (safe for frontend)
-const VITE_STRIPE = import.meta.env.VITE_STRIPE;
-const stripePromise = loadStripe(VITE_STRIPE);
+import { stripePromise } from '../utils/stripePromise';
 
 interface Props {
 	children: React.ReactNode;
@@ -33,7 +30,7 @@ const StripeContainer = ({ children }: Props) => {
 	const clientSecret = paymentIntentData?.clientSecret || '';
 
 	// Stripe Elements configuration
-	const appearance: any = {
+	const appearance: Appearance = {
 		theme: 'stripe', // Use Stripe's default styling theme
 	};
 	const options = {

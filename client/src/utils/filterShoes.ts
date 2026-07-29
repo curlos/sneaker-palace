@@ -9,7 +9,7 @@ export const filterByColor = (filters: any, shoesToFilter: Array<Shoe>) => {
 
 	return shoesToFilter.filter((shoe) => {
 		let colorIncluded = false;
-		for (let color of Object.keys(filters.colors)) {
+		for (const color of Object.keys(filters.colors)) {
 			if (filters.colors[color] && shoe.colorway.toLowerCase().includes(color)) {
 				colorIncluded = true;
 				break;
@@ -46,7 +46,7 @@ export const filterByPrice = (filters: any, shoesToFilter: Array<Shoe>) => {
 	return shoesToFilter.filter((shoe) => {
 		let shoeIncluded = false;
 
-		for (let priceRange of Object.keys(filters.priceRanges)) {
+		for (const priceRange of Object.keys(filters.priceRanges)) {
 			if (filters.priceRanges[priceRange].checked) {
 				const low = filters.priceRanges[priceRange].priceRanges.low;
 				const high = filters.priceRanges[priceRange].priceRanges.high;
@@ -68,8 +68,8 @@ export const filterByPrice = (filters: any, shoesToFilter: Array<Shoe>) => {
 };
 
 export const titleCase = (str: string) => {
-	let strLowerCase = str.toLowerCase();
-	let wordArr = strLowerCase.split(' ').map(function (currentValue) {
+	const strLowerCase = str.toLowerCase();
+	const wordArr = strLowerCase.split(' ').map(function (currentValue) {
 		return currentValue[0].toUpperCase() + currentValue.substring(1);
 	});
 

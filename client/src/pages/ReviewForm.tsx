@@ -1,7 +1,7 @@
 import { ChangeEvent, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import StarRatings from 'react-star-ratings';
+import StarRatings from '../utils/StarRatingsCompat';
 import { XIcon } from '@heroicons/react/outline';
 import { useGetShoeQuery } from '../api/shoesApi';
 import { useGetRatingQuery, useCreateRatingMutation, useUpdateRatingMutation } from '../api/ratingsApi';
@@ -39,13 +39,16 @@ const ReviewForm = () => {
 	});
 	const [file, setFile] = useState<File>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [prevExistingRating, setPrevExistingRating] = useState(existingRating);
 
-	// Update reviewInfo when existing rating is loaded
-	useEffect(() => {
+	// Update reviewInfo when existing rating is loaded (adjusting state during render
+	// per https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+	if (existingRating !== prevExistingRating) {
+		setPrevExistingRating(existingRating);
 		if (existingRating && reviewID) {
 			setReviewInfo((prev: any) => ({ ...prev, ...existingRating }));
 		}
-	}, [existingRating, reviewID]);
+	}
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -128,7 +131,11 @@ const ReviewForm = () => {
 				<h1 className="font-bold text-2xl">WRITE YOUR REVIEW</h1>
 				<div className="flex justify-between items-center border border-gray-300 p-4 rounded-lg my-4">
 					<div className="font-bold text-lg">{shoe?.name}</div>
-					<ShoeImage src={shoe?.image?.original || ''} alt={shoe?.name || ''} className="h-[150px] w-[150px]" />
+					<ShoeImage
+						src={shoe?.image?.original || ''}
+						alt={shoe?.name || ''}
+						className="h-[150px] w-[150px]"
+					/>
 				</div>
 
 				<div className="">
@@ -200,8 +207,12 @@ const ReviewForm = () => {
 					</div>
 
 					<div className="flex mt-10">
-						<div className="font-medium flex-[2]" id="size-label">SIZE</div>
-						<div className="font-medium mb-2 flex-[2]" id="width-label">WIDTH</div>
+						<div className="font-medium flex-[2]" id="size-label">
+							SIZE
+						</div>
+						<div className="font-medium mb-2 flex-[2]" id="width-label">
+							WIDTH
+						</div>
 					</div>
 
 					<div className="flex my-2">
@@ -216,7 +227,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, size: 'Too small' })}
 									checked={reviewInfo.size === 'Too small'}
 								/>
-								<label htmlFor="size-too-small" className="text-sm">Too small</label>
+								<label htmlFor="size-too-small" className="text-sm">
+									Too small
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -242,7 +255,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, size: 'Perfect' })}
 									checked={reviewInfo.size === 'Perfect'}
 								/>
-								<label htmlFor="size-perfect" className="text-sm">Perfect</label>
+								<label htmlFor="size-perfect" className="text-sm">
+									Perfect
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -254,7 +269,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, size: '1/2 a size too big' })}
 									checked={reviewInfo.size === '1/2 a size too big'}
 								/>
-								<label htmlFor="size-half-big" className="text-sm">1/2 a size too big</label>
+								<label htmlFor="size-half-big" className="text-sm">
+									1/2 a size too big
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -266,7 +283,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, size: 'Too big' })}
 									checked={reviewInfo.size === 'Too big'}
 								/>
-								<label htmlFor="size-too-big" className="text-sm">Too big</label>
+								<label htmlFor="size-too-big" className="text-sm">
+									Too big
+								</label>
 							</div>
 						</fieldset>
 
@@ -281,7 +300,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, width: 'Too narrow' })}
 									checked={reviewInfo.width === 'Too narrow'}
 								/>
-								<label htmlFor="width-too-narrow" className="text-sm">Too narrow</label>
+								<label htmlFor="width-too-narrow" className="text-sm">
+									Too narrow
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -293,7 +314,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, width: 'Slightly narrow' })}
 									checked={reviewInfo.width === 'Slightly narrow'}
 								/>
-								<label htmlFor="width-slightly-narrow" className="text-sm">Slightly narrow</label>
+								<label htmlFor="width-slightly-narrow" className="text-sm">
+									Slightly narrow
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -305,7 +328,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, width: 'Perfect' })}
 									checked={reviewInfo.width === 'Perfect'}
 								/>
-								<label htmlFor="width-perfect" className="text-sm">Perfect</label>
+								<label htmlFor="width-perfect" className="text-sm">
+									Perfect
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -317,7 +342,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, width: 'Slightly wide' })}
 									checked={reviewInfo.width === 'Slightly wide'}
 								/>
-								<label htmlFor="width-slightly-wide" className="text-sm">Slightly wide</label>
+								<label htmlFor="width-slightly-wide" className="text-sm">
+									Slightly wide
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -329,14 +356,20 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, width: 'Too wide' })}
 									checked={reviewInfo.width === 'Too wide'}
 								/>
-								<label htmlFor="width-too-wide" className="text-sm">Too wide</label>
+								<label htmlFor="width-too-wide" className="text-sm">
+									Too wide
+								</label>
 							</div>
 						</fieldset>
 					</div>
 
 					<div className="flex mt-10">
-						<div className="font-medium flex-[2]" id="comfort-label">COMFORT</div>
-						<div className="font-medium mb-2 flex-[2]" id="quality-label">QUALITY</div>
+						<div className="font-medium flex-[2]" id="comfort-label">
+							COMFORT
+						</div>
+						<div className="font-medium mb-2 flex-[2]" id="quality-label">
+							QUALITY
+						</div>
 					</div>
 
 					<div className="flex my-2">
@@ -351,7 +384,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, comfort: 'Uncomfortable' })}
 									checked={reviewInfo.comfort === 'Uncomfortable'}
 								/>
-								<label htmlFor="comfort-uncomfortable" className="text-sm">Uncomfortable</label>
+								<label htmlFor="comfort-uncomfortable" className="text-sm">
+									Uncomfortable
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -363,7 +398,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, comfort: 'Slightly uncomfortable' })}
 									checked={reviewInfo.comfort === 'Slightly uncomfortable'}
 								/>
-								<label htmlFor="comfort-slightly-uncomfortable" className="text-sm">Slightly uncomfortable</label>
+								<label htmlFor="comfort-slightly-uncomfortable" className="text-sm">
+									Slightly uncomfortable
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -375,7 +412,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, comfort: 'Ok' })}
 									checked={reviewInfo.comfort === 'Ok'}
 								/>
-								<label htmlFor="comfort-ok" className="text-sm">Ok</label>
+								<label htmlFor="comfort-ok" className="text-sm">
+									Ok
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -387,7 +426,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, comfort: 'Comfortable' })}
 									checked={reviewInfo.comfort === 'Comfortable'}
 								/>
-								<label htmlFor="comfort-comfortable" className="text-sm">Comfortable</label>
+								<label htmlFor="comfort-comfortable" className="text-sm">
+									Comfortable
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -399,7 +440,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, comfort: 'Perfect' })}
 									checked={reviewInfo.comfort === 'Perfect'}
 								/>
-								<label htmlFor="comfort-perfect" className="text-sm">Perfect</label>
+								<label htmlFor="comfort-perfect" className="text-sm">
+									Perfect
+								</label>
 							</div>
 						</fieldset>
 
@@ -414,7 +457,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, quality: 'Poor' })}
 									checked={reviewInfo.quality === 'Poor'}
 								/>
-								<label htmlFor="quality-poor" className="text-sm">Poor</label>
+								<label htmlFor="quality-poor" className="text-sm">
+									Poor
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -426,7 +471,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, quality: 'Below average' })}
 									checked={reviewInfo.quality === 'Below average'}
 								/>
-								<label htmlFor="quality-below-average" className="text-sm">Below average</label>
+								<label htmlFor="quality-below-average" className="text-sm">
+									Below average
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -438,7 +485,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, quality: 'What I expected' })}
 									checked={reviewInfo.quality === 'What I expected'}
 								/>
-								<label htmlFor="quality-what-i-expected" className="text-sm">What I expected</label>
+								<label htmlFor="quality-what-i-expected" className="text-sm">
+									What I expected
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -450,7 +499,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, quality: 'Pretty great' })}
 									checked={reviewInfo.quality === 'Pretty great'}
 								/>
-								<label htmlFor="quality-pretty-great" className="text-sm">Pretty great</label>
+								<label htmlFor="quality-pretty-great" className="text-sm">
+									Pretty great
+								</label>
 							</div>
 
 							<div className="flex items-center mb-2">
@@ -462,7 +513,9 @@ const ReviewForm = () => {
 									onChange={() => setReviewInfo({ ...reviewInfo, quality: 'Perfect' })}
 									checked={reviewInfo.quality === 'Perfect'}
 								/>
-								<label htmlFor="quality-perfect" className="text-sm">Perfect</label>
+								<label htmlFor="quality-perfect" className="text-sm">
+									Perfect
+								</label>
 							</div>
 						</fieldset>
 					</div>
@@ -475,7 +528,9 @@ const ReviewForm = () => {
 				<h2 className="font-bold text-xl mb-4">YOUR REVIEW</h2>
 				<div className="flex mb-4 max-sm:flex-col">
 					<div className="flex-[2] w-full max-sm:mb-5">
-						<label htmlFor="review-summary" className="text-gray-500 w-10/12 max-sm:w-full block">Summary</label>
+						<label htmlFor="review-summary" className="text-gray-500 w-10/12 max-sm:w-full block">
+							Summary
+						</label>
 						<input
 							id="review-summary"
 							required
@@ -488,7 +543,12 @@ const ReviewForm = () => {
 							What's your opinion in one sentence? Example: Best purchase ever.
 						</div>
 
-						<label htmlFor="review-text" className="text-gray-500 w-10/12 max-sm:w-full max-sm:mt-4 mt-8 block">Your Review</label>
+						<label
+							htmlFor="review-text"
+							className="text-gray-500 w-10/12 max-sm:w-full max-sm:mt-4 mt-8 block"
+						>
+							Your Review
+						</label>
 						<textarea
 							id="review-text"
 							required
@@ -502,15 +562,13 @@ const ReviewForm = () => {
 					</div>
 
 					<div className="flex-[2] w-full max-sm:mb-5">
-						<label htmlFor="review-photo-upload" className="text-gray-500 w-10/12 block">Upload photo</label>
+						<label htmlFor="review-photo-upload" className="text-gray-500 w-10/12 block">
+							Upload photo
+						</label>
 						{(file || reviewInfo.photo) && (
 							<div className="relative inline-block">
 								<img
-									src={
-										file
-											? URL.createObjectURL(file)
-											: `${reviewInfo.photo}`
-									}
+									src={file ? URL.createObjectURL(file) : `${reviewInfo.photo}`}
 									alt="Preview of your upload"
 									className="h-[150px] object-cover my-3"
 								/>

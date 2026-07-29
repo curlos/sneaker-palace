@@ -34,30 +34,18 @@ const Home = () => {
 					</Link>
 				</div>
 				<div className="flex flex-wrap gap-2 items-center justify-between max-md:mt-4">
-					<BrandLink brands={["Nike"]} logoPath="/assets/brand_logos/nike.svg" />
-					<BrandLink brands={["Jordan", "Air Jordan"]} logoPath="/assets/brand_logos/jordan.svg" />
-					<BrandLink brands={["adidas"]} logoPath="/assets/brand_logos/adidas.svg" />
-					<BrandLink brands={["New Balance"]} logoPath="/assets/brand_logos/new balance.svg" />
-					<BrandLink brands={["ASICS"]} logoPath="/assets/brand_logos/asics.svg" />
-					<BrandLink brands={["Hoka One One"]} logoPath="/assets/brand_logos/hoka.svg" />
+					<BrandLink brands={['Nike']} logoPath="/assets/brand_logos/nike.svg" />
+					<BrandLink brands={['Jordan', 'Air Jordan']} logoPath="/assets/brand_logos/jordan.svg" />
+					<BrandLink brands={['adidas']} logoPath="/assets/brand_logos/adidas.svg" />
+					<BrandLink brands={['New Balance']} logoPath="/assets/brand_logos/new balance.svg" />
+					<BrandLink brands={['ASICS']} logoPath="/assets/brand_logos/asics.svg" />
+					<BrandLink brands={['Hoka One One']} logoPath="/assets/brand_logos/hoka.svg" />
 				</div>
 
 				<div className="mt-5 flex w-full mb-10 max-md:block">
-					<GenderShopLink
-						gender="men"
-						imageSrc="/assets/landing_page/mens.jpeg"
-						label="Shop Men"
-					/>
-					<GenderShopLink
-						gender="women"
-						imageSrc="/assets/landing_page/womens.jpeg"
-						label="Shop Women"
-					/>
-					<GenderShopLink
-						gender="youth"
-						imageSrc="/assets/landing_page/kids.jpeg"
-						label="Shop Kids"
-					/>
+					<GenderShopLink gender="men" imageSrc="/assets/landing_page/mens.jpeg" label="Shop Men" />
+					<GenderShopLink gender="women" imageSrc="/assets/landing_page/womens.jpeg" label="Shop Women" />
+					<GenderShopLink gender="youth" imageSrc="/assets/landing_page/kids.jpeg" label="Shop Kids" />
 				</div>
 			</div>
 		</div>

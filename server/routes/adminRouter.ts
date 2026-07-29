@@ -105,34 +105,34 @@ if (process.env.NODE_ENV !== 'production') {
 	router.get('/shoes/grouped-by-brand', async (req: Request, res: Response) => {
 		try {
 			const { releaseYear, brand } = req.query;
-			
+
 			const filter: any = {};
-			
+
 			if (releaseYear) {
 				filter.releaseYear = Number(releaseYear);
 			}
-			
+
 			if (brand) {
 				filter.brand = { $regex: new RegExp(`^${brand}$`, 'i') };
 			}
-			
+
 			const shoes = await Shoe.find(filter, 'brand name releaseYear releaseDate').lean();
-			
+
 			const groupedShoes = shoes.reduce((acc: any, shoe: any) => {
 				const { brand, name, releaseYear, releaseDate } = shoe;
-				const yearOrDate = releaseYear ? releaseYear : (releaseDate ? releaseDate : '');
+				const yearOrDate = releaseYear ? releaseYear : releaseDate ? releaseDate : '';
 				const formattedString = `${brand} - ${name} (${yearOrDate})`;
-				
+
 				if (!acc[brand]) {
 					acc[brand] = [];
 				}
 				acc[brand].push(formattedString);
-				
+
 				return acc;
 			}, {});
-			
+
 			return res.json(groupedShoes);
-		} catch (error) {
+		} catch {
 			return res.status(500).json({ error: 'Error fetching grouped shoes' });
 		}
 	});

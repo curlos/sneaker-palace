@@ -10,7 +10,7 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import StarRatings from 'react-star-ratings';
+import StarRatings from '../utils/StarRatingsCompat';
 import { useDeleteRatingMutation } from '../api/ratingsApi';
 import { useGetLoggedInUserQuery } from '../api/userApi';
 import { RootState } from '../redux/store';
@@ -56,11 +56,7 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 			<div className="flex justify-between items-center">
 				<div className="flex gap-2 items-center">
 					<img
-						src={
-							review.postedByUser.profilePic
-								? `${review.postedByUser.profilePic}`
-								: DEFAULT_AVATAR
-						}
+						src={review.postedByUser.profilePic ? `${review.postedByUser.profilePic}` : DEFAULT_AVATAR}
 						alt={`${review.postedByUser.firstName || 'User'}'s avatar`}
 						className="h-9 w-9 rounded-full object-cover"
 					/>
@@ -73,7 +69,10 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 				{review.postedByUser._id === user?._id ? (
 					<div className="flex gap-2">
 						<Link to={`/shoe/edit-review/${shoe.shoeID}/${review._id}`} aria-label="Edit review">
-							<PencilAltIcon className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" aria-hidden="true" />
+							<PencilAltIcon
+								className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer"
+								aria-hidden="true"
+							/>
 						</Link>
 
 						<button type="button" aria-label="Delete review" onClick={handleDeleteReview}>
@@ -113,11 +112,7 @@ const Review = ({ shoeRating, shoe, onLike, onDislike, isLoading }: Props) => {
 					onClick={() => setShowModal(true)}
 					className="block"
 				>
-					<img
-						src={`${review.photo}`}
-						alt=""
-						className="h-36 object-cover my-2 cursor-pointer rounded-md"
-					/>
+					<img src={`${review.photo}`} alt="" className="h-36 object-cover my-2 cursor-pointer rounded-md" />
 				</button>
 			) : null}
 

@@ -95,7 +95,7 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
 			className="fixed z-20 w-screen h-screen bg-black/40 p-0 max-sm:p-8 max-md:p-16 max-lg:p-24 top-0 left-0 flex justify-center items-center"
 			onClick={() => setShowModal(!showModal)}
 		>
-			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions */}
+			{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
 			<form
 				ref={dialogRef}
 				role="dialog"
@@ -107,7 +107,10 @@ const NewPasswordModal = ({ showModal, setShowModal }: Props) => {
 				<div className="flex justify-between text-lg mb-4">
 					<div className="font-bold">Edit Password</div>
 					<button type="button" aria-label="Close" onClick={() => setShowModal(false)}>
-						<XIcon className="h-5 w-5 text-gray-600 hover:text-gray-800 cursor-pointer" aria-hidden="true" />
+						<XIcon
+							className="h-5 w-5 text-gray-600 hover:text-gray-800 cursor-pointer"
+							aria-hidden="true"
+						/>
 					</button>
 				</div>
 				<label htmlFor="current-password">Current Password</label>

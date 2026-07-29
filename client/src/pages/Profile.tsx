@@ -58,13 +58,12 @@ const Profile = () => {
 		skip: activeTab !== 'reviews',
 	});
 	const { data: favoriteShoes = [], isLoading: favoritesLoading } = useGetShoesByObjectIdsQuery(
-		profileUser?.favorites || [],
+		profileUser?.favorites || []
 	);
 
 	// Pagination logic for reviews
 	const sortedReviews = [...(profileUserReviews || [])].sort(
-		(a: any, b: any) =>
-			new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+		(a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 	);
 	const reviewsTotalPages = Math.ceil(sortedReviews.length / ITEMS_PER_PAGE);
 	const reviewsStartIndex = (reviewsCurrentPage - 1) * ITEMS_PER_PAGE;
@@ -72,9 +71,7 @@ const Profile = () => {
 	const paginatedReviews = sortedReviews.slice(reviewsStartIndex, reviewsEndIndex);
 
 	// Pagination logic for favorites
-	const sortedFavorites = [...(favoriteShoes || [])].sort(
-		(a: Shoe, b: Shoe) => (b.rating || 0) - (a.rating || 0)
-	);
+	const sortedFavorites = [...(favoriteShoes || [])].sort((a: Shoe, b: Shoe) => (b.rating || 0) - (a.rating || 0));
 	const favoritesTotalPages = Math.ceil(sortedFavorites.length / ITEMS_PER_PAGE);
 	const favoritesStartIndex = (favoritesCurrentPage - 1) * ITEMS_PER_PAGE;
 	const favoritesEndIndex = favoritesStartIndex + ITEMS_PER_PAGE;
@@ -84,22 +81,22 @@ const Profile = () => {
 		window.scrollTo(0, 0);
 	}, [userID]);
 
-	// Set initial tab based on content availability
-	useEffect(() => {
-		if (!hasSetInitialTab && !reviewsLoading && !favoritesLoading && profileUser) {
-			const hasReviews = profileUserReviews && profileUserReviews.length > 0;
-			const hasFavorites = favoriteShoes && favoriteShoes.length > 0;
-			
-			// Default to reviews unless reviews is empty but favorites has content
-			if (!hasReviews && hasFavorites) {
-				setActiveTab('favorites');
-			} else {
-				setActiveTab('reviews'); // Default case
-			}
-			
-			setHasSetInitialTab(true);
+	// Set initial tab based on content availability, once data has loaded (adjusting
+	// state during render per https://react.dev/learn/you-might-not-need-an-effect;
+	// the hasSetInitialTab guard ensures this only runs once).
+	if (!hasSetInitialTab && !reviewsLoading && !favoritesLoading && profileUser) {
+		const hasReviews = profileUserReviews && profileUserReviews.length > 0;
+		const hasFavorites = favoriteShoes && favoriteShoes.length > 0;
+
+		// Default to reviews unless reviews is empty but favorites has content
+		if (!hasReviews && hasFavorites) {
+			setActiveTab('favorites');
+		} else {
+			setActiveTab('reviews'); // Default case
 		}
-	}, [hasSetInitialTab, reviewsLoading, favoritesLoading, profileUser, profileUserReviews, favoriteShoes]);
+
+		setHasSetInitialTab(true);
+	}
 
 	return (
 		<div className="container mx-auto px-4 py-10 bg-gray-100 max-w-6xl flex-grow">
@@ -113,11 +110,7 @@ const Profile = () => {
 						<div className="flex items-center mb-5 border border-gray-300 p-8 rounded-lg bg-white gap-2">
 							<div className="">
 								<img
-									src={
-										profileUser?.profilePic
-											? `${profileUser.profilePic}`
-											: DEFAULT_AVATAR
-									}
+									src={profileUser?.profilePic ? `${profileUser.profilePic}` : DEFAULT_AVATAR}
 									alt=""
 									className="max-sm:h-20 max-sm:w-20 h-36 w-36 rounded-full object-cover mb-3"
 								/>
@@ -255,7 +248,9 @@ const Profile = () => {
 						) : sortedFavorites.length > 0 ? (
 							<div>
 								<div className="flex flex-wrap justify-start bg-white border border-gray-300 rounded-lg p-3">
-									{paginatedFavorites.map((shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />)}
+									{paginatedFavorites.map(
+										(shoe: Shoe) => shoe && <SmallShoe key={shoe._id} shoe={shoe} />
+									)}
 								</div>
 								{sortedFavorites.length > ITEMS_PER_PAGE && (
 									<Pagination

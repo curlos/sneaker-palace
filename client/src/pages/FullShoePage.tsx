@@ -44,6 +44,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 
 	// Local state
 	const [selectedSize, setSelectedSize] = useState(initialSize);
+	const [prevInitialSize, setPrevInitialSize] = useState(initialSize);
 	const [imageNum, setImageNum] = useState(0);
 	const sizeButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -68,9 +69,13 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 		window.scrollTo(0, 0);
 	}, [shoeID]);
 
-	useEffect(() => {
+	// Sync selectedSize when the user's preselected size loads/changes, adjusting state
+	// during render (per https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+	// so it doesn't cost an extra render pass, while still letting manual selections persist otherwise.
+	if (initialSize !== prevInitialSize) {
+		setPrevInitialSize(initialSize);
 		setSelectedSize(initialSize);
-	}, [user, initialSize]);
+	}
 
 	const handleAddToCart = async () => {
 		setShowShoppingCartModal(true);
@@ -173,8 +178,14 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 									{shoe?.gender?.charAt(0).toUpperCase() + shoe?.gender?.slice(1)}'s Shoes
 								</div>
 								<div className="text-xl text-red-800 mt-1">${shoe?.retailPrice}</div>
-								<div id="size-label" className="mt-5 mb-2">Select Size</div>
-								<div role="radiogroup" aria-labelledby="size-label" className="flex flex-wrap box-border justify-between max-sm:text-sm">
+								<div id="size-label" className="mt-5 mb-2">
+									Select Size
+								</div>
+								<div
+									role="radiogroup"
+									aria-labelledby="size-label"
+									className="flex flex-wrap box-border justify-between max-sm:text-sm"
+								>
 									{SHOE_SIZES.map((shoeSize, index) => {
 										return (
 											<button
@@ -264,32 +275,36 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 									{shoe?.links?.flightClub ? (
 										<a href={shoe.links.flightClub} target="_blank" rel="noreferrer">
 											<img src="/assets/flight_club.png" alt="" className="w-32" />
-											<span className="sr-only">View {shoe?.name} on Flight Club (opens in new tab)</span>
+											<span className="sr-only">
+												View {shoe?.name} on Flight Club (opens in new tab)
+											</span>
 										</a>
 									) : null}
 
 									{shoe?.links?.goat ? (
 										<a href={shoe.links.goat} target="_blank" rel="noreferrer">
 											<img src="/assets/goat.png" alt="" className="w-32" />
-											<span className="sr-only">View {shoe?.name} on GOAT (opens in new tab)</span>
+											<span className="sr-only">
+												View {shoe?.name} on GOAT (opens in new tab)
+											</span>
 										</a>
 									) : null}
 
 									{shoe?.links?.stadiumGoods ? (
 										<a href={shoe.links.stadiumGoods} target="_blank" rel="noreferrer">
-											<img
-												src="/assets/stadium_goods.svg"
-												alt=""
-												className="w-32"
-											/>
-											<span className="sr-only">View {shoe?.name} on Stadium Goods (opens in new tab)</span>
+											<img src="/assets/stadium_goods.svg" alt="" className="w-32" />
+											<span className="sr-only">
+												View {shoe?.name} on Stadium Goods (opens in new tab)
+											</span>
 										</a>
 									) : null}
 
 									{shoe?.links?.stockX ? (
 										<a href={shoe.links.stockX} target="_blank" rel="noreferrer">
 											<img src="/assets/stockx.jpeg" alt="" className="w-32" />
-											<span className="sr-only">View {shoe?.name} on StockX (opens in new tab)</span>
+											<span className="sr-only">
+												View {shoe?.name} on StockX (opens in new tab)
+											</span>
 										</a>
 									) : null}
 								</div>

@@ -90,7 +90,9 @@ const Settings = () => {
 					className="flex-[4]"
 					role="tabpanel"
 					id="settings-panel"
-					aria-labelledby={selectedSetting === 'Account Details' ? 'account-details-tab' : 'shop-preferences-tab'}
+					aria-labelledby={
+						selectedSetting === 'Account Details' ? 'account-details-tab' : 'shop-preferences-tab'
+					}
 				>
 					{getSettingPage()}
 				</div>

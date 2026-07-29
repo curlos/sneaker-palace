@@ -16,7 +16,7 @@ interface UserType {
 	updatedAt: Date;
 }
 
-declare module Express {
+declare namespace Express {
 	export interface Request {
 		user: UserType;
 	}

@@ -38,7 +38,9 @@ const Orders = () => {
 		</div>
 	) : (
 		<div className="container mx-auto px-4 max-w-6xl flex-grow">
-			<h1 ref={ordersRef} tabIndex={-1} className="text-3xl py-5 outline-none">Your Orders</h1>
+			<h1 ref={ordersRef} tabIndex={-1} className="text-3xl py-5 outline-none">
+				Your Orders
+			</h1>
 			{!orders || orders.length < 1 ? (
 				<div className="text-base flex items-center gap-2">
 					<div>No orders found</div>

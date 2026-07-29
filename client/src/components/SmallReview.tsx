@@ -2,7 +2,7 @@ import moment from 'moment';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
-import StarRatings from 'react-star-ratings';
+import StarRatings from '../utils/StarRatingsCompat';
 import { useGetShoeQuery } from '../api/shoesApi';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
 import ShoeImage from './ShoeImage';
@@ -26,9 +26,7 @@ const SmallReview = ({ review, author }: Props) => {
 			<div className="flex items-center gap-3 text-sm my-3 border-0 border-b border-solid border-gray-300 p-3">
 				<div>
 					<img
-						src={
-							author.profilePic ? `${author.profilePic}` : DEFAULT_AVATAR
-						}
+						src={author.profilePic ? `${author.profilePic}` : DEFAULT_AVATAR}
 						alt={`${author?.firstName || 'User'}'s avatar`}
 						className="h-9 w-9 rounded-full object-cover"
 					/>
@@ -58,11 +56,7 @@ const SmallReview = ({ review, author }: Props) => {
 					<ReactMarkdown>{review.text}</ReactMarkdown>
 				</div>
 				{review.photo && (
-					<img
-						src={review.photo}
-						alt=""
-						className="max-h-32 w-auto object-cover my-2 rounded"
-					/>
+					<img src={review.photo} alt="" className="max-h-32 w-auto object-cover my-2 rounded" />
 				)}
 				<div className="border border-gray-300 rounded-lg bg-white mt-2">
 					<Link to={`/shoe/${shoe.shoeID}`}>

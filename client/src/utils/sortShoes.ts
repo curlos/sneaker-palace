@@ -38,4 +38,3 @@ export const sortByMostReviewed = (shoesToSort: Array<Shoe>) =>
 
 export const sortByHighestRated = (shoesToSort: Array<Shoe>) =>
 	[...shoesToSort].sort((shoeOne, shoeTwo) => (shoeTwo.rating > shoeOne.rating ? 1 : -1));
-

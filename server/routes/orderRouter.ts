@@ -40,14 +40,13 @@ const verifyOrderAccess = async (req: Request, res: Response, next: any) => {
 			req.order = order;
 			next();
 		});
-	} catch (error) {
+	} catch {
 		return res.status(500).json({ error: 'Server error' });
 	}
 };
 
 router.get('/user', verifyToken, async (req: Request, res: Response) => {
 	try {
-		
 		const orders = await Order.find({ userID: req.user.id || req.user._id });
 		return res.json(orders);
 	} catch (error) {
@@ -91,7 +90,7 @@ router.post('/', verifyToken, async (req: Request, res: Response) => {
 		await order.save({ session });
 
 		await session.commitTransaction();
-	} catch (error) {
+	} catch {
 		await session.abortTransaction();
 		return res.status(500).json({ error: 'Failed to place order' });
 	} finally {

@@ -37,7 +37,7 @@ router.get('/by/:type/:id', async (req: Request, res: Response) => {
 		}
 
 		return res.json(ratingsWithAuthors);
-	} catch (error) {
+	} catch {
 		return res.status(500).json({ error: `Failed to fetch ratings for ${req.params.type}` });
 	}
 });
@@ -87,7 +87,7 @@ router.post('/rate', verifyToken, async (req: Request, res: Response) => {
 		const { password, ...userWithoutPassword } = updatedUser.toObject();
 
 		return res.json({ updatedShoe, updatedUser: userWithoutPassword, rating });
-	} catch (error) {
+	} catch {
 		return res.status(500).json({ error: 'Failed to create rating' });
 	}
 });
@@ -103,7 +103,11 @@ router.put('/edit/:id', verifyToken, async (req: Request, res: Response) => {
 			return res.status(403).json({ error: 'Access denied - not your rating' });
 		}
 
-		const updatedRating = await Rating.findByIdAndUpdate(req.params.id, { $set: req.body }, { returnDocument: 'after' });
+		const updatedRating = await Rating.findByIdAndUpdate(
+			req.params.id,
+			{ $set: req.body },
+			{ returnDocument: 'after' }
+		);
 
 		// Update shoe rating if ratingNum changed
 		if (req.body.ratingNum && req.body.ratingNum !== oldRating.ratingNum) {
@@ -122,7 +126,7 @@ router.put('/edit/:id', verifyToken, async (req: Request, res: Response) => {
 		}
 
 		return res.json(updatedRating);
-	} catch (error) {
+	} catch {
 		return res.status(500).json({ error: 'Failed to update rating' });
 	}
 });
@@ -248,7 +252,7 @@ router.delete('/:id', verifyToken, async (req: Request, res: Response) => {
 		// Get the updated shoe with fresh data for the response
 		const updatedShoe = await Shoe.findById(shoe?._id);
 		return res.json({ deletedRating, updatedShoe });
-	} catch (error) {
+	} catch {
 		return res.status(500).json({ error: 'Failed to delete rating' });
 	}
 });
@@ -272,7 +276,7 @@ router.put('/reset-all-ratings', async (req: Request, res: Response) => {
 			modifiedShoesCount: updatedShoes.modifiedCount,
 			modifiedUsersCount: updatedUsers.modifiedCount,
 		});
-	} catch (error) {
+	} catch {
 		return res.status(500).json({ error: 'Failed to reset ratings and shoes' });
 	}
 });

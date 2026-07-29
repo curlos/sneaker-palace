@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import Carousel from 'react-multi-carousel';
+import Carousel from '../utils/CarouselCompat';
 import 'react-multi-carousel/lib/styles.css';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
 import { useGetShoesFromPageQuery, useGetPaginatedShoesQuery } from '../api/shoesApi';
@@ -19,9 +19,65 @@ interface stateType {
 	sortType?: string;
 }
 
+interface CarouselArrowProps {
+	onClick?: () => void;
+}
+
+// Custom arrow components
+const CustomLeftArrow = ({ onClick }: CarouselArrowProps) => (
+	<button
+		type="button"
+		aria-label="Previous"
+		onClick={onClick}
+		className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full bg-white border border-gray-300 hover:border-gray-600"
+	>
+		<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+	</button>
+);
+
+const CustomRightArrow = ({ onClick }: CarouselArrowProps) => (
+	<button
+		type="button"
+		aria-label="Next"
+		onClick={onClick}
+		className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full bg-white border border-gray-300 hover:border-gray-600"
+	>
+		<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+	</button>
+);
+
+interface CarouselDotProps {
+	onClick?: () => void;
+	active?: boolean;
+	index?: number;
+}
+
+// Custom dot component for indicators
+const CustomDot = ({ onClick, active, index }: CarouselDotProps) => (
+	<button
+		type="button"
+		aria-label={`Go to slide ${(index ?? 0) + 1}`}
+		aria-current={active ? 'true' : undefined}
+		onClick={onClick}
+		className={`w-8 h-1 rounded-full mx-1 transition-all duration-200 ${
+			active ? 'bg-gray-800' : 'bg-gray-300'
+		}`}
+	/>
+);
+
 const MoreShoes = ({ shoe }: MoreShoesProps) => {
 	const { state } = useLocation<stateType>();
 	const [randomPageNum, setRandomPageNum] = useState(() => Math.floor(Math.random() * 800));
+
+	// Regenerate the random page whenever the target shoe changes to none. Kept as an
+	// effect (rather than adjusted during render) because Math.random() is impure —
+	// calling it directly in the render body would itself violate React's purity rules.
+	useEffect(() => {
+		if (!shoe) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setRandomPageNum(Math.floor(Math.random() * 800));
+		}
+	}, [shoe]);
 
 	// react-multi-carousel doesn't remove offscreen slides from the tab order (only
 	// visually hides them via CSS transform), so keyboard users can tab into shoes
@@ -33,18 +89,15 @@ const MoreShoes = ({ shoe }: MoreShoesProps) => {
 	// re-syncing via MutationObserver whenever the library adds/removes items.
 	const carouselWrapperRef = useRef<HTMLDivElement>(null);
 
-	// Regenerate random page when shoe changes (if provided)
-	useEffect(() => {
-		if (!shoe) {
-			setRandomPageNum(Math.floor(Math.random() * 800));
-		}
-	}, [shoe]);
-
 	// Get filters (empty filters for this use case)
 	const filters = getInitialFilters(state);
 
 	// Use search query when shoe is provided (fetch 13 to account for filtering out current shoe)
-	const { data: searchShoesData, isLoading: searchLoading, isFetching: searchFetching } = useGetPaginatedShoesQuery(
+	const {
+		data: searchShoesData,
+		isLoading: searchLoading,
+		isFetching: searchFetching,
+	} = useGetPaginatedShoesQuery(
 		{
 			filters,
 			sortType: 'Most Relevant',
@@ -58,25 +111,22 @@ const MoreShoes = ({ shoe }: MoreShoesProps) => {
 	);
 
 	// Filter search results to exclude current shoe
-	const filteredSearchShoes = shoe && searchShoesData?.docs 
-		? searchShoesData.docs
-			.filter((shoeItem: Shoe) => 
-				shoeItem._id !== shoe._id && shoeItem.shoeID !== shoe.shoeID
-			)
-			.slice(0, 12)
-		: [];
+	const filteredSearchShoes =
+		shoe && searchShoesData?.docs
+			? searchShoesData.docs
+					.filter((shoeItem: Shoe) => shoeItem._id !== shoe._id && shoeItem.shoeID !== shoe.shoeID)
+					.slice(0, 12)
+			: [];
 
 	// Determine if we need to fall back to random shoes
 	// This happens when: 1) No shoe provided, OR 2) Shoe provided but search returned no usable results
-	const needsRandomFallback = !shoe || (shoe && !searchLoading && !searchFetching && filteredSearchShoes.length === 0);
+	const needsRandomFallback =
+		!shoe || (shoe && !searchLoading && !searchFetching && filteredSearchShoes.length === 0);
 
 	// Use random page query when no shoe is provided OR when search returns no results
-	const { data: randomShoesData, isLoading: randomLoading } = useGetShoesFromPageQuery(
-		randomPageNum,
-		{
-			skip: !needsRandomFallback, // Skip when we don't need random fallback
-		}
-	);
+	const { data: randomShoesData, isLoading: randomLoading } = useGetShoesFromPageQuery(randomPageNum, {
+		skip: !needsRandomFallback, // Skip when we don't need random fallback
+	});
 
 	// Determine what data to show and loading state
 	let allShoes: Shoe[] = [];
@@ -160,42 +210,6 @@ const MoreShoes = ({ shoe }: MoreShoesProps) => {
 			slidesToSlide: 2, // Move 2 items at once on mobile
 		},
 	};
-
-	// Custom arrow components
-	const CustomLeftArrow = ({ onClick }: any) => (
-		<button
-			type="button"
-			aria-label="Previous"
-			onClick={onClick}
-			className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full bg-white border border-gray-300 hover:border-gray-600"
-		>
-			<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-		</button>
-	);
-
-	const CustomRightArrow = ({ onClick }: any) => (
-		<button
-			type="button"
-			aria-label="Next"
-			onClick={onClick}
-			className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full bg-white border border-gray-300 hover:border-gray-600"
-		>
-			<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-		</button>
-	);
-
-	// Custom dot component for indicators
-	const CustomDot = ({ onClick, active, index }: any) => (
-		<button
-			type="button"
-			aria-label={`Go to slide ${index + 1}`}
-			aria-current={active ? 'true' : undefined}
-			onClick={onClick}
-			className={`w-8 h-1 rounded-full mx-1 transition-all duration-200 ${
-				active ? 'bg-gray-800' : 'bg-gray-300'
-			}`}
-		/>
-	);
 
 	return loading ? (
 		<div className="flex justify-center py-4">
