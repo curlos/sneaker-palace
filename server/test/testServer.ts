@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 
 export async function startTestServer() {
-	const mongod = await MongoMemoryServer.create();
+	// A single-node replica set (not a standalone MongoMemoryServer) so that
+	// mongoose.startSession()/transactions (e.g. authRouter's register route)
+	// work the same way they do against Atlas in production.
+	const mongod = await MongoMemoryReplSet.create({ replSet: { count: 1 } });
 
 	// Point the app at the in-memory Mongo instance and skip app.listen()
 	// before importing server.ts, since both are read at import time.
@@ -21,7 +24,7 @@ export async function startTestServer() {
 	return { app, mongod };
 }
 
-export async function stopTestServer(mongod: MongoMemoryServer) {
+export async function stopTestServer(mongod: MongoMemoryReplSet) {
 	await mongoose.disconnect();
 	await mongod.stop();
 }

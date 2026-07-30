@@ -1,9 +1,9 @@
 import request from 'supertest';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import Shoe from './models/Shoe';
 import { startTestServer, stopTestServer } from './test/testServer';
 
-let mongod: MongoMemoryServer;
+let mongod: MongoMemoryReplSet;
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
 
 beforeAll(async () => {

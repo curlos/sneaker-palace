@@ -1,13 +1,13 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import Shoe from '../models/Shoe';
 import User from '../models/User';
 import { IShoe } from '../types/types';
 import { startTestServer, stopTestServer } from '../test/testServer';
 
-let mongod: MongoMemoryServer;
+let mongod: MongoMemoryReplSet;
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
 
 beforeAll(async () => {

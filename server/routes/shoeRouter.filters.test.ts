@@ -1,11 +1,11 @@
 import request from 'supertest';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import Shoe from '../models/Shoe';
 import { IShoe } from '../types/types';
 import { startTestServer, stopTestServer } from '../test/testServer';
 
-let mongod: MongoMemoryServer;
+let mongod: MongoMemoryReplSet;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
 

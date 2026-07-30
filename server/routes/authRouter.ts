@@ -1,8 +1,10 @@
 import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { isValidEmail } from '../utils/validation';
 import User from '../models/User';
+import Cart from '../models/Cart';
 
 const router = express.Router();
 
@@ -36,20 +38,34 @@ router.post('/register', async (req: Request, res: Response) => {
 	} else {
 		const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
-		const newUser = new User({
-			email: req.body.email,
-			password: hashedPassword,
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
-			lowerCaseEmail: req.body.email,
-		});
+		const session = await mongoose.startSession();
 
 		try {
-			const savedUser = await newUser.save();
-			const { password, ...others } = savedUser.toObject();
+			let savedUser;
+
+			// Build the document fresh on every attempt: withTransaction retries
+			// this callback on transient errors, and reusing a document across
+			// retries leaves its `isNew` flag set to false after the first
+			// attempt, turning the retry's save() into a failing update.
+			await session.withTransaction(async () => {
+				const newUser = new User({
+					email: req.body.email,
+					password: hashedPassword,
+					firstName: req.body.firstName,
+					lastName: req.body.lastName,
+					lowerCaseEmail: req.body.email,
+				});
+
+				savedUser = await newUser.save({ session });
+				await Cart.create([{ userID: savedUser._id.toString(), products: [] }], { session });
+			});
+
+			const { password, ...others } = savedUser!.toObject();
 			return res.status(201).json(others);
 		} catch (err) {
 			return res.status(500).json(err);
+		} finally {
+			session.endSession();
 		}
 	}
 });

@@ -66,23 +66,6 @@ export const cartApi = baseAPI.injectEndpoints({
 
 					let cartData = await response.json();
 
-					// If user doesn't have a cart, create one
-					if (!cartData) {
-						const createResponse = await fetch(`${import.meta.env.VITE_API_URL}/cart`, {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-								Authorization: `Bearer ${token}`,
-							},
-						});
-
-						if (!createResponse.ok) {
-							throw new Error(`Failed to create cart! status: ${createResponse.status}`);
-						}
-
-						cartData = await createResponse.json();
-					}
-
 					// Add computed total to the response
 					if (cartData && cartData.products) {
 						cartData = {

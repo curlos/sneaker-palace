@@ -1,11 +1,11 @@
 import request from 'supertest';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { startTestServer, stopTestServer } from '../test/testServer';
 import { uploadToCloudinary } from '../cloudinary/upload';
 
 vi.mock('../cloudinary/upload');
 
-let mongod: MongoMemoryServer;
+let mongod: MongoMemoryReplSet;
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
 
 const FAKE_IMAGE_BUFFER = Buffer.from('fake-image-bytes');

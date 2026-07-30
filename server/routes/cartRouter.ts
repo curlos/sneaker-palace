@@ -4,17 +4,6 @@ import { verifyToken } from './verifyToken';
 
 const router = express.Router();
 
-// Create cart
-router.post('/', verifyToken, async (req: Request, res: Response) => {
-	const newCart = new Cart({
-		userID: req.user!.id,
-		products: [],
-	});
-
-	const savedCart = await newCart.save();
-	return res.json(savedCart);
-});
-
 // Update cart
 router.put('/', verifyToken, async (req: Request, res: Response) => {
 	const updatedCart = await Cart.findOneAndUpdate(
