@@ -396,7 +396,192 @@ describe('POST /shoes - sorting', () => {
 });
 
 describe('POST /shoes - filtering', () => {
-	it.todo('TODO');
+	// Asserts both the exact set of matched matrix shoes AND that no other doc (including
+	// filler) leaked into the result — length alone wouldn't catch wrong-shoes-right-count,
+	// and matrixShoeIDs alone wouldn't catch extra filler leaking in (e.g. via a price bucket
+	// that filler's retailPrice also happens to fall into).
+	function expectMatches(res: { status: number; body: { docs: { shoeID: string }[] } }, expectedIDs: string[]) {
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(expectedIDs.length);
+		expect(matrixShoeIDs(res.body.docs).sort()).toEqual([...expectedIDs].sort());
+	}
+
+	function priceRangeFilters(...ranges: { low: number; high: number | null }[]) {
+		const priceRanges: Record<string, { checked: boolean; priceRanges: { low: number; high: number | null } }> = {};
+		ranges.forEach((range, i) => {
+			priceRanges[`range-${i}`] = { checked: true, priceRanges: range };
+		});
+		return priceRanges;
+	}
+
+	it('filters by a single color', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, colors: { Red: true } } });
+
+		expectMatches(res, ['matrix-1', 'matrix-4', 'matrix-14']);
+	});
+
+	it('filters by multiple colors (OR)', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, colors: { Black: true, Blue: true } } });
+
+		expectMatches(res, ['matrix-2', 'matrix-4', 'matrix-5', 'matrix-7', 'matrix-10', 'matrix-13']);
+	});
+
+	it('matches colors case-insensitively', async () => {
+		// Same expected matches as "filters by a single color" above, but with a lowercase key.
+		// Proves the route's $options: 'i' flag is actually doing something — every other color
+		// test here uses matching casing, so none of them would catch this flag being removed.
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, colors: { red: true } } });
+
+		expectMatches(res, ['matrix-1', 'matrix-4', 'matrix-14']);
+	});
+
+	it('filters by a single brand', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, brands: { Nike: true } } });
+
+		expectMatches(res, ['matrix-1', 'matrix-9', 'matrix-13']);
+	});
+
+	it('filters by multiple brands', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, brands: { Nike: true, Vans: true } } });
+
+		expectMatches(res, ['matrix-1', 'matrix-7', 'matrix-9', 'matrix-13', 'matrix-15']);
+	});
+
+	it('does not match brands case-insensitively (exact match only, unlike colors)', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, brands: { nike: true } } });
+
+		expectMatches(res, []);
+	});
+
+	it('filters by a single gender', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, genders: { women: true } } });
+
+		expectMatches(res, ['matrix-3', 'matrix-8', 'matrix-9', 'matrix-14']);
+	});
+
+	it('filters by multiple genders', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, genders: { infant: true, youth: true } } });
+
+		expectMatches(res, ['matrix-2', 'matrix-5', 'matrix-6', 'matrix-10', 'matrix-11', 'matrix-15']);
+	});
+
+	it('filters by a single release year, matching multiple shoes', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, releaseYears: { '2021': true } } });
+
+		expectMatches(res, ['matrix-2', 'matrix-3', 'matrix-4', 'matrix-10', 'matrix-13']);
+	});
+
+	it('filters by multiple release years', async () => {
+		const res = await postShoes({
+			filters: { ...EMPTY_FILTERS, releaseYears: { '2019': true, '2023': true } },
+		});
+
+		expectMatches(res, ['matrix-1', 'matrix-8', 'matrix-9', 'matrix-12']);
+	});
+
+	it('filters by a bounded price range, inclusive of both boundaries', async () => {
+		const res = await postShoes({
+			filters: { ...EMPTY_FILTERS, priceRanges: priceRangeFilters({ low: 25, high: 50 }) },
+		});
+
+		expectMatches(res, ['matrix-2', 'matrix-3', 'matrix-4']);
+	});
+
+	it('filters by an open-ended price range ("$150+"), correctly including the filler shoes too', async () => {
+		const res = await postShoes({
+			filters: { ...EMPTY_FILTERS, priceRanges: priceRangeFilters({ low: 150, high: null }) },
+		});
+
+		// volumeFillerShoes are all retailPrice: 500, which genuinely satisfies $gte: 150 — with
+		// no other filter dimension applied, they're correctly included here. This is real,
+		// intended behavior (an unbounded price filter matches everything above it), not a gap.
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(3 + volumeFillerShoes.length);
+		expect(matrixShoeIDs(res.body.docs).sort()).toEqual(['matrix-14', 'matrix-8', 'matrix-9'].sort());
+	});
+
+	it('combining an open-ended price range with another filter excludes the filler shoes', async () => {
+		const res = await postShoes({
+			filters: {
+				...EMPTY_FILTERS,
+				priceRanges: priceRangeFilters({ low: 150, high: null }),
+				brands: { Nike: true, Converse: true, 'New Balance': true },
+			},
+		});
+
+		expectMatches(res, ['matrix-8', 'matrix-9', 'matrix-14']);
+	});
+
+	it('filters by multiple price ranges (OR)', async () => {
+		const res = await postShoes({
+			filters: {
+				...EMPTY_FILTERS,
+				priceRanges: priceRangeFilters({ low: 0, high: 25 }, { low: 100, high: 150 }),
+			},
+		});
+
+		expectMatches(res, [
+			'matrix-1',
+			'matrix-2',
+			'matrix-13',
+			'matrix-6',
+			'matrix-7',
+			'matrix-8',
+			'matrix-14',
+			'matrix-15',
+		]);
+	});
+
+	it('returns every shoe when no filters are selected', async () => {
+		const res = await postShoes({ filters: EMPTY_FILTERS });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(filterCatalog.length + volumeFillerShoes.length);
+		expect(matrixShoeIDs(res.body.docs).sort()).toEqual(filterCatalog.map((shoe) => shoe.shoeID).sort());
+	});
+
+	it('ANDs filters across categories together', async () => {
+		const res = await postShoes({
+			filters: { ...EMPTY_FILTERS, brands: { Nike: true }, genders: { women: true } },
+		});
+
+		expectMatches(res, ['matrix-9']);
+	});
+
+	it('narrows correctly when every filter category is applied at once', async () => {
+		// color=Black -> matrix-2,4,7,10,13
+		// ∩ brand=Jordan|Nike -> matrix-4,13 (matrix-2,7,10 aren't Jordan/Nike; matrix-12 is
+		// Jordan but has no black in its colorway, matrix-1/9 are Nike but red/pink)
+		// ∩ gender=men -> still matrix-4,13 (both are men)
+		// ∩ releaseYear=2021 -> still matrix-4,13 (both are 2021)
+		// ∩ price 25-50 -> matrix-4 (50, boundary-inclusive) only; matrix-13 is 20, excluded
+		const res = await postShoes({
+			filters: {
+				colors: { Black: true },
+				brands: { Jordan: true, Nike: true },
+				genders: { men: true },
+				releaseYears: { '2021': true },
+				priceRanges: priceRangeFilters({ low: 25, high: 50 }),
+			},
+		});
+
+		expectMatches(res, ['matrix-4']);
+	});
+
+	it('returns an empty result when a valid filter matches no shoes', async () => {
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, brands: { Reebok: true } } });
+
+		expectMatches(res, []);
+	});
+
+	it('returns a 500 error when a color filter key contains an invalid regex pattern', async () => {
+		// selectedColors.join('|') interpolates raw filter keys directly into a MongoDB $regex
+		// with no escaping. An unbalanced '(' is invalid regex syntax, so the aggregate() call
+		// throws instead of filtering cleanly — no query is present, so there's no fallback path.
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, colors: { '(': true } } });
+
+		expect(res.status).toBe(500);
+	});
 });
 
 describe('POST /shoes - search', () => {
