@@ -1,4 +1,5 @@
 import request from 'supertest';
+import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import Shoe from '../models/Shoe';
 import { IShoe } from '../types/types';
@@ -133,7 +134,66 @@ describe('GET /shoes/:shoeID', () => {
 });
 
 describe('POST /shoes/objectIDs', () => {
-	it.todo('TODO');
+	it('returns a 400 error when ids is missing', async () => {
+		const res = await request(app).post('/shoes/objectIDs').send({});
+
+		expect(res.status).toBe(400);
+	});
+
+	it('returns a 400 error when ids is not an array', async () => {
+		const res = await request(app).post('/shoes/objectIDs').send({ ids: 'not-an-array' });
+
+		expect(res.status).toBe(400);
+	});
+
+	it('returns all shoes matching the given ids', async () => {
+		const created = await Shoe.insertMany(Array.from({ length: 5 }, (_, i) => buildShoe(i)));
+		const ids = created.map((shoe) => shoe._id.toString());
+
+		const res = await request(app).post('/shoes/objectIDs').send({ ids });
+
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(5);
+		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual(
+			created.map((shoe) => shoe.shoeID).sort()
+		);
+	});
+
+	it('returns only the shoes that exist when some ids do not match any shoe', async () => {
+		const [shoe1, shoe2, excludedShoe] = await Shoe.insertMany(
+			Array.from({ length: 3 }, (_, i) => buildShoe(i))
+		);
+		const ids = [
+			shoe1._id.toString(),
+			shoe2._id.toString(),
+			new mongoose.Types.ObjectId().toString(),
+			new mongoose.Types.ObjectId().toString(),
+		];
+
+		const res = await request(app).post('/shoes/objectIDs').send({ ids });
+
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(2);
+		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual(
+			[shoe1.shoeID, shoe2.shoeID].sort()
+		);
+		expect(res.body.some((shoe: IShoe) => shoe.shoeID === excludedShoe.shoeID)).toBe(false);
+	});
+
+	it('returns an empty array when ids is an empty array', async () => {
+		await Shoe.insertMany(Array.from({ length: 2 }, (_, i) => buildShoe(i)));
+
+		const res = await request(app).post('/shoes/objectIDs').send({ ids: [] });
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual([]);
+	});
+
+	it('returns a 500 error when ids contains values that are not valid MongoDB ObjectIds', async () => {
+		const res = await request(app).post('/shoes/objectIDs').send({ ids: ['not-a-valid-id', 123, true] });
+
+		expect(res.status).toBe(500);
+	});
 });
 
 describe('POST /shoes/bulk', () => {
