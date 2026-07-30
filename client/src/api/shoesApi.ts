@@ -10,16 +10,6 @@ export const shoesApi = baseAPI.injectEndpoints({
 			providesTags: (_, __, shoeId) => [{ type: 'Shoe', id: shoeId }],
 		}),
 
-		// Get multiple shoes by ObjectIDs (batch fetch for favorites)
-		getShoesByObjectIds: builder.query<Shoe[], string[]>({
-			query: (ids: string[]) => ({
-				url: '/shoes/objectIDs',
-				method: 'POST',
-				body: { ids },
-			}),
-			providesTags: (result) => (result ? result.map((shoe) => ({ type: 'Shoe', id: shoe.shoeID })) : []),
-		}),
-
 		// Get multiple shoes in bulk by any key (flexible batch fetch)
 		getShoesBulk: builder.query<Shoe[], { ids: string[]; key?: string }>({
 			query: ({ ids, key = '_id' }: { ids: string[]; key?: string }) => ({
@@ -120,7 +110,6 @@ export const shoesApi = baseAPI.injectEndpoints({
 
 export const {
 	useGetShoeQuery,
-	useGetShoesByObjectIdsQuery,
 	useGetShoesBulkQuery,
 	useGetPaginatedShoesQuery,
 	useGetShoesFromPageQuery,

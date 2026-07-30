@@ -6,7 +6,7 @@ import CircleLoader from '../skeleton_loaders/CircleLoader';
 import { Pagination } from '../components/Pagination';
 import { useGetUserProfileQuery } from '../api/userApi';
 import { useGetRatingsByUserQuery } from '../api/ratingsApi';
-import { useGetShoesByObjectIdsQuery } from '../api/shoesApi';
+import { useGetShoesBulkQuery } from '../api/shoesApi';
 import { Shoe } from '../types/types';
 import { DEFAULT_AVATAR } from '../utils/userConstants';
 
@@ -57,9 +57,9 @@ const Profile = () => {
 	const { data: profileUserReviews = [], isLoading: reviewsLoading } = useGetRatingsByUserQuery(userID, {
 		skip: activeTab !== 'reviews',
 	});
-	const { data: favoriteShoes = [], isLoading: favoritesLoading } = useGetShoesByObjectIdsQuery(
-		profileUser?.favorites || []
-	);
+	const { data: favoriteShoes = [], isLoading: favoritesLoading } = useGetShoesBulkQuery({
+		ids: profileUser?.favorites || [],
+	});
 
 	// Pagination logic for reviews
 	const sortedReviews = [...(profileUserReviews || [])].sort(
