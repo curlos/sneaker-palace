@@ -887,5 +887,40 @@ describe('POST /shoes - pagination', () => {
 });
 
 describe('POST /shoes - error handling', () => {
-	it.todo('TODO');
+	it('returns a 500 error when filters is missing entirely', async () => {
+		// getSelectedFilters() (shoeRouter.ts:59-73) reads req.body.filters.colors etc. directly
+		// with no guard, so a missing filters object throws before the query is even built. No
+		// query is present here, so no fallback is attempted.
+		const res = await request(app).post('/shoes').send({ pageNum: 1, limit: 12 });
+
+		expect(res.status).toBe(500);
+	});
+
+	it('returns a 500 error when filters is missing even with a search query present', async () => {
+		// The primary path throws on the missing filters, and since a query is present the
+		// fallback is attempted too -- but the fallback also calls buildFilterMatch(), which
+		// throws again for the same reason. Proves the inner catch handles this cleanly as well.
+		const res = await request(app).post('/shoes').send({ pageNum: 1, limit: 12, query: 'Thunder' });
+
+		expect(res.status).toBe(500);
+	});
+
+	it('returns a 500 error when filters is present but missing a required category', async () => {
+		const res = await request(app)
+			.post('/shoes')
+			.send({
+				pageNum: 1,
+				limit: 12,
+				filters: { brands: {}, genders: {}, priceRanges: {}, releaseYears: {} }, // colors missing
+			});
+
+		expect(res.status).toBe(500);
+	});
+
+	it('does not leak internal error details in the response body', async () => {
+		const res = await request(app).post('/shoes').send({ pageNum: 1, limit: 12 });
+
+		expect(res.status).toBe(500);
+		expect(res.body).toEqual({ error: 'Error fetching shoes' });
+	});
 });
