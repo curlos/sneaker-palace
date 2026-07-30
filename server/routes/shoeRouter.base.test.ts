@@ -1,7 +1,9 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import Shoe from '../models/Shoe';
+import User from '../models/User';
 import { IShoe } from '../types/types';
 import { startTestServer, stopTestServer } from '../test/testServer';
 
@@ -46,6 +48,20 @@ function buildShoe(index: number): IShoe {
 		favorites: [],
 		inStock: true,
 	} as IShoe;
+}
+
+function buildUser(index: number) {
+	return {
+		email: `user-${index}@example.com`,
+		lowerCaseEmail: `user-${index}@example.com`,
+		password: 'hashed-password',
+		firstName: 'Test',
+		lastName: `User${index}`,
+	};
+}
+
+function signToken(userId: mongoose.Types.ObjectId | string) {
+	return jwt.sign({ id: userId.toString(), isAdmin: false }, process.env.JWT_SEC as string);
 }
 
 describe('GET /shoes/page/:pageNum', () => {
@@ -267,5 +283,166 @@ describe('POST /shoes/bulk', () => {
 });
 
 describe('PUT /shoes/favorite/:shoeID', () => {
-	it.todo('TODO');
+	afterEach(async () => {
+		await User.deleteMany({});
+	});
+
+	it('returns a 401 error when no Authorization header is sent', async () => {
+		const shoe = await Shoe.create(buildShoe(0));
+
+		const res = await request(app).put(`/shoes/favorite/${shoe.shoeID}`);
+
+		expect(res.status).toBe(401);
+	});
+
+	it('returns a 403 error when the token is invalid', async () => {
+		const shoe = await Shoe.create(buildShoe(0));
+		const badToken = jwt.sign({ id: 'someUserId', isAdmin: false }, 'wrong-secret');
+
+		const res = await request(app)
+			.put(`/shoes/favorite/${shoe.shoeID}`)
+			.set('Authorization', `Bearer ${badToken}`);
+
+		expect(res.status).toBe(403);
+	});
+
+	it('returns a 404 error when the shoeID does not match any shoe', async () => {
+		const user = await User.create(buildUser(0));
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put('/shoes/favorite/does-not-exist')
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(404);
+	});
+
+	it('returns a 404 error when the token user does not match any user', async () => {
+		const shoe = await Shoe.create(buildShoe(0));
+		const token = signToken(new mongoose.Types.ObjectId());
+
+		const res = await request(app)
+			.put(`/shoes/favorite/${shoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(404);
+	});
+
+	it('adds the shoe to the user\'s favorites and the user to the shoe\'s favorites when not already favorited', async () => {
+		const shoe = await Shoe.create(buildShoe(0));
+		const user = await User.create(buildUser(0));
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/shoes/favorite/${shoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedShoe.favorites).toEqual([user._id.toString()]);
+		expect(res.body.updatedUser.favorites).toEqual([shoe._id.toString()]);
+		expect(res.body.updatedUser.password).toBeUndefined();
+
+		const dbShoe = await Shoe.findById(shoe._id);
+		const dbUser = await User.findById(user._id);
+		expect(dbShoe!.favorites.map((id) => id.toString())).toEqual([user._id.toString()]);
+		expect(dbUser!.favorites.map((id) => id.toString())).toEqual([shoe._id.toString()]);
+	});
+
+	it('removes the shoe from the user\'s favorites and the user from the shoe\'s favorites when already favorited', async () => {
+		const user = await User.create(buildUser(0));
+		const shoe = await Shoe.create({ ...buildShoe(0), favorites: [user._id] });
+		await user.updateOne({ $push: { favorites: shoe._id } });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/shoes/favorite/${shoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedShoe.favorites).toEqual([]);
+		expect(res.body.updatedUser.favorites).toEqual([]);
+
+		const dbShoe = await Shoe.findById(shoe._id);
+		const dbUser = await User.findById(user._id);
+		expect(dbShoe!.favorites).toEqual([]);
+		expect(dbUser!.favorites).toEqual([]);
+	});
+
+	it('toggling twice in a row (favorite then unfavorite) ends with both sides back to empty', async () => {
+		const shoe = await Shoe.create(buildShoe(0));
+		const user = await User.create(buildUser(0));
+		const token = signToken(user._id);
+
+		await request(app)
+			.put(`/shoes/favorite/${shoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+
+		const secondRes = await request(app)
+			.put(`/shoes/favorite/${shoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+		expect(secondRes.status).toBe(200);
+		expect(secondRes.body.updatedShoe.favorites).toEqual([]);
+		expect(secondRes.body.updatedUser.favorites).toEqual([]);
+
+		const dbShoe = await Shoe.findById(shoe._id);
+		const dbUser = await User.findById(user._id);
+		expect(dbShoe!.favorites).toEqual([]);
+		expect(dbUser!.favorites).toEqual([]);
+	});
+
+	it('does not disturb another user\'s existing favorite relationship with the same shoe', async () => {
+		const otherUser = await User.create(buildUser(0));
+		const shoe = await Shoe.create({ ...buildShoe(0), favorites: [otherUser._id] });
+		await otherUser.updateOne({ $push: { favorites: shoe._id } });
+
+		const user = await User.create(buildUser(1));
+		const token = signToken(user._id);
+
+		const favoriteRes = await request(app)
+			.put(`/shoes/favorite/${shoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+		expect(favoriteRes.status).toBe(200);
+		expect(favoriteRes.body.updatedShoe.favorites.sort()).toEqual(
+			[otherUser._id.toString(), user._id.toString()].sort()
+		);
+
+		const unfavoriteRes = await request(app)
+			.put(`/shoes/favorite/${shoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+		expect(unfavoriteRes.status).toBe(200);
+		expect(unfavoriteRes.body.updatedShoe.favorites).toEqual([otherUser._id.toString()]);
+
+		const dbShoe = await Shoe.findById(shoe._id);
+		const dbOtherUser = await User.findById(otherUser._id);
+		expect(dbShoe!.favorites.map((id) => id.toString())).toEqual([otherUser._id.toString()]);
+		expect(dbOtherUser!.favorites.map((id) => id.toString())).toEqual([shoe._id.toString()]);
+	});
+
+	it('does not disturb the user\'s existing favorite relationship with a different shoe', async () => {
+		const user = await User.create(buildUser(0));
+		const favoritedShoe = await Shoe.create({ ...buildShoe(0), favorites: [user._id] });
+		await user.updateOne({ $push: { favorites: favoritedShoe._id } });
+
+		const otherShoe = await Shoe.create(buildShoe(1));
+		const token = signToken(user._id);
+
+		const favoriteRes = await request(app)
+			.put(`/shoes/favorite/${otherShoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+		expect(favoriteRes.status).toBe(200);
+		expect(favoriteRes.body.updatedUser.favorites.sort()).toEqual(
+			[favoritedShoe._id.toString(), otherShoe._id.toString()].sort()
+		);
+
+		const unfavoriteRes = await request(app)
+			.put(`/shoes/favorite/${otherShoe.shoeID}`)
+			.set('Authorization', `Bearer ${token}`);
+		expect(unfavoriteRes.status).toBe(200);
+		expect(unfavoriteRes.body.updatedUser.favorites).toEqual([favoritedShoe._id.toString()]);
+
+		const dbUser = await User.findById(user._id);
+		const dbFavoritedShoe = await Shoe.findById(favoritedShoe._id);
+		expect(dbUser!.favorites.map((id) => id.toString())).toEqual([favoritedShoe._id.toString()]);
+		expect(dbFavoritedShoe!.favorites.map((id) => id.toString())).toEqual([user._id.toString()]);
+	});
 });
