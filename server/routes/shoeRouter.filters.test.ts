@@ -262,6 +262,10 @@ const volumeFillerShoes: IShoe[] = Array.from({ length: FILLER_COUNT }, (_, i) =
 beforeAll(async () => {
 	({ app, mongod } = await startTestServer());
 	await Shoe.insertMany([...filterCatalog, ...volumeFillerShoes]);
+	// Mongoose builds indexes asynchronously in the background after connecting; Shoe.init()
+	// resolves once this model's indexes (including the text index the search tests need) are
+	// actually built, so $text queries don't race against index creation.
+	await Shoe.init();
 });
 
 afterAll(async () => {
@@ -585,7 +589,140 @@ describe('POST /shoes - filtering', () => {
 });
 
 describe('POST /shoes - search', () => {
-	it.todo('TODO');
+	// Real Atlas $search can't run against mongodb-memory-server (no mongot process), so any
+	// non-empty query always throws inside the primary aggregate() call and falls into the
+	// route's fallback $text-search path (shoeRouter.ts:313-347) — that's what every test below
+	// actually exercises, not the real Atlas Search pipeline.
+
+	it('matches a shoe via its name field', async () => {
+		const res = await postShoes({ query: 'Thunder' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.map((doc: { shoeID: string }) => doc.shoeID)).toEqual(['matrix-4']);
+	});
+
+	it('trims the query before matching', async () => {
+		const res = await postShoes({ query: '  Thunder  ' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.map((doc: { shoeID: string }) => doc.shoeID)).toEqual(['matrix-4']);
+	});
+
+	it('treats a whitespace-only query as no search at all', async () => {
+		// req.body.query.trim() is falsy for a whitespace-only string, so the $search stage
+		// should never even get added — this should behave identically to omitting query
+		// entirely, not attempt a search for literal whitespace.
+		const res = await postShoes({ query: '   ' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(filterCatalog.length + volumeFillerShoes.length);
+		expect(matrixShoeIDs(res.body.docs).sort()).toEqual(filterCatalog.map((shoe) => shoe.shoeID).sort());
+	});
+
+	it('matches a shoe via its story field, not just name', async () => {
+		// "vivid" only appears in matrix-1's story ("A vivid red colorway inspired by comets.") —
+		// deliberately not a word that also appears (or stems to a shared root) in name/silhouette,
+		// so a match here proves the story field is actually indexed and searched.
+		const res = await postShoes({ query: 'vivid' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.map((doc: { shoeID: string }) => doc.shoeID)).toEqual(['matrix-1']);
+	});
+
+	it('combines a search query with an active filter', async () => {
+		// "Air" alone matches 7 matrix shoes across several brands; adding a Nike brand filter
+		// narrows it to just the Nike ones, proving the fallback's ...buildFilterMatch() spread
+		// actually applies on top of the $text search, not just the text match alone.
+		const res = await postShoes({
+			query: 'Air',
+			filters: { ...EMPTY_FILTERS, brands: { Nike: true } },
+		});
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.map((doc: { shoeID: string }) => doc.shoeID).sort()).toEqual(
+			['matrix-1', 'matrix-9', 'matrix-13'].sort()
+		);
+	});
+
+	it('returns an empty result for a query that matches nothing', async () => {
+		const res = await postShoes({ query: 'xyznonexistentqueryterm' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs).toEqual([]);
+	});
+
+	it('returns an empty result when a filter eliminates every search match', async () => {
+		// "Air" matches matrix-1,2,4,9,10,12,13, whose brands are only Nike/Air Jordan/Jordan —
+		// filtering to adidas (which owns none of those) should leave nothing, not error.
+		const res = await postShoes({
+			query: 'Air',
+			filters: { ...EMPTY_FILTERS, brands: { adidas: true } },
+		});
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs).toEqual([]);
+	});
+
+	it('reports degraded pagination metadata regardless of the real match count', async () => {
+		// "Air" matches 7 shoes total; with limit: 3, a correct implementation would report
+		// totalPages: 3 and hasNextPage: true on page 1. The fallback path (shoeRouter.ts:332-343)
+		// instead hardcodes totalPages: 1 and hasNextPage/hasPrevPage: false unconditionally, and
+		// sets totalDocs to the current page's length rather than the true total match count. This
+		// locks in that real, current behavior rather than assuming it's correct.
+		const res = await postShoes({ query: 'Air', limit: 3, pageNum: 1 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(3);
+		expect(res.body.totalDocs).toBe(3);
+		expect(res.body.totalPages).toBe(1);
+		expect(res.body.hasNextPage).toBe(false);
+		expect(res.body.hasPrevPage).toBe(false);
+	});
+
+	it('still paginates the actual returned docs correctly via skip/limit', async () => {
+		// Despite the metadata quirk above, the underlying .skip()/.limit() on the real query
+		// still works — page 1 and page 2 should return different, correctly-offset shoes.
+		// Uses limit: 2 to stay within the top 4 ranked "Air" matches (matrix-10, matrix-2,
+		// matrix-13, matrix-9), which have strictly distinct textScores — matrix-12 and matrix-4
+		// tie for 6th/7th place, and Mongo doesn't guarantee stable ordering for tied sort keys,
+		// so asserting into that tied range would be flaky.
+		const [page1, page2] = await Promise.all([
+			postShoes({ query: 'Air', limit: 2, pageNum: 1 }),
+			postShoes({ query: 'Air', limit: 2, pageNum: 2 }),
+		]);
+
+		const page1IDs = page1.body.docs.map((doc: { shoeID: string }) => doc.shoeID);
+		const page2IDs = page2.body.docs.map((doc: { shoeID: string }) => doc.shoeID);
+
+		expect(page1IDs).toEqual(['matrix-10', 'matrix-2']);
+		expect(page2IDs).toEqual(['matrix-13', 'matrix-9']);
+	});
+
+	it('ignores sortType once a search query is present', async () => {
+		// getSortType()'s result is never applied in the fallback path — it always sorts by
+		// textScore instead (shoeRouter.ts:327). Confirm two different sortTypes for the same
+		// query return identical order, closing the loop on what the sorting block deferred here.
+		// Compares only the top 5 of 7 "Air" matches — matrix-12/matrix-4 tie for 6th/7th place,
+		// and comparing across two separate requests could flake if Mongo resolves that tie
+		// differently between them (ordering for tied sort keys isn't guaranteed stable).
+		const [mostRelevantRes, priceSortRes] = await Promise.all([
+			postShoes({ query: 'Air', sortType: 'Most Relevant' }),
+			postShoes({ query: 'Air', sortType: 'Price: High to Low' }),
+		]);
+
+		expect(mostRelevantRes.status).toBe(200);
+		expect(mostRelevantRes.body.docs.slice(0, 5).map((doc: { shoeID: string }) => doc.shoeID)).toEqual(
+			priceSortRes.body.docs.slice(0, 5).map((doc: { shoeID: string }) => doc.shoeID)
+		);
+	});
+
+	it('returns full document fields in the fallback, unlike the restricted $project on the primary path', async () => {
+		const res = await postShoes({ query: 'Thunder' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs[0].releaseYear).toBe(2021);
+		expect(res.body.docs[0].estimatedMarketValue).toBe(150);
+	});
 });
 
 describe('POST /shoes - pagination', () => {
