@@ -726,7 +726,164 @@ describe('POST /shoes - search', () => {
 });
 
 describe('POST /shoes - pagination', () => {
-	it.todo('TODO');
+	// volumeFillerShoes are all tagged brand: 'Filler Brand' — filtering to just that brand
+	// isolates exactly 40 uniform shoes, a large, precisely-known count to test skip/limit
+	// boundary math against without reasoning about the heterogeneous 15-shoe matrix catalog.
+	const FILLER_ONLY_FILTERS = { ...EMPTY_FILTERS, brands: { 'Filler Brand': true } };
+
+	it('defaults to a limit of 12 when limit is omitted', async () => {
+		// postShoes defaults limit: 100 itself, so pass undefined to truly omit it from the
+		// request body (JSON.stringify drops undefined keys) and exercise the route's own default.
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, pageNum: 1, limit: undefined });
+
+		expect(res.status).toBe(200);
+		expect(res.body.limit).toBe(12);
+		expect(res.body.docs.length).toBe(12);
+		expect(res.body.totalDocs).toBe(volumeFillerShoes.length);
+	});
+
+	it('respects a custom limit and computes the correct skip', async () => {
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, limit: 5, pageNum: 3 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(5);
+		expect(res.body.totalDocs).toBe(40);
+		expect(res.body.totalPages).toBe(8);
+		expect(res.body.hasNextPage).toBe(true);
+		expect(res.body.hasPrevPage).toBe(true);
+		expect(res.body.nextPage).toBe(4);
+		expect(res.body.prevPage).toBe(2);
+		expect(res.body.pagingCounter).toBe(11);
+	});
+
+	it('reports first-page metadata correctly', async () => {
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, limit: 12, pageNum: 1 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.hasPrevPage).toBe(false);
+		expect(res.body.prevPage).toBeNull();
+		expect(res.body.pagingCounter).toBe(1);
+	});
+
+	it('reports middle-page metadata correctly', async () => {
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, limit: 12, pageNum: 2 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(12);
+		expect(res.body.hasNextPage).toBe(true);
+		expect(res.body.hasPrevPage).toBe(true);
+		expect(res.body.nextPage).toBe(3);
+		expect(res.body.prevPage).toBe(1);
+		expect(res.body.pagingCounter).toBe(13);
+	});
+
+	it('reports last-page metadata correctly, including a partial page', async () => {
+		// 40 filler shoes / limit 12 -> 4 pages, with only 4 shoes on the last page.
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, limit: 12, pageNum: 4 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(4);
+		expect(res.body.totalPages).toBe(4);
+		expect(res.body.hasNextPage).toBe(false);
+		expect(res.body.nextPage).toBeNull();
+		expect(res.body.hasPrevPage).toBe(true);
+		expect(res.body.prevPage).toBe(3);
+	});
+
+	it('returns an empty docs array (not an error) when requesting a page beyond the available data', async () => {
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, limit: 12, pageNum: 5 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs).toEqual([]);
+		expect(res.body.totalPages).toBe(4);
+		expect(res.body.hasNextPage).toBe(false);
+		expect(res.body.hasPrevPage).toBe(true);
+		expect(res.body.prevPage).toBe(4);
+	});
+
+	it('computes totalDocs/totalPages from the filtered count, not the whole collection', async () => {
+		// colors: { Black: true } matches exactly 5 matrix shoes (matrix-2,4,7,10,13), not the
+		// full 55-doc collection — proves the separate $count aggregation respects the same
+		// filter pipeline as the results themselves.
+		const res = await postShoes({
+			filters: { ...EMPTY_FILTERS, colors: { Black: true } },
+			limit: 2,
+			pageNum: 1,
+		});
+
+		expect(res.status).toBe(200);
+		expect(res.body.totalDocs).toBe(5);
+		expect(res.body.totalPages).toBe(3);
+		expect(res.body.docs.length).toBe(2);
+		expect(res.body.hasNextPage).toBe(true);
+	});
+
+	it('silently falls back to the default limit when limit is explicitly 0', async () => {
+		// req.body.limit || 12 -- 0 is falsy in JS, so limit: 0 doesn't return zero items, it
+		// silently reverts to the default of 12. Documenting this real, current behavior rather
+		// than assuming limit: 0 would mean "no results" or an error.
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, limit: 0, pageNum: 1 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.limit).toBe(12);
+		expect(res.body.docs.length).toBe(12);
+	});
+
+	it('returns a 500 error for a non-numeric pageNum', async () => {
+		// Unlike GET /shoes/page/:pageNum (which defaults to page 1 for invalid input), this
+		// route does no validation/clamping on pageNum at all -- Number('abc') is NaN, which
+		// MongoDB's $skip/$limit reject, so the aggregate() call throws.
+		const res = await postShoes({ pageNum: 'abc' });
+
+		expect(res.status).toBe(500);
+	});
+
+	it('returns a 500 error for a non-positive pageNum', async () => {
+		// pageNum: 0 or negative produces a negative $skip, which MongoDB also rejects.
+		const zeroRes = await postShoes({ pageNum: 0 });
+		const negativeRes = await postShoes({ pageNum: -1 });
+
+		expect(zeroRes.status).toBe(500);
+		expect(negativeRes.status).toBe(500);
+	});
+
+	it('reports totalPages: 0 (not 1) when a filter matches nothing at all', async () => {
+		// totalPages = Math.ceil(total / limit) -> Math.ceil(0 / 12) = 0. This route has no
+		// "|| 1" fallback the way mongoose-paginate-v2 does (see the GET /shoes/page/:pageNum
+		// comment/test in shoeRouter.base.test.ts, which always reports totalPages: 1 even when
+		// empty) -- a real inconsistency between the two pagination-bearing routes in this file.
+		const res = await postShoes({ filters: { ...EMPTY_FILTERS, brands: { Reebok: true } } });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs).toEqual([]);
+		expect(res.body.totalDocs).toBe(0);
+		expect(res.body.totalPages).toBe(0);
+		expect(res.body.hasNextPage).toBe(false);
+		expect(res.body.hasPrevPage).toBe(false);
+	});
+
+	it('returns everything on one page when limit exceeds the total available', async () => {
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, limit: 1000, pageNum: 1 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.docs.length).toBe(volumeFillerShoes.length);
+		expect(res.body.totalPages).toBe(1);
+		expect(res.body.hasNextPage).toBe(false);
+		expect(res.body.hasPrevPage).toBe(false);
+	});
+
+	it('accepts pageNum as a numeric string, same as a number', async () => {
+		const res = await postShoes({ filters: FILLER_ONLY_FILTERS, limit: 12, pageNum: '2' });
+
+		expect(res.status).toBe(200);
+		// pageNum is coerced via Number(req.body.pageNum) before use, so `page` comes back as
+		// the number 2, not the original string.
+		expect(res.body.page).toBe(2);
+		expect(res.body.docs.length).toBe(12);
+		expect(res.body.hasPrevPage).toBe(true);
+		expect(res.body.prevPage).toBe(1);
+		expect(res.body.pagingCounter).toBe(13);
+	});
 });
 
 describe('POST /shoes - error handling', () => {
