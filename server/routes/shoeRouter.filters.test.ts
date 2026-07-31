@@ -3,7 +3,7 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import Shoe from '../models/Shoe';
 import { IShoe } from '../types/types';
-import { startTestServer, stopTestServer } from '../test/testServer';
+import { startTestServer, stopTestServer } from '../utils/testServer';
 
 let mongod: MongoMemoryReplSet;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

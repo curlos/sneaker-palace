@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
-import { startTestServer, stopTestServer } from '../test/testServer';
+import { startTestServer, stopTestServer } from '../utils/testServer';
 import { uploadToCloudinary } from '../cloudinary/upload';
 
 vi.mock('../cloudinary/upload');

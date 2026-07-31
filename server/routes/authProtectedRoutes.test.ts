@@ -1,6 +1,6 @@
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
-import { startTestServer, stopTestServer } from '../test/testServer';
-import { itRequiresAuth } from '../test/authAssertions';
+import { startTestServer, stopTestServer } from '../utils/testServer';
+import { itRequiresAuth } from '../utils/authAssertions';
 
 let mongod: MongoMemoryReplSet;
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
