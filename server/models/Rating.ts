@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { applyRunValidators } from '../database/applyRunValidators';
 
 const ratingSchema = new mongoose.Schema(
 	{
@@ -19,6 +20,8 @@ const ratingSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+applyRunValidators(ratingSchema);
 
 const Rating = mongoose.model('Rating', ratingSchema);
 

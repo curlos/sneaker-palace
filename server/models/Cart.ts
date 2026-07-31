@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { applyRunValidators } from '../database/applyRunValidators';
 
 const cartSchema = new mongoose.Schema(
 	{
@@ -14,6 +15,8 @@ const cartSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+applyRunValidators(cartSchema);
 
 const Cart = mongoose.model('Cart', cartSchema);
 

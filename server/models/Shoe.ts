@@ -1,6 +1,7 @@
 import mongoose, { PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { IShoe } from '../types/types';
+import { applyRunValidators } from '../database/applyRunValidators';
 
 const shoeSchema = new mongoose.Schema<IShoe>({
 	shoeID: { type: String, required: true },
@@ -50,6 +51,8 @@ shoeSchema.index({ releaseDate: 1 }); // For "Classic Releases"
 shoeSchema.index({ retailPrice: -1 }); // For "Price: High to Low"
 shoeSchema.index({ retailPrice: 1 }); // For "Price: Low to High"
 shoeSchema.index({ rating: -1 }); // For "Highest Rated"
+
+applyRunValidators(shoeSchema);
 
 const Shoe = mongoose.model<IShoe, PaginateModel<IShoe>>('Shoe', shoeSchema);
 

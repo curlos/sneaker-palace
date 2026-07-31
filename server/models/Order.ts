@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { applyRunValidators } from '../database/applyRunValidators';
 
 const orderSchema = new mongoose.Schema(
 	{
@@ -21,6 +22,8 @@ const orderSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+applyRunValidators(orderSchema);
 
 const Order = mongoose.model('Order', orderSchema);
 

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { applyRunValidators } from '../database/applyRunValidators';
 
 const userSchema = new mongoose.Schema(
 	{
@@ -20,6 +21,8 @@ const userSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+applyRunValidators(userSchema);
 
 const User = mongoose.model('User', userSchema);
 
