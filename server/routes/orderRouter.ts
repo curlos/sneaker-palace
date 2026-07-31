@@ -107,6 +107,7 @@ router.post('/no-account', async (req: Request, res: Response) => {
 
 	const order = new Order({
 		...req.body,
+		userID: null,
 	});
 
 	await order.save();

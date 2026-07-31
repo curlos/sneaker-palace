@@ -262,3 +262,95 @@ describe('POST /orders', () => {
 		expect(dbUser!.orders).toHaveLength(0);
 	});
 });
+
+describe('POST /orders/no-account', () => {
+	it('creates the order and returns 200 without requiring authentication', async () => {
+		const res = await request(app).post('/orders/no-account').send(orderPayload());
+
+		expect(res.status).toBe(200);
+	});
+
+	it('returns the created order matching the submitted payload', async () => {
+		const payload = orderPayload();
+
+		const res = await request(app).post('/orders/no-account').send(payload);
+
+		expect(res.body.order).toEqual(
+			expect.objectContaining({
+				paymentIntentID: payload.paymentIntentID,
+				amount: payload.amount,
+				orderDate: payload.orderDate,
+				deliveryDate: payload.deliveryDate,
+				products: payload.products.map((product) => expect.objectContaining(product)),
+			})
+		);
+	});
+
+	it('persists the guest order to the database', async () => {
+		const payload = orderPayload();
+
+		await request(app).post('/orders/no-account').send(payload);
+
+		const dbOrder = await Order.findOne({ paymentIntentID: payload.paymentIntentID });
+		expect(dbOrder).not.toBeNull();
+	});
+
+	it('does not set a userID on the order when the body does not include one', async () => {
+		const payload = orderPayload();
+
+		const res = await request(app).post('/orders/no-account').send(payload);
+
+		expect(res.body.order.userID).toBeFalsy();
+
+		const dbOrder = await Order.findOne({ paymentIntentID: payload.paymentIntentID });
+		expect(dbOrder!.userID).toBeFalsy();
+	});
+
+	it('ignores a userID sent in the request body (cannot create an order tied to an account)', async () => {
+		const userId = new mongoose.Types.ObjectId();
+
+		const res = await request(app)
+			.post('/orders/no-account')
+			.send(orderPayload({ userID: userId.toString() }));
+
+		expect(res.body.order.userID).toBeFalsy();
+	});
+
+	it('returns the existing order without creating a duplicate when paymentIntentID already exists', async () => {
+		const payload = orderPayload();
+		const existingOrder = await Order.create(payload);
+
+		const res = await request(app).post('/orders/no-account').send(payload);
+
+		expect(res.status).toBe(200);
+		expect(res.body.error).toMatch(/ordered/i);
+		expect(res.body.orderID).toBe(existingOrder._id.toString());
+
+		const orderCount = await Order.countDocuments({ paymentIntentID: payload.paymentIntentID });
+		expect(orderCount).toBe(1);
+	});
+
+	it('returns the existing order without creating a duplicate even when it belongs to a registered user', async () => {
+		const payload = orderPayload();
+		const existingOrder = await Order.create({ ...payload, userID: new mongoose.Types.ObjectId().toString() });
+
+		const res = await request(app).post('/orders/no-account').send(payload);
+
+		expect(res.status).toBe(200);
+		expect(res.body.error).toMatch(/ordered/i);
+		expect(res.body.orderID).toBe(existingOrder._id.toString());
+
+		const orderCount = await Order.countDocuments({ paymentIntentID: payload.paymentIntentID });
+		expect(orderCount).toBe(1);
+	});
+
+	it('returns a 500 via the global error handler when order validation fails', async () => {
+		const payload: Record<string, unknown> = orderPayload();
+		delete payload.paymentIntentID;
+
+		const res = await request(app).post('/orders/no-account').send(payload);
+
+		expect(res.status).toBe(500);
+		expect(res.body.error).toMatch(/internal server error/i);
+	});
+});
