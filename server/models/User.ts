@@ -24,6 +24,20 @@ const userSchema = new mongoose.Schema(
 
 applyRunValidators(userSchema);
 
+// res.json() serializes Mongoose documents via toJSON() - stripping password
+// here means routes no longer need to destructure it out individually before
+// responding. Direct property access (e.g. bcrypt.compare(pw, user.password))
+// is unaffected since it doesn't go through toJSON(). Kept as a separate
+// .set() call (not inline with timestamps above) since passing it inline to
+// the Schema constructor confuses TS's field-type inference - `password`
+// (and other fields) end up typed `unknown` everywhere the model is used.
+userSchema.set('toJSON', {
+	transform: (_doc, ret) => {
+		Reflect.deleteProperty(ret, 'password');
+		return ret;
+	},
+});
+
 const User = mongoose.model('User', userSchema);
 
 export default User;

@@ -95,9 +95,7 @@ router.post('/', verifyToken, async (req: Request, res: Response) => {
 		return res.status(404).json({ error: 'User not found' });
 	}
 
-	const { password, ...userWithoutPassword } = updatedUser.toObject();
-
-	return res.json({ order, updatedUser: userWithoutPassword, updatedCart });
+	return res.json({ order, updatedUser, updatedCart });
 });
 
 router.post('/no-account', async (req: Request, res: Response) => {

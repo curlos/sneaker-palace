@@ -34,8 +34,7 @@ router.get('/:userID', optionalAuth, async (req: Request, res: Response) => {
 	const isOwnProfile = req.user && req.user.id === req.params.userID;
 
 	if (isOwnProfile) {
-		const { password, ...userWithoutPassword } = user.toObject();
-		return res.json(userWithoutPassword);
+		return res.json(user);
 	} else {
 		const { password, email, lowerCaseEmail, isAdmin, orders, ...publicProfile } = user.toObject();
 		return res.json(publicProfile);
@@ -103,8 +102,7 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
 			return res.status(404).json({ error: 'User not found' });
 		}
 
-		const { password, ...userWithoutPassword } = updatedUser.toObject();
-		return res.status(200).json({ message: 'User updated successfully', user: userWithoutPassword });
+		return res.status(200).json({ message: 'User updated successfully', user: updatedUser });
 	} catch (err) {
 		return res.json({ error: err });
 	}
@@ -152,8 +150,7 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
 			return res.status(404).json({ error: 'User not found' });
 		}
 
-		const { password, ...userWithoutPassword } = updatedUser.toObject();
-		return res.status(200).json({ message: 'Password updated successfully', user: userWithoutPassword });
+		return res.status(200).json({ message: 'Password updated successfully', user: updatedUser });
 	} catch {
 		return res.status(500).json({ error: 'Internal server error' });
 	}

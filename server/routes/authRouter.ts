@@ -60,8 +60,7 @@ router.post('/register', async (req: Request, res: Response) => {
 				await Cart.create([{ userID: savedUser._id.toString(), products: [] }], { session });
 			});
 
-			const { password, ...others } = savedUser!.toObject();
-			return res.status(201).json(others);
+			return res.status(201).json(savedUser);
 		} catch (err) {
 			return res.status(500).json(err);
 		} finally {
@@ -103,10 +102,8 @@ router.post('/login', async (req: Request, res: Response) => {
 			{ expiresIn: '3d' }
 		);
 
-		const { password, ...others } = user.toObject();
-
 		return res.status(200).json({
-			...others,
+			...user.toJSON(),
 			accessToken,
 		});
 	} catch (err) {

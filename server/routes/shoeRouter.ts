@@ -389,8 +389,7 @@ router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response)
 			return res.status(404).json({ error: 'User not found' });
 		}
 
-		const { password, ...userWithoutPassword } = updatedUser.toObject();
-		return res.status(200).json({ updatedShoe, updatedUser: userWithoutPassword });
+		return res.status(200).json({ updatedShoe, updatedUser });
 	} else {
 		await shoe.updateOne({ $pull: { favorites: user._id } });
 		await user.updateOne({ $pull: { favorites: shoe._id } });
@@ -401,8 +400,7 @@ router.put('/favorite/:shoeID', verifyToken, async (req: Request, res: Response)
 			return res.status(404).json({ error: 'User not found' });
 		}
 
-		const { password, ...userWithoutPassword } = updatedUser.toObject();
-		return res.status(200).json({ updatedShoe, updatedUser: userWithoutPassword });
+		return res.status(200).json({ updatedShoe, updatedUser });
 	}
 });
 

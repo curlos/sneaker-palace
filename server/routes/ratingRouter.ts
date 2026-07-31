@@ -84,9 +84,7 @@ router.post('/rate', verifyToken, async (req: Request, res: Response) => {
 			return res.status(404).json({ error: 'User not found' });
 		}
 
-		const { password, ...userWithoutPassword } = updatedUser.toObject();
-
-		return res.json({ updatedShoe, updatedUser: userWithoutPassword, rating });
+		return res.json({ updatedShoe, updatedUser, rating });
 	} catch {
 		return res.status(500).json({ error: 'Failed to create rating' });
 	}
@@ -153,8 +151,7 @@ router.put('/like', verifyToken, async (req: Request, res: Response) => {
 				return res.status(404).json({ error: 'User not found' });
 			}
 
-			const { password, ...userWithoutPassword } = updatedUser.toObject();
-			return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword });
+			return res.status(200).json({ updatedRating, updatedUser });
 		} else {
 			await rating.updateOne({ $pull: { helpful: user._id } });
 			await user.updateOne({ $pull: { helpful: rating._id } });
@@ -165,8 +162,7 @@ router.put('/like', verifyToken, async (req: Request, res: Response) => {
 				return res.status(404).json({ error: 'User not found' });
 			}
 
-			const { password, ...userWithoutPassword } = updatedUser.toObject();
-			return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword });
+			return res.status(200).json({ updatedRating, updatedUser });
 		}
 	} catch (err) {
 		return res.json(err);
@@ -194,8 +190,7 @@ router.put('/dislike', verifyToken, async (req: Request, res: Response) => {
 				return res.status(404).json({ error: 'User not found' });
 			}
 
-			const { password, ...userWithoutPassword } = updatedUser.toObject();
-			return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword });
+			return res.status(200).json({ updatedRating, updatedUser });
 		} else {
 			await rating.updateOne({ $pull: { notHelpful: user._id } });
 			await user.updateOne({ $pull: { notHelpful: rating._id } });
@@ -206,8 +201,7 @@ router.put('/dislike', verifyToken, async (req: Request, res: Response) => {
 				return res.status(404).json({ error: 'User not found' });
 			}
 
-			const { password, ...userWithoutPassword } = updatedUser.toObject();
-			return res.status(200).json({ updatedRating, updatedUser: userWithoutPassword });
+			return res.status(200).json({ updatedRating, updatedUser });
 		}
 	} catch (err) {
 		return res.json(err);
