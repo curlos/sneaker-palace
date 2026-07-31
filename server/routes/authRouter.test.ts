@@ -17,105 +17,96 @@ afterAll(async () => {
 	await stopTestServer(mongod);
 });
 
+afterEach(async () => {
+	await User.deleteMany({});
+});
+
+function registerPayload(overrides: Record<string, unknown> = {}) {
+	return {
+		firstName: 'Test',
+		lastName: 'User',
+		email: 'test@example.com',
+		password: 'password123',
+		...overrides,
+	};
+}
+
 describe('POST /auth/register', () => {
 	it('rejects a missing firstName', async () => {
-		const res = await request(app).post('/auth/register').send({
-			lastName: 'User',
-			email: 'test-missing-firstname@example.com',
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ firstName: undefined }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/first name/i);
 	});
 
 	it('rejects a firstName that is only whitespace', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: '   ',
-			lastName: 'User',
-			email: 'test-whitespace-firstname@example.com',
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ firstName: '   ' }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/first name/i);
 	});
 
 	it('rejects a missing lastName', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			email: 'test-missing-lastname@example.com',
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ lastName: undefined }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/last name/i);
 	});
 
 	it('rejects a lastName that is only whitespace', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: '   ',
-			email: 'test-whitespace-lastname@example.com',
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ lastName: '   ' }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/last name/i);
 	});
 
 	it('rejects a missing password', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'test-missing-password@example.com',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ password: undefined }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/password/i);
 	});
 
 	it('rejects a password that is only whitespace', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'test-whitespace-password@example.com',
-			password: '        ',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ password: '        ' }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/password/i);
 	});
 
 	it('rejects a 7-character password (just below the 8-character minimum)', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'test2@example.com',
-			password: 'pass123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ password: 'pass123' }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/8 characters/i);
 	});
 
 	it('accepts an 8-character password (the minimum allowed)', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'test-min-password@example.com',
-			password: 'pass1234',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ password: 'pass1234' }));
 
 		expect(res.status).toBe(201);
 	});
 
 	it('rejects a missing email', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email: undefined }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/email/i);
@@ -125,12 +116,9 @@ describe('POST /auth/register', () => {
 		const invalidEmails = ['carlos', 'carlos@', 'carlosexample.com', 'carlos@example', '   '];
 
 		for (const email of invalidEmails) {
-			const res = await request(app).post('/auth/register').send({
-				firstName: 'Test',
-				lastName: 'User',
-				email,
-				password: 'password123',
-			});
+			const res = await request(app)
+				.post('/auth/register')
+				.send(registerPayload({ email }));
 
 			expect(res.status).toBe(400);
 			expect(res.body.error).toMatch(/email/i);
@@ -140,19 +128,13 @@ describe('POST /auth/register', () => {
 	it('rejects a duplicate email', async () => {
 		const email = 'test-duplicate@example.com';
 
-		await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email,
-			password: 'password123',
-		});
+		await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email }));
 
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email,
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/taken/i);
@@ -162,19 +144,13 @@ describe('POST /auth/register', () => {
 	});
 
 	it('rejects a duplicate email that differs only by casing', async () => {
-		await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'Test-Duplicate-Casing@Example.com',
-			password: 'password123',
-		});
+		await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email: 'Test-Duplicate-Casing@Example.com' }));
 
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'test-duplicate-casing@example.com',
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email: 'test-duplicate-casing@example.com' }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/taken/i);
@@ -184,12 +160,9 @@ describe('POST /auth/register', () => {
 	});
 
 	it('creates a new user with valid data', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'test@example.com',
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload());
 
 		expect(res.status).toBe(201);
 		expect(res.body._id).toBeDefined();
@@ -200,14 +173,9 @@ describe('POST /auth/register', () => {
 	});
 
 	it('creates an empty cart for the new user', async () => {
-		const email = 'test-cart-on-register@example.com';
-
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email,
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload());
 
 		expect(res.status).toBe(201);
 
@@ -217,13 +185,9 @@ describe('POST /auth/register', () => {
 	});
 
 	it('ignores unexpected fields like isAdmin (protects against mass assignment)', async () => {
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'test-mass-assignment@example.com',
-			password: 'password123',
-			isAdmin: true,
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ isAdmin: true }));
 
 		expect(res.status).toBe(201);
 		expect(res.body.isAdmin).toBe(false);
@@ -233,12 +197,9 @@ describe('POST /auth/register', () => {
 		const plainPassword = 'password123';
 		const email = 'test-hash-check@example.com';
 
-		await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email,
-			password: plainPassword,
-		});
+		await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email, password: plainPassword }));
 
 		const savedUser = await User.findOne({ email });
 
@@ -250,12 +211,9 @@ describe('POST /auth/register', () => {
 	it('returns 500 if the database save fails', async () => {
 		vi.spyOn(User.prototype, 'save').mockRejectedValueOnce(new Error('DB error'));
 
-		const res = await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'test-db-failure@example.com',
-			password: 'password123',
-		});
+		const res = await request(app)
+			.post('/auth/register')
+			.send(registerPayload());
 
 		expect(res.status).toBe(500);
 	});
@@ -313,12 +271,9 @@ describe('POST /auth/login', () => {
 	it('rejects an incorrect password for an existing user', async () => {
 		const email = 'test-login-wrong-password@example.com';
 
-		await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email,
-			password: 'correctPassword123',
-		});
+		await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email, password: 'correctPassword123' }));
 
 		const res = await request(app).post('/auth/login').send({
 			email,
@@ -333,12 +288,9 @@ describe('POST /auth/login', () => {
 		const email = 'test-login-success@example.com';
 		const password = 'password123';
 
-		await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email,
-			password,
-		});
+		await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email, password }));
 
 		const res = await request(app).post('/auth/login').send({ email, password });
 
@@ -355,12 +307,9 @@ describe('POST /auth/login', () => {
 		const email = 'test-login-jwt@example.com';
 		const password = 'password123';
 
-		await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email,
-			password,
-		});
+		await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email, password }));
 
 		const res = await request(app).post('/auth/login').send({ email, password });
 
@@ -384,12 +333,9 @@ describe('POST /auth/login', () => {
 	it('logs in successfully regardless of email casing', async () => {
 		const password = 'password123';
 
-		await request(app).post('/auth/register').send({
-			firstName: 'Test',
-			lastName: 'User',
-			email: 'Test-Login-Casing@Example.com',
-			password,
-		});
+		await request(app)
+			.post('/auth/register')
+			.send(registerPayload({ email: 'Test-Login-Casing@Example.com', password }));
 
 		const res = await request(app).post('/auth/login').send({
 			email: 'test-login-casing@example.com',

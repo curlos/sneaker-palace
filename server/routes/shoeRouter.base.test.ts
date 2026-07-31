@@ -1,11 +1,12 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import Shoe from '../models/Shoe';
 import User from '../models/User';
 import { IShoe } from '../types/types';
 import { startTestServer, stopTestServer } from '../utils/testServer';
+import { signToken } from '../utils/authAssertions';
+import { buildShoe } from '../utils/shoeFixtures';
 
 let mongod: MongoMemoryReplSet;
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
@@ -22,34 +23,6 @@ afterEach(async () => {
 	await Shoe.deleteMany({});
 });
 
-function buildShoe(index: number): IShoe {
-	return {
-		shoeID: `shoe-${index}`,
-		sku: `sku-${index}`,
-		brand: 'Nike',
-		name: `Shoe ${index}`,
-		colorway: 'Black/White',
-		gender: 'men',
-		silhouette: 'Air Max 90',
-		releaseYear: 2020,
-		releaseDate: '2020-01-01',
-		retailPrice: 100,
-		estimatedMarketValue: 150,
-		story: 'A great shoe.',
-		image: {
-			'360': [],
-			original: `https://example.com/${index}/original.jpg`,
-			small: `https://example.com/${index}/small.jpg`,
-			thumbnail: `https://example.com/${index}/thumb.jpg`,
-		},
-		links: {},
-		ratings: [],
-		rating: 0,
-		favorites: [],
-		inStock: true,
-	} as IShoe;
-}
-
 function buildUser(index: number) {
 	return {
 		email: `user-${index}@example.com`,
@@ -58,10 +31,6 @@ function buildUser(index: number) {
 		firstName: 'Test',
 		lastName: `User${index}`,
 	};
-}
-
-function signToken(userId: mongoose.Types.ObjectId | string) {
-	return jwt.sign({ id: userId.toString(), isAdmin: false }, process.env.JWT_SEC as string);
 }
 
 describe('GET /shoes/page/:pageNum', () => {

@@ -1,8 +1,15 @@
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import { Express } from 'express';
 
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+
+// Shared across test files that need a signed JWT for a request. Defaults to
+// the real secret (a valid token); pass a wrong one to simulate an invalid token.
+export function signToken(userId: mongoose.Types.ObjectId | string, secret: string = process.env.JWT_SEC as string) {
+	return jwt.sign({ id: userId.toString(), isAdmin: false }, secret);
+}
 
 /**
  * For routes behind plain `verifyToken`. Auth runs before any body/param
@@ -26,7 +33,7 @@ export function itRequiresAuth(getApp: () => Express, method: HttpMethod, path: 
 	});
 
 	it('returns a 403 error when the token is invalid', async () => {
-		const badToken = jwt.sign({ id: 'someUserId', isAdmin: false }, 'wrong-secret');
+		const badToken = signToken('someUserId', 'wrong-secret');
 
 		const res = await request(getApp())[method](path).set('Authorization', `Bearer ${badToken}`);
 
@@ -38,7 +45,7 @@ export function itRequiresAuth(getApp: () => Express, method: HttpMethod, path: 
 	// the two checks above would still pass even if verifyToken rejected every
 	// request, valid or not.
 	it('is not rejected by auth when a valid token is sent', async () => {
-		const validToken = jwt.sign({ id: 'someUserId', isAdmin: false }, process.env.JWT_SEC as string);
+		const validToken = signToken('someUserId');
 
 		const res = await request(getApp())[method](path).set('Authorization', `Bearer ${validToken}`);
 
