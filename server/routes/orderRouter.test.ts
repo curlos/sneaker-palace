@@ -354,3 +354,62 @@ describe('POST /orders/no-account', () => {
 		expect(res.body.error).toMatch(/internal server error/i);
 	});
 });
+
+describe('GET /orders/user', () => {
+	it('returns an empty array when the user has no orders yet', async () => {
+		const { token } = await createUserWithCart([]);
+
+		const res = await request(app).get('/orders/user').set('Authorization', `Bearer ${token}`);
+
+		expect(res.body).toEqual([]);
+	});
+
+	it("returns the authenticated user's order", async () => {
+		const { user, token } = await createUserWithCart([]);
+		const payload = orderPayload();
+		await Order.create({ ...payload, userID: user._id.toString() });
+
+		const res = await request(app).get('/orders/user').set('Authorization', `Bearer ${token}`);
+
+		expect(res.body).toEqual([expect.objectContaining({ paymentIntentID: payload.paymentIntentID })]);
+	});
+
+	it('returns multiple orders when the user has more than one', async () => {
+		const { user, token } = await createUserWithCart([]);
+		await Order.create({ ...orderPayload(), userID: user._id.toString() });
+		await Order.create({ ...orderPayload(), userID: user._id.toString() });
+
+		const res = await request(app).get('/orders/user').set('Authorization', `Bearer ${token}`);
+
+		expect(res.body).toHaveLength(2);
+	});
+
+	it("does not return another user's orders", async () => {
+		const { token } = await createUserWithCart([]);
+		const { user: otherUser } = await createUserWithCart([]);
+		await Order.create({ ...orderPayload(), userID: otherUser._id.toString() });
+
+		const res = await request(app).get('/orders/user').set('Authorization', `Bearer ${token}`);
+
+		expect(res.body).toEqual([]);
+	});
+
+	it('does not return guest orders (no userID)', async () => {
+		const { token } = await createUserWithCart([]);
+		await Order.create({ ...orderPayload(), userID: null });
+
+		const res = await request(app).get('/orders/user').set('Authorization', `Bearer ${token}`);
+
+		expect(res.body).toEqual([]);
+	});
+
+	it('returns a 500 error when the database lookup fails', async () => {
+		const { token } = await createUserWithCart([]);
+		vi.spyOn(Order, 'find').mockRejectedValueOnce(new Error('DB error'));
+
+		const res = await request(app).get('/orders/user').set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(500);
+		expect(res.body.error).toMatch(/failed to fetch orders/i);
+	});
+});
