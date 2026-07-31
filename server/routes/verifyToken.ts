@@ -18,24 +18,4 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 	}
 };
 
-const verifyTokenAndAuthorization = (req: Request, res: Response, next: NextFunction) => {
-	verifyToken(req, res, () => {
-		if (req.user!.id === req.params.id || req.user!.isAdmin) {
-			next();
-		} else {
-			return res.status(403).json('You are not allowed to do that');
-		}
-	});
-};
-
-const verifyTokenAndAdmin = (req: Request, res: Response, next: NextFunction) => {
-	verifyToken(req, res, () => {
-		if (req.user!.isAdmin) {
-			next();
-		} else {
-			return res.status(403).json('You are not allowed to do that!');
-		}
-	});
-};
-
-export { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin };
+export { verifyToken };

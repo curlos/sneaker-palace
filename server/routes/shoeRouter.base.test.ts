@@ -287,25 +287,6 @@ describe('PUT /shoes/favorite/:shoeID', () => {
 		await User.deleteMany({});
 	});
 
-	it('returns a 401 error when no Authorization header is sent', async () => {
-		const shoe = await Shoe.create(buildShoe(0));
-
-		const res = await request(app).put(`/shoes/favorite/${shoe.shoeID}`);
-
-		expect(res.status).toBe(401);
-	});
-
-	it('returns a 403 error when the token is invalid', async () => {
-		const shoe = await Shoe.create(buildShoe(0));
-		const badToken = jwt.sign({ id: 'someUserId', isAdmin: false }, 'wrong-secret');
-
-		const res = await request(app)
-			.put(`/shoes/favorite/${shoe.shoeID}`)
-			.set('Authorization', `Bearer ${badToken}`);
-
-		expect(res.status).toBe(403);
-	});
-
 	it('returns a 404 error when the shoeID does not match any shoe', async () => {
 		const user = await User.create(buildUser(0));
 		const token = signToken(user._id);

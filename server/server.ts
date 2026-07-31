@@ -36,8 +36,8 @@ app.use('/cart', cartRouter);
 app.use('/rating', ratingRouter);
 app.use('/checkout', stripeRouter);
 app.use('/orders', orderRouter);
-app.use('/admin', adminRouter);
 app.use('/images', imageRouter);
+app.use('/admin', adminRouter);
 
 app.get('/', (_req: Request, res: Response) => {
 	res.send('Hello World!');

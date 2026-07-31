@@ -6,10 +6,11 @@ const router = express.Router();
 
 // Update cart
 router.put('/', verifyToken, async (req: Request, res: Response) => {
+	// Only allow updating products - prevents mass assignment (e.g. userID).
 	const updatedCart = await Cart.findOneAndUpdate(
 		{ userID: req.user!.id },
 		{
-			$set: req.body,
+			$set: { products: req.body.products },
 		},
 		{ returnDocument: 'after' }
 	);

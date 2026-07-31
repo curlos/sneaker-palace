@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 
-export async function startTestServer() {
+export async function startTestServer(envOverrides: Record<string, string> = {}) {
 	// A single-node replica set (not a standalone MongoMemoryServer) so that
 	// mongoose.startSession()/transactions (e.g. authRouter's register route)
 	// work the same way they do against Atlas in production.
@@ -12,6 +12,10 @@ export async function startTestServer() {
 	process.env.ATLAS_URI = mongod.getUri();
 	process.env.VERCEL = '1';
 	process.env.JWT_SEC = process.env.JWT_SEC || 'test-secret';
+	// e.g. { NODE_ENV: 'production' } to test env-gated route registration
+	// (adminRouter.ts's dev-only routes) - must be set before the import
+	// below, since that's when such conditionals are evaluated.
+	Object.assign(process.env, envOverrides);
 
 	const serverModule = await import('../server');
 	const app = serverModule.default;

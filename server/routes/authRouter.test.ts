@@ -199,7 +199,7 @@ describe('POST /auth/register', () => {
 		expect(res.body.password).toBeUndefined();
 	});
 
-	it.only('creates an empty cart for the new user', async () => {
+	it('creates an empty cart for the new user', async () => {
 		const email = 'test-cart-on-register@example.com';
 
 		const res = await request(app).post('/auth/register').send({
