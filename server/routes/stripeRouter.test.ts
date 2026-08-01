@@ -3,10 +3,14 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { startTestServer, stopTestServer } from '../utils/testServer';
 
 const mockCreatePaymentIntent = vi.fn();
+const mockRetrievePaymentMethod = vi.fn();
 
 vi.mock('stripe', () => ({
 	default: vi.fn().mockImplementation(function () {
-		return { paymentIntents: { create: mockCreatePaymentIntent } };
+		return {
+			paymentIntents: { create: mockCreatePaymentIntent },
+			paymentMethods: { retrieve: mockRetrievePaymentMethod },
+		};
 	}),
 }));
 
@@ -23,6 +27,7 @@ afterAll(async () => {
 
 beforeEach(() => {
 	mockCreatePaymentIntent.mockClear();
+	mockRetrievePaymentMethod.mockClear();
 });
 
 describe('POST /checkout/create-payment-intent', () => {
@@ -61,5 +66,43 @@ describe('POST /checkout/create-payment-intent', () => {
 
 		expect(res.status).toBe(400);
 		expect(mockCreatePaymentIntent).not.toHaveBeenCalled();
+	});
+});
+
+describe('GET /checkout/payment-method/:paymentMethodID', () => {
+	it('returns the payment method from Stripe, including card and billing details', async () => {
+		mockRetrievePaymentMethod.mockResolvedValueOnce({
+			id: 'pm_test_123',
+			card: { brand: 'visa' },
+			billing_details: { name: 'Test User', email: 'test@example.com' },
+		});
+
+		const res = await request(app).get('/checkout/payment-method/pm_test_123');
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual(
+			expect.objectContaining({
+				id: 'pm_test_123',
+				card: { brand: 'visa' },
+				billing_details: { name: 'Test User', email: 'test@example.com' },
+			})
+		);
+	});
+
+	it('passes the paymentMethodID route param to Stripe', async () => {
+		mockRetrievePaymentMethod.mockResolvedValueOnce({ id: 'pm_test_123' });
+
+		await request(app).get('/checkout/payment-method/pm_test_123');
+
+		expect(mockRetrievePaymentMethod).toHaveBeenCalledWith('pm_test_123');
+	});
+
+	it('returns a 500 error when Stripe fails to retrieve the payment method', async () => {
+		mockRetrievePaymentMethod.mockRejectedValueOnce(new Error('Stripe error'));
+
+		const res = await request(app).get('/checkout/payment-method/pm_test_123');
+
+		expect(res.status).toBe(500);
+		expect(res.body.error).toBe('Internal server error');
 	});
 });
