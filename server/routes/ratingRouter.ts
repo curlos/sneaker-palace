@@ -164,8 +164,8 @@ router.put('/like', verifyToken, async (req: Request, res: Response) => {
 
 			return res.status(200).json({ updatedRating, updatedUser });
 		}
-	} catch (err) {
-		return res.json(err);
+	} catch {
+		return res.status(500).json({ error: 'Failed to update rating reaction' });
 	}
 });
 
@@ -203,8 +203,8 @@ router.put('/dislike', verifyToken, async (req: Request, res: Response) => {
 
 			return res.status(200).json({ updatedRating, updatedUser });
 		}
-	} catch (err) {
-		return res.json(err);
+	} catch {
+		return res.status(500).json({ error: 'Failed to update rating reaction' });
 	}
 });
 

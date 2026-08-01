@@ -552,3 +552,226 @@ describe('PUT /edit/:id', () => {
 		expect(dbShoe!.rating).toBe(0);
 	});
 });
+
+const REACTION_ENDPOINTS = [
+	{ path: '/rating/like', field: 'helpful', oppositeField: 'notHelpful' },
+	{ path: '/rating/dislike', field: 'notHelpful', oppositeField: 'helpful' },
+] as const;
+
+describe.each(REACTION_ENDPOINTS)('PUT $path', ({ path, field, oppositeField }) => {
+	it('returns a 404 error when the rating does not exist', async () => {
+		const user = await createUser();
+		const token = signToken(user._id);
+		const ratingId = new mongoose.Types.ObjectId();
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: ratingId.toString() });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/rating or user not found/i);
+	});
+
+	it('returns a 404 error when the authenticated user does not exist', async () => {
+		const rating = await createRating();
+		const token = signToken(new mongoose.Types.ObjectId());
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/rating or user not found/i);
+	});
+
+	it(`adds the user to "${field}" and clears them from "${oppositeField}" when toggling on`, async () => {
+		const user = await createUser();
+		const rating = await createRating({ [oppositeField]: [user._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedRating[field]).toContain(user._id.toString());
+		expect(res.body.updatedRating[oppositeField]).not.toContain(user._id.toString());
+	});
+
+	it(`removes the user from ${field} when toggling off`, async () => {
+		const user = await createUser();
+		const rating = await createRating({ [field]: [user._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedRating[field]).not.toContain(user._id.toString());
+	});
+
+	it(`does not touch ${oppositeField} when toggling off`, async () => {
+		const user = await createUser();
+		const otherUserId = new mongoose.Types.ObjectId();
+		const rating = await createRating({ [field]: [user._id], [oppositeField]: [otherUserId] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedRating[oppositeField]).toContain(otherUserId.toString());
+	});
+
+	it(`adds the rating's _id to the user's own ${field} array when toggling on`, async () => {
+		const user = await createUser();
+		const rating = await createRating();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedUser[field]).toContain(rating._id.toString());
+
+		const dbUser = await User.findById(user._id);
+		expect(dbUser![field].map(String)).toContain(rating._id.toString());
+	});
+
+	it(`removes the rating's _id from the user's own ${field} array when toggling off`, async () => {
+		const rating = await createRating();
+		const user = await createUser({ [field]: [rating._id] });
+		await Rating.findByIdAndUpdate(rating._id, { [field]: [user._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedUser[field]).not.toContain(rating._id.toString());
+
+		const dbUser = await User.findById(user._id);
+		expect(dbUser![field].map(String)).not.toContain(rating._id.toString());
+	});
+
+	it(`does not remove other users from ${field} when toggling off`, async () => {
+		const otherUser = await createUser();
+		const user = await createUser();
+		const rating = await createRating({ [field]: [otherUser._id, user._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedRating[field]).toContain(otherUser._id.toString());
+		expect(res.body.updatedRating[field]).not.toContain(user._id.toString());
+	});
+
+	it(`does not remove other users from ${field} when toggling on`, async () => {
+		const otherUser = await createUser();
+		const user = await createUser();
+		const rating = await createRating({ [field]: [otherUser._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedRating[field]).toContain(otherUser._id.toString());
+		expect(res.body.updatedRating[field]).toContain(user._id.toString());
+	});
+
+	it(`does not remove other users from ${oppositeField} when clearing the current user during toggle-on`, async () => {
+		const otherUser = await createUser();
+		const user = await createUser();
+		const rating = await createRating({ [oppositeField]: [otherUser._id, user._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedRating[oppositeField]).toContain(otherUser._id.toString());
+		expect(res.body.updatedRating[oppositeField]).not.toContain(user._id.toString());
+	});
+
+	it('returns updatedRating and updatedUser on success', async () => {
+		const user = await createUser();
+		const rating = await createRating();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedRating).toEqual(expect.objectContaining({ _id: rating._id.toString() }));
+		expect(res.body.updatedUser).toEqual(expect.objectContaining({ _id: user._id.toString() }));
+	});
+
+	it('returns a 404 error when the user no longer exists at the final lookup', async () => {
+		const user = await createUser();
+		const rating = await createRating();
+		const token = signToken(user._id);
+		vi.spyOn(User, 'findById').mockResolvedValueOnce(null);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: rating._id.toString() });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/user not found/i);
+	});
+
+	it('returns a 500 error when ratingID is not a valid ObjectId', async () => {
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: 'not-a-valid-object-id' });
+
+		expect(res.status).toBe(500);
+	});
+
+	it('returns a 500 error when an update operation fails inside the try block', async () => {
+		const user = await createUser();
+		const ratingId = new mongoose.Types.ObjectId();
+		const fakeRating = {
+			_id: ratingId,
+			helpful: [],
+			notHelpful: [],
+			updateOne: vi.fn().mockRejectedValueOnce(new Error('DB error')),
+		};
+		vi.spyOn(Rating, 'findOne').mockResolvedValueOnce(fakeRating as never);
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(path)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingID: ratingId.toString() });
+
+		expect(res.status).toBe(500);
+	});
+});
