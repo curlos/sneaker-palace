@@ -1,5 +1,6 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import User from '../models/User';
 import Cart from '../models/Cart';
@@ -411,5 +412,103 @@ describe('GET /orders/user', () => {
 
 		expect(res.status).toBe(500);
 		expect(res.body.error).toMatch(/failed to fetch orders/i);
+	});
+});
+
+describe('GET /orders/:orderID', () => {
+	it('returns a 404 error when the order does not exist', async () => {
+		const orderId = new mongoose.Types.ObjectId();
+
+		const res = await request(app).get(`/orders/${orderId}`);
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/not found/i);
+	});
+
+	it('returns a 500 error when the orderID is not a valid ObjectId', async () => {
+		const res = await request(app).get('/orders/not-a-valid-object-id');
+
+		expect(res.status).toBe(500);
+		expect(res.body.error).toMatch(/server error/i);
+	});
+
+	it('returns a guest order without requiring authentication', async () => {
+		const order = await Order.create({ ...orderPayload(), userID: null });
+
+		const res = await request(app).get(`/orders/${order._id}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual(expect.objectContaining({ paymentIntentID: order.paymentIntentID }));
+	});
+
+	it('returns a guest order even when an Authorization header is provided', async () => {
+		const order = await Order.create({ ...orderPayload(), userID: null });
+		const token = signToken(new mongoose.Types.ObjectId());
+
+		const res = await request(app).get(`/orders/${order._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual(expect.objectContaining({ paymentIntentID: order.paymentIntentID }));
+	});
+
+	it.only('returns a guest order even when the Authorization header contains an invalid token', async () => {
+		const order = await Order.create({ ...orderPayload(), userID: null });
+		const badToken = signToken(new mongoose.Types.ObjectId(), 'wrong-secret');
+
+		const res = await request(app).get(`/orders/${order._id}`).set('Authorization', `Bearer ${badToken}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual(expect.objectContaining({ paymentIntentID: order.paymentIntentID }));
+	});
+
+	it('returns a 401 error when the order has an owner and no Authorization header is sent', async () => {
+		const { user } = await createUserWithCart([]);
+		const order = await Order.create({ ...orderPayload(), userID: user._id.toString() });
+
+		const res = await request(app).get(`/orders/${order._id}`);
+
+		expect(res.status).toBe(401);
+	});
+
+	it('returns a 403 error when the order has an owner and the token is invalid', async () => {
+		const { user } = await createUserWithCart([]);
+		const order = await Order.create({ ...orderPayload(), userID: user._id.toString() });
+		const badToken = signToken(user._id, 'wrong-secret');
+
+		const res = await request(app).get(`/orders/${order._id}`).set('Authorization', `Bearer ${badToken}`);
+
+		expect(res.status).toBe(403);
+	});
+
+	it('returns the order when the authenticated user is the owner', async () => {
+		const { user, token } = await createUserWithCart([]);
+		const order = await Order.create({ ...orderPayload(), userID: user._id.toString() });
+
+		const res = await request(app).get(`/orders/${order._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual(expect.objectContaining({ paymentIntentID: order.paymentIntentID }));
+	});
+
+	it('returns a 403 error when the authenticated user is neither the owner nor an admin', async () => {
+		const { user: owner } = await createUserWithCart([]);
+		const { token } = await createUserWithCart([]);
+		const order = await Order.create({ ...orderPayload(), userID: owner._id.toString() });
+
+		const res = await request(app).get(`/orders/${order._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(403);
+		expect(res.body.error).toMatch(/access denied/i);
+	});
+
+	it('returns the order when the authenticated user is an admin', async () => {
+		const { user: owner } = await createUserWithCart([]);
+		const order = await Order.create({ ...orderPayload(), userID: owner._id.toString() });
+		const adminToken = jwt.sign({ id: new mongoose.Types.ObjectId().toString(), isAdmin: true }, process.env.JWT_SEC as string);
+
+		const res = await request(app).get(`/orders/${order._id}`).set('Authorization', `Bearer ${adminToken}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual(expect.objectContaining({ paymentIntentID: order.paymentIntentID }));
 	});
 });

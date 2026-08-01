@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import User from '../models/User';
 import Cart from '../models/Cart';
@@ -6,35 +6,6 @@ import Order from '../models/Order';
 import { verifyToken } from './verifyToken';
 
 const router = express.Router();
-
-const verifyOrderAccess = async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const order = await Order.findById(req.params.orderID);
-
-		if (!order) {
-			return res.status(404).json({ error: 'Order not found' });
-		}
-
-		// If no userID field exists, it's a guest order - allow access
-		if (!order.userID) {
-			req.order = order;
-			return next();
-		}
-
-		// If userID exists, verify token first
-		verifyToken(req, res, () => {
-			// Check if user owns the order or is admin
-			if (order.userID !== req.user!.id && !req.user!.isAdmin) {
-				return res.status(403).json({ error: 'Access denied' });
-			}
-
-			req.order = order;
-			next();
-		});
-	} catch {
-		return res.status(500).json({ error: 'Server error' });
-	}
-};
 
 router.get('/user', verifyToken, async (req: Request, res: Response) => {
 	try {
@@ -46,8 +17,31 @@ router.get('/user', verifyToken, async (req: Request, res: Response) => {
 	}
 });
 
-router.get('/:orderID', verifyOrderAccess, async (req: Request, res: Response) => {
-	return res.json(req.order);
+router.get('/:orderID', async (req: Request, res: Response) => {
+	try {
+		const order = await Order.findById(req.params.orderID);
+
+		if (!order) {
+			return res.status(404).json({ error: 'Order not found' });
+		}
+
+		// If no userID field exists, it's a guest order - allow access
+		if (!order.userID) {
+			return res.json(order);
+		}
+
+		// If userID exists, verify token first
+		verifyToken(req, res, () => {
+			// Check if user owns the order or is admin
+			if (order.userID !== req.user!.id && !req.user!.isAdmin) {
+				return res.status(403).json({ error: 'Access denied' });
+			}
+
+			return res.json(order);
+		});
+	} catch {
+		return res.status(500).json({ error: 'Server error' });
+	}
 });
 
 router.post('/', verifyToken, async (req: Request, res: Response) => {
