@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { verifyToken } from './verifyToken';
+import { verifyToken } from '../utils/verifyToken';
 
 const JWT_SEC = 'unit-test-secret';
 

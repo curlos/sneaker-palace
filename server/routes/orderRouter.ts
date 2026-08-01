@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import User from '../models/User';
 import Cart from '../models/Cart';
 import Order from '../models/Order';
-import { verifyToken } from './verifyToken';
+import { verifyToken } from '../utils/verifyToken';
 
 const router = express.Router();
 

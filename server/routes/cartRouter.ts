@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Cart from '../models/Cart';
 import Shoe from '../models/Shoe';
-import { verifyToken } from './verifyToken';
+import { verifyToken } from '../utils/verifyToken';
 
 const router = express.Router();
 

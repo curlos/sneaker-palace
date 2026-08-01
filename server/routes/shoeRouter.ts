@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { PipelineStage } from 'mongoose';
 import Shoe from '../models/Shoe';
 import User from '../models/User';
-import { verifyToken } from './verifyToken';
+import { verifyToken } from '../utils/verifyToken';
 
 const router = express.Router();
 
