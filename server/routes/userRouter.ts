@@ -55,6 +55,12 @@ const ALLOWED_UPDATE_FIELDS = [
 ] as const;
 
 router.put('/', verifyToken, async (req: Request, res: Response) => {
+	const currentUser = await User.findById(req.user!.id);
+
+	if (!currentUser) {
+		return res.status(404).json({ error: 'User not found' });
+	}
+
 	// Only allow whitelisted fields through - prevents mass assignment (e.g. isAdmin).
 	const updateData: Partial<Record<(typeof ALLOWED_UPDATE_FIELDS)[number] | 'lowerCaseEmail', string>> = {};
 	for (const field of ALLOWED_UPDATE_FIELDS) {
@@ -63,51 +69,50 @@ router.put('/', verifyToken, async (req: Request, res: Response) => {
 		}
 	}
 
-	try {
-		// If email is being updated, check if it's different and unique
-		if (updateData.email) {
-			if (!isValidEmail(updateData.email)) {
-				return res.status(400).json({ error: 'A valid email is required' });
-			}
-
-			const currentUser = await User.findById(req.user!.id);
-
-			if (!currentUser) {
-				return res.status(404).json({ error: 'User not found' });
-			}
-
-			// Check if the new email is different from current email
-			if (updateData.email !== currentUser.email) {
-				// Check if the new email already exists in the database
-				const existingUser = await User.findOne({ email: updateData.email });
-
-				if (existingUser) {
-					return res.status(400).json({ error: 'Email already exists' });
-				}
-
-				// Also update lowerCaseEmail if it exists in the schema
-				if (updateData.email) {
-					updateData.lowerCaseEmail = updateData.email.toLowerCase();
-				}
-			}
-		}
-
-		const updatedUser = await User.findByIdAndUpdate(
-			req.user!.id,
-			{
-				$set: updateData,
-			},
-			{ returnDocument: 'after' }
-		);
-
-		if (!updatedUser) {
-			return res.status(404).json({ error: 'User not found' });
-		}
-
-		return res.status(200).json({ message: 'User updated successfully', user: updatedUser });
-	} catch (err) {
-		return res.json({ error: err });
+	// firstName/lastName can't be blank - the other fields are either kept
+	// non-blank by the FE or covered by their own validators.
+	if (updateData.firstName !== undefined && updateData.firstName.trim() === '') {
+		return res.status(400).json({ error: 'First name cannot be blank' });
 	}
+
+	if (updateData.lastName !== undefined && updateData.lastName.trim() === '') {
+		return res.status(400).json({ error: 'Last name cannot be blank' });
+	}
+
+	// If email is being updated, check if it's different and unique (case-insensitively)
+	if (updateData.email) {
+		if (!isValidEmail(updateData.email)) {
+			return res.status(400).json({ error: 'A valid email is required' });
+		}
+
+		const newLowerCaseEmail = updateData.email.toLowerCase();
+
+		// Check if the new email is different from current email
+		if (newLowerCaseEmail !== currentUser.lowerCaseEmail) {
+			// Check if the new email already exists in the database
+			const existingUser = await User.findOne({ lowerCaseEmail: newLowerCaseEmail });
+
+			if (existingUser) {
+				return res.status(400).json({ error: 'Email already exists' });
+			}
+
+			updateData.lowerCaseEmail = newLowerCaseEmail;
+		}
+	}
+
+	const updatedUser = await User.findByIdAndUpdate(
+		req.user!.id,
+		{
+			$set: updateData,
+		},
+		{ returnDocument: 'after' }
+	);
+
+	if (!updatedUser) {
+		return res.status(404).json({ error: 'User not found' });
+	}
+
+	return res.status(200).json({ message: 'User updated successfully', user: updatedUser });
 });
 
 router.put('/password', verifyToken, async (req: Request, res: Response) => {
