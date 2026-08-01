@@ -5,5 +5,10 @@ export default defineConfig({
 		environment: 'node',
 		restoreMocks: true,
 		globals: true,
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'html'],
+			exclude: ['dist/**', 'scripts/**', 'types/**', '**/*.config.*', '**/*.test.ts'],
+		},
 	},
 });
