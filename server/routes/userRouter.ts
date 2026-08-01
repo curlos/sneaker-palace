@@ -8,38 +8,40 @@ import { verifyToken } from './verifyToken';
 
 const router = express.Router();
 
-const optionalAuth = (req: Request, _res: Response, next: NextFunction) => {
-	const authHeader = req.headers.authorization;
+router.get(
+	'/:userID',
+	(req: Request, _res: Response, next: NextFunction) => {
+		const authHeader = req.headers.authorization;
 
-	if (authHeader) {
-		const token = authHeader.split(' ')[1];
-		jwt.verify(token, process.env.JWT_SEC as string, (err: jwt.VerifyErrors | null, decoded: jwt.JwtPayload | string | undefined) => {
-			if (!err) {
-				req.user = decoded as UserType;
-			}
+		if (authHeader) {
+			const token = authHeader.split(' ')[1];
+			jwt.verify(token, process.env.JWT_SEC as string, (err: jwt.VerifyErrors | null, decoded: jwt.JwtPayload | string | undefined) => {
+				if (!err) {
+					req.user = decoded as UserType;
+				}
+				next();
+			});
+		} else {
 			next();
-		});
-	} else {
-		next();
+		}
+	},
+	async (req: Request, res: Response) => {
+		const user = await User.findById(req.params.userID);
+
+		if (!user) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		const isOwnProfile = req.user && req.user.id === req.params.userID;
+
+		if (isOwnProfile) {
+			return res.json(user);
+		} else {
+			const { password, email, lowerCaseEmail, isAdmin, orders, ...publicProfile } = user.toObject();
+			return res.json(publicProfile);
+		}
 	}
-};
-
-router.get('/:userID', optionalAuth, async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.userID);
-
-	if (!user) {
-		return res.status(404).json({ error: 'User not found' });
-	}
-
-	const isOwnProfile = req.user && req.user.id === req.params.userID;
-
-	if (isOwnProfile) {
-		return res.json(user);
-	} else {
-		const { password, email, lowerCaseEmail, isAdmin, orders, ...publicProfile } = user.toObject();
-		return res.json(publicProfile);
-	}
-});
+);
 
 // Fields the frontend actually sends from AccountDetails.tsx and ShopPreferences.tsx.
 const ALLOWED_UPDATE_FIELDS = [
