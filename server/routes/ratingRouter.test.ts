@@ -3,8 +3,11 @@ import mongoose from 'mongoose';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import Rating from '../models/Rating';
 import User from '../models/User';
+import Shoe from '../models/Shoe';
 import { startTestServer, stopTestServer } from '../utils/testServer';
 import { buildUser } from '../utils/userFixtures';
+import { buildShoe } from '../utils/shoeFixtures';
+import { signToken } from '../utils/authAssertions';
 
 let mongod: MongoMemoryReplSet;
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
@@ -20,6 +23,7 @@ afterAll(async () => {
 afterEach(async () => {
 	await Rating.deleteMany({});
 	await User.deleteMany({});
+	await Shoe.deleteMany({});
 });
 
 let ratingCounter = 0;
@@ -175,5 +179,184 @@ describe('GET /by/:type/:id', () => {
 
 		expect(res.status).toBe(500);
 		expect(res.body.error).toMatch(/rating/i);
+	});
+});
+
+describe('POST /rate', () => {
+	it('creates a rating and returns updatedShoe, updatedUser, and the rating', async () => {
+		const shoe = await Shoe.create(buildShoe('post-rate-shoe'));
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID, ratingNum: 5, summary: 'Great', text: 'Loved it' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.rating).toEqual(
+			expect.objectContaining({ shoeID: shoe.shoeID, userID: user._id.toString(), ratingNum: 5, summary: 'Great', text: 'Loved it' })
+		);
+		expect(res.body.updatedShoe).toEqual(expect.objectContaining({ shoeID: shoe.shoeID }));
+		expect(res.body.updatedUser).toEqual(expect.objectContaining({ _id: user._id.toString() }));
+	});
+
+	it('sets userID from the authenticated user, ignoring any userID sent in the body', async () => {
+		const shoe = await Shoe.create(buildShoe('ignore-body-userid-shoe'));
+		const user = await createUser();
+		const otherUser = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID, ratingNum: 3, userID: otherUser._id.toString() });
+
+		expect(res.status).toBe(200);
+		expect(res.body.rating.userID).toBe(user._id.toString());
+	});
+
+	it("sets the shoe's average rating to the submitted ratingNum when the shoe had no existing ratings", async () => {
+		const shoe = await Shoe.create(buildShoe('no-existing-ratings-shoe'));
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID, ratingNum: 4 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedShoe.rating).toBe(4);
+	});
+
+	it("averages the new rating together with the shoe's existing rating", async () => {
+		const shoe = await Shoe.create({
+			...buildShoe('existing-rating-shoe'),
+			rating: 4,
+			ratings: [new mongoose.Types.ObjectId()],
+		});
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID, ratingNum: 2 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedShoe.rating).toBe(3);
+	});
+
+	it("adds the new rating's _id to the shoe's ratings array", async () => {
+		const shoe = await Shoe.create(buildShoe('shoe-ratings-array-shoe'));
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID, ratingNum: 5 });
+
+		const dbShoe = await Shoe.findById(shoe._id);
+		expect(dbShoe!.ratings.map(String)).toContain(res.body.rating._id);
+	});
+
+	it("adds the new rating's _id to the user's ratings array", async () => {
+		const shoe = await Shoe.create(buildShoe('user-ratings-array-shoe'));
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID, ratingNum: 5 });
+
+		const dbUser = await User.findById(user._id);
+		expect(dbUser!.ratings.map(String)).toContain(res.body.rating._id);
+	});
+
+	it('returns a 404 error when the shoe does not exist', async () => {
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: 'no-such-shoe', ratingNum: 5 });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/not found/i);
+	});
+
+	it('returns a 404 error when the authenticated user no longer exists', async () => {
+		const shoe = await Shoe.create(buildShoe('missing-user-shoe'));
+		const token = signToken(new mongoose.Types.ObjectId());
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID, ratingNum: 5 });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/not found/i);
+	});
+
+	it('returns a 500 error when the rating fails schema validation', async () => {
+		const shoe = await Shoe.create(buildShoe('validation-fail-shoe'));
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID });
+
+		expect(res.status).toBe(500);
+	});
+
+	it('returns a 500 error when a database operation fails', async () => {
+		const user = await createUser();
+		const token = signToken(user._id);
+		vi.spyOn(Shoe, 'findOne').mockRejectedValueOnce(new Error('DB error'));
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: 'some-shoe', ratingNum: 5 });
+
+		expect(res.status).toBe(500);
+	});
+
+	it('returns a 404 error when the user no longer exists at the final lookup', async () => {
+		const shoe = await Shoe.create(buildShoe('toctou-shoe'));
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		vi.spyOn(User, 'findById')
+			.mockResolvedValueOnce(user as unknown as null)
+			.mockResolvedValueOnce(null);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ shoeID: shoe.shoeID, ratingNum: 5 });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toBe('User not found');
+	});
+
+	it('returns a 404 error when shoeID is omitted from the body', async () => {
+		await Shoe.create(buildShoe('omitted-shoeid-shoe'));
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.post('/rating/rate')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 5 });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/not found/i);
 	});
 });
