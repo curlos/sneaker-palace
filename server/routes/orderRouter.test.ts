@@ -451,7 +451,7 @@ describe('GET /orders/:orderID', () => {
 		expect(res.body).toEqual(expect.objectContaining({ paymentIntentID: order.paymentIntentID }));
 	});
 
-	it.only('returns a guest order even when the Authorization header contains an invalid token', async () => {
+	it('returns a guest order even when the Authorization header contains an invalid token', async () => {
 		const order = await Order.create({ ...orderPayload(), userID: null });
 		const badToken = signToken(new mongoose.Types.ObjectId(), 'wrong-secret');
 
