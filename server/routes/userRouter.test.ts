@@ -1,5 +1,6 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import User from '../models/User';
 import { startTestServer, stopTestServer } from '../utils/testServer';
@@ -34,6 +35,13 @@ async function createUser(overrides: Record<string, unknown> = {}) {
 		lastName: 'User',
 		...overrides,
 	});
+}
+
+// PUT /password runs bcrypt.compare() against the stored password, so unlike
+// createUser() (plain text - fine for the routes that never touch bcrypt),
+// this needs a real bcrypt hash.
+async function createUserWithPassword(plainPassword: string, overrides: Record<string, unknown> = {}) {
+	return createUser({ password: await bcrypt.hash(plainPassword, 12), ...overrides });
 }
 
 const STRIPPED_PUBLIC_PROFILE_FIELDS = ['password', 'email', 'lowerCaseEmail', 'isAdmin', 'orders'] as const;
@@ -319,5 +327,119 @@ describe('PUT /', () => {
 
 		const dbUserB = await User.findById(userB._id);
 		expect(dbUserB!.firstName).toBe('Untouched');
+	});
+});
+
+describe('PUT /password', () => {
+	it.each(['currentPassword', 'newPassword'] as const)(
+		'returns a 400 error when %s is missing',
+		async (missingField) => {
+			const user = await createUserWithPassword('oldPassword123');
+			const token = signToken(user._id);
+
+			const body: Record<string, string> = { currentPassword: 'oldPassword123', newPassword: 'newPassword123' };
+			delete body[missingField];
+
+			const res = await request(app).put('/users/password').set('Authorization', `Bearer ${token}`).send(body);
+
+			expect(res.status).toBe(400);
+			expect(res.body.error).toMatch(/password/i);
+		}
+	);
+
+	it.each(['short1', '        '] as const)('returns a 400 error when the new password is %j', async (newPassword) => {
+		const user = await createUserWithPassword('oldPassword123');
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put('/users/password')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ currentPassword: 'oldPassword123', newPassword });
+
+		expect(res.status).toBe(400);
+		expect(res.body.error).toMatch(/8 characters/i);
+	});
+
+	it('returns a 404 error when the authenticated user no longer exists', async () => {
+		const token = signToken(new mongoose.Types.ObjectId());
+
+		const res = await request(app)
+			.put('/users/password')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ currentPassword: 'oldPassword123', newPassword: 'newPassword123' });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/not found/i);
+	});
+
+	it('returns a 400 error when the current password is incorrect', async () => {
+		const user = await createUserWithPassword('oldPassword123');
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put('/users/password')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ currentPassword: 'wrongPassword123', newPassword: 'newPassword123' });
+
+		expect(res.status).toBe(400);
+		expect(res.body.error).toMatch(/password/i);
+	});
+
+	it('updates the password so the new password verifies against the stored hash', async () => {
+		const user = await createUserWithPassword('oldPassword123');
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put('/users/password')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ currentPassword: 'oldPassword123', newPassword: 'newPassword123' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.message).toMatch(/password/i);
+
+		const dbUser = await User.findById(user._id);
+		expect(await bcrypt.compare('newPassword123', dbUser!.password)).toBe(true);
+	});
+
+	it('does not include the password in the response', async () => {
+		const user = await createUserWithPassword('oldPassword123');
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put('/users/password')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ currentPassword: 'oldPassword123', newPassword: 'newPassword123' });
+
+		expect(res.body.user.password).toBeUndefined();
+	});
+
+	it("returns a 500 error when the authenticated user's id is not a valid ObjectId", async () => {
+		const token = signToken('not-a-valid-object-id');
+
+		const res = await request(app)
+			.put('/users/password')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ currentPassword: 'oldPassword123', newPassword: 'newPassword123' });
+
+		expect(res.status).toBe(500);
+	});
+
+	it("cannot update another user's password by sending their _id in the request body", async () => {
+		const userA = await createUserWithPassword('oldPasswordA123');
+		const userB = await createUserWithPassword('oldPasswordB123');
+		const token = signToken(userA._id);
+
+		const res = await request(app)
+			.put('/users/password')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ _id: userB._id.toString(), currentPassword: 'oldPasswordA123', newPassword: 'newPassword123' });
+
+		expect(res.status).toBe(200);
+
+		const dbUserA = await User.findById(userA._id);
+		expect(await bcrypt.compare('newPassword123', dbUserA!.password)).toBe(true);
+
+		const dbUserB = await User.findById(userB._id);
+		expect(await bcrypt.compare('oldPasswordB123', dbUserB!.password)).toBe(true);
 	});
 });

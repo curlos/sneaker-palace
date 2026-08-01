@@ -122,7 +122,7 @@ router.put('/password', verifyToken, async (req: Request, res: Response) => {
 			return res.status(400).json({ error: 'Current password and new password are required' });
 		}
 
-		if (req.body.newPassword.length < 8) {
+		if (req.body.newPassword.trim().length < 8) {
 			return res.status(400).json({ error: 'New password must be at least 8 characters long' });
 		}
 
