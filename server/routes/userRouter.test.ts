@@ -5,6 +5,7 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import User from '../models/User';
 import { startTestServer, stopTestServer } from '../utils/testServer';
 import { signToken } from '../utils/authAssertions';
+import { buildUser } from '../utils/userFixtures';
 
 let mongod: MongoMemoryReplSet;
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
@@ -21,20 +22,8 @@ afterEach(async () => {
 	await User.deleteMany({});
 });
 
-let userCounter = 0;
-
 async function createUser(overrides: Record<string, unknown> = {}) {
-	userCounter += 1;
-	const email = `user${userCounter}@example.com`;
-
-	return User.create({
-		email,
-		lowerCaseEmail: email,
-		password: 'password123',
-		firstName: 'Test',
-		lastName: 'User',
-		...overrides,
-	});
+	return User.create(buildUser(overrides));
 }
 
 // PUT /password runs bcrypt.compare() against the stored password, so unlike

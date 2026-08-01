@@ -26,15 +26,15 @@ router.get('/by/:type/:id', async (req: Request, res: Response) => {
 		}
 
 		const ratings = await Rating.find(query);
-		const ratingsWithAuthors = [];
 
-		for (const rating of ratings) {
-			const user = await User.findById(rating.userID).select('-password');
-			ratingsWithAuthors.push({
-				...rating.toObject(),
-				postedByUser: user,
-			});
-		}
+		const uniqueUserIDs = [...new Set(ratings.map((rating) => rating.userID))];
+		const users = await User.find({ _id: { $in: uniqueUserIDs } }).select('firstName lastName profilePic');
+		const usersById = new Map(users.map((user) => [user._id.toString(), user]));
+
+		const ratingsWithAuthors = ratings.map((rating) => ({
+			...rating.toObject(),
+			postedByUser: usersById.get(rating.userID) || null,
+		}));
 
 		return res.json(ratingsWithAuthors);
 	} catch {
