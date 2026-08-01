@@ -1,23 +1,12 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import CryptoJS from 'crypto-js';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import Shoe from '../models/Shoe';
 import { addAllShoes, addAllShoesByBrand, addShoeByName } from '../utils/sneakerV2_API';
+import { adminAuth } from '../utils/adminAuth';
 
 const router = express.Router();
-
-// Simple admin authentication middleware
-const adminAuth = (req: Request, res: Response, next: NextFunction) => {
-	const adminSecret = req.headers['admin-secret'];
-
-	// Use a temporary secret for this migration
-	if (adminSecret !== process.env.ADMIN_MIGRATION_SECRET) {
-		return res.status(403).json({ error: 'Admin access required' });
-	}
-
-	next();
-};
 
 // Shoe management endpoints - Admin only (Development environment only)
 if (process.env.NODE_ENV !== 'production') {

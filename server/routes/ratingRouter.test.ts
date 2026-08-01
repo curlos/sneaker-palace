@@ -13,7 +13,11 @@ let mongod: MongoMemoryReplSet;
 let app: Awaited<ReturnType<typeof startTestServer>>['app'];
 
 beforeAll(async () => {
-	({ app, mongod } = await startTestServer());
+	// ADMIN_MIGRATION_SECRET must be set here (not left undefined) - PUT
+	// /reset-all-ratings' adminAuth check is `adminSecret !== process.env.ADMIN_MIGRATION_SECRET`,
+	// and if both sides were undefined that comparison would be false, letting
+	// unauthenticated requests through.
+	({ app, mongod } = await startTestServer({ ADMIN_MIGRATION_SECRET: 'test-admin-secret' }));
 });
 
 afterAll(async () => {
@@ -231,11 +235,15 @@ describe('POST /rate', () => {
 	});
 
 	it("averages the new rating together with the shoe's existing rating", async () => {
-		const shoe = await Shoe.create({
-			...buildShoe('existing-rating-shoe'),
-			rating: 4,
-			ratings: [new mongoose.Types.ObjectId()],
+		const shoe = await Shoe.create(buildShoe('existing-rating-shoe'));
+		const otherUser = await createUser();
+		const existingRating = await createRating({
+			userID: otherUser._id.toString(),
+			shoeID: shoe.shoeID,
+			ratingNum: 4,
 		});
+		await Shoe.findByIdAndUpdate(shoe._id, { rating: 4, ratings: [existingRating._id] });
+
 		const user = await createUser();
 		const token = signToken(user._id);
 
@@ -407,12 +415,9 @@ describe('PUT /edit/:id', () => {
 
 	it("does not change the shoe's rating when ratingNum is not in the request body", async () => {
 		const user = await createUser();
-		const shoe = await Shoe.create({
-			...buildShoe('edit-no-ratingnum-shoe'),
-			rating: 4,
-			ratings: [new mongoose.Types.ObjectId()],
-		});
+		const shoe = await Shoe.create({ ...buildShoe('edit-no-ratingnum-shoe'), rating: 4 });
 		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		await Shoe.findByIdAndUpdate(shoe._id, { ratings: [rating._id] });
 		const token = signToken(user._id);
 
 		const res = await request(app)
@@ -427,12 +432,9 @@ describe('PUT /edit/:id', () => {
 
 	it("does not change the shoe's rating when ratingNum is sent but equal to the existing value", async () => {
 		const user = await createUser();
-		const shoe = await Shoe.create({
-			...buildShoe('edit-same-ratingnum-shoe'),
-			rating: 4,
-			ratings: [new mongoose.Types.ObjectId()],
-		});
+		const shoe = await Shoe.create({ ...buildShoe('edit-same-ratingnum-shoe'), rating: 4 });
 		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		await Shoe.findByIdAndUpdate(shoe._id, { ratings: [rating._id] });
 		const token = signToken(user._id);
 
 		const res = await request(app)
@@ -531,12 +533,9 @@ describe('PUT /edit/:id', () => {
 	// the shoe recalculation instead of being silently skipped.
 	it('recalculates the shoe rating when ratingNum is edited to 0', async () => {
 		const user = await createUser();
-		const shoe = await Shoe.create({
-			...buildShoe('edit-zero-ratingnum-shoe'),
-			rating: 4,
-			ratings: [new mongoose.Types.ObjectId()],
-		});
+		const shoe = await Shoe.create({ ...buildShoe('edit-zero-ratingnum-shoe'), rating: 4 });
 		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		await Shoe.findByIdAndUpdate(shoe._id, { ratings: [rating._id] });
 		const token = signToken(user._id);
 
 		const res = await request(app)
@@ -771,6 +770,88 @@ describe.each(REACTION_ENDPOINTS)('PUT $path', ({ path, field, oppositeField }) 
 			.put(path)
 			.set('Authorization', `Bearer ${token}`)
 			.send({ ratingID: ratingId.toString() });
+
+		expect(res.status).toBe(500);
+	});
+});
+
+describe('PUT /reset-all-ratings', () => {
+	it('returns a 403 error when no admin-secret header is sent', async () => {
+		const res = await request(app).put('/rating/reset-all-ratings');
+
+		expect(res.status).toBe(403);
+	});
+
+	it('returns a 403 error when the admin-secret header is wrong', async () => {
+		const res = await request(app).put('/rating/reset-all-ratings').set('admin-secret', 'wrong-secret');
+
+		expect(res.status).toBe(403);
+	});
+
+	it('deletes all ratings and resets every shoe and user rating field, reporting accurate counts', async () => {
+		const shoeA = await Shoe.create(buildShoe('reset-shoe-a'));
+		const shoeB = await Shoe.create(buildShoe('reset-shoe-b'));
+		const userA = await createUser();
+		const userB = await createUser();
+		const userC = await createUser();
+
+		// shoeA has one real rating (from userA); shoeB has two (from userB and userC) -
+		// mirroring the bidirectional shoe.ratings/user.ratings refs POST /rate creates.
+		const ratingA = await createRating({ userID: userA._id.toString(), shoeID: shoeA.shoeID, ratingNum: 4 });
+		const ratingB1 = await createRating({ userID: userB._id.toString(), shoeID: shoeB.shoeID, ratingNum: 3 });
+		const ratingB2 = await createRating({ userID: userC._id.toString(), shoeID: shoeB.shoeID, ratingNum: 5 });
+
+		const shoeRatingPairs = [
+			[shoeA, [ratingA]],
+			[shoeB, [ratingB1, ratingB2]],
+		] as const;
+		for (const [shoe, ratings] of shoeRatingPairs) {
+			await Shoe.findByIdAndUpdate(shoe._id, { rating: 4, ratings: ratings.map((rating) => rating._id) });
+		}
+
+		const userRatingPairs = [
+			[userA, ratingA],
+			[userB, ratingB1],
+			[userC, ratingB2],
+		] as const;
+		for (const [user, rating] of userRatingPairs) {
+			await User.findByIdAndUpdate(user._id, { ratings: [rating._id] });
+		}
+
+		const res = await request(app).put('/rating/reset-all-ratings').set('admin-secret', 'test-admin-secret');
+
+		expect(res.status).toBe(200);
+		expect(res.body.deletedRatingsCount).toBe(3);
+		expect(res.body.modifiedShoesCount).toBe(2);
+		expect(res.body.modifiedUsersCount).toBe(3);
+
+		expect(await Rating.countDocuments()).toBe(0);
+
+		for (const [shoe] of shoeRatingPairs) {
+			const dbShoe = await Shoe.findById(shoe._id);
+			expect(dbShoe!.rating).toBe(0);
+			expect(dbShoe!.ratings).toHaveLength(0);
+		}
+
+		for (const [user] of userRatingPairs) {
+			const dbUser = await User.findById(user._id);
+			expect(dbUser!.ratings).toHaveLength(0);
+		}
+	});
+
+	it('succeeds as a no-op when there is nothing to reset', async () => {
+		const res = await request(app).put('/rating/reset-all-ratings').set('admin-secret', 'test-admin-secret');
+
+		expect(res.status).toBe(200);
+		expect(res.body.deletedRatingsCount).toBe(0);
+		expect(res.body.modifiedShoesCount).toBe(0);
+		expect(res.body.modifiedUsersCount).toBe(0);
+	});
+
+	it('returns a 500 error when a database operation fails', async () => {
+		vi.spyOn(Rating, 'deleteMany').mockRejectedValueOnce(new Error('DB error'));
+
+		const res = await request(app).put('/rating/reset-all-ratings').set('admin-secret', 'test-admin-secret');
 
 		expect(res.status).toBe(500);
 	});

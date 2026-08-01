@@ -3,6 +3,7 @@ import Rating from '../models/Rating';
 import Shoe from '../models/Shoe';
 import User from '../models/User';
 import { verifyToken } from '../utils/verifyToken';
+import { adminAuth } from '../utils/adminAuth';
 
 const router = express.Router();
 
@@ -251,28 +252,30 @@ router.delete('/:id', verifyToken, async (req: Request, res: Response) => {
 	}
 });
 
-// Reset all shoe ratings to 0 and delete all ratings
-// TODO: Add auth. This one's kind of weird. Maybe hide this behind admin access or something...
-router.put('/reset-all-ratings', async (req: Request, res: Response) => {
-	try {
-		// Delete all ratings from the database
-		const deletedRatings = await Rating.deleteMany({});
+// Reset all shoe ratings to 0 and delete all ratings.
+// Destructive - dev-only, admin-secret protected (matches adminRouter.ts's dev-only routes).
+if (process.env.NODE_ENV !== 'production') {
+	router.put('/reset-all-ratings', adminAuth, async (req: Request, res: Response) => {
+		try {
+			// Delete all ratings from the database
+			const deletedRatings = await Rating.deleteMany({});
 
-		// Reset all shoe ratings to 0 and clear ratings arrays
-		const updatedShoes = await Shoe.updateMany({}, { $set: { rating: 0, ratings: [] } });
+			// Reset all shoe ratings to 0 and clear ratings arrays
+			const updatedShoes = await Shoe.updateMany({}, { $set: { rating: 0, ratings: [] } });
 
-		// Clear all user ratings arrays
-		const updatedUsers = await User.updateMany({}, { $set: { ratings: [] } });
+			// Clear all user ratings arrays
+			const updatedUsers = await User.updateMany({}, { $set: { ratings: [] } });
 
-		return res.json({
-			message: 'All ratings deleted and shoe ratings reset to 0',
-			deletedRatingsCount: deletedRatings.deletedCount,
-			modifiedShoesCount: updatedShoes.modifiedCount,
-			modifiedUsersCount: updatedUsers.modifiedCount,
-		});
-	} catch {
-		return res.status(500).json({ error: 'Failed to reset ratings and shoes' });
-	}
-});
+			return res.json({
+				message: 'All ratings deleted and shoe ratings reset to 0',
+				deletedRatingsCount: deletedRatings.deletedCount,
+				modifiedShoesCount: updatedShoes.modifiedCount,
+				modifiedUsersCount: updatedUsers.modifiedCount,
+			});
+		} catch {
+			return res.status(500).json({ error: 'Failed to reset ratings and shoes' });
+		}
+	});
+}
 
 export default router;
