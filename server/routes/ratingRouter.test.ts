@@ -775,6 +775,190 @@ describe.each(REACTION_ENDPOINTS)('PUT $path', ({ path, field, oppositeField }) 
 	});
 });
 
+describe('DELETE /:id', () => {
+	it('returns a 404 error when the rating does not exist', async () => {
+		const user = await createUser();
+		const token = signToken(user._id);
+		const ratingId = new mongoose.Types.ObjectId();
+
+		const res = await request(app).delete(`/rating/${ratingId}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/rating not found/i);
+	});
+
+	it('returns a 403 error when the authenticated user does not own the rating', async () => {
+		const owner = await createUser();
+		const otherUser = await createUser();
+		const rating = await createRating({ userID: owner._id.toString() });
+		const token = signToken(otherUser._id);
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(403);
+		expect(res.body.error).toMatch(/access denied/i);
+	});
+
+	it('returns a 500 error when the rating id is not a valid ObjectId', async () => {
+		const user = await createUser();
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.delete('/rating/not-a-valid-object-id')
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(500);
+	});
+
+	it('deletes the rating from the database', async () => {
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString() });
+		const token = signToken(user._id);
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		expect(await Rating.findById(rating._id)).toBeNull();
+	});
+
+	it('returns deletedRating and updatedShoe in the response body', async () => {
+		const shoe = await Shoe.create(buildShoe('delete-response-shoe'));
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID });
+		await Shoe.findByIdAndUpdate(shoe._id, { ratings: [rating._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body.deletedRating).toEqual(expect.objectContaining({ _id: rating._id.toString() }));
+		expect(res.body.updatedShoe).toEqual(expect.objectContaining({ shoeID: shoe.shoeID }));
+	});
+
+	it("sets the shoe's rating to 0 when removing its only tracked rating", async () => {
+		const shoe = await Shoe.create({ ...buildShoe('delete-only-rating-shoe'), rating: 4 });
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		await Shoe.findByIdAndUpdate(shoe._id, { ratings: [rating._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		const dbShoe = await Shoe.findById(shoe._id);
+		expect(dbShoe!.rating).toBe(0);
+	});
+
+	it("recalculates the shoe's average rating using the removal formula when other ratings remain", async () => {
+		const shoe = await Shoe.create(buildShoe('delete-avg-shoe'));
+		const user = await createUser();
+		const otherUser = await createUser();
+		const ratingToDelete = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 2 });
+		const siblingRating = await createRating({
+			userID: otherUser._id.toString(),
+			shoeID: shoe.shoeID,
+			ratingNum: 4,
+		});
+		await Shoe.findByIdAndUpdate(shoe._id, { rating: 3, ratings: [ratingToDelete._id, siblingRating._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.delete(`/rating/${ratingToDelete._id}`)
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		const dbShoe = await Shoe.findById(shoe._id);
+		// (avg * count - removed) / (count - 1) = (3 * 2 - 2) / 1 = 4
+		expect(dbShoe!.rating).toBe(4);
+	});
+
+	// shoe.rating is updated via shoe.save() (only the in-memory-modified path), while
+	// shoe.ratings is updated via a separate shoe.updateOne({ $pull }) that bypasses the
+	// in-memory document. Checking both together, from the same delete, proves neither
+	// write clobbers the other.
+	it("updates both the shoe's rating and ratings array together from a single delete", async () => {
+		const shoe = await Shoe.create(buildShoe('delete-both-fields-shoe'));
+		const user = await createUser();
+		const otherUser = await createUser();
+		const ratingToDelete = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 2 });
+		const siblingRating = await createRating({
+			userID: otherUser._id.toString(),
+			shoeID: shoe.shoeID,
+			ratingNum: 4,
+		});
+		await Shoe.findByIdAndUpdate(shoe._id, { rating: 3, ratings: [ratingToDelete._id, siblingRating._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.delete(`/rating/${ratingToDelete._id}`)
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		const dbShoe = await Shoe.findById(shoe._id);
+		expect(dbShoe!.rating).toBe(4);
+		expect(dbShoe!.ratings.map(String)).toEqual([siblingRating._id.toString()]);
+	});
+
+	it("removes the rating's _id from the shoe's ratings array", async () => {
+		const shoe = await Shoe.create(buildShoe('delete-shoe-ratings-array-shoe'));
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID });
+		await Shoe.findByIdAndUpdate(shoe._id, { ratings: [rating._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		const dbShoe = await Shoe.findById(shoe._id);
+		expect(dbShoe!.ratings.map(String)).not.toContain(rating._id.toString());
+	});
+
+	it("removes the rating's _id from the user's ratings array", async () => {
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString() });
+		await User.findByIdAndUpdate(user._id, { ratings: [rating._id] });
+		const token = signToken(user._id);
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		const dbUser = await User.findById(user._id);
+		expect(dbUser!.ratings.map(String)).not.toContain(rating._id.toString());
+	});
+
+	it("returns updatedShoe as null when the rating's shoe no longer exists", async () => {
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString(), shoeID: 'no-such-shoe' });
+		const token = signToken(user._id);
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+		expect(res.body.updatedShoe).toBeNull();
+	});
+
+	it("does not error when the rating's author no longer exists", async () => {
+		const missingUserId = new mongoose.Types.ObjectId();
+		const rating = await createRating({ userID: missingUserId.toString() });
+		const token = signToken(missingUserId);
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(200);
+	});
+
+	it('returns a 500 error when a database operation fails', async () => {
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString() });
+		const token = signToken(user._id);
+		vi.spyOn(Rating, 'findByIdAndDelete').mockRejectedValueOnce(new Error('DB error'));
+
+		const res = await request(app).delete(`/rating/${rating._id}`).set('Authorization', `Bearer ${token}`);
+
+		expect(res.status).toBe(500);
+	});
+});
+
 describe('PUT /reset-all-ratings', () => {
 	it('returns a 403 error when no admin-secret header is sent', async () => {
 		const res = await request(app).put('/rating/reset-all-ratings');
