@@ -360,3 +360,195 @@ describe('POST /rate', () => {
 		expect(res.body.error).toMatch(/not found/i);
 	});
 });
+
+describe('PUT /edit/:id', () => {
+	it('returns a 404 error when the rating does not exist', async () => {
+		const user = await createUser();
+		const token = signToken(user._id);
+		const ratingId = new mongoose.Types.ObjectId();
+
+		const res = await request(app)
+			.put(`/rating/edit/${ratingId}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 3 });
+
+		expect(res.status).toBe(404);
+		expect(res.body.error).toMatch(/rating not found/i);
+	});
+
+	it('returns a 403 error when the authenticated user does not own the rating', async () => {
+		const owner = await createUser();
+		const otherUser = await createUser();
+		const rating = await createRating({ userID: owner._id.toString() });
+		const token = signToken(otherUser._id);
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 3 });
+
+		expect(res.status).toBe(403);
+		expect(res.body.error).toMatch(/access denied/i);
+	});
+
+	it('updates the rating and returns the updated document', async () => {
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString(), summary: 'Old summary' });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ summary: 'New summary' });
+
+		expect(res.status).toBe(200);
+		expect(res.body.summary).toBe('New summary');
+	});
+
+	it("does not change the shoe's rating when ratingNum is not in the request body", async () => {
+		const user = await createUser();
+		const shoe = await Shoe.create({
+			...buildShoe('edit-no-ratingnum-shoe'),
+			rating: 4,
+			ratings: [new mongoose.Types.ObjectId()],
+		});
+		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ summary: 'Updated summary only' });
+
+		expect(res.status).toBe(200);
+		const dbShoe = await Shoe.findById(shoe._id);
+		expect(dbShoe!.rating).toBe(4);
+	});
+
+	it("does not change the shoe's rating when ratingNum is sent but equal to the existing value", async () => {
+		const user = await createUser();
+		const shoe = await Shoe.create({
+			...buildShoe('edit-same-ratingnum-shoe'),
+			rating: 4,
+			ratings: [new mongoose.Types.ObjectId()],
+		});
+		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 4 });
+
+		expect(res.status).toBe(200);
+		const dbShoe = await Shoe.findById(shoe._id);
+		expect(dbShoe!.rating).toBe(4);
+	});
+
+	it("sets the shoe's rating to the raw new value when the shoe has no tracked ratings", async () => {
+		const user = await createUser();
+		const shoe = await Shoe.create(buildShoe('edit-zero-count-shoe'));
+		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 3 });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 5 });
+
+		expect(res.status).toBe(200);
+		const dbShoe = await Shoe.findById(shoe._id);
+		expect(dbShoe!.rating).toBe(5);
+	});
+
+	it("recalculates the shoe's average rating using the update formula when it has existing ratings", async () => {
+		const user = await createUser();
+		const otherUser = await createUser();
+		const shoe = await Shoe.create(buildShoe('edit-avg-shoe'));
+
+		// Two real ratings on this shoe: 2 and 4, averaging to 3.
+		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 2 });
+		const siblingRating = await createRating({ userID: otherUser._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		await Shoe.findByIdAndUpdate(shoe._id, { rating: 3, ratings: [rating._id, siblingRating._id] });
+
+		const token = signToken(user._id);
+
+		// Edit the "2" up to "5" (still within ratingNum's max of 5).
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 5 });
+
+		expect(res.status).toBe(200);
+		const dbShoe = await Shoe.findById(shoe._id);
+		// avg + (new - old) / count = 3 + (5 - 2) / 2 = 4.5
+		expect(dbShoe!.rating).toBe(4.5);
+	});
+
+	it("does not error when the rating's shoe no longer exists", async () => {
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString(), shoeID: 'no-such-shoe', ratingNum: 3 });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 5 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.ratingNum).toBe(5);
+	});
+
+	it('returns a 500 error when the update fails schema validation', async () => {
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString() });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 6 });
+
+		expect(res.status).toBe(500);
+	});
+
+	it('returns a 500 error when a database operation fails', async () => {
+		const user = await createUser();
+		const rating = await createRating({ userID: user._id.toString() });
+		const token = signToken(user._id);
+		vi.spyOn(Rating, 'findByIdAndUpdate').mockRejectedValueOnce(new Error('DB error'));
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 5 });
+
+		expect(res.status).toBe(500);
+	});
+
+	// ratingNum has no schema `min` (only `max: 5`), so 0 is a legal value. The guard
+	// checks `!== undefined` (not truthiness) so editing down to 0 still triggers
+	// the shoe recalculation instead of being silently skipped.
+	it('recalculates the shoe rating when ratingNum is edited to 0', async () => {
+		const user = await createUser();
+		const shoe = await Shoe.create({
+			...buildShoe('edit-zero-ratingnum-shoe'),
+			rating: 4,
+			ratings: [new mongoose.Types.ObjectId()],
+		});
+		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		const token = signToken(user._id);
+
+		const res = await request(app)
+			.put(`/rating/edit/${rating._id}`)
+			.set('Authorization', `Bearer ${token}`)
+			.send({ ratingNum: 0 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.ratingNum).toBe(0);
+
+		const dbShoe = await Shoe.findById(shoe._id);
+		// avg + (new - old) / count = 4 + (0 - 4) / 1 = 0
+		expect(dbShoe!.rating).toBe(0);
+	});
+});

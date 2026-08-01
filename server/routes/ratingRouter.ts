@@ -108,7 +108,7 @@ router.put('/edit/:id', verifyToken, async (req: Request, res: Response) => {
 		);
 
 		// Update shoe rating if ratingNum changed
-		if (req.body.ratingNum && req.body.ratingNum !== oldRating.ratingNum) {
+		if (req.body.ratingNum !== undefined && req.body.ratingNum !== oldRating.ratingNum) {
 			const shoe = await Shoe.findOne({ shoeID: oldRating.shoeID });
 			if (shoe) {
 				const currentRatingCount = shoe.ratings.length;
