@@ -1,0 +1,58 @@
+import { Shoe, ShoeFilters, AuthUser } from './types/types';
+
+export const makeShoe = (overrides: Partial<Shoe> = {}): Shoe => ({
+	_id: undefined,
+	shoeID: '1',
+	sku: 'sku',
+	brand: 'brand',
+	name: 'name',
+	colorway: 'colorway',
+	gender: 'gender',
+	silhouette: 'silhouette',
+	releaseYear: 2020,
+	releaseDate: '2020-01-01',
+	retailPrice: 100,
+	estimatedMarketValue: 100,
+	story: '',
+	image: { '360': [], original: '', small: '', thumbnail: '' },
+	links: { stockX: '', goat: '', flightClub: '', stadiumGoods: '' },
+	ratings: [],
+	rating: 0,
+	favorites: [],
+	createdAt: '',
+	updatedAt: '',
+	...overrides,
+});
+
+export const makeEmptyFilters = (overrides: Partial<ShoeFilters> = {}): ShoeFilters => ({
+	colors: {},
+	brands: {},
+	genders: {},
+	priceRanges: {},
+	releaseYears: {},
+	shoeSizes: {},
+	...overrides,
+});
+
+export const makeAuthUser = (overrides: Partial<AuthUser> = {}): AuthUser => ({
+	_id: 'user-1',
+	email: 'test@example.com',
+	password: '',
+	firstName: 'Test',
+	lastName: 'User',
+	isAdmin: false,
+	profilePic: '',
+	ratings: [],
+	favorites: [],
+	helpful: [],
+	notHelpful: [],
+	itemsBought: [],
+	lowerCaseEmail: 'test@example.com',
+	createdAt: '',
+	updatedAt: '',
+	preselectedShoeSize: '',
+	preferredGender: '',
+	unitOfMeasure: '',
+	accessToken: 'mock-access-token',
+	...overrides,
+});
