@@ -45,7 +45,7 @@ const CheckoutProduct = ({ product, type }: Props) => {
 			</div>
 
 			<div className="text-lg font-medium">
-				{shoe && shoe.retailPrice && Number(product.quantity * shoe?.retailPrice).toFixed(2)}
+				${shoe && shoe.retailPrice && Number(product.quantity * shoe?.retailPrice).toFixed(2)}
 			</div>
 		</div>
 	);
