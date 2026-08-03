@@ -18,6 +18,10 @@ class MockIntersectionObserver implements IntersectionObserver {
 }
 global.IntersectionObserver = MockIntersectionObserver;
 
+// jsdom doesn't implement URL.createObjectURL (used for local image previews
+// in AccountDetails.tsx/ReviewForm.tsx before a file is uploaded).
+URL.createObjectURL = () => 'blob:mock-preview-url';
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());

@@ -16,6 +16,16 @@ const AccountDetails = () => {
 	const [email, setEmail] = useState(user?.email);
 	const [file, setFile] = useState<File>();
 
+	// user arrives asynchronously after mount - sync the fields once it loads,
+	// during render rather than in an effect, to avoid an extra empty-then-filled render.
+	const [loadedUserId, setLoadedUserId] = useState(user?._id);
+	if (user && user._id !== loadedUserId) {
+		setLoadedUserId(user._id);
+		setFirstName(user.firstName);
+		setLastName(user.lastName);
+		setEmail(user.email);
+	}
+
 	const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 	const [showFailureMessage, setShowFailureMessage] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');

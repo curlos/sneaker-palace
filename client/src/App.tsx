@@ -112,7 +112,7 @@ const App = () => {
 						</Route>
 
 						<Route path="/shoe/submit-review/:shoeID" exact>
-							{!user ? (
+							{!userId ? (
 								<Redirect to="/login" />
 							) : (
 								<span>
@@ -122,7 +122,7 @@ const App = () => {
 						</Route>
 
 						<Route path="/shoe/edit-review/:shoeID/:reviewID" exact>
-							{!user ? (
+							{!userId ? (
 								<Redirect to="/login" />
 							) : (
 								<span>
@@ -136,7 +136,7 @@ const App = () => {
 						</Route>
 
 						<Route path="/orders" exact>
-							{!user ? (
+							{!userId ? (
 								<Redirect to="/" />
 							) : (
 								<span>
@@ -150,7 +150,7 @@ const App = () => {
 						</Route>
 
 						<Route path="/settings" exact>
-							{!user ? (
+							{!userId ? (
 								<Redirect to="/" />
 							) : (
 								<span>
