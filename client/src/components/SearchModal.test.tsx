@@ -96,7 +96,7 @@ it('closes the modal when Escape is pressed', async () => {
 	expect(setShowSearchModal).toHaveBeenCalledWith(false);
 });
 
-it.only('renders product results inside the modal', async () => {
+it('renders product results inside the modal', async () => {
 	renderWithProviders(<SearchModal showSearchModal={true} setShowSearchModal={vi.fn()} />);
 
 	expect(await screen.findByText('Air Max 1')).toBeInTheDocument();
