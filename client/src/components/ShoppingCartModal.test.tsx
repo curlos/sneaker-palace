@@ -89,7 +89,7 @@ it('does not close the modal when clicking inside the dialog', async () => {
 	expect(setShowModal).not.toHaveBeenCalled();
 });
 
-it.only('closes the modal when Escape is pressed', async () => {
+it('closes the modal when Escape is pressed', async () => {
 	const setShowModal = vi.fn();
 	const user = userEvent.setup();
 	renderWithProviders(<ShoppingCartModal showModal={true} setShowModal={setShowModal} />);

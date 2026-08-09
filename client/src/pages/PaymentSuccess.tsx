@@ -24,7 +24,7 @@ const PaymentSuccess = () => {
 	const { data: user } = useGetLoggedInUserQuery(userId);
 
 	// Use unified cart hook
-	const { data: cartData } = useCart();
+	const { data: cartData, isLoading: cartLoading } = useCart();
 	const currentCart = cartData;
 	const total = cartData?.total || 0;
 
@@ -36,7 +36,11 @@ const PaymentSuccess = () => {
 	const [createUserOrder] = useCreateUserOrderMutation();
 	const [createGuestOrder] = useCreateGuestOrderMutation();
 
-	const [loading, setLoading] = useState(true);
+	// Starts already-resolved when there's no payment intent to look up (e.g. landing here
+	// directly) - nothing will ever set it false otherwise.
+	const [loading, setLoading] = useState(
+		() => !!new URLSearchParams(window.location.search).get('payment_intent_client_secret')
+	);
 	const [orderID, setOrderID] = useState('');
 
 	const stripe = useStripe();
@@ -131,12 +135,15 @@ const PaymentSuccess = () => {
 					}
 
 					setLoading(false);
+				} else if (!cartLoading) {
+					// Cart has finished loading and is genuinely empty - nothing to order, stop waiting.
+					setLoading(false);
 				}
 			};
 			addToOrders();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentCart, paymentInfo, total, user?._id]);
+	}, [currentCart, paymentInfo, total, user?._id, cartLoading]);
 
 	return loading ? (
 		<div className="flex justify-center h-screen p-10">

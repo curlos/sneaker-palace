@@ -3,8 +3,9 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import CheckoutProduct from '../components/CheckoutProduct';
 import { useCart } from '../api/cartApi';
+import { useGetShoesBulkQuery } from '../api/shoesApi';
 import CircleLoader from '../skeleton_loaders/CircleLoader';
-import { IProduct } from '../types/types';
+import { IProduct, OrderedItem, Shoe } from '../types/types';
 
 export default function CheckoutForm() {
 	const stripe = useStripe();
@@ -14,6 +15,28 @@ export default function CheckoutForm() {
 	const { data: cartData } = useCart();
 	const currentCart = cartData;
 	const total = cartData?.total || 0;
+
+	const products = currentCart?.products || [];
+	const productIds: string[] = products.map((product: IProduct) => product.productID);
+	const uniqueProductIds = Array.from(new Set(productIds));
+	const { data: shoesData, isLoading: shoesLoading } = useGetShoesBulkQuery(
+		{ ids: uniqueProductIds, key: 'shoeID' },
+		{ skip: uniqueProductIds.length === 0 }
+	);
+
+	// Create lookup map for O(1) access instead of O(N) find operations
+	const shoeLookup = new Map<string, Shoe>();
+	shoesData?.forEach((shoe: Shoe) => {
+		shoeLookup.set(shoe.shoeID, shoe);
+	});
+
+	// Pair each product with its shoe, dropping any product whose shoe can't be found
+	const cartItems = products
+		.map((product: IProduct) => {
+			const shoe = shoeLookup.get(product.productID);
+			return shoe ? { product, shoe } : null;
+		})
+		.filter((item): item is OrderedItem => item !== null);
 
 	const [message, setMessage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -113,7 +136,7 @@ export default function CheckoutForm() {
 								<CircleLoader size={5} />
 							</div>
 						) : (
-							'Pay now'
+							'Pay Now'
 						)}
 					</span>
 				</button>
@@ -155,9 +178,15 @@ export default function CheckoutForm() {
 					</div>
 
 					<div className="">
-						{currentCart?.products?.map((product: IProduct) => (
-							<CheckoutProduct key={product._id} product={product} type="small" />
-						))}
+						{shoesLoading ? (
+							<div className="flex py-10 h-screen">
+								<CircleLoader size={16} />
+							</div>
+						) : (
+							cartItems.map(({ product, shoe }) => (
+								<CheckoutProduct key={product._id} product={product} shoe={shoe} type="small" />
+							))
+						)}
 					</div>
 				</div>
 			</div>

@@ -151,7 +151,7 @@ it("shows edit/delete controls to the review's author", async () => {
 	expect(screen.getByRole('link', { name: /edit review/i })).toBeInTheDocument();
 });
 
-it.only('hides edit/delete controls from a different logged-in user', async () => {
+it('hides edit/delete controls from a different logged-in user', async () => {
 	renderAsUser('someone-else');
 	await screen.findByText('Great shoe');
 

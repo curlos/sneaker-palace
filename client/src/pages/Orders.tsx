@@ -41,14 +41,14 @@ const Orders = () => {
 			<h1 ref={ordersRef} tabIndex={-1} className="text-3xl py-5 outline-none">
 				Your Orders
 			</h1>
-			{!orders || orders.length < 1 ? (
+			{sortedOrders.length < 1 ? (
 				<div className="text-base flex items-center gap-2">
 					<div>No orders found</div>
 					<Link to="/shoes" className="py-4 px-10 max-sm:px-2 bg-black text-white">
 						Order shoes
 					</Link>
 				</div>
-			) : sortedOrders.length > 0 ? (
+			) : (
 				<div>
 					<div>
 						{paginatedOrders.map((order: IOrder) => (
@@ -66,7 +66,7 @@ const Orders = () => {
 						/>
 					)}
 				</div>
-			) : null}
+			)}
 		</div>
 	);
 };
