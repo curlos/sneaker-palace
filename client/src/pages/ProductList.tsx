@@ -4,7 +4,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { useGetPaginatedShoesQuery } from '../api/shoesApi';
 import { AppliedFilters } from '../components/AppliedFilters';
 import { Pagination } from '../components/Pagination';
-import Sidebar from '../components/Sidebar';
+import FilterSidebar from '../components/FilterSidebar';
 import SmallShoe from '../components/SmallShoe';
 import { SortDropdown } from '../components/SortDropdown';
 import SmallShoeSkeleton from '../skeleton_loaders/SmallShoeSkeleton';
@@ -218,7 +218,7 @@ const ProductList = () => {
 				) : null}
 
 				{showSidebar ? (
-					<Sidebar filters={filters} updateFilters={updateFilters} shoeSizes={SHOE_SIZES} />
+					<FilterSidebar filters={filters} updateFilters={updateFilters} shoeSizes={SHOE_SIZES} />
 				) : null}
 
 				<div className="flex-[10] p-4 max-lg:p-3">

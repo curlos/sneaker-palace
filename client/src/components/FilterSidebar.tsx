@@ -21,7 +21,7 @@ const colorSwatchClasses: Record<string, string> = {
 	purple: 'bg-purple-500',
 };
 
-const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
+const FilterSidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 	const [showColors, setShowColors] = useState(false);
 	const [showBrands, setShowBrands] = useState(false);
 	const [showGender, setShowGender] = useState(false);
@@ -307,4 +307,4 @@ const Sidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 	);
 };
 
-export default Sidebar;
+export default FilterSidebar;
