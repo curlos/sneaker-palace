@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ShoeFilters } from '../types/types';
 
 interface Props {
@@ -195,7 +195,7 @@ const FilterSidebar = ({ filters, updateFilters, shoeSizes }: Props) => {
 					onClick={() => setShowPriceRanges(!showPriceRanges)}
 				>
 					<span id="filter-label-price" className="font-bold mb-3">
-						Shop by Price
+						Price
 					</span>{' '}
 					{showPriceRanges ? (
 						<ChevronUpIcon className="h-6 w-6" aria-hidden="true" />
