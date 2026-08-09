@@ -21,26 +21,30 @@ export const ordersApi = baseAPI.injectEndpoints({
 			providesTags: (_, __, orderId) => [{ type: 'Order', id: orderId }],
 		}),
 
-		// Create order for logged-in user
+		// Create order for logged-in user. Retried on failure - orderRouter.ts dedupes by
+		// paymentIntentID, so a retry after a lost response just returns the existing order
+		// instead of creating a duplicate.
 		createUserOrder: builder.mutation<CreateOrderResponse, CreateOrderPayload>({
 			query: (orderData) => ({
 				url: '/orders',
 				method: 'POST',
 				body: orderData,
 			}),
+			extraOptions: { maxRetries: 2 },
 			invalidatesTags: (result, error, orderData) => [
 				{ type: 'User', id: orderData.userID },
 				{ type: 'Order', id: 'USER_ORDERS' },
 			],
 		}),
 
-		// Create order for guest user (no account)
+		// Create order for guest user (no account). Same retry-safety reasoning as createUserOrder.
 		createGuestOrder: builder.mutation<CreateOrderResponse, CreateOrderPayload>({
 			query: (orderData) => ({
 				url: '/orders/no-account',
 				method: 'POST',
 				body: orderData,
 			}),
+			extraOptions: { maxRetries: 2 },
 		}),
 	}),
 });

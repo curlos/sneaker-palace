@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 
 // Hook
 export const useWindowSize = () => {
-	// Initialize state with undefined width/height so server and client renders match
-	// Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
+	// Initialize state with the actual window size (this app is client-only, no SSR,
+	// so there's no hydration mismatch to guard against). Starting at {0, 0} instead
+	// made every mount look like a resize from 0 to the real width, which tripped
+	// consumers' "the breakpoint changed" logic on first render.
 	const [windowSize, setWindowSize] = useState({
-		width: 0,
-		height: 0,
+		width: window.innerWidth,
+		height: window.innerHeight,
 	});
 	useEffect(() => {
 		// Handler to call on window resize

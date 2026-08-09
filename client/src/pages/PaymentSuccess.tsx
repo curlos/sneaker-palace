@@ -42,6 +42,7 @@ const PaymentSuccess = () => {
 		() => !!new URLSearchParams(window.location.search).get('payment_intent_client_secret')
 	);
 	const [orderID, setOrderID] = useState('');
+	const [orderFailed, setOrderFailed] = useState(false);
 
 	const stripe = useStripe();
 	const [paymentInfo, setPaymentInfo] = useState<PaymentInfo>({});
@@ -111,6 +112,7 @@ const PaymentSuccess = () => {
 								}
 							} catch (err) {
 								console.log(err);
+								setOrderFailed(true);
 							}
 						}
 					} else {
@@ -130,6 +132,7 @@ const PaymentSuccess = () => {
 								}
 							} catch (err) {
 								console.log(err);
+								setOrderFailed(true);
 							}
 						}
 					}
@@ -157,18 +160,24 @@ const PaymentSuccess = () => {
 				) : (
 					<h1 className="text-4xl">Hello Guest,</h1>
 				)}
-				<div>Your order has been placed successfully.</div>
+				{orderFailed ? (
+					<div role="alert">Payment succeeded, but we couldn't confirm your order. Please contact support.</div>
+				) : (
+					<div>Your order has been placed successfully.</div>
+				)}
 
 				<div className="flex gap-3 mt-3 max-sm:flex-col">
 					<Link to="/shoes" className="bg-black p-4 text-white rounded-full text-center">
 						Continue Shopping
 					</Link>
-					<Link
-						to={`/order-details/${orderID}`}
-						className="bg-white p-4 text-black border border-black rounded-full text-center"
-					>
-						View or manage order
-					</Link>
+					{!orderFailed && (
+						<Link
+							to={`/order-details/${orderID}`}
+							className="bg-white p-4 text-black border border-black rounded-full text-center"
+						>
+							View or manage order
+						</Link>
+					)}
 				</div>
 			</div>
 		</div>
