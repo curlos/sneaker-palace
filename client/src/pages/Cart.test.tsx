@@ -115,7 +115,7 @@ it("updates the Subtotal/Total after a cart item's quantity changes", async () =
 	expect(await screen.findAllByText('$500.00')).toHaveLength(2);
 });
 
-it.only('shows the empty-bag message again after removing the only item from the cart', async () => {
+it('shows the empty-bag message again after removing the only item from the cart', async () => {
 	localStorage.setItem(
 		'currentCart',
 		JSON.stringify({ products: [{ _id: 'p1', productID: 'shoe-1', size: '10', quantity: 2, retailPrice: 100 }] })
