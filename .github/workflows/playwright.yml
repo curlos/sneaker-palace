@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [ main, master ]
     paths: [ 'client/**' ]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
 jobs:
   test:
     timeout-minutes: 60
@@ -13,6 +20,9 @@ jobs:
     defaults:
       run:
         working-directory: client
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - uses: actions/checkout@v7
     - uses: actions/setup-node@v7
@@ -30,3 +40,15 @@ jobs:
         name: playwright-report
         path: client/playwright-report/
         retention-days: 30
+    - name: Upload Pages artifact
+      if: ${{ !cancelled() && github.event_name == 'push' }}
+      uses: actions/upload-pages-artifact@v5
+      with:
+        path: client/playwright-report
+    - name: Deploy to GitHub Pages
+      if: ${{ !cancelled() && github.event_name == 'push' }}
+      id: deployment
+      uses: actions/deploy-pages@v5
+    - name: Add report link to summary
+      if: ${{ !cancelled() && github.event_name == 'push' }}
+      run: echo "### 📊 [View Playwright Report](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
