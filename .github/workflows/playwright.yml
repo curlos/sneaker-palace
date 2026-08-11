@@ -2,17 +2,19 @@ name: Playwright Tests
 on:
   push:
     branches: [ main, master ]
-    paths: [ 'client/**' ]
+    paths: [ 'client/**', 'server/**', '.github/workflows/playwright.yml' ]
   pull_request:
     branches: [ main, master ]
-    paths: [ 'client/**' ]
+    paths: [ 'client/**', 'server/**', '.github/workflows/playwright.yml' ]
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
   group: pages
-  cancel-in-progress: false
+  # A newer push supersedes an older one - no point letting a stale run keep
+  # burning CI time (and racing to deploy Pages) once a fresher commit exists.
+  cancel-in-progress: true
 jobs:
   test:
     timeout-minutes: 60
@@ -28,10 +30,54 @@ jobs:
     - uses: actions/setup-node@v7
       with:
         node-version: lts/*
-    - name: Install dependencies
+        cache: npm
+        cache-dependency-path: |
+          client/package-lock.json
+          server/package-lock.json
+    - name: Install client dependencies
+      run: npm ci
+    - name: Install server dependencies
+      working-directory: server
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Start MongoDB
+      # A single-node replica set, not a plain standalone: the register
+      # endpoint uses a session transaction, which Mongo only allows on a
+      # replica set member. Pinned to the commit behind the 1.12.1 tag
+      # (not the mutable tag itself) so a repointed tag can't silently
+      # change what runs here.
+      uses: supercharge/mongodb-github-action@315db7fe45ac2880b7758f1933e6e5d59afd5e94
+      with:
+        mongodb-version: '7.0'
+        mongodb-replica-set: rs0
+    - name: Seed shoe catalog fixture
+      # Real e2e coverage needs real products to browse/filter/sort/buy - a
+      # fresh MongoDB starts with none, so restore a diverse ~80-shoe sample
+      # exported from local dev (client/e2e/fixtures/data/shoes.json). Runs
+      # mongoimport from a throwaway container against the Mongo instance
+      # the action above already started on localhost:27017.
+      run: |
+        docker run --rm --network host \
+          -v "${{ github.workspace }}/client/e2e/fixtures/data:/fixture" \
+          mongo:7 mongoimport --uri="mongodb://localhost:27017/shoe-shop" --collection=shoes --jsonArray --file=/fixture/shoes.json
+    - name: Configure server environment
+      working-directory: server
+      run: |
+        cat <<EOF > .env.local
+        ATLAS_URI=mongodb://localhost:27017/shoe-shop
+        JWT_SEC=${{ secrets.CI_JWT_SEC || 'ci-test-jwt-secret' }}
+        PASS_SEC=${{ secrets.CI_PASS_SEC || 'ci-test-pass-secret' }}
+        STRIPE_KEY=${{ secrets.STRIPE_SECRET_KEY_TEST }}
+        NODE_ENV=test
+        EOF
+    - name: Configure client environment
+      run: |
+        cat <<EOF > .env
+        VITE_API_URL=http://localhost:8888
+        VITE_CLIENT_URL=http://localhost:5173
+        VITE_STRIPE=${{ secrets.STRIPE_PUBLISHABLE_KEY_TEST }}
+        EOF
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v7
