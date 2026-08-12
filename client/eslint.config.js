@@ -28,4 +28,20 @@ export default tseslint.config(
 			'@typescript-eslint/no-explicit-any': 'warn',
 		},
 	},
+	{
+		// Playwright test files, not React - the react-hooks plugin's
+		// rules-of-hooks rule matches on function names starting with "use",
+		// which false-positives on Playwright fixtures' own `use` callback
+		// param (an unrelated, official part of the Playwright fixture API).
+		files: ['e2e/**/*.ts'],
+		rules: {
+			'react-hooks/rules-of-hooks': 'off',
+			// Destructuring a fixture only to trigger its setup side effect
+			// (e.g. `testUser: _testUser` to force a test user to be
+			// registered/logged in) without needing the value is a deliberate,
+			// common pattern here - Playwright fixtures only run when
+			// destructured. The leading underscore is the intentional signal.
+			'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+		},
+	},
 );

@@ -307,8 +307,8 @@ router.post('/', async (req: Request, res: Response) => {
 		};
 
 		return res.json(paginatedResult);
-	} catch (error) {
-		console.error('Search error:', error);
+	} catch {
+		// console.error('Search error:', error);
 
 		// Fallback to text search if Atlas Search fails
 		if (req.body.query && req.body.query.trim()) {
