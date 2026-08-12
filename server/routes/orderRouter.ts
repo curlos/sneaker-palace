@@ -77,6 +77,18 @@ router.post('/', verifyToken, async (req: Request, res: Response) => {
 		await session.commitTransaction();
 	} catch {
 		await session.abortTransaction();
+
+		// The findOne check above has a race window - two concurrent requests
+		// for the same paymentIntentID can both pass it before either commits.
+		// The unique index on Order is the real (atomic) guard against that; if
+		// this failure was caused by it, another request already created the
+		// order, so report it the same way the pre-check above does instead of
+		// a hard failure.
+		const existingOrder = await Order.findOne({ paymentIntentID: req.body.paymentIntentID });
+		if (existingOrder) {
+			return res.json({ error: 'Already ordered', orderID: existingOrder._id });
+		}
+
 		return res.status(500).json({ error: 'Failed to place order' });
 	} finally {
 		session.endSession();
@@ -104,7 +116,22 @@ router.post('/no-account', async (req: Request, res: Response) => {
 		userID: null,
 	});
 
-	await order.save();
+	try {
+		await order.save();
+	} catch {
+		// The findOne check above has a race window - two concurrent requests
+		// for the same paymentIntentID can both pass it before either saves.
+		// The unique index on Order is the real (atomic) guard against that; if
+		// this failure was caused by it, another request already created the
+		// order, so report it the same way the pre-check above does instead of
+		// a hard failure.
+		const existingOrder = await Order.findOne({ paymentIntentID: req.body.paymentIntentID });
+		if (existingOrder) {
+			return res.json({ error: 'Already ordered', orderID: existingOrder._id });
+		}
+
+		return res.status(500).json({ error: 'Failed to create order' });
+	}
 
 	return res.json({ order });
 });

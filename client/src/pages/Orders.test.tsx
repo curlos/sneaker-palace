@@ -30,6 +30,15 @@ it('shows "No orders found" for a guest', async () => {
 	expect(await screen.findByText('No orders found')).toBeInTheDocument();
 });
 
+it('shows "No orders found" for a logged-in user with no orders', async () => {
+	server.use(http.get(`${API_URL}/orders/user`, () => HttpResponse.json([])));
+
+	renderOrders();
+
+	expect(await screen.findByText('No orders found')).toBeInTheDocument();
+	expect(screen.getByRole('link', { name: /order shoes/i })).toHaveAttribute('href', '/shoes');
+});
+
 it('renders the order number for a logged-in user with orders', async () => {
 	renderOrders();
 

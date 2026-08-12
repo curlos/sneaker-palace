@@ -25,6 +25,23 @@ const orderSchema = new mongoose.Schema(
 
 applyRunValidators(orderSchema);
 
+// Guards against a concurrent duplicate order submission (e.g. a double-click
+// or network retry on Pay Now) creating two orders for the same payment -
+// orderRouter.ts's pre-check (Order.findOne before creating) has a race
+// window; this index is the actual atomic guarantee. Scoped to orders
+// created from this fix's deploy date onward via partialFilterExpression,
+// since older data already has duplicate paymentIntentIDs from before this
+// protection existed and a plain unique index can't be built while
+// duplicates exist - this leaves that historical data untouched rather than
+// requiring a destructive cleanup.
+orderSchema.index(
+	{ paymentIntentID: 1 },
+	{
+		unique: true,
+		partialFilterExpression: { createdAt: { $gte: new Date('2026-08-12T00:00:00.000Z') } },
+	}
+);
+
 const Order = mongoose.model('Order', orderSchema);
 
 export default Order;
