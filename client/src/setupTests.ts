@@ -1,8 +1,14 @@
 import '@testing-library/jest-dom';
+import { configure } from '@testing-library/dom';
 import dotenv from 'dotenv';
 import { server } from './mocks/server';
 
 dotenv.config({ path: ['.env.local', '.env'] });
+
+// Default is 1000ms, which is fine on a fast local machine but too tight on
+// GitHub Actions' shared runners - waitFor/findBy* queries were timing out
+// there even though nothing was actually broken.
+configure({ asyncUtilTimeout: 5000 });
 
 // jsdom doesn't implement IntersectionObserver (used by MoreShoes.tsx's carousel visibility
 // tracking); without a stub, mounting it throws and React unmounts the whole tree.

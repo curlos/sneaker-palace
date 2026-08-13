@@ -345,14 +345,14 @@ describe('POST /orders/no-account', () => {
 		expect(orderCount).toBe(1);
 	});
 
-	it('returns a 500 via the global error handler when order validation fails', async () => {
+	it('returns a 500 with a failure message when order validation fails', async () => {
 		const payload: Record<string, unknown> = orderPayload();
 		delete payload.paymentIntentID;
 
 		const res = await request(app).post('/orders/no-account').send(payload);
 
 		expect(res.status).toBe(500);
-		expect(res.body.error).toMatch(/internal server error/i);
+		expect(res.body.error).toMatch(/failed to create order/i);
 	});
 });
 
