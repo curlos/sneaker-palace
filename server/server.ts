@@ -15,7 +15,7 @@ import adminRouter from './routes/adminRouter';
 import { connectToServer } from './database/connection';
 
 const app = express();
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const PORT = process.env.PORT || 8888;
 

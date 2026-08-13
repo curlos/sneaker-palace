@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ quiet: true });
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_KEY as string, { apiVersion: '2026-06-24.dahlia' });
 

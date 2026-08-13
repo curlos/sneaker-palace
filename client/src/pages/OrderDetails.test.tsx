@@ -30,7 +30,7 @@ it('shows "Guest" as the shipping name when the order has no associated user', a
 				_id: params.orderId,
 				userID: undefined,
 				amount: 130,
-				orderDate: new Date().toString(),
+				orderDate: new Date().toISOString(),
 				createdAt: new Date().toISOString(),
 				products: [{ _id: 'p1', productID: 'air-max-1', size: '10', quantity: 1, retailPrice: 130 }],
 				card: { brand: 'visa', last4: '4242' },
@@ -94,7 +94,7 @@ it('renders a separate line item for each product even when they share the same 
 				_id: params.orderId,
 				userID: 'user-1',
 				amount: 260,
-				orderDate: new Date().toString(),
+				orderDate: new Date().toISOString(),
 				createdAt: new Date().toISOString(),
 				products: [
 					{ _id: 'p1', productID: 'air-max-1', size: '9', quantity: 1, retailPrice: 130 },

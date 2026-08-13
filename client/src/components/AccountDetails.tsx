@@ -11,9 +11,9 @@ import { useGetLoggedInUserQuery, useUpdateUserInfoMutation } from '../api/userA
 const AccountDetails = () => {
 	const userId = useSelector((s: RootState) => s.user.currentUser?._id);
 	const { data: user } = useGetLoggedInUserQuery(userId);
-	const [firstName, setFirstName] = useState(user?.firstName);
-	const [lastName, setLastName] = useState(user?.lastName);
-	const [email, setEmail] = useState(user?.email);
+	const [firstName, setFirstName] = useState(user?.firstName ?? '');
+	const [lastName, setLastName] = useState(user?.lastName ?? '');
+	const [email, setEmail] = useState(user?.email ?? '');
 	const [file, setFile] = useState<File>();
 
 	// user arrives asynchronously after mount - sync the fields once it loads,

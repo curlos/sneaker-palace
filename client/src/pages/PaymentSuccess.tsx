@@ -50,15 +50,18 @@ const PaymentSuccess = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		const clientSecret = new URLSearchParams(window.location.search).get('payment_intent_client_secret');
+		let cancelled = false;
 
 		if (stripe && clientSecret) {
 			stripe.retrievePaymentIntent(clientSecret).then((paymentIntent) => {
+				if (cancelled) return;
 				if (paymentIntent && paymentIntent.paymentIntent) {
 					axios
 						.get(
 							`${import.meta.env.VITE_API_URL}/checkout/payment-method/${paymentIntent.paymentIntent.payment_method}`
 						)
 						.then((result) => {
+							if (cancelled) return;
 							setPaymentInfo({
 								paymentMethod: result.data,
 								paymentIntentID: paymentIntent.paymentIntent.id,
@@ -67,10 +70,15 @@ const PaymentSuccess = () => {
 				}
 			});
 		}
+
+		return () => {
+			cancelled = true;
+		};
 	}, [stripe]);
 
 	useEffect(() => {
 		const { paymentMethod, paymentIntentID } = paymentInfo;
+		let cancelled = false;
 
 		if (paymentMethod && paymentIntentID && paymentMethod.card && paymentMethod.billing_details) {
 			const addToOrders = async () => {
@@ -81,7 +89,7 @@ const PaymentSuccess = () => {
 						card: paymentMethod.card as CreateOrderPayload['card'],
 						billingDetails: paymentMethod.billing_details as CreateOrderPayload['billingDetails'],
 						paymentIntentID: paymentIntentID as string,
-						orderDate: new Date().toString(),
+						orderDate: new Date().toISOString(),
 						deliveryDate: new Date(moment().add(2, 'days').format('ddd, MMM D').toUpperCase()).toString(),
 						userID: user?._id as string, // Add userID for cache invalidation
 					};
@@ -93,11 +101,11 @@ const PaymentSuccess = () => {
 								const response = await createUserOrder(body).unwrap();
 
 								if (response && response.error) {
-									setOrderID(response.orderID || '');
+									if (!cancelled) setOrderID(response.orderID || '');
 								} else if (response.order) {
 									const { order } = response;
 
-									setOrderID(order._id);
+									if (!cancelled) setOrderID(order._id);
 
 									// Clear the user's cart after successful payment
 									if (currentCart?._id) {
@@ -112,7 +120,7 @@ const PaymentSuccess = () => {
 								}
 							} catch (err) {
 								console.log(err);
-								setOrderFailed(true);
+								if (!cancelled) setOrderFailed(true);
 							}
 						}
 					} else {
@@ -122,29 +130,33 @@ const PaymentSuccess = () => {
 								const response = await createGuestOrder(body).unwrap();
 
 								if (response && response.error) {
-									setOrderID(response.orderID || '');
+									if (!cancelled) setOrderID(response.orderID || '');
 								} else if (response.order) {
 									const { order } = response;
 
-									setOrderID(order._id);
+									if (!cancelled) setOrderID(order._id);
 									// Clear guest cart on successful order using RTK Query
 									await updateGuestCart({ products: [], total: 0 });
 								}
 							} catch (err) {
 								console.log(err);
-								setOrderFailed(true);
+								if (!cancelled) setOrderFailed(true);
 							}
 						}
 					}
 
-					setLoading(false);
+					if (!cancelled) setLoading(false);
 				} else if (!cartLoading) {
 					// Cart has finished loading and is genuinely empty - nothing to order, stop waiting.
-					setLoading(false);
+					if (!cancelled) setLoading(false);
 				}
 			};
 			addToOrders();
 		}
+
+		return () => {
+			cancelled = true;
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentCart, paymentInfo, total, user?._id, cartLoading]);
 

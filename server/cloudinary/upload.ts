@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from 'cloudinary';
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 // Configure Cloudinary
 cloudinary.config({

@@ -11,7 +11,7 @@ const makeOrder = (overrides: Record<string, unknown> = {}) => ({
 	_id: 'order-1',
 	userID: 'user-1',
 	amount: 130,
-	orderDate: new Date().toString(),
+	orderDate: new Date().toISOString(),
 	createdAt: new Date().toISOString(),
 	products: [{ _id: 'p1', productID: 'air-max-1', size: '10', quantity: 1, retailPrice: 130 }],
 	card: { brand: 'visa', last4: '4242' },
