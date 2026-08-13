@@ -45,7 +45,15 @@ jobs:
       working-directory: client
       run: npm test
     - name: Run server unit/integration tests
+      # STRIPE_KEY: routes/stripeRouter.ts constructs `new Stripe(...)` at
+      # import time, which server.ts pulls in - so it throws for every test
+      # file that imports server.ts (not just Stripe-related ones), even
+      # though only stripeRouter.test.ts actually exercises Stripe (and that
+      # file mocks the SDK entirely). A dummy value is enough since nothing
+      # else makes a real Stripe call.
       working-directory: server
+      env:
+        STRIPE_KEY: sk_test_dummy_key_for_ci
       run: npm test
 
   e2e:
