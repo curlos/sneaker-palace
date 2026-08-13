@@ -16,7 +16,52 @@ concurrency:
   # burning CI time (and racing to deploy Pages) once a fresher commit exists.
   cancel-in-progress: true
 jobs:
+  lint-typecheck-build:
+    # Lint/typecheck/format/build are all static checks - none of them need
+    # a running app or env vars (confirmed: client build succeeds with no
+    # .env present) - so this job stays minimal and fails fast before any
+    # of the slower jobs below even start installing further.
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-node@v7
+      with:
+        node-version: lts/*
+        cache: npm
+        cache-dependency-path: |
+          client/package-lock.json
+          server/package-lock.json
+    - name: Install client dependencies
+      working-directory: client
+      run: npm ci
+    - name: Install server dependencies
+      working-directory: server
+      run: npm ci
+    - name: Lint client
+      working-directory: client
+      run: npm run lint
+    - name: Typecheck client
+      working-directory: client
+      run: npm run typecheck
+    - name: Check client formatting
+      working-directory: client
+      run: npm run format:check
+    - name: Build client
+      working-directory: client
+      run: npm run build
+    - name: Lint server
+      working-directory: server
+      run: npm run lint
+    - name: Check server formatting
+      working-directory: server
+      run: npm run format:check
+    - name: Typecheck/build server
+      working-directory: server
+      run: npm run tsc
+
   unit-tests:
+    needs: lint-typecheck-build
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
@@ -41,27 +86,6 @@ jobs:
       # it throws before MSW's mocks even get a chance to intercept.
       working-directory: client
       run: echo "VITE_API_URL=http://localhost:8888" > .env
-    - name: Lint client
-      working-directory: client
-      run: npm run lint
-    - name: Typecheck client
-      working-directory: client
-      run: npm run typecheck
-    - name: Check client formatting
-      working-directory: client
-      run: npm run format:check
-    - name: Build client
-      working-directory: client
-      run: npm run build
-    - name: Lint server
-      working-directory: server
-      run: npm run lint
-    - name: Check server formatting
-      working-directory: server
-      run: npm run format:check
-    - name: Typecheck/build server
-      working-directory: server
-      run: npm run tsc
     - name: Run client unit tests
       # test:report (package.json) runs coverage + the html pass/fail
       # reporter (needs @vitest/ui) in one pass - coverage only shows which
