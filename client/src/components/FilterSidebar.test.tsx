@@ -51,7 +51,9 @@ it('toggles a color on when its swatch is clicked', async () => {
 	await user.click(screen.getByRole('button', { name: 'Color' }));
 	await user.click(screen.getByRole('button', { name: 'red' }));
 
-	expect(updateFilters).toHaveBeenCalledWith(expect.objectContaining({ colors: expect.objectContaining({ red: true }) }));
+	expect(updateFilters).toHaveBeenCalledWith(
+		expect.objectContaining({ colors: expect.objectContaining({ red: true }) })
+	);
 });
 
 it('toggles a color off when it is already active', async () => {
@@ -60,7 +62,9 @@ it('toggles a color off when it is already active', async () => {
 	await user.click(screen.getByRole('button', { name: 'Color' }));
 	await user.click(screen.getByRole('button', { name: 'red' }));
 
-	expect(updateFilters).toHaveBeenCalledWith(expect.objectContaining({ colors: expect.objectContaining({ red: false }) }));
+	expect(updateFilters).toHaveBeenCalledWith(
+		expect.objectContaining({ colors: expect.objectContaining({ red: false }) })
+	);
 });
 
 it('toggles a brand off when it is already checked', async () => {
@@ -69,7 +73,9 @@ it('toggles a brand off when it is already checked', async () => {
 	await user.click(screen.getByRole('button', { name: 'Brand' }));
 	await user.click(screen.getByRole('checkbox', { name: 'Nike' }));
 
-	expect(updateFilters).toHaveBeenCalledWith(expect.objectContaining({ brands: expect.objectContaining({ Nike: false }) }));
+	expect(updateFilters).toHaveBeenCalledWith(
+		expect.objectContaining({ brands: expect.objectContaining({ Nike: false }) })
+	);
 });
 
 it.each([
@@ -85,14 +91,17 @@ it.each([
 		optionName: '2025',
 		expected: { releaseYears: expect.objectContaining({ 2025: true }) },
 	},
-])('toggles $optionName on in the $section section when its checkbox is checked', async ({ section, optionName, expected }) => {
-	const { updateFilters, user } = renderSidebar();
+])(
+	'toggles $optionName on in the $section section when its checkbox is checked',
+	async ({ section, optionName, expected }) => {
+		const { updateFilters, user } = renderSidebar();
 
-	await user.click(screen.getByRole('button', { name: section }));
-	await user.click(screen.getByRole('checkbox', { name: optionName }));
+		await user.click(screen.getByRole('button', { name: section }));
+		await user.click(screen.getByRole('checkbox', { name: optionName }));
 
-	expect(updateFilters).toHaveBeenCalledWith(expect.objectContaining(expected));
-});
+		expect(updateFilters).toHaveBeenCalledWith(expect.objectContaining(expected));
+	}
+);
 
 it('renders release years in descending order', async () => {
 	const { user } = renderSidebar();

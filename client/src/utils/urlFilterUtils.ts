@@ -105,9 +105,7 @@ export const buildURLFromFilters = (filters: Partial<ShoeFilters>) => {
 	}
 
 	// Build release years param
-	const activeReleaseYears = Object.keys(filters.releaseYears || {}).filter(
-		(year) => filters.releaseYears?.[year]
-	);
+	const activeReleaseYears = Object.keys(filters.releaseYears || {}).filter((year) => filters.releaseYears?.[year]);
 	if (activeReleaseYears.length > 0) {
 		params.set('releaseYears', activeReleaseYears.join(','));
 	}

@@ -41,6 +41,27 @@ jobs:
       # it throws before MSW's mocks even get a chance to intercept.
       working-directory: client
       run: echo "VITE_API_URL=http://localhost:8888" > .env
+    - name: Lint client
+      working-directory: client
+      run: npm run lint
+    - name: Typecheck client
+      working-directory: client
+      run: npm run typecheck
+    - name: Check client formatting
+      working-directory: client
+      run: npm run format:check
+    - name: Build client
+      working-directory: client
+      run: npm run build
+    - name: Lint server
+      working-directory: server
+      run: npm run lint
+    - name: Check server formatting
+      working-directory: server
+      run: npm run format:check
+    - name: Typecheck/build server
+      working-directory: server
+      run: npm run tsc
     - name: Run client unit tests
       # test:report (package.json) runs coverage + the html pass/fail
       # reporter (needs @vitest/ui) in one pass - coverage only shows which

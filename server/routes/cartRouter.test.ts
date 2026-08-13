@@ -33,7 +33,7 @@ describe('GET /cart', () => {
 		expect(res.body).toBeNull();
 	});
 
-	it('returns the authenticated user\'s cart', async () => {
+	it("returns the authenticated user's cart", async () => {
 		const userId = new mongoose.Types.ObjectId();
 		const product = { productID: 'shoe-1', size: '10', quantity: 1, retailPrice: 100 };
 		const cart = await Cart.create({
@@ -77,7 +77,7 @@ describe('GET /cart', () => {
 		expect(res.body.products).toEqual(products.map((product) => expect.objectContaining(product)));
 	});
 
-	it('does not return another user\'s cart', async () => {
+	it("does not return another user's cart", async () => {
 		const userA = new mongoose.Types.ObjectId();
 		const userB = new mongoose.Types.ObjectId();
 
@@ -101,15 +101,12 @@ describe('PUT /cart', () => {
 	it('returns a 404 error when the user has no cart yet', async () => {
 		const token = signToken(new mongoose.Types.ObjectId());
 
-		const res = await request(app)
-			.put('/cart')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ products: [] });
+		const res = await request(app).put('/cart').set('Authorization', `Bearer ${token}`).send({ products: [] });
 
 		expect(res.status).toBe(404);
 	});
 
-	it('updates the authenticated user\'s cart products', async () => {
+	it("updates the authenticated user's cart products", async () => {
 		const userId = new mongoose.Types.ObjectId();
 		await Cart.create({ userID: userId.toString(), products: [] });
 		await Shoe.create(buildShoe('shoe-3'));
@@ -129,7 +126,7 @@ describe('PUT /cart', () => {
 		expect(dbCart!.products).toEqual(newProducts.map((product) => expect.objectContaining(product)));
 	});
 
-	it('does not alter another user\'s cart', async () => {
+	it("does not alter another user's cart", async () => {
 		const userA = new mongoose.Types.ObjectId();
 		const userB = new mongoose.Types.ObjectId();
 
@@ -175,7 +172,7 @@ describe('PUT /cart', () => {
 		expect(dbCartB).toBeNull();
 	});
 
-	it('edits one product\'s size in place, leaving sibling products and their _id untouched', async () => {
+	it("edits one product's size in place, leaving sibling products and their _id untouched", async () => {
 		const userId = new mongoose.Types.ObjectId();
 		const cart = await Cart.create({
 			userID: userId.toString(),
@@ -322,7 +319,9 @@ describe('PUT /cart', () => {
 			.put('/cart')
 			.set('Authorization', `Bearer ${token}`)
 			.send({
-				products: [{ _id: 'not-a-valid-object-id', productID: 'shoe-1', size: '9', quantity: 1, retailPrice: 100 }],
+				products: [
+					{ _id: 'not-a-valid-object-id', productID: 'shoe-1', size: '9', quantity: 1, retailPrice: 100 },
+				],
 			});
 
 		expect(res.status).toBe(400);
@@ -367,10 +366,7 @@ describe('PUT /cart', () => {
 			{ productID: 'shoe-1', size: '10', quantity: 1, retailPrice: 100 },
 		];
 
-		const res = await request(app)
-			.put('/cart')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ products });
+		const res = await request(app).put('/cart').set('Authorization', `Bearer ${token}`).send({ products });
 
 		expect(res.status).toBe(200);
 		expect(res.body.products).toEqual(products.map((product) => expect.objectContaining(product)));
@@ -387,7 +383,13 @@ describe('PUT /cart', () => {
 			.set('Authorization', `Bearer ${token}`)
 			.send({
 				products: [
-					{ productID: 'shoe-1', size: '9', quantity: 1, retailPrice: 100, someRandomField: 'should not persist' },
+					{
+						productID: 'shoe-1',
+						size: '9',
+						quantity: 1,
+						retailPrice: 100,
+						someRandomField: 'should not persist',
+					},
 				],
 			});
 
@@ -406,10 +408,7 @@ describe('PUT /cart', () => {
 		});
 		const token = signToken(userId);
 
-		const res = await request(app)
-			.put('/cart')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ products: [] });
+		const res = await request(app).put('/cart').set('Authorization', `Bearer ${token}`).send({ products: [] });
 
 		expect(res.status).toBe(200);
 		expect(res.body.products).toEqual([]);

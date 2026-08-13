@@ -28,10 +28,9 @@ it('shows the View Full Results button after the debounce delay once text is typ
 
 	await user.type(screen.getByPlaceholderText('TYPE TO SEARCH'), 'air max');
 
-	await waitFor(
-		() => expect(screen.getByRole('button', { name: /view full results/i })).toBeInTheDocument(),
-		{ timeout: 2000 }
-	);
+	await waitFor(() => expect(screen.getByRole('button', { name: /view full results/i })).toBeInTheDocument(), {
+		timeout: 2000,
+	});
 });
 
 it('navigates to the search results and closes the modal on submit', async () => {
@@ -54,10 +53,9 @@ it('navigates to the search results and closes the modal when View Full Results 
 		<SearchModal showSearchModal={true} setShowSearchModal={setShowSearchModal} />
 	);
 	await user.type(screen.getByPlaceholderText('TYPE TO SEARCH'), 'air max');
-	const viewResultsButton = await waitFor(
-		() => screen.getByRole('button', { name: /view full results/i }),
-		{ timeout: 2000 }
-	);
+	const viewResultsButton = await waitFor(() => screen.getByRole('button', { name: /view full results/i }), {
+		timeout: 2000,
+	});
 
 	await user.click(viewResultsButton);
 

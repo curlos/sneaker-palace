@@ -75,15 +75,7 @@ it('jumps to the last page when "Last page" is clicked', async () => {
 });
 
 it('marks the current page button as the active page for assistive tech', () => {
-	render(
-		<Pagination
-			pageLimit={5}
-			dataLimit={10}
-			currentPage={3}
-			setCurrentPage={vi.fn()}
-			totalItemCount={50}
-		/>
-	);
+	render(<Pagination pageLimit={5} dataLimit={10} currentPage={3} setCurrentPage={vi.fn()} totalItemCount={50} />);
 
 	expect(screen.getByRole('button', { name: 'Page 3' })).toHaveAttribute('aria-current', 'page');
 });
@@ -107,27 +99,21 @@ it('caps the result range at the total item count on a partial last page', () =>
 });
 
 it('renders all page numbers when pageLimit is 5 or fewer', () => {
-	render(
-		<Pagination pageLimit={3} dataLimit={10} currentPage={1} setCurrentPage={vi.fn()} totalItemCount={30} />
-	);
+	render(<Pagination pageLimit={3} dataLimit={10} currentPage={1} setCurrentPage={vi.fn()} totalItemCount={30} />);
 
 	const pageButtons = screen.getAllByRole('button', { name: /^page \d+$/i });
 	expect(pageButtons.map((button) => button.textContent)).toEqual(['1', '2', '3']);
 });
 
 it('renders the last 5 pages when the current page is near the end', () => {
-	render(
-		<Pagination pageLimit={10} dataLimit={10} currentPage={9} setCurrentPage={vi.fn()} totalItemCount={100} />
-	);
+	render(<Pagination pageLimit={10} dataLimit={10} currentPage={9} setCurrentPage={vi.fn()} totalItemCount={100} />);
 
 	const pageButtons = screen.getAllByRole('button', { name: /^page \d+$/i });
 	expect(pageButtons.map((button) => button.textContent)).toEqual(['6', '7', '8', '9', '10']);
 });
 
 it('renders a 5-page window starting at the current page when in the middle', () => {
-	render(
-		<Pagination pageLimit={10} dataLimit={10} currentPage={5} setCurrentPage={vi.fn()} totalItemCount={100} />
-	);
+	render(<Pagination pageLimit={10} dataLimit={10} currentPage={5} setCurrentPage={vi.fn()} totalItemCount={100} />);
 
 	const pageButtons = screen.getAllByRole('button', { name: /^page \d+$/i });
 	expect(pageButtons.map((button) => button.textContent)).toEqual(['5', '6', '7', '8', '9']);

@@ -37,7 +37,11 @@ const makeReview = (overrides: { _id: string; summary: string; createdAt: string
 
 it('paginates when there are more than 5 reviews', async () => {
 	const shoeRatings = Array.from({ length: 6 }, (_, i) =>
-		makeReview({ _id: `rating-${i}`, summary: `Review number ${i}`, createdAt: new Date(2024, 0, i + 1).toISOString() })
+		makeReview({
+			_id: `rating-${i}`,
+			summary: `Review number ${i}`,
+			createdAt: new Date(2024, 0, i + 1).toISOString(),
+		})
 	);
 
 	renderWithProviders(<FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} />);
@@ -63,9 +67,7 @@ it('marks a review as helpful when a logged-in user clicks "Mark as helpful"', a
 			return HttpResponse.json({});
 		})
 	);
-	const shoeRatings = [
-		makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() }),
-	];
+	const shoeRatings = [makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() })];
 	const user = userEvent.setup();
 	renderWithProviders(<FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} />, {
 		preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } },
@@ -83,9 +85,7 @@ it('marks a review as helpful when a logged-in user clicks "Mark as helpful"', a
 });
 
 it('redirects a guest user to /login instead of liking a rating', async () => {
-	const shoeRatings = [
-		makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() }),
-	];
+	const shoeRatings = [makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() })];
 	const user = userEvent.setup();
 	const { history } = renderWithProviders(<FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} />);
 	await screen.findByText('Great shoe');
@@ -106,9 +106,7 @@ it('marks a review as not helpful when a logged-in user clicks "Mark as not help
 			return HttpResponse.json({});
 		})
 	);
-	const shoeRatings = [
-		makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() }),
-	];
+	const shoeRatings = [makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() })];
 	const user = userEvent.setup();
 	renderWithProviders(<FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} />, {
 		preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } },
@@ -125,7 +123,11 @@ it('marks a review as not helpful when a logged-in user clicks "Mark as not help
 it('shows the other page of reviews when "Page 2" is clicked', async () => {
 	Element.prototype.scrollIntoView = vi.fn();
 	const shoeRatings = Array.from({ length: 6 }, (_, i) =>
-		makeReview({ _id: `rating-${i}`, summary: `Review number ${i}`, createdAt: new Date(2024, 0, i + 1).toISOString() })
+		makeReview({
+			_id: `rating-${i}`,
+			summary: `Review number ${i}`,
+			createdAt: new Date(2024, 0, i + 1).toISOString(),
+		})
 	);
 	const user = userEvent.setup();
 	renderWithProviders(<FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} />);
@@ -155,9 +157,7 @@ it('renders the correct percentage for each star rating', () => {
 
 it('renders the average rating and total review count when reviews exist', async () => {
 	const ratedShoe = { shoeID: 'air-max-1', rating: 4.5 };
-	const shoeRatings = [
-		makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() }),
-	];
+	const shoeRatings = [makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() })];
 	renderWithProviders(<FullShoeReviews shoe={ratedShoe} shoeRatings={shoeRatings} />);
 
 	expect(await screen.findByText('4.50 out of 5')).toBeInTheDocument();
@@ -165,11 +165,11 @@ it('renders the average rating and total review count when reviews exist', async
 });
 
 it("logs an error and doesn't crash when liking a rating fails", async () => {
-	server.use(http.put(`${API_URL}/rating/like`, () => HttpResponse.json({ message: 'Server error' }, { status: 500 })));
+	server.use(
+		http.put(`${API_URL}/rating/like`, () => HttpResponse.json({ message: 'Server error' }, { status: 500 }))
+	);
 	const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-	const shoeRatings = [
-		makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() }),
-	];
+	const shoeRatings = [makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() })];
 	const user = userEvent.setup();
 	renderWithProviders(<FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} />, {
 		preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } },
@@ -187,9 +187,7 @@ it("logs an error and doesn't crash when liking a rating fails", async () => {
 });
 
 it('does not render pagination controls when there are 5 or fewer reviews', async () => {
-	const shoeRatings = [
-		makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() }),
-	];
+	const shoeRatings = [makeReview({ _id: 'rating-1', summary: 'Great shoe', createdAt: new Date().toISOString() })];
 	renderWithProviders(<FullShoeReviews shoe={shoe} shoeRatings={shoeRatings} />);
 	await screen.findByText('Great shoe');
 

@@ -74,45 +74,39 @@ it('still shows the order-details link when the order already exists (e.g. a dup
 	);
 });
 
-it(
-	'shows a failure message and no order link when order creation fails even after retries',
-	async () => {
-		server.use(http.post(`${API_URL}/orders/no-account`, () => HttpResponse.json({ error: 'Server error' }, { status: 500 })));
+it('shows a failure message and no order link when order creation fails even after retries', async () => {
+	server.use(
+		http.post(`${API_URL}/orders/no-account`, () => HttpResponse.json({ error: 'Server error' }, { status: 500 }))
+	);
 
-		renderWithProviders(<PaymentSuccess />);
+	renderWithProviders(<PaymentSuccess />);
 
-		// Real exponential backoff (maxRetries: 2) can take longer than findBy's default 1000ms poll.
-		expect(await screen.findByRole('alert', {}, { timeout: 8000 })).toHaveTextContent(
-			"Payment succeeded, but we couldn't confirm your order. Please contact support."
-		);
-		expect(screen.queryByRole('link', { name: /view or manage order/i })).not.toBeInTheDocument();
-	},
-	10000
-);
+	// Real exponential backoff (maxRetries: 2) can take longer than findBy's default 1000ms poll.
+	expect(await screen.findByRole('alert', {}, { timeout: 8000 })).toHaveTextContent(
+		"Payment succeeded, but we couldn't confirm your order. Please contact support."
+	);
+	expect(screen.queryByRole('link', { name: /view or manage order/i })).not.toBeInTheDocument();
+}, 10000);
 
-it(
-	'retries and completes the order after a transient failure',
-	async () => {
-		let attempts = 0;
-		server.use(
-			http.post(`${API_URL}/orders/no-account`, () => {
-				attempts++;
-				if (attempts === 1) {
-					return HttpResponse.json({ error: 'Server error' }, { status: 500 });
-				}
-				return HttpResponse.json({ order: { _id: 'order-after-retry' } });
-			})
-		);
+it('retries and completes the order after a transient failure', async () => {
+	let attempts = 0;
+	server.use(
+		http.post(`${API_URL}/orders/no-account`, () => {
+			attempts++;
+			if (attempts === 1) {
+				return HttpResponse.json({ error: 'Server error' }, { status: 500 });
+			}
+			return HttpResponse.json({ order: { _id: 'order-after-retry' } });
+		})
+	);
 
-		renderWithProviders(<PaymentSuccess />);
+	renderWithProviders(<PaymentSuccess />);
 
-		expect(await screen.findByRole('link', { name: /view or manage order/i })).toHaveAttribute(
-			'href',
-			'/order-details/order-after-retry'
-		);
-	},
-	10000
-);
+	expect(await screen.findByRole('link', { name: /view or manage order/i })).toHaveAttribute(
+		'href',
+		'/order-details/order-after-retry'
+	);
+}, 10000);
 
 it('exits the loading spinner with a broken order link when the cart is empty on load', async () => {
 	localStorage.setItem('currentCart', JSON.stringify({ products: [] }));

@@ -66,7 +66,9 @@ it('redirects to / when the order fetch errors for a guest', async () => {
 
 it("renders the ordered shoe's name, size, and quantity", async () => {
 	server.use(
-		http.post(`${API_URL}/shoes/bulk`, () => HttpResponse.json([makeShoe({ shoeID: 'air-max-1', name: 'Air Max 1', retailPrice: 130 })]))
+		http.post(`${API_URL}/shoes/bulk`, () =>
+			HttpResponse.json([makeShoe({ shoeID: 'air-max-1', name: 'Air Max 1', retailPrice: 130 })])
+		)
 	);
 
 	renderOrderDetails('order-1');
@@ -101,10 +103,14 @@ it('renders a separate line item for each product even when they share the same 
 					{ _id: 'p2', productID: 'air-max-1', size: '10', quantity: 1, retailPrice: 130 },
 				],
 				card: { brand: 'visa', last4: '4242' },
-				billingDetails: { address: { city: '', country: 'US', line1: '', line2: '', postal_code: '10001', state: '' } },
+				billingDetails: {
+					address: { city: '', country: 'US', line1: '', line2: '', postal_code: '10001', state: '' },
+				},
 			})
 		),
-		http.post(`${API_URL}/shoes/bulk`, () => HttpResponse.json([makeShoe({ shoeID: 'air-max-1', name: 'Air Max 1', retailPrice: 130 })]))
+		http.post(`${API_URL}/shoes/bulk`, () =>
+			HttpResponse.json([makeShoe({ shoeID: 'air-max-1', name: 'Air Max 1', retailPrice: 130 })])
+		)
 	);
 
 	renderOrderDetails('order-1');

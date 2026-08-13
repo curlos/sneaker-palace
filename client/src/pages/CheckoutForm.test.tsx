@@ -35,7 +35,9 @@ beforeEach(() => {
 	server.use(
 		http.post(`${API_URL}/shoes/bulk`, async ({ request }) => {
 			const body = (await request.json()) as { ids: string[] };
-			return HttpResponse.json(body.ids.map((id) => makeShoe({ shoeID: id, name: 'Air Max 1', retailPrice: 130 })));
+			return HttpResponse.json(
+				body.ids.map((id) => makeShoe({ shoeID: id, name: 'Air Max 1', retailPrice: 130 }))
+			);
 		})
 	);
 });

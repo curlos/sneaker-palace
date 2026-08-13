@@ -68,7 +68,9 @@ export const handlers = [
 
 	// MoreShoes fetches a random page as a fallback while its parent shoe is still loading
 	// (or when the search-based results come up empty), so the page number is unpredictable.
-	http.get(`${API_URL}/shoes/page/:pageNum`, () => HttpResponse.json({ docs: mockShoes, totalDocs: mockShoes.length })),
+	http.get(`${API_URL}/shoes/page/:pageNum`, () =>
+		HttpResponse.json({ docs: mockShoes, totalDocs: mockShoes.length })
+	),
 
 	http.get(`${API_URL}/rating/by/shoe/:shoeID`, () => HttpResponse.json([])),
 
@@ -127,7 +129,9 @@ export const handlers = [
 				createdAt: new Date().toISOString(),
 				products: [{ _id: 'p1', productID: 'air-max-1', size: '10', quantity: 1, retailPrice: 130 }],
 				card: { brand: 'visa', last4: '4242' },
-				billingDetails: { address: { city: '', country: 'US', line1: '', line2: '', postal_code: '10001', state: '' } },
+				billingDetails: {
+					address: { city: '', country: 'US', line1: '', line2: '', postal_code: '10001', state: '' },
+				},
 			},
 		])
 	),
@@ -141,7 +145,9 @@ export const handlers = [
 			createdAt: new Date().toISOString(),
 			products: [{ _id: 'p1', productID: 'air-max-1', size: '10', quantity: 1, retailPrice: 130 }],
 			card: { brand: 'visa', last4: '4242' },
-			billingDetails: { address: { city: '', country: 'US', line1: '', line2: '', postal_code: '10001', state: '' } },
+			billingDetails: {
+				address: { city: '', country: 'US', line1: '', line2: '', postal_code: '10001', state: '' },
+			},
 		})
 	),
 ];

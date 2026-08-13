@@ -1,0 +1,7 @@
+{
+  "name": "sneaker-palace-root",
+  "private": true,
+  "scripts": {
+    "test:all": "npm run test --prefix client && npm run test --prefix server && npm run e2e --prefix client"
+  }
+}

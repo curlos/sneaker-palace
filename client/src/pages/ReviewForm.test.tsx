@@ -184,7 +184,9 @@ it('submits photo: null when an existing photo is explicitly removed while editi
 });
 
 it('does not navigate away and re-enables the submit button when saving fails', async () => {
-	server.use(http.post(`${API_URL}/rating/rate`, () => HttpResponse.json({ error: 'Server error' }, { status: 500 })));
+	server.use(
+		http.post(`${API_URL}/rating/rate`, () => HttpResponse.json({ error: 'Server error' }, { status: 500 }))
+	);
 	const user = userEvent.setup();
 	const { history } = renderCreateForm();
 	await screen.findByText('Air Max 1');

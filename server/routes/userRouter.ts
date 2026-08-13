@@ -15,12 +15,16 @@ router.get(
 
 		if (authHeader) {
 			const token = authHeader.split(' ')[1];
-			jwt.verify(token, process.env.JWT_SEC as string, (err: jwt.VerifyErrors | null, decoded: jwt.JwtPayload | string | undefined) => {
-				if (!err) {
-					req.user = decoded as UserType;
+			jwt.verify(
+				token,
+				process.env.JWT_SEC as string,
+				(err: jwt.VerifyErrors | null, decoded: jwt.JwtPayload | string | undefined) => {
+					if (!err) {
+						req.user = decoded as UserType;
+					}
+					next();
 				}
-				next();
-			});
+			);
 		} else {
 			next();
 		}

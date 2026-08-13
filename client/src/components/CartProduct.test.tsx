@@ -83,7 +83,9 @@ it('renders the shoe name, gender, and colorway from the shoe query', async () =
 	renderWithProviders(<CartProduct productInfo={productInfo} />);
 
 	expect(await screen.findByText('Air Max 1')).toBeInTheDocument();
-	expect(screen.getByText((_, element) => element?.tagName === 'DIV' && element.textContent === "gender's Shoes")).toBeInTheDocument();
+	expect(
+		screen.getByText((_, element) => element?.tagName === 'DIV' && element.textContent === "gender's Shoes")
+	).toBeInTheDocument();
 	expect(screen.getByText('colorway')).toBeInTheDocument();
 });
 
@@ -111,7 +113,7 @@ it('shows a loading skeleton before the shoe data loads', async () => {
 	expect(screen.queryByRole('status')).not.toBeInTheDocument();
 });
 
-it("removes the product from the logged-in user's cart when \"Remove\" is clicked", async () => {
+it('removes the product from the logged-in user\'s cart when "Remove" is clicked', async () => {
 	let capturedBody: { products?: { _id: string }[] } = {};
 	server.use(
 		http.put(`${API_URL}/cart`, async ({ request }) => {
@@ -160,7 +162,9 @@ it("logs an error and doesn't crash when the logged-in user's cart update fails"
 
 	await user.selectOptions(screen.getByLabelText('Quantity'), '3');
 
-	await waitFor(() => expect(consoleError).toHaveBeenCalledWith('Failed to update cart quantity:', expect.anything()));
+	await waitFor(() =>
+		expect(consoleError).toHaveBeenCalledWith('Failed to update cart quantity:', expect.anything())
+	);
 
 	consoleError.mockRestore();
 });

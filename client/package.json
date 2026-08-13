@@ -44,6 +44,7 @@
     "test:report": "vitest run --coverage --reporter=default --reporter=html --outputFile.html=./html-report/index.html",
     "test:ui": "vitest --ui",
     "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "e2e": "playwright test",

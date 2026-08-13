@@ -46,7 +46,9 @@ it('renders the order number for a logged-in user with orders', async () => {
 });
 
 it('shows "No orders found" when every order has an empty products array', async () => {
-	server.use(http.get(`${API_URL}/orders/user`, () => HttpResponse.json([makeOrder({ _id: 'empty-order-1', products: [] })])));
+	server.use(
+		http.get(`${API_URL}/orders/user`, () => HttpResponse.json([makeOrder({ _id: 'empty-order-1', products: [] })]))
+	);
 
 	renderOrders();
 

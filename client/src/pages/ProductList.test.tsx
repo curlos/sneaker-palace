@@ -11,7 +11,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 // Shared across the pagination tests: 13 shoes (one more than a page) so page 2 has content,
 // with a handler that actually slices by the `pageNum` sent in the request body - the default
 // mock handler ignores pagination entirely and always returns the same 2 shoes.
-const paginatedShoes = Array.from({ length: 13 }, (_, i) => makeShoe({ shoeID: `shoe-${i + 1}`, name: `Shoe ${i + 1}` }));
+const paginatedShoes = Array.from({ length: 13 }, (_, i) =>
+	makeShoe({ shoeID: `shoe-${i + 1}`, name: `Shoe ${i + 1}` })
+);
 
 const paginatedShoesHandler = () =>
 	http.post(`${API_URL}/shoes`, async ({ request }) => {

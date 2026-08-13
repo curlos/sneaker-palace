@@ -173,7 +173,9 @@ const PaymentSuccess = () => {
 					<h1 className="text-4xl">Hello Guest,</h1>
 				)}
 				{orderFailed ? (
-					<div role="alert">Payment succeeded, but we couldn't confirm your order. Please contact support.</div>
+					<div role="alert">
+						Payment succeeded, but we couldn't confirm your order. Please contact support.
+					</div>
 				) : (
 					<div>Your order has been placed successfully.</div>
 				)}

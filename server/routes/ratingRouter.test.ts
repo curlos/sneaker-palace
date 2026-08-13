@@ -199,7 +199,13 @@ describe('POST /rate', () => {
 
 		expect(res.status).toBe(200);
 		expect(res.body.rating).toEqual(
-			expect.objectContaining({ shoeID: shoe.shoeID, userID: user._id.toString(), ratingNum: 5, summary: 'Great', text: 'Loved it' })
+			expect.objectContaining({
+				shoeID: shoe.shoeID,
+				userID: user._id.toString(),
+				ratingNum: 5,
+				summary: 'Great',
+				text: 'Loved it',
+			})
 		);
 		expect(res.body.updatedShoe).toEqual(expect.objectContaining({ shoeID: shoe.shoeID }));
 		expect(res.body.updatedUser).toEqual(expect.objectContaining({ _id: user._id.toString() }));
@@ -470,7 +476,11 @@ describe('PUT /edit/:id', () => {
 
 		// Two real ratings on this shoe: 2 and 4, averaging to 3.
 		const rating = await createRating({ userID: user._id.toString(), shoeID: shoe.shoeID, ratingNum: 2 });
-		const siblingRating = await createRating({ userID: otherUser._id.toString(), shoeID: shoe.shoeID, ratingNum: 4 });
+		const siblingRating = await createRating({
+			userID: otherUser._id.toString(),
+			shoeID: shoe.shoeID,
+			ratingNum: 4,
+		});
 		await Shoe.findByIdAndUpdate(shoe._id, { rating: 3, ratings: [rating._id, siblingRating._id] });
 
 		const token = signToken(user._id);
@@ -803,9 +813,7 @@ describe('DELETE /:id', () => {
 		const user = await createUser();
 		const token = signToken(user._id);
 
-		const res = await request(app)
-			.delete('/rating/not-a-valid-object-id')
-			.set('Authorization', `Bearer ${token}`);
+		const res = await request(app).delete('/rating/not-a-valid-object-id').set('Authorization', `Bearer ${token}`);
 
 		expect(res.status).toBe(500);
 	});
@@ -862,9 +870,7 @@ describe('DELETE /:id', () => {
 		await Shoe.findByIdAndUpdate(shoe._id, { rating: 3, ratings: [ratingToDelete._id, siblingRating._id] });
 		const token = signToken(user._id);
 
-		const res = await request(app)
-			.delete(`/rating/${ratingToDelete._id}`)
-			.set('Authorization', `Bearer ${token}`);
+		const res = await request(app).delete(`/rating/${ratingToDelete._id}`).set('Authorization', `Bearer ${token}`);
 
 		expect(res.status).toBe(200);
 		const dbShoe = await Shoe.findById(shoe._id);
@@ -889,9 +895,7 @@ describe('DELETE /:id', () => {
 		await Shoe.findByIdAndUpdate(shoe._id, { rating: 3, ratings: [ratingToDelete._id, siblingRating._id] });
 		const token = signToken(user._id);
 
-		const res = await request(app)
-			.delete(`/rating/${ratingToDelete._id}`)
-			.set('Authorization', `Bearer ${token}`);
+		const res = await request(app).delete(`/rating/${ratingToDelete._id}`).set('Authorization', `Bearer ${token}`);
 
 		expect(res.status).toBe(200);
 		const dbShoe = await Shoe.findById(shoe._id);

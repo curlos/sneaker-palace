@@ -59,9 +59,7 @@ const CustomDot = ({ onClick, active, index }: CarouselDotProps) => (
 		aria-label={`Go to slide ${(index ?? 0) + 1}`}
 		aria-current={active ? 'true' : undefined}
 		onClick={onClick}
-		className={`w-8 h-1 rounded-full mx-1 transition-all duration-200 ${
-			active ? 'bg-gray-800' : 'bg-gray-300'
-		}`}
+		className={`w-8 h-1 rounded-full mx-1 transition-all duration-200 ${active ? 'bg-gray-800' : 'bg-gray-300'}`}
 	/>
 );
 

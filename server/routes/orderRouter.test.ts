@@ -213,7 +213,7 @@ describe('POST /orders', () => {
 		expect(dbUser!.orders).toHaveLength(0);
 	});
 
-	it("ignores a userID sent in the request body (cannot reassign order ownership)", async () => {
+	it('ignores a userID sent in the request body (cannot reassign order ownership)', async () => {
 		const { user, token } = await createUserWithCart([]);
 		const otherUserId = new mongoose.Types.ObjectId();
 
@@ -504,7 +504,10 @@ describe('GET /orders/:orderID', () => {
 	it('returns the order when the authenticated user is an admin', async () => {
 		const { user: owner } = await createUserWithCart([]);
 		const order = await Order.create({ ...orderPayload(), userID: owner._id.toString() });
-		const adminToken = jwt.sign({ id: new mongoose.Types.ObjectId().toString(), isAdmin: true }, process.env.JWT_SEC as string);
+		const adminToken = jwt.sign(
+			{ id: new mongoose.Types.ObjectId().toString(), isAdmin: true },
+			process.env.JWT_SEC as string
+		);
 
 		const res = await request(app).get(`/orders/${order._id}`).set('Authorization', `Bearer ${adminToken}`);
 

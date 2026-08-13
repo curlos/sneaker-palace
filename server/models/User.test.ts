@@ -56,9 +56,7 @@ describe('User toJSON', () => {
 			});
 			const token = signToken(user._id);
 
-			const res = await request(app)
-				.get(`/users/${user._id}`)
-				.set('Authorization', `Bearer ${token}`);
+			const res = await request(app).get(`/users/${user._id}`).set('Authorization', `Bearer ${token}`);
 
 			expect(res.status).toBe(200);
 			expect(res.body._id).toBe(user._id.toString());

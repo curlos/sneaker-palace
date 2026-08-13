@@ -175,7 +175,10 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 							<div className="flex-[2] p-10 max-xl:p-4">
 								<h1 className="text-2xl">{shoe?.name}</h1>
 								<div className="text-gray-500">
-									{shoe?.gender ? `${shoe.gender.charAt(0).toUpperCase()}${shoe.gender.slice(1)}` : ''}'s Shoes
+									{shoe?.gender
+										? `${shoe.gender.charAt(0).toUpperCase()}${shoe.gender.slice(1)}`
+										: ''}
+									's Shoes
 								</div>
 								<div className="text-xl text-red-800 mt-1">${shoe?.retailPrice}</div>
 								<div id="size-label" className="mt-5 mb-2">

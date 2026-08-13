@@ -101,9 +101,7 @@ it('clears every selected value in a multi-value category', async () => {
 
 	await user.click(screen.getByRole('button', { name: /clear colors filter/i }));
 
-	expect(updateFilters).toHaveBeenCalledWith(
-		expect.objectContaining({ colors: { red: false, blue: false } })
-	);
+	expect(updateFilters).toHaveBeenCalledWith(expect.objectContaining({ colors: { red: false, blue: false } }));
 });
 
 it('leaves other categories untouched when clearing one category', async () => {

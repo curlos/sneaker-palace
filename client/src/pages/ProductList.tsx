@@ -113,7 +113,6 @@ const ProductList = () => {
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
-		 
 	}, [searchQuery]);
 
 	const [prevSearchQueryForSort, setPrevSearchQueryForSort] = useState(searchQuery);

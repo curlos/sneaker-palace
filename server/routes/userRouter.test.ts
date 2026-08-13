@@ -98,7 +98,7 @@ describe('GET /:userID', () => {
 		);
 	});
 
-	it('does not include the password even on the authenticated user\'s own profile', async () => {
+	it("does not include the password even on the authenticated user's own profile", async () => {
 		const user = await createUser();
 		const token = signToken(user._id);
 
@@ -107,7 +107,7 @@ describe('GET /:userID', () => {
 		expect(res.body.password).toBeUndefined();
 	});
 
-	it('returns the public profile when the authenticated user is viewing someone else\'s profile', async () => {
+	it("returns the public profile when the authenticated user is viewing someone else's profile", async () => {
 		const user = await createUser();
 		const otherUser = await createUser();
 		const token = signToken(otherUser._id);
@@ -148,30 +148,30 @@ describe('PUT /', () => {
 		['firstName', '   ', /first name/i],
 		['lastName', '', /last name/i],
 		['lastName', '   ', /last name/i],
-	] as const)('returns a 400 error and does not persist the change when %s is %j', async (field, value, errorMatch) => {
-		const user = await createUser({ [field]: 'Old' });
-		const token = signToken(user._id);
+	] as const)(
+		'returns a 400 error and does not persist the change when %s is %j',
+		async (field, value, errorMatch) => {
+			const user = await createUser({ [field]: 'Old' });
+			const token = signToken(user._id);
 
-		const res = await request(app)
-			.put('/users')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ [field]: value });
+			const res = await request(app)
+				.put('/users')
+				.set('Authorization', `Bearer ${token}`)
+				.send({ [field]: value });
 
-		expect(res.status).toBe(400);
-		expect(res.body.error).toMatch(errorMatch);
+			expect(res.status).toBe(400);
+			expect(res.body.error).toMatch(errorMatch);
 
-		const dbUser = await User.findById(user._id);
-		expect(dbUser![field]).toBe('Old');
-	});
+			const dbUser = await User.findById(user._id);
+			expect(dbUser![field]).toBe('Old');
+		}
+	);
 
 	it('leaves fields not included in the request body unchanged', async () => {
 		const user = await createUser({ firstName: 'Old', lastName: 'Name' });
 		const token = signToken(user._id);
 
-		const res = await request(app)
-			.put('/users')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ firstName: 'New' });
+		const res = await request(app).put('/users').set('Authorization', `Bearer ${token}`).send({ firstName: 'New' });
 
 		expect(res.status).toBe(200);
 		expect(res.body.user.lastName).toBe('Name');
@@ -208,10 +208,7 @@ describe('PUT /', () => {
 		const user = await createUser();
 		const token = signToken(user._id);
 
-		const res = await request(app)
-			.put('/users')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ firstName: 'New' });
+		const res = await request(app).put('/users').set('Authorization', `Bearer ${token}`).send({ firstName: 'New' });
 
 		expect(res.body.user.password).toBeUndefined();
 	});
@@ -246,7 +243,7 @@ describe('PUT /', () => {
 		expect(dbUser!.email).toBe(user.email);
 	});
 
-	it('returns a 400 error when the new email matches another user\'s email in a different case', async () => {
+	it("returns a 400 error when the new email matches another user's email in a different case", async () => {
 		const user = await createUser();
 		const otherUser = await createUser({ email: 'existing@example.com', lowerCaseEmail: 'existing@example.com' });
 		const token = signToken(user._id);
@@ -292,10 +289,7 @@ describe('PUT /', () => {
 	it('returns a 404 error when the authenticated user no longer exists', async () => {
 		const token = signToken(new mongoose.Types.ObjectId());
 
-		const res = await request(app)
-			.put('/users')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ firstName: 'New' });
+		const res = await request(app).put('/users').set('Authorization', `Bearer ${token}`).send({ firstName: 'New' });
 
 		expect(res.status).toBe(404);
 		expect(res.body.error).toMatch(/not found/i);

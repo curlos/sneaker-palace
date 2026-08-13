@@ -51,7 +51,9 @@ it('reads the guest cart from localStorage when no user is logged in', async () 
 });
 
 it('fetches the server cart when a user is logged in', async () => {
-	renderWithProviders(<CartConsumer />, { preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } } });
+	renderWithProviders(<CartConsumer />, {
+		preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } },
+	});
 
 	expect(await screen.findByTestId('cart-total')).toHaveTextContent('200');
 });

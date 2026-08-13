@@ -75,7 +75,19 @@ describe('GET /shoes/page/:pageNum', () => {
 		const doc = res.body.docs[0];
 
 		expect(Object.keys(doc).sort()).toEqual(
-			['_id', 'brand', 'colorway', 'gender', 'id', 'image', 'name', 'rating', 'ratings', 'retailPrice', 'shoeID'].sort()
+			[
+				'_id',
+				'brand',
+				'colorway',
+				'gender',
+				'id',
+				'image',
+				'name',
+				'rating',
+				'ratings',
+				'retailPrice',
+				'shoeID',
+			].sort()
 		);
 		expect(doc.image).toEqual({ original: 'https://example.com/0/original.jpg' });
 	});
@@ -151,9 +163,7 @@ describe('POST /shoes/bulk', () => {
 
 		expect(res.status).toBe(200);
 		expect(res.body.length).toBe(5);
-		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual(
-			created.map((shoe) => shoe.shoeID).sort()
-		);
+		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual(created.map((shoe) => shoe.shoeID).sort());
 	});
 
 	it('returns all shoes matching the given ids when key is omitted (defaults to _id)', async () => {
@@ -164,15 +174,11 @@ describe('POST /shoes/bulk', () => {
 
 		expect(res.status).toBe(200);
 		expect(res.body.length).toBe(5);
-		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual(
-			created.map((shoe) => shoe.shoeID).sort()
-		);
+		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual(created.map((shoe) => shoe.shoeID).sort());
 	});
 
 	it('returns only the shoes that exist when some ids do not match any shoe (default _id key)', async () => {
-		const [shoe1, shoe2, excludedShoe] = await Shoe.insertMany(
-			Array.from({ length: 3 }, (_, i) => buildShoe(i))
-		);
+		const [shoe1, shoe2, excludedShoe] = await Shoe.insertMany(Array.from({ length: 3 }, (_, i) => buildShoe(i)));
 		const ids = [
 			shoe1._id.toString(),
 			shoe2._id.toString(),
@@ -184,9 +190,7 @@ describe('POST /shoes/bulk', () => {
 
 		expect(res.status).toBe(200);
 		expect(res.body.length).toBe(2);
-		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual(
-			[shoe1.shoeID, shoe2.shoeID].sort()
-		);
+		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual([shoe1.shoeID, shoe2.shoeID].sort());
 		expect(res.body.some((shoe: IShoe) => shoe.shoeID === excludedShoe.shoeID)).toBe(false);
 	});
 
@@ -200,7 +204,9 @@ describe('POST /shoes/bulk', () => {
 	});
 
 	it('returns a 500 error when ids contains values that are not valid MongoDB ObjectIds (default _id key)', async () => {
-		const res = await request(app).post('/shoes/bulk').send({ ids: ['not-a-valid-id', 123, true] });
+		const res = await request(app)
+			.post('/shoes/bulk')
+			.send({ ids: ['not-a-valid-id', 123, true] });
 
 		expect(res.status).toBe(500);
 	});
@@ -217,18 +223,14 @@ describe('POST /shoes/bulk', () => {
 	});
 
 	it('returns only the shoes that exist when some shoeIDs do not match any shoe (key: "shoeID")', async () => {
-		const [shoe1, shoe2, excludedShoe] = await Shoe.insertMany(
-			Array.from({ length: 3 }, (_, i) => buildShoe(i))
-		);
+		const [shoe1, shoe2, excludedShoe] = await Shoe.insertMany(Array.from({ length: 3 }, (_, i) => buildShoe(i)));
 		const ids = [shoe1.shoeID, shoe2.shoeID, 'does-not-exist-1', 'does-not-exist-2'];
 
 		const res = await request(app).post('/shoes/bulk').send({ ids, key: 'shoeID' });
 
 		expect(res.status).toBe(200);
 		expect(res.body.length).toBe(2);
-		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual(
-			[shoe1.shoeID, shoe2.shoeID].sort()
-		);
+		expect(res.body.map((shoe: IShoe) => shoe.shoeID).sort()).toEqual([shoe1.shoeID, shoe2.shoeID].sort());
 		expect(res.body.some((shoe: IShoe) => shoe.shoeID === excludedShoe.shoeID)).toBe(false);
 	});
 
@@ -260,9 +262,7 @@ describe('PUT /shoes/favorite/:shoeID', () => {
 		const user = await User.create(buildUser(0));
 		const token = signToken(user._id);
 
-		const res = await request(app)
-			.put('/shoes/favorite/does-not-exist')
-			.set('Authorization', `Bearer ${token}`);
+		const res = await request(app).put('/shoes/favorite/does-not-exist').set('Authorization', `Bearer ${token}`);
 
 		expect(res.status).toBe(404);
 	});
@@ -271,21 +271,17 @@ describe('PUT /shoes/favorite/:shoeID', () => {
 		const shoe = await Shoe.create(buildShoe(0));
 		const token = signToken(new mongoose.Types.ObjectId());
 
-		const res = await request(app)
-			.put(`/shoes/favorite/${shoe.shoeID}`)
-			.set('Authorization', `Bearer ${token}`);
+		const res = await request(app).put(`/shoes/favorite/${shoe.shoeID}`).set('Authorization', `Bearer ${token}`);
 
 		expect(res.status).toBe(404);
 	});
 
-	it('adds the shoe to the user\'s favorites and the user to the shoe\'s favorites when not already favorited', async () => {
+	it("adds the shoe to the user's favorites and the user to the shoe's favorites when not already favorited", async () => {
 		const shoe = await Shoe.create(buildShoe(0));
 		const user = await User.create(buildUser(0));
 		const token = signToken(user._id);
 
-		const res = await request(app)
-			.put(`/shoes/favorite/${shoe.shoeID}`)
-			.set('Authorization', `Bearer ${token}`);
+		const res = await request(app).put(`/shoes/favorite/${shoe.shoeID}`).set('Authorization', `Bearer ${token}`);
 
 		expect(res.status).toBe(200);
 		expect(res.body.updatedShoe.favorites).toEqual([user._id.toString()]);
@@ -298,15 +294,13 @@ describe('PUT /shoes/favorite/:shoeID', () => {
 		expect(dbUser!.favorites.map((id) => id.toString())).toEqual([shoe._id.toString()]);
 	});
 
-	it('removes the shoe from the user\'s favorites and the user from the shoe\'s favorites when already favorited', async () => {
+	it("removes the shoe from the user's favorites and the user from the shoe's favorites when already favorited", async () => {
 		const user = await User.create(buildUser(0));
 		const shoe = await Shoe.create({ ...buildShoe(0), favorites: [user._id] });
 		await user.updateOne({ $push: { favorites: shoe._id } });
 		const token = signToken(user._id);
 
-		const res = await request(app)
-			.put(`/shoes/favorite/${shoe.shoeID}`)
-			.set('Authorization', `Bearer ${token}`);
+		const res = await request(app).put(`/shoes/favorite/${shoe.shoeID}`).set('Authorization', `Bearer ${token}`);
 
 		expect(res.status).toBe(200);
 		expect(res.body.updatedShoe.favorites).toEqual([]);
@@ -323,9 +317,7 @@ describe('PUT /shoes/favorite/:shoeID', () => {
 		const user = await User.create(buildUser(0));
 		const token = signToken(user._id);
 
-		await request(app)
-			.put(`/shoes/favorite/${shoe.shoeID}`)
-			.set('Authorization', `Bearer ${token}`);
+		await request(app).put(`/shoes/favorite/${shoe.shoeID}`).set('Authorization', `Bearer ${token}`);
 
 		const secondRes = await request(app)
 			.put(`/shoes/favorite/${shoe.shoeID}`)
@@ -340,7 +332,7 @@ describe('PUT /shoes/favorite/:shoeID', () => {
 		expect(dbUser!.favorites).toEqual([]);
 	});
 
-	it('does not disturb another user\'s existing favorite relationship with the same shoe', async () => {
+	it("does not disturb another user's existing favorite relationship with the same shoe", async () => {
 		const otherUser = await User.create(buildUser(0));
 		const shoe = await Shoe.create({ ...buildShoe(0), favorites: [otherUser._id] });
 		await otherUser.updateOne({ $push: { favorites: shoe._id } });
@@ -368,7 +360,7 @@ describe('PUT /shoes/favorite/:shoeID', () => {
 		expect(dbOtherUser!.favorites.map((id) => id.toString())).toEqual([shoe._id.toString()]);
 	});
 
-	it('does not disturb the user\'s existing favorite relationship with a different shoe', async () => {
+	it("does not disturb the user's existing favorite relationship with a different shoe", async () => {
 		const user = await User.create(buildUser(0));
 		const favoritedShoe = await Shoe.create({ ...buildShoe(0), favorites: [user._id] });
 		await user.updateOne({ $push: { favorites: favoritedShoe._id } });

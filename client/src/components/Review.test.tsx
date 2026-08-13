@@ -30,7 +30,13 @@ const shoeRating = {
 
 it("renders the review's summary text", () => {
 	renderWithProviders(
-		<Review shoeRating={shoeRating} shoe={{ shoeID: 'air-max-1' }} onLike={vi.fn()} onDislike={vi.fn()} isLoading={false} />
+		<Review
+			shoeRating={shoeRating}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={vi.fn()}
+			onDislike={vi.fn()}
+			isLoading={false}
+		/>
 	);
 
 	expect(screen.getByText('Great shoe')).toBeInTheDocument();
@@ -40,7 +46,13 @@ it('calls onLike with the review id when "Mark as helpful" is clicked', async ()
 	const onLike = vi.fn();
 	const user = userEvent.setup();
 	renderWithProviders(
-		<Review shoeRating={shoeRating} shoe={{ shoeID: 'air-max-1' }} onLike={onLike} onDislike={vi.fn()} isLoading={false} />
+		<Review
+			shoeRating={shoeRating}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={onLike}
+			onDislike={vi.fn()}
+			isLoading={false}
+		/>
 	);
 
 	await user.click(screen.getByRole('button', { name: /mark as helpful/i }));
@@ -52,7 +64,13 @@ it('calls onDislike with the review id when "Mark as not helpful" is clicked', a
 	const onDislike = vi.fn();
 	const user = userEvent.setup();
 	renderWithProviders(
-		<Review shoeRating={shoeRating} shoe={{ shoeID: 'air-max-1' }} onLike={vi.fn()} onDislike={onDislike} isLoading={false} />
+		<Review
+			shoeRating={shoeRating}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={vi.fn()}
+			onDislike={onDislike}
+			isLoading={false}
+		/>
 	);
 
 	await user.click(screen.getByRole('button', { name: /mark as not helpful/i }));
@@ -62,10 +80,18 @@ it('calls onDislike with the review id when "Mark as not helpful" is clicked', a
 
 it('shows "Mark as helpful" as pressed when the logged-in user has already liked the review', async () => {
 	server.use(
-		http.get(`${API_URL}/users/:userId`, () => HttpResponse.json(makeAuthUser({ _id: 'user-3', helpful: ['rating-1'] })))
+		http.get(`${API_URL}/users/:userId`, () =>
+			HttpResponse.json(makeAuthUser({ _id: 'user-3', helpful: ['rating-1'] }))
+		)
 	);
 	renderWithProviders(
-		<Review shoeRating={shoeRating} shoe={{ shoeID: 'air-max-1' }} onLike={vi.fn()} onDislike={vi.fn()} isLoading={false} />,
+		<Review
+			shoeRating={shoeRating}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={vi.fn()}
+			onDislike={vi.fn()}
+			isLoading={false}
+		/>,
 		{ preloadedState: { user: { currentUser: makeAuthUser({ _id: 'user-3' }), isFetching: false, error: false } } }
 	);
 
@@ -81,7 +107,13 @@ it('shows "Mark as not helpful" as pressed when the logged-in user has already d
 		)
 	);
 	renderWithProviders(
-		<Review shoeRating={shoeRating} shoe={{ shoeID: 'air-max-1' }} onLike={vi.fn()} onDislike={vi.fn()} isLoading={false} />,
+		<Review
+			shoeRating={shoeRating}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={vi.fn()}
+			onDislike={vi.fn()}
+			isLoading={false}
+		/>,
 		{ preloadedState: { user: { currentUser: makeAuthUser({ _id: 'user-3' }), isFetching: false, error: false } } }
 	);
 
@@ -109,7 +141,13 @@ it('opens the review photo modal when the photo thumbnail is clicked', async () 
 
 it('shows the default avatar when the reviewer has no profile picture', () => {
 	renderWithProviders(
-		<Review shoeRating={shoeRating} shoe={{ shoeID: 'air-max-1' }} onLike={vi.fn()} onDislike={vi.fn()} isLoading={false} />
+		<Review
+			shoeRating={shoeRating}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={vi.fn()}
+			onDislike={vi.fn()}
+			isLoading={false}
+		/>
 	);
 
 	expect(screen.getByRole('img', { name: "Jane's avatar" })).toHaveAttribute('src', DEFAULT_AVATAR);
@@ -121,7 +159,13 @@ it("shows the reviewer's profile picture when one is set", () => {
 		postedByUser: { ...shoeRating.postedByUser, profilePic: 'https://example.com/avatar.jpg' },
 	};
 	renderWithProviders(
-		<Review shoeRating={reviewWithPic} shoe={{ shoeID: 'air-max-1' }} onLike={vi.fn()} onDislike={vi.fn()} isLoading={false} />
+		<Review
+			shoeRating={reviewWithPic}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={vi.fn()}
+			onDislike={vi.fn()}
+			isLoading={false}
+		/>
 	);
 
 	expect(screen.getByRole('img', { name: "Jane's avatar" })).toHaveAttribute('src', 'https://example.com/avatar.jpg');
@@ -129,7 +173,13 @@ it("shows the reviewer's profile picture when one is set", () => {
 
 it('disables the helpful/not-helpful buttons while a mutation is loading', () => {
 	renderWithProviders(
-		<Review shoeRating={shoeRating} shoe={{ shoeID: 'air-max-1' }} onLike={vi.fn()} onDislike={vi.fn()} isLoading={true} />
+		<Review
+			shoeRating={shoeRating}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={vi.fn()}
+			onDislike={vi.fn()}
+			isLoading={true}
+		/>
 	);
 
 	expect(screen.getByRole('button', { name: /mark as helpful/i })).toBeDisabled();
@@ -139,7 +189,13 @@ it('disables the helpful/not-helpful buttons while a mutation is loading', () =>
 const renderAsUser = (userId: string) => {
 	server.use(http.get(`${API_URL}/users/:userId`, () => HttpResponse.json(makeAuthUser({ _id: userId }))));
 	return renderWithProviders(
-		<Review shoeRating={shoeRating} shoe={{ shoeID: 'air-max-1' }} onLike={vi.fn()} onDislike={vi.fn()} isLoading={false} />,
+		<Review
+			shoeRating={shoeRating}
+			shoe={{ shoeID: 'air-max-1' }}
+			onLike={vi.fn()}
+			onDislike={vi.fn()}
+			isLoading={false}
+		/>,
 		{ preloadedState: { user: { currentUser: makeAuthUser({ _id: userId }), isFetching: false, error: false } } }
 	);
 };

@@ -19,7 +19,10 @@ it('logs the user out, closes the modal, and navigates home when "Sign Out" is c
 	const user = userEvent.setup();
 	const { store, history } = renderWithProviders(
 		<SidenavModal showSidenavModal={true} setShowSidenavModal={setShowSidenavModal} />,
-		{ route: '/settings', preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } } }
+		{
+			route: '/settings',
+			preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } },
+		}
 	);
 	await screen.findByRole('link', { name: /sign out/i });
 
@@ -82,11 +85,14 @@ it.each(['Login', 'Register'])('shows the %s link when no user is logged in', (n
 	expect(screen.getByRole('link', { name })).toBeInTheDocument();
 });
 
-it.each(['Profile', 'Orders', 'Settings', 'Sign Out'])('does not show the %s link when no user is logged in', (name) => {
-	renderWithProviders(<SidenavModal showSidenavModal={true} setShowSidenavModal={vi.fn()} />);
+it.each(['Profile', 'Orders', 'Settings', 'Sign Out'])(
+	'does not show the %s link when no user is logged in',
+	(name) => {
+		renderWithProviders(<SidenavModal showSidenavModal={true} setShowSidenavModal={vi.fn()} />);
 
-	expect(screen.queryByRole('link', { name })).not.toBeInTheDocument();
-});
+		expect(screen.queryByRole('link', { name })).not.toBeInTheDocument();
+	}
+);
 
 it.each(['Profile', 'Orders', 'Settings', 'Sign Out'])('shows the %s link when a user is logged in', async (name) => {
 	renderWithProviders(<SidenavModal showSidenavModal={true} setShowSidenavModal={vi.fn()} />, {
@@ -105,7 +111,7 @@ it.each(['Login', 'Register'])('does not show the %s link when a user is logged 
 	expect(screen.queryByRole('link', { name })).not.toBeInTheDocument();
 });
 
-it('links Profile to the logged-in user\'s profile page', async () => {
+it("links Profile to the logged-in user's profile page", async () => {
 	renderWithProviders(<SidenavModal showSidenavModal={true} setShowSidenavModal={vi.fn()} />, {
 		preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } },
 	});

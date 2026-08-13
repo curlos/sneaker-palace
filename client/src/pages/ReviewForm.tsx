@@ -4,7 +4,12 @@ import { useHistory, useParams } from 'react-router-dom';
 import StarRatings from '../utils/StarRatingsCompat';
 import { XIcon } from '@heroicons/react/outline';
 import { useGetShoeQuery } from '../api/shoesApi';
-import { useGetRatingQuery, useCreateRatingMutation, useUpdateRatingMutation, CreateRatingPayload } from '../api/ratingsApi';
+import {
+	useGetRatingQuery,
+	useCreateRatingMutation,
+	useUpdateRatingMutation,
+	CreateRatingPayload,
+} from '../api/ratingsApi';
 import { useGetLoggedInUserQuery } from '../api/userApi';
 import { RootState } from '../redux/store';
 import CircleLoader from '../skeleton_loaders/CircleLoader';

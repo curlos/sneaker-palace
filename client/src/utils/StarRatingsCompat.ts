@@ -6,6 +6,7 @@ import StarRatingsImport from 'react-star-ratings';
 // unwrapped default, causing "Element type is invalid... got: object". Unwrap defensively:
 // use `.default` if present (the broken case), otherwise use the import directly (handles
 // the import resolving correctly now or after a future Rolldown/package fix).
-const StarRatings = (StarRatingsImport as unknown as { default?: typeof StarRatingsImport }).default ?? StarRatingsImport;
+const StarRatings =
+	(StarRatingsImport as unknown as { default?: typeof StarRatingsImport }).default ?? StarRatingsImport;
 
 export default StarRatings;

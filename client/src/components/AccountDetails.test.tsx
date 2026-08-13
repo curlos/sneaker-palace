@@ -86,7 +86,6 @@ it('previews the selected file and uploads it when saving', async () => {
 
 	await user.click(screen.getByRole('button', { name: /save/i }));
 
-
 	await waitFor(() => expect(receivedBody.profilePic).toBe('https://example.com/uploaded.jpg'));
 });
 
@@ -126,18 +125,20 @@ it('shows a success message after saving account details', async () => {
 });
 
 it('disables the Save button while the update is in flight', async () => {
-	server.use(http.put(`${API_URL}/users`, async () => {
-		// isLoading flips true synchronously when the click fires (before the request even
-		// resolves), so the assertion below doesn't need this delay to see that part. What it
-		// guards against is the *reverse*: await user.click() only resolves once userEvent's
-		// internal event chain has fully unwound, and a fast-enough response could resolve and
-		// flip isLoading back to false during that unwind - making the button look enabled again
-		// by the time the assertion runs. 50ms is comfortably above that unwind's overhead
-		// (empirically, delay(1) flakes and delay(2) passes on this machine - but that boundary
-		// shifts with system load/CI, so 50ms is used for a safe margin, not the observed minimum).
-		await delay(50);
-		return HttpResponse.json(makeAuthUser());
-	}));
+	server.use(
+		http.put(`${API_URL}/users`, async () => {
+			// isLoading flips true synchronously when the click fires (before the request even
+			// resolves), so the assertion below doesn't need this delay to see that part. What it
+			// guards against is the *reverse*: await user.click() only resolves once userEvent's
+			// internal event chain has fully unwound, and a fast-enough response could resolve and
+			// flip isLoading back to false during that unwind - making the button look enabled again
+			// by the time the assertion runs. 50ms is comfortably above that unwind's overhead
+			// (empirically, delay(1) flakes and delay(2) passes on this machine - but that boundary
+			// shifts with system load/CI, so 50ms is used for a safe margin, not the observed minimum).
+			await delay(50);
+			return HttpResponse.json(makeAuthUser());
+		})
+	);
 	const user = userEvent.setup();
 	renderWithProviders(<AccountDetails />, {
 		preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } },
@@ -150,7 +151,9 @@ it('disables the Save button while the update is in flight', async () => {
 });
 
 it('shows the server error message when saving fails', async () => {
-	server.use(http.put(`${API_URL}/users`, () => HttpResponse.json({ error: 'Email already in use' }, { status: 400 })));
+	server.use(
+		http.put(`${API_URL}/users`, () => HttpResponse.json({ error: 'Email already in use' }, { status: 400 }))
+	);
 	const user = userEvent.setup();
 	renderWithProviders(<AccountDetails />, {
 		preloadedState: { user: { currentUser: makeAuthUser(), isFetching: false, error: false } },

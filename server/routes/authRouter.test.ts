@@ -116,9 +116,7 @@ describe('POST /auth/register', () => {
 		const invalidEmails = ['carlos', 'carlos@', 'carlosexample.com', 'carlos@example', '   '];
 
 		for (const email of invalidEmails) {
-			const res = await request(app)
-				.post('/auth/register')
-				.send(registerPayload({ email }));
+			const res = await request(app).post('/auth/register').send(registerPayload({ email }));
 
 			expect(res.status).toBe(400);
 			expect(res.body.error).toMatch(/email/i);
@@ -128,13 +126,9 @@ describe('POST /auth/register', () => {
 	it('rejects a duplicate email', async () => {
 		const email = 'test-duplicate@example.com';
 
-		await request(app)
-			.post('/auth/register')
-			.send(registerPayload({ email }));
+		await request(app).post('/auth/register').send(registerPayload({ email }));
 
-		const res = await request(app)
-			.post('/auth/register')
-			.send(registerPayload({ email }));
+		const res = await request(app).post('/auth/register').send(registerPayload({ email }));
 
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/taken/i);
@@ -160,9 +154,7 @@ describe('POST /auth/register', () => {
 	});
 
 	it('creates a new user with valid data', async () => {
-		const res = await request(app)
-			.post('/auth/register')
-			.send(registerPayload());
+		const res = await request(app).post('/auth/register').send(registerPayload());
 
 		expect(res.status).toBe(201);
 		expect(res.body._id).toBeDefined();
@@ -173,9 +165,7 @@ describe('POST /auth/register', () => {
 	});
 
 	it('creates an empty cart for the new user', async () => {
-		const res = await request(app)
-			.post('/auth/register')
-			.send(registerPayload());
+		const res = await request(app).post('/auth/register').send(registerPayload());
 
 		expect(res.status).toBe(201);
 
@@ -211,9 +201,7 @@ describe('POST /auth/register', () => {
 	it('returns 500 if the database save fails', async () => {
 		vi.spyOn(User.prototype, 'save').mockRejectedValueOnce(new Error('DB error'));
 
-		const res = await request(app)
-			.post('/auth/register')
-			.send(registerPayload());
+		const res = await request(app).post('/auth/register').send(registerPayload());
 
 		expect(res.status).toBe(500);
 	});
@@ -288,9 +276,7 @@ describe('POST /auth/login', () => {
 		const email = 'test-login-success@example.com';
 		const password = 'password123';
 
-		await request(app)
-			.post('/auth/register')
-			.send(registerPayload({ email, password }));
+		await request(app).post('/auth/register').send(registerPayload({ email, password }));
 
 		const res = await request(app).post('/auth/login').send({ email, password });
 
@@ -307,9 +293,7 @@ describe('POST /auth/login', () => {
 		const email = 'test-login-jwt@example.com';
 		const password = 'password123';
 
-		await request(app)
-			.post('/auth/register')
-			.send(registerPayload({ email, password }));
+		await request(app).post('/auth/register').send(registerPayload({ email, password }));
 
 		const res = await request(app).post('/auth/login').send({ email, password });
 
@@ -350,7 +334,7 @@ describe('POST /auth/login', () => {
 		const res = await request(app)
 			.post('/auth/login')
 			.send({ email: { $ne: null }, password: 'password123' });
-		
+
 		expect(res.status).toBe(400);
 		expect(res.body.error).toMatch(/email/i);
 	});

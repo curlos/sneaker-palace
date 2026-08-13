@@ -54,7 +54,9 @@ it("shows a review's summary when the user has reviews", async () => {
 it('auto-selects the Favorites tab when the user has favorites but no reviews', async () => {
 	server.use(
 		http.get(`${API_URL}/users/:userId`, () => HttpResponse.json({ ...mockAuthUser, favorites: ['fav-shoe-1'] })),
-		http.post(`${API_URL}/shoes/bulk`, () => HttpResponse.json([makeShoe({ _id: 'fav-shoe-1', name: 'Air Force 1' })]))
+		http.post(`${API_URL}/shoes/bulk`, () =>
+			HttpResponse.json([makeShoe({ _id: 'fav-shoe-1', name: 'Air Force 1' })])
+		)
 	);
 
 	renderProfile();
@@ -65,7 +67,9 @@ it('auto-selects the Favorites tab when the user has favorites but no reviews', 
 it('switches to the Favorites tab when it is clicked manually', async () => {
 	server.use(
 		http.get(`${API_URL}/users/:userId`, () => HttpResponse.json({ ...mockAuthUser, favorites: ['fav-shoe-1'] })),
-		http.post(`${API_URL}/shoes/bulk`, () => HttpResponse.json([makeShoe({ _id: 'fav-shoe-1', name: 'Air Force 1' })]))
+		http.post(`${API_URL}/shoes/bulk`, () =>
+			HttpResponse.json([makeShoe({ _id: 'fav-shoe-1', name: 'Air Force 1' })])
+		)
 	);
 	// Give the user a review too, so the default/auto-selected tab is Reviews, not Favorites —
 	// isolating the manual-click switch from the auto-select-on-load behavior above.
@@ -97,7 +101,9 @@ it('shows the helpful votes, unhelpful votes, review, and favorites counts in In
 			HttpResponse.json({ ...mockAuthUser, helpful: ['h1', 'h2'], notHelpful: ['n1'], favorites: ['fav-shoe-1'] })
 		),
 		http.get(`${API_URL}/rating/by/user/:userID`, () => HttpResponse.json([mockReview])),
-		http.post(`${API_URL}/shoes/bulk`, () => HttpResponse.json([makeShoe({ _id: 'fav-shoe-1', name: 'Air Force 1' })]))
+		http.post(`${API_URL}/shoes/bulk`, () =>
+			HttpResponse.json([makeShoe({ _id: 'fav-shoe-1', name: 'Air Force 1' })])
+		)
 	);
 
 	renderProfile();
@@ -111,7 +117,9 @@ it('shows the helpful votes, unhelpful votes, review, and favorites counts in In
 
 it('renders the formatted join date', async () => {
 	server.use(
-		http.get(`${API_URL}/users/:userId`, () => HttpResponse.json({ ...mockAuthUser, createdAt: '2023-05-15T12:00:00.000Z' }))
+		http.get(`${API_URL}/users/:userId`, () =>
+			HttpResponse.json({ ...mockAuthUser, createdAt: '2023-05-15T12:00:00.000Z' })
+		)
 	);
 
 	renderProfile();

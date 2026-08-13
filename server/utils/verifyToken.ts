@@ -7,12 +7,16 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
 	if (authHeader) {
 		const token = authHeader.split(' ')[1];
-		jwt.verify(token, process.env.JWT_SEC as string, (err: jwt.VerifyErrors | null, decoded: jwt.JwtPayload | string | undefined) => {
-			if (err) return res.status(403).json('Token is not valid!');
+		jwt.verify(
+			token,
+			process.env.JWT_SEC as string,
+			(err: jwt.VerifyErrors | null, decoded: jwt.JwtPayload | string | undefined) => {
+				if (err) return res.status(403).json('Token is not valid!');
 
-			req.user = decoded as UserType;
-			next();
-		});
+				req.user = decoded as UserType;
+				next();
+			}
+		);
 	} else {
 		return res.status(401).json('You are not authenticated!');
 	}

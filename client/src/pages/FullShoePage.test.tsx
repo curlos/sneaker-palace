@@ -112,7 +112,9 @@ it('removes a review from the page after deleting it', async () => {
 		http.get(`${API_URL}/rating/by/shoe/:shoeID`, () => HttpResponse.json(deleted ? [] : [review])),
 		http.delete(`${API_URL}/rating/:ratingId`, ({ params }) => {
 			deleted = true;
-			return HttpResponse.json({ deletedRating: { _id: params.ratingId, shoeID: 'test-shoe-xyz', userID: 'user-1' } });
+			return HttpResponse.json({
+				deletedRating: { _id: params.ratingId, shoeID: 'test-shoe-xyz', userID: 'user-1' },
+			});
 		})
 	);
 	const user = userEvent.setup();
@@ -218,7 +220,13 @@ it('shows "TBA" for the release date when the shoe has none', async () => {
 	server.use(
 		http.get(`${API_URL}/shoes/:shoeID`, () =>
 			HttpResponse.json(
-				makeShoe({ _id: 'shoe-mongo-1', shoeID: 'test-shoe-xyz', name: 'Air Max 1', retailPrice: 130, releaseDate: '' })
+				makeShoe({
+					_id: 'shoe-mongo-1',
+					shoeID: 'test-shoe-xyz',
+					name: 'Air Max 1',
+					retailPrice: 130,
+					releaseDate: '',
+				})
 			)
 		)
 	);
@@ -239,7 +247,8 @@ it('shows a static image with no rotation slider when the shoe has no 360 images
 					retailPrice: 230,
 					image: {
 						'360': [],
-						original: 'https://image.goat.com/attachments/product_template_pictures/images/107/717/709/original/CT8012_017.png.png',
+						original:
+							'https://image.goat.com/attachments/product_template_pictures/images/107/717/709/original/CT8012_017.png.png',
 						small: '',
 						thumbnail: '',
 					},
@@ -268,7 +277,8 @@ it('shows a rotation slider when the shoe has 360 images', async () => {
 							'https://images.stockx.com/360/Nike-LeBron-8-South-Beach-2021/Images/Nike-LeBron-8-South-Beach-2021/Lv2/img01.jpg',
 							'https://images.stockx.com/360/Nike-LeBron-8-South-Beach-2021/Images/Nike-LeBron-8-South-Beach-2021/Lv2/img02.jpg',
 						],
-						original: 'https://image.goat.com/attachments/product_template_pictures/images/054/966/981/original/694880_00.png.png',
+						original:
+							'https://image.goat.com/attachments/product_template_pictures/images/054/966/981/original/694880_00.png.png',
 						small: '',
 						thumbnail: '',
 					},
