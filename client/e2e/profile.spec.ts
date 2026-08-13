@@ -44,3 +44,17 @@ test('un-favoriting a shoe removes it from the profile favorites tab', async ({ 
 
 	await expect(profile.favoritesPanel.locator('a[href^="/shoe/"]')).toHaveCount(0);
 });
+
+// Deliberately not requesting the `testUser` fixture - handleFavorite in
+// FullShoePage.tsx redirects a logged-out user to /login instead of
+// favoriting, so this documents that guard is real, not an oversight.
+test('favoriting as a guest redirects to login', async ({ page }) => {
+	const productList = new ProductListPage(page);
+	const productDetail = new ProductDetailPage(page);
+
+	await productList.goto();
+	await productList.openFirstProduct();
+	await productDetail.favoriteButton.click();
+
+	await expect(page).toHaveURL('/login');
+});

@@ -3,6 +3,9 @@ import { test } from './fixtures/auth';
 import { ProductListPage } from './pages/ProductListPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ReviewFormPage } from './pages/ReviewFormPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { NavBar } from './pages/NavBar';
+import { makeTestUser } from './utils/testUser';
 
 // Reviews land on a real, shared shoe (the catalog's first-listed one), so a
 // fixed summary would collide with reviews left by other runs/workers. A
@@ -68,4 +71,67 @@ test('a user can delete their own review', async ({ page, testUser: _testUser })
 	// an optimistic UI removal.
 	await page.reload();
 	await expect(ownReview(page)).not.toBeVisible();
+});
+
+// ratingRouter.ts's edit/delete endpoints check `rating.userID === req.user.id`
+// and return 403 otherwise - a real authorization boundary that can only be
+// proven by actually attempting it as a different, real logged-in user
+// against the real backend, not something a mock could verify. Driven via
+// page.request (real backend, real DB) rather than the UI, since the UI
+// itself never renders an "Edit review" link for another user's review in
+// the first place (see Review.tsx) - there's no button to click to trigger
+// this path, only a direct request can.
+test("a user cannot edit or delete another user's review", async ({ page, testUser }) => {
+	const summary = uniqueSummary();
+	const shoeUrl = await submitReview(page, summary, 'Comfortable and true to size.');
+	await page.waitForURL(shoeUrl);
+
+	const editHref = await ownReview(page).getByRole('link', { name: 'Edit review' }).getAttribute('href');
+	const reviewID = editHref!.split('/').pop();
+
+	const navBar = new NavBar(page);
+	await navBar.openUserMenu(testUser.firstName);
+	await navBar.signOutButton().click();
+	// Same logout race as elsewhere in the suite - wait for the logged-out
+	// state before registering a second account.
+	await expect(navBar.loginLink).toBeVisible();
+
+	const registerPage = new RegisterPage(page);
+	await registerPage.goto();
+	await registerPage.register(makeTestUser());
+	await page.waitForURL('/');
+
+	const accessToken = await page.evaluate(() => {
+		const persistRoot = JSON.parse(localStorage.getItem('persist:root')!);
+		return JSON.parse(persistRoot.user).currentUser.accessToken;
+	});
+	const headers = { Authorization: `Bearer ${accessToken}` };
+
+	const editResponse = await page.request.put(`http://localhost:8888/rating/edit/${reviewID}`, {
+		headers,
+		data: { summary: 'hijacked' },
+	});
+	expect(editResponse.status()).toBe(403);
+
+	const deleteResponse = await page.request.delete(`http://localhost:8888/rating/${reviewID}`, { headers });
+	expect(deleteResponse.status()).toBe(403);
+
+	// Confirm the review genuinely wasn't touched, not just that we got a 403
+	// back - the original summary should still be there, unchanged.
+	await page.goto(shoeUrl);
+	await expect(page.getByText(summary)).toBeVisible();
+});
+
+// Deliberately not requesting the `testUser` fixture - App.tsx redirects
+// /shoe/submit-review/:shoeID to /login when logged out, so this documents
+// that guard is real, not an oversight.
+test('writing a review as a guest redirects to login', async ({ page }) => {
+	const productList = new ProductListPage(page);
+	const productDetail = new ProductDetailPage(page);
+	await productList.goto();
+	await productList.openFirstProduct();
+
+	await productDetail.writeReviewLink.click();
+
+	await expect(page).toHaveURL('/login');
 });

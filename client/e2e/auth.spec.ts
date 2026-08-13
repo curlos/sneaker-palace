@@ -64,3 +64,27 @@ test('logging in with the wrong password shows an error and does not log in', as
 	await expect(page).toHaveURL('/login');
 	await expect(navBar.loginLink).toBeVisible();
 });
+
+test('registering with an already-used email shows an error', async ({ page }) => {
+	const registerPage = new RegisterPage(page);
+	const navBar = new NavBar(page);
+	const user = makeTestUser();
+
+	await registerPage.goto();
+	await registerPage.register(user);
+	await navBar.openUserMenu(user.firstName);
+	await navBar.signOutButton().click();
+	// registerPage.goto() below is a hard navigation, which rehydrates Redux
+	// from localStorage - wait for the logged-out state to actually be
+	// visible (and therefore persisted) first, or a fresh page load can
+	// still pick up the pre-sign-out session (same race as the login tests
+	// above). Also, /register redirects to / when already logged in, so this
+	// second registration attempt wouldn't even reach the form otherwise.
+	await expect(navBar.loginLink).toBeVisible();
+
+	await registerPage.goto();
+	await registerPage.register(user);
+
+	await expect(registerPage.errorAlert).toContainText('Email taken');
+	await expect(page).toHaveURL('/register');
+});
