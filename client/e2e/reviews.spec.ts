@@ -101,10 +101,14 @@ test("a user cannot edit or delete another user's review", async ({ page, testUs
 	await registerPage.register(makeTestUser());
 	await page.waitForURL('/');
 
-	const accessToken = await page.evaluate(() => {
-		const persistRoot = JSON.parse(localStorage.getItem('persist:root')!);
-		return JSON.parse(persistRoot.user).currentUser.accessToken;
+	// waitForURL only guarantees the redux dispatch (and thus the navigation)
+	// has happened - redux-persist's write to localStorage is async/debounced,
+	// so it can still lag behind by a tick. Poll instead of reading once.
+	const accessTokenHandle = await page.waitForFunction(() => {
+		const persistRoot = JSON.parse(localStorage.getItem('persist:root') || 'null');
+		return persistRoot ? (JSON.parse(persistRoot.user)?.currentUser?.accessToken ?? null) : null;
 	});
+	const accessToken = await accessTokenHandle.jsonValue();
 	const headers = { Authorization: `Bearer ${accessToken}` };
 
 	const editResponse = await page.request.put(`http://localhost:8888/rating/edit/${reviewID}`, {

@@ -43,7 +43,7 @@ jobs:
       run: echo "VITE_API_URL=http://localhost:8888" > .env
     - name: Run client unit tests
       working-directory: client
-      run: npm test
+      run: npm run test:coverage
     - name: Run server unit/integration tests
       # STRIPE_KEY: routes/stripeRouter.ts constructs `new Stripe(...)` at
       # import time, which server.ts pulls in - so it throws for every test
@@ -54,7 +54,19 @@ jobs:
       working-directory: server
       env:
         STRIPE_KEY: sk_test_dummy_key_for_ci
-      run: npm test
+      run: npm run test:coverage
+    - uses: actions/upload-artifact@v7
+      if: ${{ !cancelled() }}
+      with:
+        name: client-coverage-report
+        path: client/coverage/
+        retention-days: 30
+    - uses: actions/upload-artifact@v7
+      if: ${{ !cancelled() }}
+      with:
+        name: server-coverage-report
+        path: server/coverage/
+        retention-days: 30
 
   e2e:
     needs: unit-tests
@@ -63,9 +75,6 @@ jobs:
     defaults:
       run:
         working-directory: client
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - uses: actions/checkout@v7
     - uses: actions/setup-node@v7
@@ -127,15 +136,54 @@ jobs:
         name: playwright-report
         path: client/playwright-report/
         retention-days: 30
-    - name: Upload Pages artifact
-      if: ${{ !cancelled() && github.event_name == 'push' }}
-      uses: actions/upload-pages-artifact@v5
+
+  deploy-reports:
+    needs: [unit-tests, e2e]
+    # !cancelled() (not success()) so this still runs - and publishes whatever
+    # reports do exist - even if unit-tests failed and e2e was skipped as a
+    # result.
+    if: ${{ !cancelled() && github.event_name == 'push' }}
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Download E2E report
+      continue-on-error: true
+      uses: actions/download-artifact@v7
       with:
-        path: client/playwright-report
+        name: playwright-report
+        path: site/e2e
+    - name: Download client coverage report
+      continue-on-error: true
+      uses: actions/download-artifact@v7
+      with:
+        name: client-coverage-report
+        path: site/coverage/client
+    - name: Download server coverage report
+      continue-on-error: true
+      uses: actions/download-artifact@v7
+      with:
+        name: server-coverage-report
+        path: site/coverage/server
+    - name: Build report index
+      # Any of the three can be missing (e.g. the E2E report when unit-tests
+      # failed and e2e was skipped) - only link to whichever actually downloaded.
+      run: |
+        {
+          echo "<!DOCTYPE html><html><head><title>Test Reports</title></head><body>"
+          echo "<h1>Test Reports</h1><ul>"
+          [ -f site/e2e/index.html ] && echo '<li><a href="e2e/">E2E (Playwright)</a></li>'
+          [ -f site/coverage/client/index.html ] && echo '<li><a href="coverage/client/">Client unit test coverage</a></li>'
+          [ -f site/coverage/server/index.html ] && echo '<li><a href="coverage/server/">Server unit/integration test coverage</a></li>'
+          echo "</ul></body></html>"
+        } > site/index.html
+    - uses: actions/upload-pages-artifact@v5
+      with:
+        path: site
     - name: Deploy to GitHub Pages
-      if: ${{ !cancelled() && github.event_name == 'push' }}
       id: deployment
       uses: actions/deploy-pages@v5
     - name: Add report link to summary
-      if: ${{ !cancelled() && github.event_name == 'push' }}
-      run: echo "### 📊 [View Playwright Report](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
+      run: echo "### 📊 [View Test Reports](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
