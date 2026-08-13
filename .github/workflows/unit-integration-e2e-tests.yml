@@ -34,6 +34,13 @@ jobs:
     - name: Install server dependencies
       working-directory: server
       run: npm ci
+    - name: Configure client environment
+      # client/.env is gitignored, so it doesn't exist on a fresh checkout.
+      # Without VITE_API_URL, RTK Query builds relative URLs (e.g. /users/1),
+      # which Node's fetch can't resolve (no page origin like a browser has) -
+      # it throws before MSW's mocks even get a chance to intercept.
+      working-directory: client
+      run: echo "VITE_API_URL=http://localhost:8888" > .env
     - name: Run client unit tests
       working-directory: client
       run: npm test
