@@ -5,3 +5,4 @@ uploads
 dist
 mongo-backups
 coverage
+html-report

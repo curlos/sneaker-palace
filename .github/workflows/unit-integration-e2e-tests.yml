@@ -42,8 +42,11 @@ jobs:
       working-directory: client
       run: echo "VITE_API_URL=http://localhost:8888" > .env
     - name: Run client unit tests
+      # test:report (package.json) runs coverage + the html pass/fail
+      # reporter (needs @vitest/ui) in one pass - coverage only shows which
+      # lines ran, not whether the assertions touching them passed.
       working-directory: client
-      run: npm run test:coverage
+      run: npm run test:report
     - name: Run server unit/integration tests
       # STRIPE_KEY: routes/stripeRouter.ts constructs `new Stripe(...)` at
       # import time, which server.ts pulls in - so it throws for every test
@@ -54,7 +57,7 @@ jobs:
       working-directory: server
       env:
         STRIPE_KEY: sk_test_dummy_key_for_ci
-      run: npm run test:coverage
+      run: npm run test:report
     - uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
       with:
@@ -66,6 +69,18 @@ jobs:
       with:
         name: server-coverage-report
         path: server/coverage/
+        retention-days: 30
+    - uses: actions/upload-artifact@v7
+      if: ${{ !cancelled() }}
+      with:
+        name: client-test-report
+        path: client/html-report/
+        retention-days: 30
+    - uses: actions/upload-artifact@v7
+      if: ${{ !cancelled() }}
+      with:
+        name: server-test-report
+        path: server/html-report/
         retention-days: 30
 
   e2e:
@@ -167,14 +182,28 @@ jobs:
       with:
         name: server-coverage-report
         path: site/coverage/server
+    - name: Download client test report
+      continue-on-error: true
+      uses: actions/download-artifact@v7
+      with:
+        name: client-test-report
+        path: site/tests/client
+    - name: Download server test report
+      continue-on-error: true
+      uses: actions/download-artifact@v7
+      with:
+        name: server-test-report
+        path: site/tests/server
     - name: Build report index
-      # Any of the three can be missing (e.g. the E2E report when unit-tests
+      # Any of these can be missing (e.g. the E2E report when unit-tests
       # failed and e2e was skipped) - only link to whichever actually downloaded.
       run: |
         {
           echo "<!DOCTYPE html><html><head><title>Test Reports</title></head><body>"
           echo "<h1>Test Reports</h1><ul>"
           [ -f site/e2e/index.html ] && echo '<li><a href="e2e/">E2E (Playwright)</a></li>'
+          [ -f site/tests/client/index.html ] && echo '<li><a href="tests/client/">Client unit test results (pass/fail)</a></li>'
+          [ -f site/tests/server/index.html ] && echo '<li><a href="tests/server/">Server unit/integration test results (pass/fail)</a></li>'
           [ -f site/coverage/client/index.html ] && echo '<li><a href="coverage/client/">Client unit test coverage</a></li>'
           [ -f site/coverage/server/index.html ] && echo '<li><a href="coverage/server/">Server unit/integration test coverage</a></li>'
           echo "</ul></body></html>"
