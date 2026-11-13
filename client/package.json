@@ -33,8 +33,8 @@
     "uniqid": "^5.4.0"
   },
   "scripts": {
-    "start": "vite",
-    "start:prod": "VITE_DEV_URL=https://sneakers-app-server.herokuapp.com vite",
+    "start": ". ~/.nvm/nvm.sh && nvm exec 22 vite",
+    "start:prod": ". ~/.nvm/nvm.sh && VITE_DEV_URL=https://sneakers-app-server.herokuapp.com nvm exec 22 vite",
     "build": "vite build",
     "buildAndRun": "vite build && vite preview",
     "test": "vitest run",

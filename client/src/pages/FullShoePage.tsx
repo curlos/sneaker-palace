@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import MoreShoes from '../components/MoreShoes';
 import { SHOE_SIZES, AVERAGE_SHOE_SIZE } from '../utils/shoeConstants';
+import { decodeHtmlEntities } from '../utils/decodeHtmlEntities';
 
 interface Props {
 	setShowShoppingCartModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -249,7 +250,7 @@ const FullShoePage = ({ setShowShoppingCartModal }: Props) => {
 									</button>
 								</div>
 
-								<div className="my-5">{shoe?.story}</div>
+								<div className="my-5">{decodeHtmlEntities(shoe?.story ?? '')}</div>
 
 								<div>
 									<span className="font-bold">Brand:</span> {shoe?.brand}
