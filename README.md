@@ -1,7 +1,7 @@
 # Sneaker Palace 👟
 
 <div align="center">
-  <img src="client/public/icon.png" alt="Sneaker Palace Logo" width="120" height="120">
+  <img src="client/public/icon-readme.png" alt="Sneaker Palace Logo" width="120" height="120">
   
   <h3>The Ultimate Sneaker E-Commerce Experience</h3>
   
