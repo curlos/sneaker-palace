@@ -97,7 +97,7 @@ export default defineConfig({
       timeout: 120_000,
     },
     {
-      command: 'npm run start',
+      command: process.env.CI ? 'npx vite' : 'npm run start',
       url: 'http://localhost:5173',
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
