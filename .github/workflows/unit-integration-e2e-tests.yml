@@ -189,7 +189,7 @@ jobs:
         VITE_STRIPE=${{ secrets.STRIPE_PUBLISHABLE_KEY_TEST }}
         EOF
     - name: Run Playwright tests
-      run: npx playwright test --project=chromium --project=firefox
+      run: npx playwright test
     - uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
       with:
